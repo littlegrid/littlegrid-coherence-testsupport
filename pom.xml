@@ -1,24 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jhall</groupId>
-    <artifactId>local-process-coherence-testsupport</artifactId>
+    <groupId>com.practicalblend</groupId>
+    <artifactId>coherence-testsupport</artifactId>
     <packaging>jar</packaging>
-    <version>1.12</version>
+    <version>1.1</version>
 
     <name>${project.artifactId}</name>
 
-    <parent>
-        <groupId>org.jhall.rainbow</groupId>
-        <artifactId>rainbow-parent</artifactId>
-        <version>1.0.6</version>
-        <relativePath />
-    </parent>
-
     <scm>
-        <connection>scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12</connection>
-        <developerConnection>scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12</developerConnection>
+        <connection>
+            scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
+        </connection>
+        <developerConnection>
+            scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
+        </developerConnection>
         <url>http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12</url>
     </scm>
 
@@ -26,19 +25,83 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>oracle</groupId>
+            <groupId>com.oracle</groupId>
             <artifactId>coherence</artifactId>
-            <scope>provided</scope>
+            <version>${coherence.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${install.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${clean.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compiler.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <source>${java.target.version}</source>
+                        <target>${java.target.version}</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${release.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>rainbow-release</id>
+            <name>rainbow-release</name>
+            <url>http://192.168.1.151:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>rainbow-snapshot</id>
+            <name>rainbow-snapshot</name>
+            <url>http://192.168.1.151:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <profiles>
         <profile>
@@ -90,5 +153,21 @@
             </build>
         </profile>
     </profiles>
+
+    <properties>
+        <java.target.version>1.6</java.target.version>
+
+        <!-- JAR versions -->
+        <coherence.version>3.7.0.0</coherence.version>
+        <junit.version>4.8.2</junit.version>
+        <log4j.version>1.2.14</log4j.version>
+
+        <!-- Plugin versions -->
+        <clean.plugin.version>2.4.1</clean.plugin.version>
+        <install.plugin.version>2.3.1</install.plugin.version>
+        <release.plugin.version>2.1</release.plugin.version>
+        <compiler.plugin.version>2.3.2</compiler.plugin.version>
+        <surefire.plugin.version>2.5</surefire.plugin.version>
+    </properties>
 </project>
 
