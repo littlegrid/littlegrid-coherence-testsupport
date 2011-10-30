@@ -1,10 +1,10 @@
+import com.practicalblend.coherence.testsupport.server.ClusterMemberGroup;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import org.jhall.coherence.testsupport.server.ClusterMemberGroup;
 
-import static org.jhall.coherence.testsupport.ClientUtils.setStorageDisabledClientSystemProperties;
-import static org.jhall.coherence.testsupport.ServerFactory.createCacheServerGroup;
-import static org.jhall.coherence.testsupport.ServerFactory.shutdownCacheFactoryThenClusterMemberGroups;
+import static com.practicalblend.coherence.testsupport.ClientUtils.setStorageDisabledClientSystemProperties;
+import static com.practicalblend.coherence.testsupport.ServerFactory.createCacheServerGroup;
+import static com.practicalblend.coherence.testsupport.ServerFactory.shutdownCacheFactoryThenClusterMemberGroups;
 
 public class SimpleApp {
     public static void main(String[] args) {
