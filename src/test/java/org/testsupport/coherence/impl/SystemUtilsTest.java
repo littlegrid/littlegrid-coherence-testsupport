@@ -1,8 +1,8 @@
-package org.testsupport.common.util;
+package org.testsupport.coherence.impl;
 
-import org.testsupport.coherence.support.common.AbstractTestSupportTest;
 import org.junit.Test;
-import org.testsupport.coherence.support.impl.PropertyContainer;
+import org.testsupport.coherence.impl.PropertyContainer;
+import org.testsupport.common.util.SystemUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -16,25 +16,12 @@ import static org.junit.Assert.assertThat;
 /**
  * System utils tests.
  */
-public class SystemUtilsTest extends AbstractTestSupportTest {
+public class SystemUtilsTest {
     private static final String KNOWN_PREFIX = "prefix.used.for.testing.";
     private static final String KNOWN_KEY_1 = KNOWN_PREFIX + "key1";
     private static final String KNOWN_VALUE_1 = "value1";
     private static final String KNOWN_KEY_2 = KNOWN_PREFIX + "key2";
     private static final String KNOWN_VALUE_2 = "value2";
-
-    @Test
-    public void getEnvironmentVariableJavaHomeAsItShouldExist() {
-        String javaHome = SystemUtils.getEnvironmentVariable("JAVA_HOME");
-
-        assertThat(javaHome, notNullValue());
-        assertThat(javaHome, not(""));
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void getEnvironmentVariableUsingNameThatShouldNotExist() {
-        SystemUtils.getEnvironmentVariable("_ENVIRONMENT_VARIABLE_ZZZ_THAT_YYY_SHOULD_111_NOT_EXIST");
-    }
 
     @Test
     public void setSystemPropertiesWhenItDoesNotAlreadyExist() {

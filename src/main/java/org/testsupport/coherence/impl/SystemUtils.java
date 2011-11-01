@@ -1,45 +1,18 @@
-package org.testsupport.common.util;
+package org.testsupport.coherence.impl;
 
-import org.apache.log4j.Logger;
-import org.testsupport.coherence.support.impl.PropertyContainer;
+import org.testsupport.coherence.impl.PropertyContainer;
 
 import java.util.Map;
 import java.util.Set;
-
-import static java.lang.String.format;
 
 /**
  * System utilities class providing useful system related methods.
  */
 public class SystemUtils {
-    private static final Logger LOGGER = Logger.getLogger(SystemUtils.class);
-
-
     /**
      * Private constructor to prevent creation.
      */
     private SystemUtils() {
-    }
-
-    /**
-     * Get value for the specified environment variable.
-     *
-     * @param environmentVariableName Environment variable.
-     * @return value relating to environment variable.
-     */
-    public static String getEnvironmentVariable(String environmentVariableName) {
-        String value = System.getenv(environmentVariableName);
-
-        if (value == null) {
-            String message = format("Configuration error, environment variable '%s' not set", environmentVariableName);
-
-            LOGGER.error(message);
-            System.err.println(message);
-
-            throw new IllegalStateException(message);
-        }
-
-        return value;
     }
 
     /**

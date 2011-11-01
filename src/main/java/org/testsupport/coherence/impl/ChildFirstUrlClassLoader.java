@@ -1,4 +1,4 @@
-package org.testsupport.common.net;
+package org.testsupport.coherence.impl;
 
 import java.net.URL;
 import java.net.URLClassLoader;
