@@ -8,10 +8,16 @@ import java.util.concurrent.Callable;
 /**
  * Local process cluster member callable, a task that starts a cluster member wrapper.
  */
-class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> {
+class ClusterMemberCallable implements Callable<ClusterMemberDelegatingWrapper> {
     private URL[] classPathUrls;
     private String clusterMemberClassName;
 
+    /**
+     * Constructor.
+     *
+     * @param clusterMemberClassName  Cluster member class name.
+     * @param classPathUrls  Class path.
+     */
     public ClusterMemberCallable(String clusterMemberClassName,
                                  URL[] classPathUrls) {
 
@@ -27,7 +33,11 @@ class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> 
         this.classPathUrls = classPathUrls;
     }
 
-    public DelegatingClusterMemberWrapper call()
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberDelegatingWrapper call()
             throws Exception {
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -36,11 +46,11 @@ class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> 
             ChildFirstUrlClassLoader childFirstUrlClassLoader = new ChildFirstUrlClassLoader(classPathUrls);
             Thread.currentThread().setContextClassLoader(childFirstUrlClassLoader);
 
-            DelegatingClusterMemberWrapper wrapper =
-                    new DelegatingClusterMemberWrapper(clusterMemberClassName, childFirstUrlClassLoader);
-            wrapper.start();
+            ClusterMemberDelegatingWrapper memberWrapper =
+                    new ClusterMemberDelegatingWrapper(clusterMemberClassName, childFirstUrlClassLoader);
+            memberWrapper.start();
 
-            return wrapper;
+            return memberWrapper;
         } catch (Throwable throwable) {
             throw new Exception(throwable);
         } finally {

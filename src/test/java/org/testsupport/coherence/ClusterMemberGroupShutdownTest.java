@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.sleepAfterPerformingMemberShutdown;
 
 /**
@@ -18,7 +18,8 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         final int expectedClusterSizeAfterShutdown = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
         final int memberIdToShutdown = 3;
 
-        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup =
+                newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSizeBeforeShutdown);
         assertThat(doesMemberExist(memberIdToShutdown), is(true));
 
@@ -36,7 +37,8 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         int memberIdToShutdown = 12;
         int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup =
+                newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
         assertThat(doesMemberExist(memberIdToShutdown), is(false));
 

@@ -14,8 +14,8 @@ import static java.lang.String.format;
  * into a separate class loader and then delegates requests (start, stop, shutdown etc.) to
  * the instance of the wrapped class.
  */
-class DelegatingClusterMemberWrapper implements ClusterMember {
-    private Logger logger = Logger.getLogger(DelegatingClusterMemberWrapper.class.getName());
+class ClusterMemberDelegatingWrapper implements ClusterMember {
+    private Logger logger = Logger.getLogger(ClusterMemberDelegatingWrapper.class.getName());
     private Object clusterMemberInstance;
 
     /**
@@ -24,7 +24,7 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
      * @param clusterMemberClassName   Name of class to instantiate and delegate calls to.
      * @param childFirstUrlClassLoader Instance of child first class loader.
      */
-    public DelegatingClusterMemberWrapper(String clusterMemberClassName,
+    public ClusterMemberDelegatingWrapper(String clusterMemberClassName,
                                           ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
             logger.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberClassName));

@@ -3,7 +3,7 @@ import com.tangosol.net.NamedCache;
 import org.testsupport.coherence.ClusterMemberGroup;
 import org.testsupport.coherence.ClusterMemberGroupUtils;
 
-import static org.testsupport.coherence.ClientUtils.setStorageDisabledClientSystemProperties;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.setStorageDisabledClientSystemProperties;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups;
 
 public class SimpleApp {
@@ -13,7 +13,7 @@ public class SimpleApp {
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = ClusterMemberGroupUtils.newBuilder().setNumberOfMembers(2).build().startAll();
+            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setNumberOfMembers(2).build().startAll();
 
             setStorageDisabledClientSystemProperties();
 

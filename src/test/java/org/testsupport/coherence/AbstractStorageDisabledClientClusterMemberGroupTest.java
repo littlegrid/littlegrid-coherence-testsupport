@@ -8,6 +8,7 @@ import org.junit.Before;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.setStorageDisabledClientSystemProperties;
 
 /**
  * Abstract base class for cluster member group tests.
@@ -24,7 +25,7 @@ public abstract class AbstractStorageDisabledClientClusterMemberGroupTest extend
 
     @Before
     public void beforeTest() {
-        ClientUtils.setStorageDisabledClientSystemProperties(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
+        setStorageDisabledClientSystemProperties(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
         cluster = CacheFactory.ensureCluster();
 
         assertThat("Only storage disabled client is expected to be running before the cluster member tests start",

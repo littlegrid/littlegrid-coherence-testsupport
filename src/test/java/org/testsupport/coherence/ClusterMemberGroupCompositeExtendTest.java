@@ -9,7 +9,8 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.testsupport.coherence.ClusterMemberGroup.Builder.Topology.COMPOSITE_STORAGE_ENABLED_PROXY;
 import static org.testsupport.coherence.ClusterMemberGroup.Builder.Topology.EXTEND_PROXY_ONLY;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.setExtendClientSystemProperties;
 
 /**
  * Cluster member group Extend tests.
@@ -17,10 +18,10 @@ import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
 public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientClusterMemberGroupTest {
     @Test
     public void noStorageEnabledMembersCannotStoreData() {
-        ClusterMemberGroup extendProxyGroup = newBuilder().setTopology(EXTEND_PROXY_ONLY)
+        ClusterMemberGroup extendProxyGroup = newClusterMemberGroupBuilder().setTopology(EXTEND_PROXY_ONLY)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
 
-        ClientUtils.setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
+        setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
 
         NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
 
@@ -44,12 +45,12 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
         ClusterMemberGroup extendProxyGroup = null;
 
         try {
-            cacheServerGroup = newBuilder().setNumberOfMembers(numberOfCacheServers).
+            cacheServerGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfCacheServers).
                     setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
-            extendProxyGroup = newBuilder().setTopology(EXTEND_PROXY_ONLY).
+            extendProxyGroup = newClusterMemberGroupBuilder().setTopology(EXTEND_PROXY_ONLY).
                     setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
 
-            ClientUtils.setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
+            setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
 
             NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
             cache.put("any key", "storage enabled member(s) should be present, so this will be cached");
@@ -64,7 +65,7 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = newBuilder().setTopology(COMPOSITE_STORAGE_ENABLED_PROXY)
+            memberGroup = newClusterMemberGroupBuilder().setTopology(COMPOSITE_STORAGE_ENABLED_PROXY)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
 
             NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);

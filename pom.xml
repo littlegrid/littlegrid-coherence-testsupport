@@ -32,10 +32,11 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle</groupId>
-            <!--<groupId>oracle</groupId>-->
+            <!--<groupId>com.oracle</groupId>-->
+            <groupId>oracle</groupId>
             <artifactId>coherence</artifactId>
-            <version>${coherence.version}</version>
+            <!--<version>${coherence.version}</version>-->
+            <version>3.6.1.0</version>
         </dependency>
     </dependencies>
 

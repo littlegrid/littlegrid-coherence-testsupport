@@ -8,14 +8,14 @@ import org.testsupport.common.lang.PropertyContainer;
  * Default local process cluster member group basic tests.
  */
 @Deprecated
-public class DefaultLocalProcessClusterMemberGroupImplTest extends AbstractTest {
+public class DefaultLocalProcessClusterMemberGroupTest extends AbstractTest {
     @Test(expected = IllegalStateException.class)
     public void constructWithNoPropertyContainer() {
-        new DefaultLocalProcessClusterMemberGroupImpl(null, null);
+        new DefaultLocalProcessClusterMemberGroup(null, null);
     }
 
     @Test(expected = IllegalStateException.class)
     public void constructWithNoGroupConfig() {
-        new DefaultLocalProcessClusterMemberGroupImpl(new PropertyContainer(), null);
+        new DefaultLocalProcessClusterMemberGroup(new PropertyContainer(), null);
     }
 }

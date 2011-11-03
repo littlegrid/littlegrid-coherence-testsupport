@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownClusterMemberGroups;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.DEFAULT_WKA_PORT;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KEY;
@@ -25,8 +25,8 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
-            memberGroup2 = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+            memberGroup1 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+            memberGroup2 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
             shutdownClusterMemberGroups(memberGroup1, memberGroup2);
@@ -42,8 +42,8 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
-            memberGroup2 = newBuilder().setNumberOfMembers(numberOfMembers).setWkaPort(getAlternativeWkaPort()).build().startAll();
+            memberGroup1 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+            memberGroup2 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).setWkaPort(getAlternativeWkaPort()).build().startAll();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
             shutdownClusterMemberGroups(memberGroup1, memberGroup2);

@@ -2,7 +2,7 @@ package org.testsupport.coherence;
 
 import org.junit.Test;
 
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 
 /**
  * Large cluster member group tests.
@@ -13,7 +13,8 @@ public class ClusterMemberGroupLargeTest extends AbstractStorageDisabledClientCl
         final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup =
+                newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.stopAll();

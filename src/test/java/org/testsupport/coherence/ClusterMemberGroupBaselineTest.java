@@ -2,7 +2,7 @@ package org.testsupport.coherence;
 
 import org.junit.Test;
 
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 
 /**
  * Cluster member group baseline tests.
@@ -10,19 +10,19 @@ import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
 public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
     @Test
     public void neverStarted() {
-        newBuilder().build();
+        newClusterMemberGroupBuilder().build();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
     public void shutdownWhenNeverStarted() {
-        newBuilder().build().shutdownAll();
+        newClusterMemberGroupBuilder().build().shutdownAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
     public void stopWhenNeverStarted() {
-        newBuilder().build().stopAll();
+        newClusterMemberGroupBuilder().build().stopAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
@@ -31,7 +31,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.shutdownAll();
@@ -43,7 +43,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.startAll();
@@ -58,7 +58,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.shutdownAll();
@@ -71,7 +71,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.stopAll();
@@ -83,6 +83,6 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
 
     @Test
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
-        newBuilder().setJarsToExcludeFromClassPath("junit-4.8.2.jar").build().startAll().shutdownAll();
+        newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath("junit-4.8.2.jar").build().startAll().shutdownAll();
     }
 }

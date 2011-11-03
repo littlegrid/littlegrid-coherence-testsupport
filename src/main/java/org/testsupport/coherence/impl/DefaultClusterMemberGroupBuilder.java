@@ -16,7 +16,7 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KE
 
 /**
  */
-public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
+public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
     private int memberCount = 1;
     private String cacheConfiguration;
@@ -57,6 +57,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
         throw new IllegalArgumentException(message);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setCacheConfiguration(final String cacheConfiguration) {
         this.cacheConfiguration = cacheConfiguration;
@@ -64,11 +67,17 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setClientCacheConfiguration(final String cacheConfiguration) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setSystemProperties(final Properties properties) {
         this.systemProperties = properties;
@@ -76,6 +85,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setTopology(final Topology topology) {
         this.topology = topology;
@@ -83,6 +95,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setNumberOfMembers(final int numberOfMembers) {
         this.memberCount = numberOfMembers;
@@ -90,16 +105,25 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setClusterMemberClassName(final String clusterMemberClassName) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setClassPath(final URL[] classPath) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setJarsToExcludeFromClassPath(final String... jarsToExcludeFromClassPath) {
         groupConfig.setJarsToExcludeFromClassPathUrls(jarsToExcludeFromClassPath);
@@ -107,6 +131,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setWkaPort(final int wkaPort) {
         this.wkaPort = wkaPort;
@@ -126,7 +153,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
      * @return member group.
      */
     @Deprecated
-    public static ClusterMemberGroup createCacheServerGroup(int numberOfMembers,
+    private static ClusterMemberGroup createCacheServerGroup(int numberOfMembers,
                                                             String cacheConfiguration,
                                                             Properties properties,
                                                             ClusterMemberGroupConfig groupConfig,
@@ -331,7 +358,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Buil
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = new DefaultLocalProcessClusterMemberGroupImpl(container, groupConfig);
+            memberGroup = new DefaultLocalProcessClusterMemberGroup(container, groupConfig);
 
             if (startImmediately) {
                 memberGroup.startAll();

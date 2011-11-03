@@ -23,12 +23,12 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
 /**
  * Default local process cluster member group implementation.
  */
-public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberGroup {
-    private final Logger logger = Logger.getLogger(DefaultLocalProcessClusterMemberGroupImpl.class.getName());
+public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
+    private final Logger logger = Logger.getLogger(DefaultLocalProcessClusterMemberGroup.class.getName());
     private boolean startInvoked;
     private ClusterMemberGroupConfig groupConfig;
     private PropertyContainer propertyContainer;
-    private List<Future<DelegatingClusterMemberWrapper>> memberFutures;
+    private List<Future<ClusterMemberDelegatingWrapper>> memberFutures;
 
 
     /**
@@ -37,8 +37,8 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
      * @param propertyContainer Property container.
      * @param groupConfig       Cluster member group config.
      */
-    public DefaultLocalProcessClusterMemberGroupImpl(PropertyContainer propertyContainer,
-                                                     ClusterMemberGroupConfig groupConfig) {
+    public DefaultLocalProcessClusterMemberGroup(PropertyContainer propertyContainer,
+                                                 ClusterMemberGroupConfig groupConfig) {
 
         if (propertyContainer == null) {
             throw new IllegalStateException("Property container cannot be null");
@@ -60,6 +60,15 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * Indicates if started has been invoked - be it regardless of whether the start attempt was successful or not.
+     *
+     * @return true if started has been invoked.
+     */
+    public boolean isStartInvoked() {
+        return startInvoked;
     }
 
     private URL[] getClassPathUrlsExcludingJavaHome(String... jarsToExcludeFromClassPathUrls)
@@ -113,21 +122,21 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
         PropertyContainer replacedSystemProperties = SystemUtils.setReplaceClearSystemProperties(propertyContainer);
 
         try {
-            List<Callable<DelegatingClusterMemberWrapper>> tasks =
-                    new ArrayList<Callable<DelegatingClusterMemberWrapper>>(numberOfClusterMembers);
+            List<Callable<ClusterMemberDelegatingWrapper>> tasks =
+                    new ArrayList<Callable<ClusterMemberDelegatingWrapper>>(numberOfClusterMembers);
 
             for (int i = 0; i < numberOfClusterMembers; i++) {
                 tasks.add(new ClusterMemberCallable(groupConfig.getClusterMemberClassName(),
                         groupConfig.getClassPathUrls()));
             }
 
-            Callable<DelegatingClusterMemberWrapper> taskForSeniorMember = tasks.remove(0);
+            Callable<ClusterMemberDelegatingWrapper> taskForSeniorMember = tasks.remove(0);
 
             ExecutorService executorService =
                     Executors.newFixedThreadPool(groupConfig.getNumberOfThreadsInStartUpPool());
 
             logger.fine("About to establish a cluster using a single member initially");
-            Future<DelegatingClusterMemberWrapper> futureForSeniorMember = executorService.submit(taskForSeniorMember);
+            Future<ClusterMemberDelegatingWrapper> futureForSeniorMember = executorService.submit(taskForSeniorMember);
             futureForSeniorMember.get();
 
             logger.info("First cluster member up, starting any remaining members to join established cluster");
@@ -167,16 +176,16 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
                 Runtime.getRuntime().freeMemory() / oneMB));
     }
 
-    private DelegatingClusterMemberWrapper getClusterMemberWrapper(int memberId) {
+    private ClusterMemberDelegatingWrapper getClusterMemberWrapper(int memberId) {
         if (!startInvoked) {
             throw new IllegalStateException("Cluster member group never started");
         }
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
+                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                DelegatingClusterMemberWrapper memberWrapper = task.get();
+                ClusterMemberDelegatingWrapper memberWrapper = task.get();
 
                 if (memberWrapper.getLocalMemberId() == memberId) {
                     return memberWrapper;
@@ -198,9 +207,9 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
             List<Integer> memberIds = new ArrayList<Integer>();
 
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
+                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                DelegatingClusterMemberWrapper memberWrapper = task.get();
+                ClusterMemberDelegatingWrapper memberWrapper = task.get();
                 memberIds.add(memberWrapper.getLocalMemberId());
             }
 
@@ -245,7 +254,7 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
 
         logger.info(format("About to shutdown cluster member '%d'", memberId));
 
-        DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
+        ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
         if (memberWrapper != null) {
             memberWrapper.shutdown();
@@ -269,9 +278,9 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
+                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                DelegatingClusterMemberWrapper memberWrapper = task.get();
+                ClusterMemberDelegatingWrapper memberWrapper = task.get();
                 memberWrapper.shutdown();
             }
 
@@ -309,7 +318,7 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
 
         logger.info(format("About to stop cluster member '%d'", memberId));
 
-        DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
+        ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
         if (memberWrapper != null) {
             memberWrapper.stop();
@@ -333,9 +342,9 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
+                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                DelegatingClusterMemberWrapper memberWrapper = task.get();
+                ClusterMemberDelegatingWrapper memberWrapper = task.get();
                 memberWrapper.stop();
             }
         } catch (Exception e) {

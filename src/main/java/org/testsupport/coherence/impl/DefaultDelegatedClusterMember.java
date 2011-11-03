@@ -8,7 +8,7 @@ import org.testsupport.coherence.ClusterMember;
  * Default cluster member delegate implementation that performs the necessary cluster member actions - this
  * implementation simply delegates to a Default cache server where possible.
  */
-public class DefaultClusterMemberDelegateImpl implements ClusterMember {
+public final class DefaultDelegatedClusterMember implements ClusterMember {
     /**
      * {@inheritDoc}
      */
