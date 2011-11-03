@@ -1,8 +1,8 @@
-package org.testsupport.coherence.impl;
+package org.testsupport.common.lang;
 
 import org.junit.Test;
-import org.testsupport.coherence.impl.PropertyContainer;
-import org.testsupport.common.util.SystemUtils;
+import org.testsupport.common.lang.PropertyContainer;
+import org.testsupport.common.lang.SystemUtils;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package org.testsupport.coherence.impl;
+package org.testsupport.coherence;
 
 import com.tangosol.net.Member;
 
@@ -25,12 +25,16 @@ public interface ClusterMember {
     void stop();
 
     /**
-     * Gets the local member id.
+     * Gets this local member Id.
      *
-     * @return this member id.
+     * @return member id.
      */
-    @Deprecated
     int getLocalMemberId();
 
-    Member getLocalMember();
+    /**
+     * Returns the class loader that the cluster member has been loaded into.
+     *
+     * @return class loader.
+     */
+    ClassLoader getActualContainingClassLoader();
 }

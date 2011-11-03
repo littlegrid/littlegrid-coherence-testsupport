@@ -1,4 +1,4 @@
-package org.testsupport.coherence.impl;
+package org.testsupport.common.net;
 
 import org.junit.Test;
 import org.testsupport.common.net.ChildFirstUrlClassLoader;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
  */
 public class ChildFirstUrlClassLoaderTest {
     private static final String CLASS_TO_TRY_AND_LOAD =
-            "org.testsupport.coherence.impl.ChildFirstUrlClassLoaderTest$Dummy";
+            "org.testsupport.common.net.ChildFirstUrlClassLoaderTest$Dummy";
 
     @Test
     public void loadClassFromChildClassLoader()

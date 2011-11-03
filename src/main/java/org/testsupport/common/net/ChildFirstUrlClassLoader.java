@@ -1,4 +1,4 @@
-package org.testsupport.coherence.impl;
+package org.testsupport.common.net;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,6 +19,8 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
 
         super(urls);
     }
+
+//    TODO: If Security exception thrown the JAVA_HOME is probably messed up.
 
     /**
      * {@inheritDoc}

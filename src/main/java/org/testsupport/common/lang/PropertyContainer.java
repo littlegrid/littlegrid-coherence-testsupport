@@ -1,4 +1,4 @@
-package org.testsupport.coherence.impl;
+package org.testsupport.common.lang;
 
 import java.util.HashMap;
 import java.util.Map;

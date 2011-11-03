@@ -1,40 +1,30 @@
-package org.testsupport.coherence.impl;
+package org.testsupport.coherence;
 
 import org.junit.Test;
 
 import static org.testsupport.coherence.ClusterMemberGroupFactory.newBuilder;
 
 /**
- * Default local process cluster member group basic tests.
+ * Cluster member group baseline tests.
  */
-public class DefaultLocalProcessClusterMemberGroupImplBaselineTest
+public class ClusterMemberGroupBaselineTest
         extends AbstractDefaultLocalProcessClusterMemberGroupImplTest {
-
-    @Test(expected = IllegalStateException.class)
-    public void constructWithNoPropertyContainer() {
-        new DefaultLocalProcessClusterMemberGroupImpl(null, null);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void constructWithNoGroupConfig() {
-        new DefaultLocalProcessClusterMemberGroupImpl(new PropertyContainer(), null);
-    }
 
     @Test
     public void neverStarted() {
-        memberGroup = newBuilder().build();
+        newBuilder().build();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
     public void shutdownWhenNeverStarted() {
-        memberGroup = newBuilder().build().shutdownAll();
+        newBuilder().build().shutdownAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
     public void stopWhenNeverStarted() {
-        memberGroup = newBuilder().build().stopAll();
+        newBuilder().build().stopAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
@@ -43,7 +33,7 @@ public class DefaultLocalProcessClusterMemberGroupImplBaselineTest
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.shutdownAll();
@@ -55,7 +45,7 @@ public class DefaultLocalProcessClusterMemberGroupImplBaselineTest
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.startAll();
@@ -67,10 +57,10 @@ public class DefaultLocalProcessClusterMemberGroupImplBaselineTest
 
     @Test
     public void startAndShutdownInvokedTwice() {
-        final int numberOfServers = SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfServers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = newBuilder().setNumberOfMembers(numberOfServers).build().startAll();
+        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.shutdownAll();
@@ -80,10 +70,10 @@ public class DefaultLocalProcessClusterMemberGroupImplBaselineTest
 
     @Test
     public void startAndStopInvokedTwice() {
-        final int numberOfServers = SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfServers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = newBuilder().setNumberOfMembers(numberOfServers).build().startAll();
+        final ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.stopAll();
@@ -95,8 +85,6 @@ public class DefaultLocalProcessClusterMemberGroupImplBaselineTest
 
     @Test
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
-        ClusterMemberGroupConfig memberGroupConfig = new ClusterMemberGroupConfig("junit-4.8.2.jar");
-
-        memberGroup = newBuilder().setClusterMemberGroupConfig(memberGroupConfig).build().startAll().shutdownAll();
+        newBuilder().setJarsToExcludeFromClassPath("junit-4.8.2.jar").build().startAll().shutdownAll();
     }
 }

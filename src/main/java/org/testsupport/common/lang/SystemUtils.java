@@ -1,4 +1,4 @@
-package org.testsupport.coherence.impl;
+package org.testsupport.common.lang;
 
 import org.testsupport.coherence.impl.PropertyContainer;
 

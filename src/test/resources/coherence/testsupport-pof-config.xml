@@ -4,12 +4,14 @@
     <user-type-list>
         <include>coherence-pof-config.xml</include>
 
+<!--
         <user-type>
             <type-id>1001</type-id>
-            <class-name>com.practicalblend.coherence.testsupport.pof.MultifacetedStateObject</class-name>
+            <class-name>org.testsupportcoherence.support.pof.MultifacetedStateObject</class-name>
             <serializer>
-                <class-name>com.practicalblend.coherence.testsupport.pof.MultifacetedStateObjectSerializer</class-name>
+                <class-name>org.testsupportcoherence.support.pof.MultifacetedStateObjectSerializer</class-name>
             </serializer>
         </user-type>
+-->
     </user-type-list>
 </pof-config>
