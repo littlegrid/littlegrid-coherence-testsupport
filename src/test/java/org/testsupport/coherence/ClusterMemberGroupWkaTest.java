@@ -2,17 +2,19 @@ package org.testsupport.coherence;
 
 import org.junit.Test;
 
+import java.util.logging.Logger;
+
 import static java.lang.String.format;
-import static org.testsupport.coherence.ClusterMemberGroupFactory.newBuilder;
-import static org.testsupport.coherence.ClusterMemberGroupFactory.shutdownClusterMemberGroups;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownClusterMemberGroups;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.DEFAULT_WKA_PORT;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KEY;
 
 /**
  * Cluster member group WKA tests.
  */
-public class ClusterMemberGroupWkaTest extends
-        AbstractDefaultLocalProcessClusterMemberGroupImplTest {
+public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+    Logger logger = Logger.getLogger(ClusterMemberGroupWkaTest.class.getName());
 
     @Test
     public void twoSmallMemberGroupsWithSameWka() {

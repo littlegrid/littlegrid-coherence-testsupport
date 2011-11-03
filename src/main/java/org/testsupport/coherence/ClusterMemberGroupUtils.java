@@ -5,6 +5,8 @@ import org.testsupport.coherence.impl.DefaultClusterMemberGroupBuilder;
 
 import java.util.logging.Logger;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
  * Cluster member group factory.
  */
@@ -25,12 +27,28 @@ public class ClusterMemberGroupUtils {
         return new DefaultClusterMemberGroupBuilder();
     }
 
-    public static int getSecondsToSleepAfterPerformingShutdown() {
+    public static int getSecondsToSleepAfterPerformingMemberShutdown() {
         return SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN;
     }
 
-    public static int getSecondsToSleepAfterPerformingStop() {
+    public static int getSecondsToSleepAfterPerformingMemberStop() {
         return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP;
+    }
+
+    public static void sleepAfterPerformingMemberShutdown() {
+        sleepForSeconds(getSecondsToSleepAfterPerformingMemberShutdown());
+    }
+
+    public static void sleepAfterPerformingMemberStop() {
+        sleepForSeconds(getSecondsToSleepAfterPerformingMemberStop());
+    }
+
+    private static void sleepForSeconds(int seconds) {
+        try {
+            SECONDS.sleep(seconds);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     //TODO: Think about JMX

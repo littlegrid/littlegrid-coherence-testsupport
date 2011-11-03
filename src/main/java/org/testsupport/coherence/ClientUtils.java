@@ -1,18 +1,20 @@
 package org.testsupport.coherence;
 
-import org.testsupport.coherence.support.impl.PropertyContainer;
-import org.testsupport.common.util.SystemUtils;
-import org.apache.log4j.Logger;
+import org.testsupport.coherence.impl.DefaultClusterMemberGroupBuilder;
+import org.testsupport.common.lang.PropertyContainer;
+import org.testsupport.common.lang.SystemUtils;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
 /**
  * Coherence client utils.
  */
+@Deprecated
 public class ClientUtils {
-    private static Logger LOGGER = Logger.getLogger(ClientUtils.class);
+    private static final Logger LOGGER = Logger.getLogger(ClientUtils.class.getName());
 
     /**
      * Private constructor to prevent creation.
@@ -93,10 +95,10 @@ public class ClientUtils {
 
     @Deprecated
     private static void outputAndSetClientSystemProperties(PropertyContainer propertyContainer) {
-        LOGGER.debug(format("Client current Coherence properties: %s ",
+        LOGGER.fine(format("Client current Coherence properties: %s ",
                 SystemUtils.getSystemPropertiesWithPrefix(CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT)));
 
-        LOGGER.info(format("Client system properties to set: %s", propertyContainer));
+        LOGGER.fine(format("Client system properties to set: %s", propertyContainer));
 
         SystemUtils.setReplaceClearSystemProperties(propertyContainer);
     }
@@ -114,7 +116,7 @@ public class ClientUtils {
 
     @Deprecated
     private static PropertyContainer internalCreateStorageDisabledClientPropertyContainerWithDefaults() {
-        PropertyContainer container = new PropertyContainer(ClusterMemberGroupFactory.createCacheServerPropertiesWithDefaults());
+        PropertyContainer container = new PropertyContainer(DefaultClusterMemberGroupBuilder.createCacheServerPropertiesWithDefaults());
         container.addProperty(CoherenceSystemPropertyConst.ROLE_KEY, "StorageDisabledClient");
         container.addProperty(CoherenceSystemPropertyConst.DISTRIBUTED_LOCALSTORAGE_KEY, Boolean.FALSE.toString());
 
@@ -133,7 +135,7 @@ public class ClientUtils {
 
     @Deprecated
     private static PropertyContainer internalCreateExtendClientPropertyContainerWithDefaults() {
-        PropertyContainer container = new PropertyContainer(ClusterMemberGroupFactory.createGenericClusterMemberPropertiesWithDefaults());
+        PropertyContainer container = new PropertyContainer(DefaultClusterMemberGroupBuilder.createGenericClusterMemberPropertiesWithDefaults());
         container.addProperty(CoherenceSystemPropertyConst.DISTRIBUTED_LOCALSTORAGE_KEY, Boolean.FALSE.toString());
         container.addProperty(CoherenceSystemPropertyConst.EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
         container.addProperty(CoherenceSystemPropertyConst.TCMP_ENABLED_KEY, Boolean.FALSE.toString());

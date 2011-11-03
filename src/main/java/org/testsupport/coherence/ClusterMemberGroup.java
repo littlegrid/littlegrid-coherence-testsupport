@@ -1,5 +1,7 @@
 package org.testsupport.coherence;
 
+import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -15,13 +17,12 @@ public interface ClusterMemberGroup {
     ClusterMemberGroup startAll();
 
     /**
-     * Shuts down a specific cluster members in the group.
+     * Shuts down specific cluster members in the group.
      *
-     * @param memberId Id of cluster member to shutdown.
+     * @param memberIds Ids of cluster member(s) to shutdown.
      * @return member group.
      */
-    @Deprecated
-    ClusterMemberGroup shutdownMember(int memberId);
+    ClusterMemberGroup shutdownMember(int... memberIds);
 
     /**
      * Shuts down all the cluster members in the group.
@@ -31,13 +32,12 @@ public interface ClusterMemberGroup {
     ClusterMemberGroup shutdownAll();
 
     /**
-     * Stops a specific cluster member.
+     * Stops specific cluster members.
      *
-     * @param memberId Id of cluster member to stop.
+     * @param memberIds Ids of cluster member(s) to stop.
      * @return member group.
      */
-    @Deprecated
-    ClusterMemberGroup stopMember(int memberId);
+    ClusterMemberGroup stopMember(int... memberIds);
 
     /**
      * Stops all the cluster members in the group.
@@ -46,11 +46,29 @@ public interface ClusterMemberGroup {
      */
     ClusterMemberGroup stopAll();
 
+    /**
+     * Returns a specific cluster member.
+     *
+     * @param memberId Member id
+     * @return member or <b>null</b> if called on a group that hasn't or can't start-up.
+     */
+    ClusterMember getClusterMember(int memberId);
+
+    /**
+     * Returns the member Ids of started cluster members.
+     *
+     * @return members Ids.
+     */
+    List<Integer> getStartedMemberIds();
+
+    /**
+     * Builder interface for cluster member group.
+     */
     static interface Builder {
         enum Topology {
             STORAGE_ENABLED_ONLY,
             COMPOSITE_STORAGE_ENABLED_PROXY,
-            PROXY_AND_SEPARATE_STORAGE_ENABLED,
+            SEPARATE_PROXY_AND_STORAGE_ENABLED,
             EXTEND_PROXY_ONLY
         }
 
@@ -58,10 +76,20 @@ public interface ClusterMemberGroup {
 
         Builder setCacheConfiguration(String cacheConfiguration);
 
+        Builder setClientCacheConfiguration(String cacheConfiguration);
+
         Builder setSystemProperties(Properties properties);
 
         Builder setTopology(Topology topology);
 
-        Builder setMemberCount(int numberOfMembers);
+        Builder setNumberOfMembers(int numberOfMembers);
+
+        Builder setClusterMemberClassName(String clusterMemberClassName);
+
+        Builder setClassPath(URL[] classPathUrls);
+
+        Builder setJarsToExcludeFromClassPath(String... jarsToExcludeFromClassPathUrls);
+
+        Builder setWkaPort(int wkaPort);
     }
 }

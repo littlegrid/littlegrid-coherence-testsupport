@@ -1,8 +1,9 @@
 package org.testsupport.coherence.impl;
 
-import com.tangosol.net.CacheFactory;
+import org.testsupport.coherence.ClusterMember;
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.util.SystemUtils;
+import org.testsupport.common.lang.PropertyContainer;
+import org.testsupport.common.lang.SystemUtils;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -14,6 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT;
@@ -22,27 +24,12 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
  * Default local process cluster member group implementation.
  */
 public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberGroup {
+    private final Logger logger = Logger.getLogger(DefaultLocalProcessClusterMemberGroupImpl.class.getName());
     private boolean startInvoked;
-    //    private Logger logger = Logger.getLogger(this.getClass());
     private ClusterMemberGroupConfig groupConfig;
     private PropertyContainer propertyContainer;
-    private List<Future<DelegatingClusterMemberWrapper>> futuresOfMemberWrapper;
+    private List<Future<DelegatingClusterMemberWrapper>> memberFutures;
 
-    protected void logDebug(final String message,
-                            final Object... args) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    protected void logWarn(final String message,
-                           final Object... args) {
-
-        CacheFactory.log(format(message, args), CacheFactory.LOG_WARN);
-    }
-
-    public DefaultLocalProcessClusterMemberGroupImpl(Builder builder) {
-
-    }
 
     /**
      * Constructor.
@@ -66,8 +53,7 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
 
         try {
             if (groupConfig.getClassPathUrls() == null) {
-//                logger.debug("Cluster member group config class path URLs null, setting to current (minus Java home)");
-                CacheFactory.log("Cluster member group config class path URLs null, setting to current (minus Java home)");
+                logger.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
 
                 groupConfig.setClassPathUrls(getClassPathUrlsExcludingJavaHome(groupConfig.getJarsToExcludeFromClassPathUrls()));
             }
@@ -93,8 +79,8 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
                 if (jarsToExcludeFromClassPathUrls != null) {
                     for (String jarToExclude : jarsToExcludeFromClassPathUrls) {
                         if (partOfClassPath.endsWith(jarToExclude)) {
-//                            logger.debug(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
-                            CacheFactory.log(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
+                            logger.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
+
                             found = true;
                         }
                     }
@@ -140,28 +126,24 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
             ExecutorService executorService =
                     Executors.newFixedThreadPool(groupConfig.getNumberOfThreadsInStartUpPool());
 
-//            logger.debug("About to establish a cluster using a single member initially");
-            CacheFactory.log("About to establish a cluster using a single member initially");
+            logger.fine("About to establish a cluster using a single member initially");
             Future<DelegatingClusterMemberWrapper> futureForSeniorMember = executorService.submit(taskForSeniorMember);
             futureForSeniorMember.get();
 
-//            logger.debug("First cluster member up, starting any remaining members to join cluster via established WKA");
-            CacheFactory.log("First cluster member up, starting any remaining members to join cluster via established WKA");
-            futuresOfMemberWrapper = executorService.invokeAll(tasks);
-            futuresOfMemberWrapper.add(futureForSeniorMember);
+            logger.info("First cluster member up, starting any remaining members to join established cluster");
+            memberFutures = executorService.invokeAll(tasks);
+            memberFutures.add(futureForSeniorMember);
             executorService.shutdown();
 
             List<Integer> memberIds = getStartedMemberIds();
 
-//            logger.info(format("Group of cluster member(s) started, member Ids: %s", memberIds));
-            CacheFactory.log(format("Group of cluster member(s) started, member Ids: %s", memberIds));
+            logger.info(format("Group of cluster member(s) started, member Ids: %s", memberIds));
         } catch (Exception e) {
-            String message = String.format(
+            String message = format(
                     "Failed to start cluster member group - check Coherence system properties for misconfiguration: %s",
                     SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
 
-//            logger.error(message);
-            CacheFactory.log(message);
+            logger.severe(message);
             throw new IllegalStateException(message, e);
         } finally {
             SystemUtils.setReplaceClearSystemProperties(replacedSystemProperties);
@@ -173,23 +155,13 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
     private void outputStartAllMessages() {
         final int oneMB = 1024 * 1024;
 
-//        logger.info(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
-//                groupConfig.getNumberOfClusterMembers(), groupConfig.getNumberOfThreadsInStartUpPool()));
-//
-//        logger.debug(format("Class path (after exclusions)..: %s", Arrays.deepToString(groupConfig.getClassPathUrls())));
-//        logger.debug(String.format("Current Coherence properties...: %s", SystemUtils.getSystemPropertiesWithPrefix(CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT)));
-//        logger.info(format("Server system properties to set: %s", propertyContainer));
-//        logger.debug(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
-//                Runtime.getRuntime().maxMemory() / oneMB,
-//                Runtime.getRuntime().totalMemory() / oneMB,
-//                Runtime.getRuntime().freeMemory() / oneMB));
-        CacheFactory.log(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
+        logger.info(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
                 groupConfig.getNumberOfClusterMembers(), groupConfig.getNumberOfThreadsInStartUpPool()));
 
-        CacheFactory.log(format("Class path (after exclusions)..: %s", Arrays.deepToString(groupConfig.getClassPathUrls())));
-        CacheFactory.log(String.format("Current Coherence properties...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
-        CacheFactory.log(format("Server system properties to set: %s", propertyContainer));
-        CacheFactory.log(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
+        logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(groupConfig.getClassPathUrls())));
+        logger.fine(format("Current Coherence properties...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
+        logger.info(format("Server system properties to set: %s", propertyContainer));
+        logger.fine(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,
                 Runtime.getRuntime().freeMemory() / oneMB));
@@ -201,8 +173,8 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
         }
 
         try {
-            for (int i = 0; i < futuresOfMemberWrapper.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = futuresOfMemberWrapper.get(i);
+            for (int i = 0; i < memberFutures.size(); i++) {
+                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
                 DelegatingClusterMemberWrapper memberWrapper = task.get();
 
@@ -217,12 +189,16 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
         return null;
     }
 
-    private List<Integer> getStartedMemberIds() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Integer> getStartedMemberIds() {
         try {
             List<Integer> memberIds = new ArrayList<Integer>();
 
-            for (int i = 0; i < futuresOfMemberWrapper.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = futuresOfMemberWrapper.get(i);
+            for (int i = 0; i < memberFutures.size(); i++) {
+                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
                 DelegatingClusterMemberWrapper memberWrapper = task.get();
                 memberIds.add(memberWrapper.getLocalMemberId());
@@ -238,15 +214,36 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup shutdownMember(int memberId) {
+    public ClusterMember getClusterMember(int memberId) {
         if (!startInvoked) {
-            logWarn("Cluster member group never started - member '%s' not running to shutdown", memberId);
+            logger.warning(format("Cluster member group never started - cannot get member '%s'", memberId));
+
+            return null;
+        }
+
+        logger.fine(format("About to get cluster member '%d'", memberId));
+
+        return getClusterMemberWrapper(memberId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup shutdownMember(int... memberIds) {
+        if (!startInvoked) {
+            logger.warning("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
 
-//        logger.info(String.format("About to shutdown cluster member '%d'", memberId));
-        CacheFactory.log(String.format("About to shutdown cluster member '%d'", memberId));
+        if (memberIds.length > 1) {
+            throw new UnsupportedOperationException("Shutting down multiple members is not supported currently");
+        }
+
+        int memberId = memberIds[0];
+
+        logger.info(format("About to shutdown cluster member '%d'", memberId));
 
         DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
@@ -263,29 +260,32 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
     @Override
     public ClusterMemberGroup shutdownAll() {
         if (!startInvoked) {
-            logWarn("Cluster member group never started - nothing to shutdown");
+            logger.warning("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
 
-//        logger.info(format("Shutting down '%d' cluster member(s) in group", groupConfig.getNumberOfClusterMembers()));
-        CacheFactory.log(format("Shutting down '%d' cluster member(s) in group", groupConfig.getNumberOfClusterMembers()));
+        logger.info(format("Shutting down '%d' cluster member(s) in group", groupConfig.getNumberOfClusterMembers()));
 
         try {
-            for (int i = 0; i < futuresOfMemberWrapper.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = futuresOfMemberWrapper.get(i);
+            for (int i = 0; i < memberFutures.size(); i++) {
+                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
                 DelegatingClusterMemberWrapper memberWrapper = task.get();
                 memberWrapper.shutdown();
             }
 
-            futuresOfMemberWrapper.clear();
+            memberFutures.clear();
 
-//            logger.info("Group of cluster member(s) shutdown");
-            CacheFactory.log("Group of cluster member(s) shutdown");
+            logger.info("Group of cluster member(s) shutdown");
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+
+        //TODO: reset system properties after shutdown
+        logger.warning("RESET THE SYSTEM PROPERTIES AFTER THE SHUTDOWN");
+        logger.warning("RESET THE SYSTEM PROPERTIES AFTER THE SHUTDOWN");
+        logger.warning("RESET THE SYSTEM PROPERTIES AFTER THE SHUTDOWN");
 
         return this;
     }
@@ -294,15 +294,20 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup stopMember(int memberId) {
+    public ClusterMemberGroup stopMember(int... memberIds) {
         if (!startInvoked) {
-            logWarn("Cluster member group never started - member '%s' not running to stop", memberId);
+            logger.warning("Cluster member group never started - nothing to ");
 
             return this;
         }
 
-//        logger.info(String.format("About to stop cluster member '%d'", memberId));
-        CacheFactory.log(String.format("About to stop cluster member '%d'", memberId));
+        if (memberIds.length > 1) {
+            throw new UnsupportedOperationException("Stopping multiple members is not supported currently");
+        }
+
+        int memberId = memberIds[0];
+
+        logger.info(format("About to stop cluster member '%d'", memberId));
 
         DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
@@ -319,17 +324,16 @@ public class DefaultLocalProcessClusterMemberGroupImpl implements ClusterMemberG
     @Override
     public ClusterMemberGroup stopAll() {
         if (!startInvoked) {
-            logWarn("Cluster member group never started - nothing to shutdown");
+            logger.warning("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
 
-//        logger.info(format("Stopping '%d' cluster member(s) in this group", groupConfig.getNumberOfClusterMembers()));
-        CacheFactory.log(format("Stopping '%d' cluster member(s) in this group", groupConfig.getNumberOfClusterMembers()));
+        logger.info(format("Stopping '%d' cluster member(s) in this group", groupConfig.getNumberOfClusterMembers()));
 
         try {
-            for (int i = 0; i < futuresOfMemberWrapper.size(); i++) {
-                Future<DelegatingClusterMemberWrapper> task = futuresOfMemberWrapper.get(i);
+            for (int i = 0; i < memberFutures.size(); i++) {
+                Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
                 DelegatingClusterMemberWrapper memberWrapper = task.get();
                 memberWrapper.stop();

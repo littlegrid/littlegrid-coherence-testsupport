@@ -9,17 +9,15 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.testsupport.coherence.ClusterMemberGroup.Builder.Topology.COMPOSITE_STORAGE_ENABLED_PROXY;
 import static org.testsupport.coherence.ClusterMemberGroup.Builder.Topology.EXTEND_PROXY_ONLY;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
 
 /**
  * Cluster member group Extend tests.
  */
-public class ClusterMemberGroupCompositeExtendTest extends AbstractClusterMemberGroupTest {
-    private static final String EXTEND_TEST_CACHE = "extend.test";
-
+public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientClusterMemberGroupTest {
     @Test
-    @Ignore
     public void noStorageEnabledMembersCannotStoreData() {
-        ClusterMemberGroup extendProxyGroup = ClusterMemberGroupUtils.newBuilder().setTopology(EXTEND_PROXY_ONLY)
+        ClusterMemberGroup extendProxyGroup = newBuilder().setTopology(EXTEND_PROXY_ONLY)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
 
         ClientUtils.setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
@@ -46,9 +44,9 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractClusterMember
         ClusterMemberGroup extendProxyGroup = null;
 
         try {
-            cacheServerGroup = ClusterMemberGroupUtils.newBuilder().setNumberOfMembers(numberOfCacheServers).
+            cacheServerGroup = newBuilder().setNumberOfMembers(numberOfCacheServers).
                     setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
-            extendProxyGroup = ClusterMemberGroupUtils.newBuilder().setTopology(EXTEND_PROXY_ONLY).
+            extendProxyGroup = newBuilder().setTopology(EXTEND_PROXY_ONLY).
                     setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
 
             ClientUtils.setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
@@ -66,7 +64,7 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractClusterMember
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = ClusterMemberGroupUtils.newBuilder().setTopology(COMPOSITE_STORAGE_ENABLED_PROXY)
+            memberGroup = newBuilder().setTopology(COMPOSITE_STORAGE_ENABLED_PROXY)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
 
             NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);

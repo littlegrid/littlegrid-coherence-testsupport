@@ -1,0 +1,16 @@
+Todo
+====
+
+* Deprecate everything that is to go or needs to be reviewed as a candidate for removal.
+
+* Add fluent builder API to ServerFactory.
+
+* Add fluent builder API to ClientUtils.
+
+* Move tests over to fluent builder API.
+
+* Once deprecated, remove.
+
+* Improve support for waiting after a member has been shutdown or stopped with older versions of Coherence.
+
+* Add source encoding.

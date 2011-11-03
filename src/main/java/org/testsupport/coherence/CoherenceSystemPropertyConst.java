@@ -20,7 +20,7 @@ public class CoherenceSystemPropertyConst {
     public static final String WKA_KEY = TANGOSOL_COHERENCE_DOT + "wka";
     public static final String WKA_PORT_KEY = TANGOSOL_COHERENCE_DOT + "wka.port";
     public static final String LOCALHOST_KEY = TANGOSOL_COHERENCE_DOT + "localhost";
-    public static final String LOCALPORT_KEY = TANGOSOL_COHERENCE_DOT + "localport";
+    public static final String LOCAL_PORT_KEY = TANGOSOL_COHERENCE_DOT + "localport";
     public static final String TTL_KEY = TANGOSOL_COHERENCE_DOT + "ttl";
     public static final String LOG_KEY = TANGOSOL_COHERENCE_DOT + "log";
     public static final String CACHECONFIG_KEY = TANGOSOL_COHERENCE_DOT + "cacheconfig";

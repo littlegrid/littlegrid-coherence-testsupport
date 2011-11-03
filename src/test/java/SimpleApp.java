@@ -1,10 +1,10 @@
-import com.practicalblend.coherence.testsupport.server.ClusterMemberGroup;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.testsupport.coherence.ClusterMemberGroup;
+import org.testsupport.coherence.ClusterMemberGroupUtils;
 
-import static com.practicalblend.coherence.testsupport.ClientUtils.setStorageDisabledClientSystemProperties;
-import static com.practicalblend.coherence.testsupport.ServerFactory.createCacheServerGroup;
-import static com.practicalblend.coherence.testsupport.ServerFactory.shutdownCacheFactoryThenClusterMemberGroups;
+import static org.testsupport.coherence.ClientUtils.setStorageDisabledClientSystemProperties;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups;
 
 public class SimpleApp {
     public static void main(String[] args) {
@@ -13,12 +13,12 @@ public class SimpleApp {
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = createCacheServerGroup(2);
+            memberGroup = ClusterMemberGroupUtils.newBuilder().setNumberOfMembers(2).build().startAll();
 
             setStorageDisabledClientSystemProperties();
 
             NamedCache cache = CacheFactory.getCache("test");
-            cache.put(key, "Whatever");
+            cache.put(key, "hello");
             System.out.println(cache.get(key));
         } finally {
             shutdownCacheFactoryThenClusterMemberGroups(memberGroup);

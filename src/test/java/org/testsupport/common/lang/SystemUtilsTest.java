@@ -1,22 +1,19 @@
 package org.testsupport.common.lang;
 
 import org.junit.Test;
-import org.testsupport.common.lang.PropertyContainer;
-import org.testsupport.common.lang.SystemUtils;
+import org.testsupport.common.AbstractTest;
 
 import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
  * System utils tests.
  */
-public class SystemUtilsTest {
+public class SystemUtilsTest extends AbstractTest {
     private static final String KNOWN_PREFIX = "prefix.used.for.testing.";
     private static final String KNOWN_KEY_1 = KNOWN_PREFIX + "key1";
     private static final String KNOWN_VALUE_1 = "value1";

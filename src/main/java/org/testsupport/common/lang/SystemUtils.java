@@ -1,7 +1,5 @@
 package org.testsupport.common.lang;
 
-import org.testsupport.coherence.impl.PropertyContainer;
-
 import java.util.Map;
 import java.util.Set;
 

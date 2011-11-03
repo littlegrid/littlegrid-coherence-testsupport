@@ -9,7 +9,7 @@
             <init-params>
                 <init-param>
                     <param-type>java.lang.String</param-type>
-                    <param-value>coherence/inprocess-testsupport-pof-config.xml</param-value>
+                    <param-value>coherence/testsupport-pof-config.xml</param-value>
                 </init-param>
             </init-params>
         </serializer>

@@ -36,7 +36,8 @@ class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> 
             ChildFirstUrlClassLoader childFirstUrlClassLoader = new ChildFirstUrlClassLoader(classPathUrls);
             Thread.currentThread().setContextClassLoader(childFirstUrlClassLoader);
 
-            DelegatingClusterMemberWrapper wrapper = new DelegatingClusterMemberWrapper(clusterMemberClassName, childFirstUrlClassLoader);
+            DelegatingClusterMemberWrapper wrapper =
+                    new DelegatingClusterMemberWrapper(clusterMemberClassName, childFirstUrlClassLoader);
             wrapper.start();
 
             return wrapper;

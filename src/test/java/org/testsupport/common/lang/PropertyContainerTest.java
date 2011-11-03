@@ -1,7 +1,7 @@
 package org.testsupport.common.lang;
 
 import org.junit.Test;
-import org.testsupport.common.lang.PropertyContainer;
+import org.testsupport.common.AbstractTest;
 
 import java.util.Map;
 import java.util.Properties;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
  * Property container tests.
  */
 @Deprecated
-public class PropertyContainerTest {
+public class PropertyContainerTest extends AbstractTest {
     private static final String KNOWN_KEY_1 = "key1";
     private static final String KNOWN_VALUE_1 = "value1";
     private static final String KNOWN_KEY_2 = "key2";

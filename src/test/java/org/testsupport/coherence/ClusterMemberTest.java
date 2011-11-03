@@ -1,11 +1,34 @@
 package org.testsupport.coherence;
 
+import org.junit.Test;
+import org.testsupport.common.AbstractTest;
+import org.testsupport.common.net.ChildFirstUrlClassLoader;
+
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
+
 /**
- * Created by IntelliJ IDEA.
- * User: jhall
- * Date: 02/11/11
- * Time: 21:45
- * To change this template use File | Settings | File Templates.
+ * Cluster member tests.
  */
-public class ClusterMemberTest {
+public class ClusterMemberTest extends AbstractTest {
+    @Test
+    public void getClassLoader() {
+        final int numberOfMembers = 3;
+        ClusterMemberGroup memberGroup = newBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        List<Integer> memberIds = memberGroup.getStartedMemberIds();
+
+        assertThat(memberIds.size(), is(numberOfMembers));
+
+        for (int memberId : memberIds) {
+            ClusterMember member = memberGroup.getClusterMember(memberId);
+            assertThat(member.getActualContainingClassLoader() instanceof ChildFirstUrlClassLoader, is(true));
+            assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));
+        }
+
+        memberGroup.shutdownAll();
+    }
 }

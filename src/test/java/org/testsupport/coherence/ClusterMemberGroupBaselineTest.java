@@ -2,14 +2,12 @@ package org.testsupport.coherence;
 
 import org.junit.Test;
 
-import static org.testsupport.coherence.ClusterMemberGroupFactory.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
 
 /**
  * Cluster member group baseline tests.
  */
-public class ClusterMemberGroupBaselineTest
-        extends AbstractDefaultLocalProcessClusterMemberGroupImplTest {
-
+public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
     @Test
     public void neverStarted() {
         newBuilder().build();

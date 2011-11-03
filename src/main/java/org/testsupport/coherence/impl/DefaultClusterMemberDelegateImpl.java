@@ -2,7 +2,7 @@ package org.testsupport.coherence.impl;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultCacheServer;
-import com.tangosol.net.Member;
+import org.testsupport.coherence.ClusterMember;
 
 /**
  * Default cluster member delegate implementation that performs the necessary cluster member actions - this
@@ -22,7 +22,6 @@ public class DefaultClusterMemberDelegateImpl implements ClusterMember {
      */
     @Override
     public void shutdown() {
-        CacheFactory.log("*************** Shutdown");
         DefaultCacheServer.shutdown();
     }
 
@@ -46,7 +45,7 @@ public class DefaultClusterMemberDelegateImpl implements ClusterMember {
      * {@inheritDoc}
      */
     @Override
-    public Member getLocalMember() {
-        throw new UnsupportedOperationException();
+    public ClassLoader getActualContainingClassLoader() {
+        return this.getClass().getClassLoader();
     }
 }

@@ -7,11 +7,11 @@ import java.net.URL;
  * the cluster.
  */
 @Deprecated
-public class ClusterMemberGroupConfig {
+class ClusterMemberGroupConfig {
     public static final int DEFAULT_NUMBER_OF_CLUSTER_MEMBERS = 1;
-    public static final int DEFAULT_THREADS_IN_START_UP_POOL = 2;
+    public static final int DEFAULT_THREADS_IN_START_UP_POOL = 5;
     public static final String DEFAULT_CLUSTER_MEMBER_IMPLEMENTATION =
-            "org.testsupport.coherence.support.impl.DefaultClusterMemberDelegateImpl";
+            "org.testsupport.coherence.impl.DefaultClusterMemberDelegateImpl";
 
     private int numberOfClusterMembers = DEFAULT_NUMBER_OF_CLUSTER_MEMBERS;
     private int numberOfThreadsInStartUpPool = DEFAULT_THREADS_IN_START_UP_POOL;

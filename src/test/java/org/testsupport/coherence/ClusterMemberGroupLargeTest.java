@@ -2,14 +2,12 @@ package org.testsupport.coherence;
 
 import org.junit.Test;
 
-import static org.testsupport.coherence.ClusterMemberGroupFactory.newBuilder;
+import static org.testsupport.coherence.ClusterMemberGroupUtils.newBuilder;
 
 /**
  * Large cluster member group tests.
  */
-public class ClusterMemberGroupLargeTest extends
-        AbstractDefaultLocalProcessClusterMemberGroupImplTest {
-
+public class ClusterMemberGroupLargeTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
     @Test
     public void startAndStopThenShutdownLargeMemberGroup() {
         final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
