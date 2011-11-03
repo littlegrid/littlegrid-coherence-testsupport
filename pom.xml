@@ -12,15 +12,15 @@
     <name>${project.artifactId}</name>
 
     <scm>
-<!--
-        <connection>
-            scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
-        </connection>
-        <developerConnection>
-            scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
-        </developerConnection>
-        <url>http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12</url>
--->
+        <!--
+                <connection>
+                    scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
+                </connection>
+                <developerConnection>
+                    scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
+                </developerConnection>
+                <url>http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12</url>
+        -->
     </scm>
 
     <dependencies>
@@ -127,6 +127,15 @@
                             <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m</argLine>
                         </configuration>
                     </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>${checkstyle.version}</version>
+                        <configuration>
+                            <configLocation>${checkstyle.configuration.file}</configLocation>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -171,6 +180,9 @@
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <surefire.plugin.version>2.5</surefire.plugin.version>
         <javadoc.plugin.version>2.7</javadoc.plugin.version>
+        <checkstyle.version>2.7</checkstyle.version>
+
+        <checkstyle.configuration.file>tweaked_sun_checks.xml</checkstyle.configuration.file>
     </properties>
 </project>
 
