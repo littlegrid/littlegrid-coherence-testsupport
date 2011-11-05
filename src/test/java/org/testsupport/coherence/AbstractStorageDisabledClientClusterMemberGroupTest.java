@@ -20,20 +20,15 @@ public abstract class AbstractStorageDisabledClientClusterMemberGroupTest extend
 
 
     protected void assertThatClusterIsExpectedSize(final int expectedClusterSize) {
-        assertThat(cluster.getMemberSet().size(), is(expectedClusterSize));
-    }
-
-    @Before
-    public void beforeTest() {
-        setStorageDisabledClientSystemProperties(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
         cluster = CacheFactory.ensureCluster();
 
-        assertThat("Only storage disabled client is expected to be running before the cluster member tests start",
-                cluster.getMemberSet().size(), is(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
+        assertThat(cluster.getMemberSet().size(), is(expectedClusterSize));
     }
 
     @After
     public void afterTest() {
+        cluster = CacheFactory.ensureCluster();
+
         assertThat("Only storage disabled client is expected to be running after the cluster member tests have run",
                 cluster.getMemberSet().size(), is(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
 

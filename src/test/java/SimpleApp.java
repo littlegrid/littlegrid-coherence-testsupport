@@ -13,7 +13,7 @@ public class SimpleApp {
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setNumberOfMembers(2).build().startAll();
+            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setStorageEnabledCount(2).build().startAll();
 
             setStorageDisabledClientSystemProperties();
 

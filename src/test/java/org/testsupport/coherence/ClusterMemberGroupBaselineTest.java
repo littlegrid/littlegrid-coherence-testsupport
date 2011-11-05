@@ -1,5 +1,7 @@
 package org.testsupport.coherence;
 
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
 import org.junit.Test;
 
 import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
@@ -31,8 +33,12 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
+
+        NamedCache cache = CacheFactory.getCache("test");
+        cache.put("key", "value");
 
         memberGroup.shutdownAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
@@ -43,7 +49,8 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.startAll();
@@ -58,7 +65,8 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.shutdownAll();
@@ -71,7 +79,8 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.stopAll();

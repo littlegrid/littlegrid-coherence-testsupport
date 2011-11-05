@@ -25,8 +25,8 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
-            memberGroup2 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+            memberGroup1 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
+            memberGroup2 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
             shutdownClusterMemberGroups(memberGroup1, memberGroup2);
@@ -42,8 +42,8 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
-            memberGroup2 = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).setWkaPort(getAlternativeWkaPort()).build().startAll();
+            memberGroup1 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
+            memberGroup2 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).setWkaPort(getAlternativeWkaPort()).build().startAll();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
             shutdownClusterMemberGroups(memberGroup1, memberGroup2);
@@ -51,7 +51,7 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
     }
 
     private int getAlternativeWkaPort() {
-        final int portIncrement = 25;
+        final int portIncrement = 20;
 
         String currentPortString = System.getProperty(WKA_PORT_KEY, Integer.toString(DEFAULT_WKA_PORT));
         int differentPort = Integer.parseInt(currentPortString) + portIncrement;

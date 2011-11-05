@@ -65,30 +65,33 @@ public interface ClusterMemberGroup {
      * Builder interface for cluster member group.
      */
     static interface Builder {
-        enum Topology {
-            STORAGE_ENABLED_ONLY,
-            COMPOSITE_STORAGE_ENABLED_PROXY,
-            SEPARATE_PROXY_AND_STORAGE_ENABLED,
-            EXTEND_PROXY_ONLY
-        }
-
         ClusterMemberGroup build();
 
         Builder setCacheConfiguration(String cacheConfiguration);
 
+        Builder setExtendProxyCacheConfiguration(String cacheConfiguration);
+
+        Builder setStorageEnabledCacheConfiguration(String cacheConfiguration);
+
         Builder setClientCacheConfiguration(String cacheConfiguration);
+
+        Builder setOverrideConfiguration(String overrideConfiguration);
+
+        Builder setClientOverrideConfiguration(String overrideConfiguration);
 
         Builder setSystemProperties(Properties properties);
 
-        Builder setTopology(Topology topology);
+        Builder setStorageEnabledCount(int numberOfMembers);
 
-        Builder setNumberOfMembers(int numberOfMembers);
+        Builder setStorageEnabledExtendProxyCount(int numberOfMembers);
+
+        Builder setExtendProxyCount(int numberOfMembers);
 
         Builder setClusterMemberClassName(String clusterMemberClassName);
 
         Builder setClassPath(URL[] classPathUrls);
 
-        Builder setJarsToExcludeFromClassPath(String... jarsToExcludeFromClassPathUrls);
+        Builder setJarsToExcludeFromClassPath(String... jarsToExcludeFromClassPath);
 
         Builder setWkaPort(int wkaPort);
     }

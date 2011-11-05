@@ -1,12 +1,11 @@
 package org.testsupport.common.lang;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.Properties;
 
 /**
  * System utilities class providing useful system related methods.
  */
-public class SystemUtils {
+public final class SystemUtils {
     /**
      * Private constructor to prevent creation.
      */
@@ -14,55 +13,54 @@ public class SystemUtils {
     }
 
     /**
-     * Sets, replaces or clears system properties using the supplied property container, returning a property
-     * container object containing all existing system properties that have been replaced or cleared.
+     * Captures current system properties.
      *
-     * @param propertyContainer Properties to be used and set and thus made available for use.
-     * @return returns property container containing all existing system properties that have been replaced
-     *         or cleared.
+     * @return current properties.
      */
-    @Deprecated
-    public static PropertyContainer setReplaceClearSystemProperties(PropertyContainer propertyContainer) {
-        PropertyContainer replacedSystemProperties = new PropertyContainer();
+    public static Properties snapshotSystemProperties() {
+        Properties properties = new Properties();
 
-        for (Map.Entry<String, String> entry : propertyContainer.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            String replacedValue = System.getProperty(key);
+        for (String key : System.getProperties().stringPropertyNames()) {
+            String value = System.getProperty(key);
 
-            if (replacedValue != null) {
-                replacedSystemProperties.addProperty(key, replacedValue);
-            }
+            properties.setProperty(key, value);
+        }
 
-            if (value == null || value.isEmpty()) {
-                System.clearProperty(key);
-            } else {
+        return properties;
+    }
+
+    /**
+     * Apply the properties to the system properties.
+     *
+     * @param properties New and updated system properties.
+     */
+    public static void applyToSystemProperties(final Properties properties) {
+        for (String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+
+            if (!value.trim().isEmpty()) {
                 System.setProperty(key, value);
             }
         }
-
-        return replacedSystemProperties;
     }
 
     /**
      * Get current system properties which start with the specified prefix.
      *
      * @param prefix Prefix.
-     * @return property container with system properties which start with the prefix.
+     * @return properties.
      */
-    @Deprecated
-    public static PropertyContainer getSystemPropertiesWithPrefix(String prefix) {
-        PropertyContainer prefixedPropertyContainer = new PropertyContainer();
-        Set<String> keys = System.getProperties().stringPropertyNames();
+    public static Properties getSystemPropertiesWithPrefix(final String prefix) {
+        Properties prefixedProperties = new Properties();
 
-        for (String key : keys) {
+        for (String key : System.getProperties().stringPropertyNames()) {
             if (key.contains(prefix)) {
                 String value = System.getProperty(key);
 
-                prefixedPropertyContainer.addProperty(key, value);
+                prefixedProperties.setProperty(key, value);
             }
         }
 
-        return prefixedPropertyContainer;
+        return prefixedProperties;
     }
 }

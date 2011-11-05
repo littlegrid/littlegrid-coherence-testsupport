@@ -18,7 +18,7 @@ public class ClusterMemberTest extends AbstractTest {
     @Test
     public void getClassLoader() {
         final int numberOfMembers = 3;
-        ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+        ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
         List<Integer> memberIds = memberGroup.getStartedMemberIds();
 
         assertThat(memberIds.size(), is(numberOfMembers));

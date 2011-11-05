@@ -186,4 +186,3 @@
         <checkstyle.configuration.file>tweaked_sun_checks.xml</checkstyle.configuration.file>
     </properties>
 </project>
-

@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.CACHECONFIG_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT;
 
 /**
  * Cluster member group factory.
@@ -254,7 +256,7 @@ public final class ClusterMemberGroupUtils {
                                                                  PropertyContainer propertyContainer) {
 
         PropertyContainer containerToUse = new PropertyContainer(propertyContainer);
-        containerToUse.addProperty(CoherenceSystemPropertyConst.CACHECONFIG_KEY, cacheConfiguration);
+        containerToUse.addProperty(CACHECONFIG_KEY, cacheConfiguration);
 
         outputAndSetClientSystemProperties(containerToUse);
     }
@@ -263,11 +265,12 @@ public final class ClusterMemberGroupUtils {
     @Deprecated
     private static void outputAndSetClientSystemProperties(PropertyContainer propertyContainer) {
         LOGGER.fine(format("Client current Coherence properties: %s ",
-                SystemUtils.getSystemPropertiesWithPrefix(CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT)));
+                SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
 
         LOGGER.fine(format("Client system properties to set: %s", propertyContainer));
 
-        SystemUtils.setReplaceClearSystemProperties(propertyContainer);
+        throw new UnsupportedOperationException();
+//        SystemUtils.setReplaceClearSystemProperties(propertyContainer);
     }
 
     /**

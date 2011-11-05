@@ -19,7 +19,7 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         final int memberIdToShutdown = 3;
 
         final ClusterMemberGroup memberGroup =
-                newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSizeBeforeShutdown);
         assertThat(doesMemberExist(memberIdToShutdown), is(true));
 
@@ -38,7 +38,7 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         final ClusterMemberGroup memberGroup =
-                newClusterMemberGroupBuilder().setNumberOfMembers(numberOfMembers).build().startAll();
+                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
         assertThatClusterIsExpectedSize(expectedClusterSize);
         assertThat(doesMemberExist(memberIdToShutdown), is(false));
 

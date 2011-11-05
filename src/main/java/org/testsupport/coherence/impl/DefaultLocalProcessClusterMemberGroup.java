@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,10 +25,11 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
  * Default local process cluster member group implementation.
  */
 public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
-    private final Logger logger = Logger.getLogger(DefaultLocalProcessClusterMemberGroup.class.getName());
+    private final LoggerWrapper logger = new LoggerWrapper("abc123", Logger.getLogger(DefaultLocalProcessClusterMemberGroup.class.getName()));
     private boolean startInvoked;
     private ClusterMemberGroupConfig groupConfig;
     private PropertyContainer propertyContainer;
+    private Properties systemPropertiesBeforeStartInvoked;
     private List<Future<ClusterMemberDelegatingWrapper>> memberFutures;
 
 
@@ -113,19 +115,18 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             return this;
         }
 
+        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
+        SystemUtils.applyToSystemProperties(propertyContainer.getProperties());
         startInvoked = true;
         outputStartAllMessages();
 
-        final int numberOfClusterMembers = groupConfig.getNumberOfClusterMembers();
-
-        //TODO: Look to 'isolate' these properties
-        PropertyContainer replacedSystemProperties = SystemUtils.setReplaceClearSystemProperties(propertyContainer);
+        final int numberOfMembers = groupConfig.getNumberOfClusterMembers();
 
         try {
             List<Callable<ClusterMemberDelegatingWrapper>> tasks =
-                    new ArrayList<Callable<ClusterMemberDelegatingWrapper>>(numberOfClusterMembers);
+                    new ArrayList<Callable<ClusterMemberDelegatingWrapper>>(numberOfMembers);
 
-            for (int i = 0; i < numberOfClusterMembers; i++) {
+            for (int i = 0; i < numberOfMembers; i++) {
                 tasks.add(new ClusterMemberCallable(groupConfig.getClusterMemberClassName(),
                         groupConfig.getClassPathUrls()));
             }
@@ -152,11 +153,13 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
                     "Failed to start cluster member group - check Coherence system properties for misconfiguration: %s",
                     SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
 
+            System.setProperties(systemPropertiesBeforeStartInvoked);
             logger.severe(message);
             throw new IllegalStateException(message, e);
-        } finally {
-            SystemUtils.setReplaceClearSystemProperties(replacedSystemProperties);
         }
+
+        //TODO:
+        System.setProperty("tangosol.coherence.distributed.localstorage", "false");
 
         return this;
     }
@@ -274,6 +277,8 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             return this;
         }
 
+        System.setProperties(systemPropertiesBeforeStartInvoked);
+
         logger.info(format("Shutting down '%d' cluster member(s) in group", groupConfig.getNumberOfClusterMembers()));
 
         try {
@@ -290,11 +295,6 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-
-        //TODO: reset system properties after shutdown
-        logger.warning("RESET THE SYSTEM PROPERTIES AFTER THE SHUTDOWN");
-        logger.warning("RESET THE SYSTEM PROPERTIES AFTER THE SHUTDOWN");
-        logger.warning("RESET THE SYSTEM PROPERTIES AFTER THE SHUTDOWN");
 
         return this;
     }

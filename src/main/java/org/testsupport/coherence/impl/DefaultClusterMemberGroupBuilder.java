@@ -8,53 +8,84 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import static java.lang.String.format;
-import static org.testsupport.coherence.ClusterMemberGroup.Builder.Topology.STORAGE_ENABLED_ONLY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.DEFAULT_WKA_PORT;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOCAL_HOST_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOCAL_PORT_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.OVERRIDE_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.TTL_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_HOST_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KEY;
 
 /**
+ * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
-    private int memberCount = 1;
+    private int numberOfStorageEnabledMembers = 1; //TODO: remove this initial value
     private String cacheConfiguration;
+    private String overrideConfiguration;
     private Properties systemProperties = new Properties();
-    private Topology topology = STORAGE_ENABLED_ONLY;
-    private int wkaPort = DEFAULT_WKA_PORT;
+    private int wkaPort = DEFAULT_WKA_PORT; //TODO: remove this initial value
     private int localPort = wkaPort;
+    private String wkaAddress = "127.0.0.1";
+    private String localAddress = wkaAddress;
+
     private ClusterMemberGroupConfig groupConfig = new ClusterMemberGroupConfig();
+
+    /*
+        Order of settings should be:
+            * testsupport.coherence.default.properties
+            * testsupport.coherence.project.properties
+            * ${ENV.testsupport.coherence}/testsupport.coherence.override.properties
+            * -Dtestsupport.coherence.override.properties=nameOfOverridePropertiesFile (resource or file).
+
+        The idea is to be as gently opinionated *but* must also be Developer and CI friendly!
+     */
+
 
     public DefaultClusterMemberGroupBuilder() {
     }
 
+    private void setSystemProperty(final String key,
+                                   final String value) {
+
+        if (key != null && value != null) {
+            systemProperties.setProperty(key, value);
+        }
+    }
+
     @Override
     public ClusterMemberGroup build() {
-        systemProperties.setProperty(WKA_PORT_KEY, Integer.toString(wkaPort));
-        systemProperties.setProperty(LOCAL_PORT_KEY, Integer.toString(localPort));
+        setSystemProperty(WKA_HOST_KEY, wkaAddress);
+        setSystemProperty(LOCAL_HOST_KEY, localAddress);
+        setSystemProperty(WKA_PORT_KEY, Integer.toString(wkaPort));
+        setSystemProperty(LOCAL_PORT_KEY, Integer.toString(localPort));
+        setSystemProperty(OVERRIDE_KEY, overrideConfiguration);
+        setSystemProperty(TTL_KEY, "0");
 
-//        TODO: SET THE CLUSTER NAME TO THE TIME THE THING WAS STARTED TO HELP TELL IT APART FROM OTHERS RUNNING, PERHAPS IN A DEBUG SESSSION.
-        switch (topology) {
-            case STORAGE_ENABLED_ONLY:
-                return createCacheServerGroup(memberCount, cacheConfiguration, systemProperties,
-                        groupConfig, false);
-
-            case COMPOSITE_STORAGE_ENABLED_PROXY:
-                break;
-
-            case SEPARATE_PROXY_AND_STORAGE_ENABLED:
-                break;
-
-            case EXTEND_PROXY_ONLY:
-                return createExtendProxyServerGroup(memberCount, cacheConfiguration, systemProperties,
-                        groupConfig, false);
-
+        if (numberOfStorageEnabledMembers > 0) {
+            return createCacheServerGroup(numberOfStorageEnabledMembers, cacheConfiguration, systemProperties,
+                    groupConfig, false);
+        } else {
+            throw new UnsupportedOperationException();
         }
-
-        String message = format("Cannot build of type '%s' as it is unrecognised", topology);
-        LOGGER.severe(message);
-        throw new IllegalArgumentException(message);
+////        TODO: SET THE CLUSTER NAME TO THE TIME THE THING WAS STARTED TO HELP TELL IT APART FROM OTHERS RUNNING, PERHAPS IN A DEBUG SESSSION.
+//        switch (topology) {
+//            case STORAGE_ENABLED_ONLY:
+//                return createCacheServerGroup(numberOfStorageEnabledMembers, cacheConfiguration, systemProperties,
+//                        groupConfig, false);
+//
+//            case COMPOSITE_STORAGE_ENABLED_PROXY:
+//                break;
+//
+//            case SEPARATE_PROXY_AND_STORAGE_ENABLED:
+//                break;
+//
+//            case EXTEND_PROXY_ONLY:
+//                return createExtendProxyServerGroup(numberOfStorageEnabledMembers, cacheConfiguration, systemProperties,
+//                        groupConfig, false);
+//
+//        }
     }
 
     /**
@@ -67,11 +98,39 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    @Override
+    public ClusterMemberGroup.Builder setExtendProxyCacheConfiguration(final String cacheConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setStorageEnabledCacheConfiguration(final String cacheConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public ClusterMemberGroup.Builder setClientCacheConfiguration(final String cacheConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setOverrideConfiguration(final String overrideConfiguration) {
+        this.overrideConfiguration = overrideConfiguration;
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setClientOverrideConfiguration(final String overrideConfiguration) {
         throw new UnsupportedOperationException();
     }
 
@@ -89,18 +148,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setTopology(final Topology topology) {
-        this.topology = topology;
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup.Builder setNumberOfMembers(final int numberOfMembers) {
-        this.memberCount = numberOfMembers;
+    public ClusterMemberGroup.Builder setStorageEnabledCount(final int numberOfMembers) {
+        this.numberOfStorageEnabledMembers = numberOfMembers;
 
         return this;
     }
@@ -143,6 +192,22 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyCount(final int numberOfMembers) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setExtendProxyCount(int numberOfMembers) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Convenience method to specifically create a group of cache servers and start them.
      *
      * @param numberOfMembers    Number of servers.
@@ -154,10 +219,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Deprecated
     private static ClusterMemberGroup createCacheServerGroup(int numberOfMembers,
-                                                            String cacheConfiguration,
-                                                            Properties properties,
-                                                            ClusterMemberGroupConfig groupConfig,
-                                                            boolean startImmediately) {
+                                                             String cacheConfiguration,
+                                                             Properties properties,
+                                                             ClusterMemberGroupConfig groupConfig,
+                                                             boolean startImmediately) {
 
         PropertyContainer container = internalCreateCacheServerPropertyContainerWithDefaults();
         container.addProperties(properties);
@@ -438,9 +503,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         container.addProperty(CoherenceSystemPropertyConst.CLUSTER_KEY, "TestLocalProcessCluster");
         container.addProperty(CoherenceSystemPropertyConst.LOG_LEVEL_KEY, logLevel);
 //        container.addProperty(CoherenceSystemPropertyConst.LOG_KEY, log);
-        container.addProperty(CoherenceSystemPropertyConst.WKA_KEY, host);
+        container.addProperty(CoherenceSystemPropertyConst.WKA_HOST_KEY, host);
         container.addProperty(WKA_PORT_KEY, port);
-        container.addProperty(CoherenceSystemPropertyConst.LOCALHOST_KEY, host);
+        container.addProperty(CoherenceSystemPropertyConst.LOCAL_HOST_KEY, host);
         container.addProperty(CoherenceSystemPropertyConst.LOCAL_PORT_KEY, port);
         container.addProperty(CoherenceSystemPropertyConst.TTL_KEY, "0");
 //        container.addProperty(MANAGEMENT_KEY, "all");

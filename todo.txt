@@ -14,3 +14,5 @@ Todo
 * Improve support for waiting after a member has been shutdown or stopped with older versions of Coherence.
 
 * Add source encoding.
+
+* Source from Jaxp a problem.
