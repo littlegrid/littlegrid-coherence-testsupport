@@ -21,15 +21,15 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
     /**
      * Constructor.
      *
-     * @param clusterMemberClassName   Name of class to instantiate and delegate calls to.
-     * @param childFirstUrlClassLoader Instance of child first class loader.
+     * @param clusterMemberInstanceClassName Name of class to instantiate and delegate calls to.
+     * @param childFirstUrlClassLoader       Instance of child first class loader.
      */
-    public ClusterMemberDelegatingWrapper(String clusterMemberClassName,
+    public ClusterMemberDelegatingWrapper(String clusterMemberInstanceClassName,
                                           ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
-            logger.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberClassName));
+            logger.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
 
-            Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberClassName);
+            Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
             Constructor constructor = clusterMemberClass.getConstructor();
             clusterMemberInstance = constructor.newInstance();
         } catch (Exception e) {

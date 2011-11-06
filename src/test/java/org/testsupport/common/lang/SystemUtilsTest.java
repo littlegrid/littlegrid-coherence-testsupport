@@ -79,6 +79,7 @@ public class SystemUtilsTest extends AbstractTest {
         assertThat(System.getProperty(key), is(KNOWN_VALUE_1));
     }
 
+    @SuppressWarnings("unchecked")
     private static Map.Entry<String, String> getFirstEntry(final Properties properties) {
         Set<Map.Entry<Object, Object>> entries = properties.entrySet();
 

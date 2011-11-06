@@ -17,9 +17,9 @@ public class CoherenceSystemPropertyConst {
     public static final String DISTRIBUTED_LOCALSTORAGE_KEY = TANGOSOL_COHERENCE_DOT + "distributed.localstorage";
     public static final String EXTEND_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "extend.enabled";
     public static final String TCMP_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "tcmp.enabled";
-    public static final String WKA_HOST_KEY = TANGOSOL_COHERENCE_DOT + "wka";
+    public static final String WKA_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "wka";
     public static final String WKA_PORT_KEY = TANGOSOL_COHERENCE_DOT + "wka.port";
-    public static final String LOCAL_HOST_KEY = TANGOSOL_COHERENCE_DOT + "localhost";
+    public static final String LOCAL_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "localhost";
     public static final String LOCAL_PORT_KEY = TANGOSOL_COHERENCE_DOT + "localport";
     public static final String TTL_KEY = TANGOSOL_COHERENCE_DOT + "ttl";
     public static final String LOG_KEY = TANGOSOL_COHERENCE_DOT + "log";
@@ -35,13 +35,4 @@ public class CoherenceSystemPropertyConst {
 
     @Deprecated
     public static final String JMXREMOTE_KEY = "com.sun.management.jmxremote";
-
-    @Deprecated
-    public static final int DEFAULT_WKA_PORT = 12051;
-
-    @Deprecated
-    public static final int DEFAULT_LOG_LEVEL = 3;
-
-    @Deprecated
-    public static final String DEFAULT_LOG = "log4j";
 }

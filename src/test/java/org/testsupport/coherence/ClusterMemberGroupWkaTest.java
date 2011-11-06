@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 import static java.lang.String.format;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownClusterMemberGroups;
-import static org.testsupport.coherence.CoherenceSystemPropertyConst.DEFAULT_WKA_PORT;
-import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KEY;
 
 /**
  * Cluster member group WKA tests.
@@ -26,6 +24,7 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
 
         try {
             memberGroup1 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
+
             memberGroup2 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
@@ -42,22 +41,17 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
-            memberGroup2 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).setWkaPort(getAlternativeWkaPort()).build().startAll();
+            ClusterMemberGroup.Builder builder = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers);
+            memberGroup1 = builder.build().startAll();
+
+            final int differentPort = builder.getWkaPort() + 20;
+            logger.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
+
+            memberGroup2 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).
+                    setWkaPort(differentPort).build().startAll();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
             shutdownClusterMemberGroups(memberGroup1, memberGroup2);
         }
-    }
-
-    private int getAlternativeWkaPort() {
-        final int portIncrement = 20;
-
-        String currentPortString = System.getProperty(WKA_PORT_KEY, Integer.toString(DEFAULT_WKA_PORT));
-        int differentPort = Integer.parseInt(currentPortString) + portIncrement;
-
-        logger.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
-
-        return differentPort;
     }
 }

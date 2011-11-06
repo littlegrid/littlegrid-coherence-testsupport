@@ -2,6 +2,7 @@ package org.testsupport.coherence;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
@@ -11,18 +12,21 @@ import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMember
  */
 public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
     @Test
+    @Ignore
     public void neverStarted() {
         newClusterMemberGroupBuilder().build();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
+    @Ignore
     public void shutdownWhenNeverStarted() {
         newClusterMemberGroupBuilder().build().shutdownAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
+    @Ignore
     public void stopWhenNeverStarted() {
         newClusterMemberGroupBuilder().build().stopAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
@@ -91,7 +95,10 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
     }
 
     @Test
+    @Ignore
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
-        newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath("junit-4.8.2.jar").build().startAll().shutdownAll();
+        final String jarToExclude = "junit-4.8.2.jar";
+
+        newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath(jarToExclude).build().startAll().shutdownAll();
     }
 }

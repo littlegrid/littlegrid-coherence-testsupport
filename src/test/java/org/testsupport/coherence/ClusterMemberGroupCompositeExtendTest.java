@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.fail;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.setExtendClientSystemProperties;
+//import static org.testsupport.coherence.ClusterMemberGroupUtils.setExtendClientSystemProperties;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups;
 
 /**
@@ -21,19 +21,20 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
         ClusterMemberGroup extendProxyGroup = newClusterMemberGroupBuilder().setStorageEnabledExtendProxyCount(1)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
 
-        setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
+        throw new UnsupportedOperationException();
+//        setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
 
-        NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
-
-        try {
-            cache.put("doesn't matter", "no storage enabled members, so will throw runtime exception");
-
-            fail("Test should have failed due to no storage enabled members");
-        } catch (PortableException e) {
-            // A exception is expected for this test
-        } finally {
-            shutdownCacheFactoryThenClusterMemberGroups(extendProxyGroup);
-        }
+//        NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
+//
+//        try {
+//            cache.put("doesn't matter", "no storage enabled members, so will throw runtime exception");
+//
+//            fail("Test should have failed due to no storage enabled members");
+//        } catch (PortableException e) {
+//            // A exception is expected for this test
+//        } finally {
+//            shutdownCacheFactoryThenClusterMemberGroups(extendProxyGroup);
+//        }
     }
 
     @Test

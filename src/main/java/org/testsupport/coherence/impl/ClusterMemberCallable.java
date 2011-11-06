@@ -10,18 +10,18 @@ import java.util.concurrent.Callable;
  */
 class ClusterMemberCallable implements Callable<ClusterMemberDelegatingWrapper> {
     private URL[] classPathUrls;
-    private String clusterMemberClassName;
+    private String clusterMemberInstanceClassName;
 
     /**
      * Constructor.
      *
-     * @param clusterMemberClassName  Cluster member class name.
+     * @param clusterMemberInstanceClassName  Cluster member class name.
      * @param classPathUrls  Class path.
      */
-    public ClusterMemberCallable(String clusterMemberClassName,
+    public ClusterMemberCallable(String clusterMemberInstanceClassName,
                                  URL[] classPathUrls) {
 
-        if (clusterMemberClassName == null) {
+        if (clusterMemberInstanceClassName == null) {
             throw new IllegalStateException("Cluster member class name cannot be null");
         }
 
@@ -29,7 +29,7 @@ class ClusterMemberCallable implements Callable<ClusterMemberDelegatingWrapper> 
             throw new IllegalStateException("Class path URLs cannot be null");
         }
 
-        this.clusterMemberClassName = clusterMemberClassName;
+        this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
         this.classPathUrls = classPathUrls;
     }
 
@@ -47,7 +47,7 @@ class ClusterMemberCallable implements Callable<ClusterMemberDelegatingWrapper> 
             Thread.currentThread().setContextClassLoader(childFirstUrlClassLoader);
 
             ClusterMemberDelegatingWrapper memberWrapper =
-                    new ClusterMemberDelegatingWrapper(clusterMemberClassName, childFirstUrlClassLoader);
+                    new ClusterMemberDelegatingWrapper(clusterMemberInstanceClassName, childFirstUrlClassLoader);
             memberWrapper.start();
 
             return memberWrapper;

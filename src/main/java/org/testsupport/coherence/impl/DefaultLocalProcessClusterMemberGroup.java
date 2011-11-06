@@ -2,7 +2,6 @@ package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMember;
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.lang.PropertyContainer;
 import org.testsupport.common.lang.SystemUtils;
 
 import java.io.File;
@@ -27,37 +26,47 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
 public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
     private final LoggerWrapper logger = new LoggerWrapper("abc123", Logger.getLogger(DefaultLocalProcessClusterMemberGroup.class.getName()));
     private boolean startInvoked;
-    private ClusterMemberGroupConfig groupConfig;
-    private PropertyContainer propertyContainer;
+    private Properties systemPropertiesToBeApplied;
     private Properties systemPropertiesBeforeStartInvoked;
     private List<Future<ClusterMemberDelegatingWrapper>> memberFutures;
+    private int numberOfMembers;
+    private URL[] classPathUrls;
+    private String clusterMemberInstanceClassName;
+    private int numberOfThreadsInStartUpPool;
 
 
     /**
      * Constructor.
      *
-     * @param propertyContainer Property container.
-     * @param groupConfig       Cluster member group config.
+     * @param systemPropertiesToBeApplied System systemPropertiesToBeApplied.
+     * @param groupConfig                 Cluster member group config.
      */
-    public DefaultLocalProcessClusterMemberGroup(PropertyContainer propertyContainer,
-                                                 ClusterMemberGroupConfig groupConfig) {
+    public DefaultLocalProcessClusterMemberGroup(final int numberOfMembers,
+                                                 final Properties systemPropertiesToBeApplied,
+                                                 final URL[] classPathUrls,
+                                                 final String[] jarsToExcludeFromClassPath,
+                                                 final String clusterMemberInstanceClassName,
+                                                 final int numberOfThreadsInStartUpPool) {
+        this.numberOfMembers = numberOfMembers;
+        this.classPathUrls = classPathUrls;
+        this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
+        this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
 
-        if (propertyContainer == null) {
+        if (systemPropertiesToBeApplied == null) {
             throw new IllegalStateException("Property container cannot be null");
         }
 
-        if (groupConfig == null) {
-            throw new IllegalStateException("Cluster member group configuration cannot be null");
-        }
+        System.out.println("PERFORM OTHER SANITY CHECKS!!!!");
+        System.out.println("PERFORM OTHER SANITY CHECKS!!!!");
+        System.out.println("PERFORM OTHER SANITY CHECKS!!!!");
 
-        this.propertyContainer = propertyContainer;
-        this.groupConfig = groupConfig;
+        this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
 
         try {
-            if (groupConfig.getClassPathUrls() == null) {
+            if (classPathUrls == null) {
                 logger.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
 
-                groupConfig.setClassPathUrls(getClassPathUrlsExcludingJavaHome(groupConfig.getJarsToExcludeFromClassPathUrls()));
+                this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
             }
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -116,25 +125,21 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         }
 
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
-        SystemUtils.applyToSystemProperties(propertyContainer.getProperties());
+        SystemUtils.applyToSystemProperties(systemPropertiesToBeApplied);
         startInvoked = true;
         outputStartAllMessages();
-
-        final int numberOfMembers = groupConfig.getNumberOfClusterMembers();
 
         try {
             List<Callable<ClusterMemberDelegatingWrapper>> tasks =
                     new ArrayList<Callable<ClusterMemberDelegatingWrapper>>(numberOfMembers);
 
             for (int i = 0; i < numberOfMembers; i++) {
-                tasks.add(new ClusterMemberCallable(groupConfig.getClusterMemberClassName(),
-                        groupConfig.getClassPathUrls()));
+                tasks.add(new ClusterMemberCallable(clusterMemberInstanceClassName, classPathUrls));
             }
 
             Callable<ClusterMemberDelegatingWrapper> taskForSeniorMember = tasks.remove(0);
 
-            ExecutorService executorService =
-                    Executors.newFixedThreadPool(groupConfig.getNumberOfThreadsInStartUpPool());
+            ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
 
             logger.fine("About to establish a cluster using a single member initially");
             Future<ClusterMemberDelegatingWrapper> futureForSeniorMember = executorService.submit(taskForSeniorMember);
@@ -150,7 +155,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             logger.info(format("Group of cluster member(s) started, member Ids: %s", memberIds));
         } catch (Exception e) {
             String message = format(
-                    "Failed to start cluster member group - check Coherence system properties for misconfiguration: %s",
+                    "Failed to start cluster member group - check Coherence system systemPropertiesToBeApplied for misconfiguration: %s",
                     SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
 
             System.setProperties(systemPropertiesBeforeStartInvoked);
@@ -168,11 +173,11 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         final int oneMB = 1024 * 1024;
 
         logger.info(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
-                groupConfig.getNumberOfClusterMembers(), groupConfig.getNumberOfThreadsInStartUpPool()));
+                numberOfMembers, numberOfThreadsInStartUpPool));
 
-        logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(groupConfig.getClassPathUrls())));
-        logger.fine(format("Current Coherence properties...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
-        logger.info(format("Server system properties to set: %s", propertyContainer));
+        logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
+        logger.fine(format("Current Coherence systemPropertiesToBeApplied...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
+        logger.info(format("Server system systemPropertiesToBeApplied to set: %s", systemPropertiesToBeApplied));
         logger.fine(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,
@@ -279,7 +284,8 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
 
         System.setProperties(systemPropertiesBeforeStartInvoked);
 
-        logger.info(format("Shutting down '%d' cluster member(s) in group", groupConfig.getNumberOfClusterMembers()));
+        System.out.println("TODO, this should report the entire cluster size, not just this instance of the CMG");
+        logger.info(format("Shutting down '%d' cluster member(s) in group", numberOfMembers));
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
@@ -338,7 +344,9 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             return this;
         }
 
-        logger.info(format("Stopping '%d' cluster member(s) in this group", groupConfig.getNumberOfClusterMembers()));
+
+        System.out.println("TODO, this should report the entire cluster size, not just this instance of the CMG");
+        logger.info(format("Stopping '%d' cluster member(s) in this group", numberOfMembers));
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {

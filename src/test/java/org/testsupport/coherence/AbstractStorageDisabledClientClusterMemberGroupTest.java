@@ -8,7 +8,7 @@ import org.junit.Before;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.setStorageDisabledClientSystemProperties;
+//import static org.testsupport.coherence.ClusterMemberGroupUtils.setStorageDisabledClientSystemProperties;
 
 /**
  * Abstract base class for cluster member group tests.
