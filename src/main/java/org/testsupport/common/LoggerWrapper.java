@@ -1,4 +1,4 @@
-package org.testsupport.common.utils;
+package org.testsupport.common;
 
 
 import java.net.InetAddress;

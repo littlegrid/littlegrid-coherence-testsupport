@@ -1,11 +1,11 @@
-package org.testsupport.common.utils;
+package org.testsupport.coherence.impl;
 
 import java.util.Properties;
 
 /**
  * System utilities class providing useful system related methods.
  */
-public final class SystemUtils {
+final class SystemUtils {
     /**
      * Private constructor to prevent creation.
      */

@@ -1,7 +1,5 @@
 package org.testsupport.coherence.impl;
 
-import org.testsupport.common.utils.ChildFirstUrlClassLoader;
-
 import java.net.URL;
 import java.util.concurrent.Callable;
 

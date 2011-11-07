@@ -1,8 +1,8 @@
 package org.testsupport.coherence;
 
 import org.junit.Test;
+import org.testsupport.coherence.impl.ChildFirstUrlClassLoader;
 import org.testsupport.common.AbstractTest;
-import org.testsupport.common.utils.ChildFirstUrlClassLoader;
 
 import java.util.List;
 

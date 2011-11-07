@@ -1,8 +1,7 @@
 package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMember;
-import org.testsupport.common.utils.ChildFirstUrlClassLoader;
-import org.testsupport.common.utils.LoggerWrapper;
+import org.testsupport.common.LoggerWrapper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

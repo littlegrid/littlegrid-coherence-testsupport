@@ -1,9 +1,7 @@
 package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.utils.BeanUtils;
-import org.testsupport.common.utils.LoggerWrapper;
-import org.testsupport.common.utils.SystemUtils;
+import org.testsupport.common.LoggerWrapper;
 
 import java.io.IOException;
 import java.net.URL;

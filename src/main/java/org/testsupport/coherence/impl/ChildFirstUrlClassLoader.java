@@ -1,4 +1,4 @@
-package org.testsupport.common.utils;
+package org.testsupport.coherence.impl;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -7,7 +7,7 @@ import java.net.URLClassLoader;
  * Child-first URL class-loader, changes the normal class-loading order by attempting
  * to load the class locally from the child before delegating to the parent.
  */
-public class ChildFirstUrlClassLoader extends URLClassLoader {
+class ChildFirstUrlClassLoader extends URLClassLoader {
     /**
      * Constructor.
      *

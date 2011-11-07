@@ -2,7 +2,7 @@ package org.testsupport.coherence;
 
 import com.tangosol.net.CacheFactory;
 import org.testsupport.coherence.impl.DefaultClusterMemberGroupBuilder;
-import org.testsupport.common.utils.LoggerWrapper;
+import org.testsupport.common.LoggerWrapper;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;

@@ -1,4 +1,4 @@
-package org.testsupport.common.utils;
+package org.testsupport.coherence.impl;
 
 import com.tangosol.util.ValueManipulator;
 import com.tangosol.util.processor.PropertyManipulator;
@@ -8,7 +8,7 @@ import java.util.Properties;
 /**
  * Bean utilities class.
  */
-public final class BeanUtils {
+final class BeanUtils {
     /**
      * Private constructor to prevent creation.
      */

@@ -1,9 +1,9 @@
-package org.testsupport.common.utils;
+package org.testsupport.coherence.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.testsupport.coherence.impl.SystemUtils;
 import org.testsupport.common.AbstractTest;
-import org.testsupport.common.utils.SystemUtils;
 
 import java.util.Map;
 import java.util.Properties;

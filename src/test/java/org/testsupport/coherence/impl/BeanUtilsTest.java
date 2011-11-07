@@ -1,8 +1,8 @@
-package org.testsupport.common.utils;
+package org.testsupport.coherence.impl;
 
 import org.junit.Test;
+import org.testsupport.coherence.impl.BeanUtils;
 import org.testsupport.common.AbstractTest;
-import org.testsupport.common.utils.BeanUtils;
 
 import java.util.Properties;
 

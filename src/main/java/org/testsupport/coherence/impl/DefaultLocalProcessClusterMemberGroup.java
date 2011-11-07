@@ -2,8 +2,7 @@ package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMember;
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.utils.LoggerWrapper;
-import org.testsupport.common.utils.SystemUtils;
+import org.testsupport.common.LoggerWrapper;
 
 import java.io.File;
 import java.net.MalformedURLException;
