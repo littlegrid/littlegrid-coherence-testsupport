@@ -1,11 +1,11 @@
 package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMember;
-import org.testsupport.common.net.ChildFirstUrlClassLoader;
+import org.testsupport.common.utils.ChildFirstUrlClassLoader;
+import org.testsupport.common.utils.LoggerWrapper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -15,7 +15,7 @@ import static java.lang.String.format;
  * the instance of the wrapped class.
  */
 class ClusterMemberDelegatingWrapper implements ClusterMember {
-    private Logger logger = Logger.getLogger(ClusterMemberDelegatingWrapper.class.getName());
+    private LoggerWrapper logger = new LoggerWrapper(ClusterMemberDelegatingWrapper.class.getName());
     private Object clusterMemberInstance;
 
     /**
@@ -24,8 +24,8 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      * @param clusterMemberInstanceClassName Name of class to instantiate and delegate calls to.
      * @param childFirstUrlClassLoader       Instance of child first class loader.
      */
-    public ClusterMemberDelegatingWrapper(String clusterMemberInstanceClassName,
-                                          ChildFirstUrlClassLoader childFirstUrlClassLoader) {
+    public ClusterMemberDelegatingWrapper(final String clusterMemberInstanceClassName,
+                                          final ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
             logger.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
 

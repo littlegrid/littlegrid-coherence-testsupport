@@ -1,17 +1,22 @@
 package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.lang.BeanUtils;
+import org.testsupport.common.utils.BeanUtils;
+import org.testsupport.common.utils.LoggerWrapper;
+import org.testsupport.common.utils.SystemUtils;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Logger;
 
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.CACHE_CONFIGURATION_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.EXTEND_ENABLED_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOCAL_ADDRESS_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOCAL_PORT_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOG_LEVEL_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.OVERRIDE_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.ROLE_NAME_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.TTL_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_ADDRESS_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KEY;
@@ -20,13 +25,13 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KE
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
-    private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
+    private static final LoggerWrapper LOGGER = new LoggerWrapper(DefaultClusterMemberGroupBuilder.class.getName());
+    private Properties systemProperties = new Properties();
     private int storageEnabledCount;
     private int extendProxyCount;
     private int storageEnabledExtendProxyCount;
     private String cacheConfiguration;
     private String overrideConfiguration;
-    private Properties systemProperties = new Properties();
     private int wkaPort;
     private int localPort = wkaPort;
     private String wkaAddress;
@@ -38,6 +43,52 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String DEFAULT_PROPERTIES_FILENAME = "testsupport.coherence.default.properties";
     private static final String OVERRIDE_PROPERTIES_FILENAME = "testsupport.coherence.override.properties";
+    private String storageEnabledRoleName;
+    private String storageDisabledClientRoleName;
+
+
+    //TODO: Think about JMX
+//            properties.addSystemProperty(MANAGEMENT_KEY, "all");
+//            properties.addSystemProperty(MANAGEMENT_REMOTE_KEY, "true");
+//            properties.addSystemProperty(JMXREMOTE_KEY, "");
+
+    public String getStorageEnabledRoleName() {
+        return storageEnabledRoleName;
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setStorageEnabledRoleName(String storageEnabledRoleName) {
+        this.storageEnabledRoleName = storageEnabledRoleName;
+
+        return this;
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(String roleName) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setExtendProxyRoleName(String roleName) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(String roleName) {
+        this.storageDisabledClientRoleName = roleName;
+
+        return this;
+    }
+
+    public String getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(String ttl) {
+        this.ttl = ttl;
+    }
+
+    private String ttl;
 
     /*
         Order of settings should be:
@@ -49,10 +100,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         The idea is to be as gently opinionated *but* must also be Developer and CI friendly!
      */
     public DefaultClusterMemberGroupBuilder() {
-        applyProperties();
+        loadAndProcessProperties();
     }
 
-    private void applyProperties() {
+    private void loadAndProcessProperties() {
         try {
             Properties defaultProperties = new Properties();
             defaultProperties.load(this.getClass().getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_FILENAME));
@@ -64,7 +115,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             Properties properties = new Properties(defaultProperties);
 //            properties.putAll(overrideProperties);
 
-            BeanUtils.applyProperties(this, properties);
+            BeanUtils.processProperties(this, properties);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -80,21 +131,25 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     @Override
     public ClusterMemberGroup build() {
+        ClusterMemberGroup storageEnabledGroup;
+        ClusterMemberGroup storageEnabledExtendProxyGroup;
+        ClusterMemberGroup extendProxyGroup;
+
+        boolean clientIsExtend = false;
+
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
             storageEnabledCount = 1;
         }
 
-        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
-        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
-        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
-        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
-        setSystemPropertyWhenValid(OVERRIDE_KEY, overrideConfiguration);
-        setSystemPropertyWhenValid(TTL_KEY, "0");
-        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
+        if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
+            clientIsExtend = true;
+        }
+
+        prepareProperties();
 
         if (storageEnabledCount > 0) {
-            return new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
-                    null, null, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);
+            storageEnabledGroup = new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
+                    null, null, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool).startAll();
         } else {
             throw new UnsupportedOperationException();
         }
@@ -115,6 +170,35 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 //                        groupConfig, false);
 //
 //        }
+
+        systemProperties.clear();
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageDisabledClientRoleName);
+
+        if (clientIsExtend) {
+            setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+        }
+
+        SystemUtils.applyToSystemProperties(systemProperties);
+
+        return storageEnabledGroup;
+    }
+
+    private void prepareProperties() {
+        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
+        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
+        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
+        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageEnabledRoleName);
+
+        setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        setSystemPropertyWhenValid(OVERRIDE_KEY, overrideConfiguration);
+
+        setSystemPropertyWhenValid(TTL_KEY, ttl);
+        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
     }
 
     /**
@@ -390,8 +474,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                                                                                boolean startImmediately) {
 
 //        PropertyContainer container = new PropertyContainer(properties);
-//        container.addProperty(CoherenceSystemPropertyConst.ROLE_KEY, "LocalProcessCombinedServer");
-//        container.addProperty(CoherenceSystemPropertyConst.DISTRIBUTED_LOCALSTORAGE_KEY, Boolean.TRUE.toString());
+//        container.addProperty(CoherenceSystemPropertyConst.ROLE_NAME_KEY, "LocalProcessCombinedServer");
+//        container.addProperty(CoherenceSystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
 //
 //        return createExtendProxyServerGroup(1, cacheConfiguration, container.getProperties(),
 //                groupConfig, startImmediately);
@@ -421,7 +505,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 //            groupConfig = new ClusterMemberGroupConfig();
 //        }
 //
-//        properties.setProperty(CoherenceSystemPropertyConst.CACHECONFIG_KEY, cacheConfiguration);
+//        properties.setProperty(CoherenceSystemPropertyConst.CACHE_CONFIGURATION_KEY, cacheConfiguration);
 //
 //        groupConfig.setNumberOfClusterMembers(numberOfMembers);
 //        ClusterMemberGroup memberGroup = null;

@@ -10,13 +10,6 @@ import java.util.Properties;
  */
 public interface ClusterMemberGroup {
     /**
-     * Starts all the cluster members in the group.
-     *
-     * @return member group.
-     */
-    ClusterMemberGroup startAll();
-
-    /**
      * Shuts down specific cluster members in the group.
      *
      * @param memberIds Ids of cluster member(s) to shutdown.
@@ -69,14 +62,10 @@ public interface ClusterMemberGroup {
 
         Builder setCacheConfiguration(String cacheConfiguration);
 
-        Builder setExtendProxySpecificCacheConfiguration(String cacheConfiguration);
-
         Builder setStorageEnabledSpecificCacheConfiguration(String cacheConfiguration);
-
+        Builder setExtendProxySpecificCacheConfiguration(String cacheConfiguration);
         Builder setClientCacheConfiguration(String cacheConfiguration);
-
         Builder setOverrideConfiguration(String overrideConfiguration);
-
         Builder setClientOverrideConfiguration(String overrideConfiguration);
 
         Builder setSystemProperties(Properties properties);
@@ -89,6 +78,11 @@ public interface ClusterMemberGroup {
 
         Builder setExtendProxyCount(int numberOfMembers);
         int getExtendProxyCount();
+
+        Builder setStorageEnabledRoleName(String roleName);
+        Builder setStorageEnabledExtendProxyRoleName(String roleName);
+        Builder setExtendProxyRoleName(String roleName);
+        Builder setStorageDisabledClientRoleName(String roleName);
 
         Builder setLogLevel(int logLevel);
         int getLogLevel();

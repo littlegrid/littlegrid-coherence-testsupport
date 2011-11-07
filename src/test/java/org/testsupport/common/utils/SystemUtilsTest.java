@@ -1,8 +1,9 @@
-package org.testsupport.common.lang;
+package org.testsupport.common.utils;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.testsupport.common.AbstractTest;
+import org.testsupport.common.utils.SystemUtils;
 
 import java.util.Map;
 import java.util.Properties;

@@ -1,7 +1,8 @@
-package org.testsupport.common.net;
+package org.testsupport.common.utils;
 
 import org.junit.Test;
 import org.testsupport.common.AbstractTest;
+import org.testsupport.common.utils.ChildFirstUrlClassLoader;
 
 import java.io.File;
 import java.net.URL;
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertThat;
  */
 public class ChildFirstUrlClassLoaderTest extends AbstractTest {
     private static final String CLASS_TO_TRY_AND_LOAD =
-            "org.testsupport.common.net.ChildFirstUrlClassLoaderTest$Dummy";
+            "org.testsupport.common.utils.ChildFirstUrlClassLoaderTest$Dummy";
 
     @Test
     public void loadClassFromChildClassLoader()

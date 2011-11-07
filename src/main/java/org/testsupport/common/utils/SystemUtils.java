@@ -1,4 +1,4 @@
-package org.testsupport.common.lang;
+package org.testsupport.common.utils;
 
 import java.util.Properties;
 

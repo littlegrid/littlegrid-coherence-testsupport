@@ -19,7 +19,7 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
     @Ignore
     public void noStorageEnabledMembersCannotStoreData() {
         ClusterMemberGroup extendProxyGroup = newClusterMemberGroupBuilder().setStorageEnabledExtendProxyCount(1)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
         throw new UnsupportedOperationException();
 //        setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
@@ -47,11 +47,11 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
 
         try {
             storageEnabledGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfCacheServers).
-                    setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
+                    setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
             extendProxyGroup = newClusterMemberGroupBuilder().setExtendProxyCount(1)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                    .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build().startAll();
+                    .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
 
             NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
             cache.put("any key", "storage enabled member(s) should be present, so this will be cached");
@@ -67,7 +67,7 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
 
         try {
             memberGroup = newClusterMemberGroupBuilder().setStorageEnabledExtendProxyCount(1)
-                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build().startAll();
+                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
             NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
             cache.put("any key", "single combined extend proxy and stored enabled member, so this will be cached");

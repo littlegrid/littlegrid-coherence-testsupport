@@ -2,7 +2,7 @@ package org.testsupport.coherence;
 
 import org.junit.Test;
 import org.testsupport.common.AbstractTest;
-import org.testsupport.common.net.ChildFirstUrlClassLoader;
+import org.testsupport.common.utils.ChildFirstUrlClassLoader;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class ClusterMemberTest extends AbstractTest {
     @Test
     public void getClassLoader() {
         final int numberOfMembers = 3;
-        ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
+        ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
         List<Integer> memberIds = memberGroup.getStartedMemberIds();
 
         assertThat(memberIds.size(), is(numberOfMembers));

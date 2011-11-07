@@ -2,7 +2,8 @@ package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMember;
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.lang.SystemUtils;
+import org.testsupport.common.utils.LoggerWrapper;
+import org.testsupport.common.utils.SystemUtils;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -15,7 +16,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT;
@@ -24,7 +24,7 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
  * Default local process cluster member group implementation.
  */
 public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
-    private final LoggerWrapper logger = new LoggerWrapper("abc123", Logger.getLogger(DefaultLocalProcessClusterMemberGroup.class.getName()));
+    private final LoggerWrapper logger = new LoggerWrapper(DefaultLocalProcessClusterMemberGroup.class.getName());
     private boolean startInvoked;
     private Properties systemPropertiesToBeApplied;
     private Properties systemPropertiesBeforeStartInvoked;
@@ -56,9 +56,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             throw new IllegalStateException("Property container cannot be null");
         }
 
-        System.out.println("PERFORM OTHER SANITY CHECKS!!!!");
-        System.out.println("PERFORM OTHER SANITY CHECKS!!!!");
-        System.out.println("PERFORM OTHER SANITY CHECKS!!!!");
+        System.out.println("Check incoming arguments");
 
         this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
 
@@ -116,9 +114,10 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
     }
 
     /**
-     * {@inheritDoc}
+     * Starts all the cluster members in the group.
+     *
+     * @return member group.
      */
-    @Override
     public ClusterMemberGroup startAll() {
         if (startInvoked) {
             return this;
@@ -155,16 +154,13 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             logger.info(format("Group of cluster member(s) started, member Ids: %s", memberIds));
         } catch (Exception e) {
             String message = format(
-                    "Failed to start cluster member group - check Coherence system systemPropertiesToBeApplied for misconfiguration: %s",
+                    "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
                     SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
 
             System.setProperties(systemPropertiesBeforeStartInvoked);
             logger.severe(message);
             throw new IllegalStateException(message, e);
         }
-
-        //TODO:
-        System.setProperty("tangosol.coherence.distributed.localstorage", "false");
 
         return this;
     }
@@ -176,8 +172,8 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        logger.fine(format("Current Coherence systemPropertiesToBeApplied...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
-        logger.info(format("Server system systemPropertiesToBeApplied to set: %s", systemPropertiesToBeApplied));
+        logger.fine(format("Current Coherence applied...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
+        logger.info(format("Server system applied to set: %s", systemPropertiesToBeApplied));
         logger.fine(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,

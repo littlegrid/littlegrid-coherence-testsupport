@@ -1,7 +1,5 @@
 package org.testsupport.coherence;
 
-import com.tangosol.net.Member;
-
 /**
  * Cluster member interface - implementations of this class need to provide basic functionality,
  * so they may be controlled by the {@link org.testsupport.coherence.ClusterMemberGroup}

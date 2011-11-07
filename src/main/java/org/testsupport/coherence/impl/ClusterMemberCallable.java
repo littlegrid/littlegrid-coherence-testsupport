@@ -1,6 +1,6 @@
 package org.testsupport.coherence.impl;
 
-import org.testsupport.common.net.ChildFirstUrlClassLoader;
+import org.testsupport.common.utils.ChildFirstUrlClassLoader;
 
 import java.net.URL;
 import java.util.concurrent.Callable;
@@ -18,8 +18,8 @@ class ClusterMemberCallable implements Callable<ClusterMemberDelegatingWrapper> 
      * @param clusterMemberInstanceClassName  Cluster member class name.
      * @param classPathUrls  Class path.
      */
-    public ClusterMemberCallable(String clusterMemberInstanceClassName,
-                                 URL[] classPathUrls) {
+    public ClusterMemberCallable(final String clusterMemberInstanceClassName,
+                                 final URL[] classPathUrls) {
 
         if (clusterMemberInstanceClassName == null) {
             throw new IllegalStateException("Cluster member class name cannot be null");

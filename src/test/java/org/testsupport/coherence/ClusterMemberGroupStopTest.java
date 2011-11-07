@@ -18,7 +18,8 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         final int expectedClusterSizeAfterStop = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
         final int memberIdToStop = 3;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup =
+                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSizeBeforeStop);
         assertThat(doesMemberExist(memberIdToStop), is(true));
 
@@ -36,7 +37,8 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         int memberIdToStop = 12;
         int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
+        final ClusterMemberGroup memberGroup =
+                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
         assertThat(doesMemberExist(memberIdToStop), is(false));
 

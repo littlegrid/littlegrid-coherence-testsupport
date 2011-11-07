@@ -37,6 +37,7 @@
             <artifactId>coherence</artifactId>
             <!--<version>${coherence.version}</version>-->
             <version>3.6.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -126,6 +127,9 @@
                             -->
                             <forkMode>always</forkMode>
                             <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m</argLine>
+                            <systemPropertyVariables>
+                                <tangosol.coherence.wka.port>45123</tangosol.coherence.wka.port>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
 
@@ -179,7 +183,7 @@
         <install.plugin.version>2.3.1</install.plugin.version>
         <release.plugin.version>2.1</release.plugin.version>
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
-        <surefire.plugin.version>2.5</surefire.plugin.version>
+        <surefire.plugin.version>2.10</surefire.plugin.version>
         <javadoc.plugin.version>2.7</javadoc.plugin.version>
         <checkstyle.version>2.7</checkstyle.version>
 

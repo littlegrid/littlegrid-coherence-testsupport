@@ -1,7 +1,8 @@
-package org.testsupport.common.lang;
+package org.testsupport.common.utils;
 
 import org.junit.Test;
 import org.testsupport.common.AbstractTest;
+import org.testsupport.common.utils.BeanUtils;
 
 import java.util.Properties;
 
@@ -24,7 +25,7 @@ public class BeanUtilsTest extends AbstractTest {
         Properties properties = new Properties();
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.applyProperties(person, properties);
+        int propertiesSetCount = BeanUtils.processProperties(person, properties);
 
         assertThat(propertiesSetCount, is(0));
         assertThat(person.getName(), nullValue());
@@ -38,7 +39,7 @@ public class BeanUtilsTest extends AbstractTest {
 
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.applyProperties(person, properties);
+        int propertiesSetCount = BeanUtils.processProperties(person, properties);
 
         assertThat(propertiesSetCount, is(1));
         assertThat(person.getName(), is(EXPECTED_NAME));
@@ -52,7 +53,7 @@ public class BeanUtilsTest extends AbstractTest {
 
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.applyProperties(person, properties);
+        int propertiesSetCount = BeanUtils.processProperties(person, properties);
 
         assertThat(propertiesSetCount, is(1));
         assertThat(person.getAge(), is(EXPECTED_AGE));
@@ -66,7 +67,7 @@ public class BeanUtilsTest extends AbstractTest {
 
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.applyProperties(person, properties);
+        int propertiesSetCount = BeanUtils.processProperties(person, properties);
 
         assertThat(propertiesSetCount, is(2));
         assertThat(person.getName(), is(EXPECTED_NAME));
@@ -78,7 +79,7 @@ public class BeanUtilsTest extends AbstractTest {
         Properties properties = new Properties();
         properties.setProperty("NonExistentProperty", "DoesNotMatterPropertyDoesNotExist");
 
-        BeanUtils.applyProperties(new Person(), properties);
+        BeanUtils.processProperties(new Person(), properties);
     }
 
 

@@ -38,7 +38,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build().startAll();
+                .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         NamedCache cache = CacheFactory.getCache("test");
@@ -49,19 +49,21 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
     }
 
     @Test
+    @Ignore
     public void startInvokedTwice() {
-        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build().startAll();
-        assertThatClusterIsExpectedSize(expectedClusterSize);
-
-        memberGroup.startAll();
-        assertThatClusterIsExpectedSize(expectedClusterSize);
-
-        memberGroup.shutdownAll();
-        assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+        throw new UnsupportedOperationException();
+//        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+//        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+//
+//        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+//                .setStorageEnabledCount(numberOfMembers).build();
+//        assertThatClusterIsExpectedSize(expectedClusterSize);
+//
+//        memberGroup.startAll();
+//        assertThatClusterIsExpectedSize(expectedClusterSize);
+//
+//        memberGroup.shutdownAll();
+//        assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
@@ -70,7 +72,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build().startAll();
+                .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.shutdownAll();
@@ -84,7 +86,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build().startAll();
+                .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.stopAll();
@@ -96,9 +98,20 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
 
     @Test
     @Ignore
+    public void addTestWhereNoCacheConfigurationIsSpecifiedAndHaveFileCalledCoherenceCacheConfigToBePickedUp() {
+    }
+
+    @Test
+    @Ignore
+    public void addTestWhereSpecificCacheConfigurationIsUsedAndItHasSpecificSchemes() {
+
+    }
+
+    @Test
+    @Ignore
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
         final String jarToExclude = "junit-4.8.2.jar";
 
-        newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath(jarToExclude).build().startAll().shutdownAll();
+        newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath(jarToExclude).build().shutdownAll();
     }
 }

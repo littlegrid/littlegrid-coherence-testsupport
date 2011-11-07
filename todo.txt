@@ -16,3 +16,5 @@ Todo
 * Add source encoding.
 
 * Source from Jaxp a problem.
+
+* Add tests for when ClusterMember is got by Id and then start invoked.

@@ -14,7 +14,7 @@ public class ClusterMemberGroupLargeTest extends AbstractStorageDisabledClientCl
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         final ClusterMemberGroup memberGroup =
-                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build().startAll();
+                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.stopAll();

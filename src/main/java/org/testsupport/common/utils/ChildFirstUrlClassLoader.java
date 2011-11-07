@@ -1,4 +1,4 @@
-package org.testsupport.common.net;
+package org.testsupport.common.utils;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -14,19 +14,17 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
      * @param urls URLs from which to try and load classes.
      * @throws Throwable Problem with construction.
      */
-    public ChildFirstUrlClassLoader(URL[] urls)
+    public ChildFirstUrlClassLoader(final URL[] urls)
             throws Throwable {
 
         super(urls);
     }
 
-//    TODO: If Security exception thrown the JAVA_HOME is probably messed up.
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<?> loadClass(String name)
+    public Class<?> loadClass(final String name)
             throws ClassNotFoundException {
 
         Class loadedClass = findLoadedClass(name);
