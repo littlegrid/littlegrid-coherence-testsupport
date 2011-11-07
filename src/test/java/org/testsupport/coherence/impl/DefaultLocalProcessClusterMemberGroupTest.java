@@ -9,7 +9,6 @@ import java.util.Properties;
 /**
  * Default local process cluster member group basic tests.
  */
-@Deprecated
 @Ignore
 public class DefaultLocalProcessClusterMemberGroupTest extends AbstractTest {
     @Test(expected = IllegalStateException.class)

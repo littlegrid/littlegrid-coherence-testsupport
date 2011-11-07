@@ -17,7 +17,7 @@
 
     <caching-scheme-mapping>
         <cache-mapping>
-            <cache-name>*</cache-name>
+            <cache-name>known-cache</cache-name>
             <scheme-name>simple-distributed-scheme</scheme-name>
         </cache-mapping>
     </caching-scheme-mapping>

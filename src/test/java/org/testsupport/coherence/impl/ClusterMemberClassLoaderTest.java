@@ -1,7 +1,8 @@
-package org.testsupport.coherence;
+package org.testsupport.coherence.impl;
 
 import org.junit.Test;
-import org.testsupport.coherence.impl.ChildFirstUrlClassLoader;
+import org.testsupport.coherence.ClusterMember;
+import org.testsupport.coherence.ClusterMemberGroup;
 import org.testsupport.common.AbstractTest;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMember
 /**
  * Cluster member tests.
  */
-public class ClusterMemberTest extends AbstractTest {
+public class ClusterMemberClassLoaderTest extends AbstractTest {
     @Test
     public void getClassLoader() {
         final int numberOfMembers = 3;

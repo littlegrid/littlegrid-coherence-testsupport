@@ -5,32 +5,14 @@ import com.tangosol.net.NamedCache;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.fail;
 import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 
 /**
  * Cluster member group baseline tests.
  */
 public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
-    @Test
-    @Ignore
-    public void neverStarted() {
-        newClusterMemberGroupBuilder().build();
-        assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-    }
-
-    @Test
-    @Ignore
-    public void shutdownWhenNeverStarted() {
-        newClusterMemberGroupBuilder().build().shutdownAll();
-        assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-    }
-
-    @Test
-    @Ignore
-    public void stopWhenNeverStarted() {
-        newClusterMemberGroupBuilder().build().stopAll();
-        assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-    }
+    private static final String KNOWN_CACHE = "known-cache";
 
     @Test
     public void startAndShutdownSingleMemberGroup() {
@@ -49,21 +31,29 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
     }
 
     @Test
-    @Ignore
-    public void startInvokedTwice() {
-        throw new UnsupportedOperationException();
-//        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
-//        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-//
-//        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
-//                .setStorageEnabledCount(numberOfMembers).build();
-//        assertThatClusterIsExpectedSize(expectedClusterSize);
-//
-//        memberGroup.startAll();
-//        assertThatClusterIsExpectedSize(expectedClusterSize);
-//
-//        memberGroup.shutdownAll();
-//        assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+    public void simpleMemberGroupWithCacheConfigurationAndKnownCache() {
+        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
+
+        NamedCache cache = CacheFactory.getCache(KNOWN_CACHE);
+        cache.put("key", "value");
+
+        memberGroup.shutdownAll();
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void simpleMemberGroupWithCacheConfigurationAndUnknownCache() {
+        ClusterMemberGroup memberGroup = null;
+
+        try {
+            memberGroup = newClusterMemberGroupBuilder()
+                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
+
+            NamedCache cache = CacheFactory.getCache("unknown-cache-this-will-not-be-found-in-cache-configuration");
+            cache.put("key", "value");
+        } finally {
+            memberGroup.shutdownAll();
+        }
     }
 
     @Test
