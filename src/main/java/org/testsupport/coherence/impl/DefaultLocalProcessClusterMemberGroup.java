@@ -23,11 +23,13 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
  * Default local process cluster member group implementation.
  */
 public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
-    private final LoggerPlaceHolder logger = new LoggerPlaceHolder(DefaultLocalProcessClusterMemberGroup.class.getName());
+    private final LoggerPlaceHolder logger =
+            new LoggerPlaceHolder(DefaultLocalProcessClusterMemberGroup.class.getName());
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
     private Properties systemPropertiesToBeApplied;
-    private List<Future<ClusterMemberDelegatingWrapper>> memberFutures;
+    private List<Future<ClusterMemberDelegatingWrapper>> memberFutures =
+            new ArrayList<Future<ClusterMemberDelegatingWrapper>>();
     private int numberOfMembers;
     private URL[] classPathUrls;
     private String clusterMemberInstanceClassName;
@@ -38,7 +40,6 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
      * Constructor.
      *
      * @param systemPropertiesToBeApplied System systemPropertiesToBeApplied.
-     * @param groupConfig                 Cluster member group config.
      */
     public DefaultLocalProcessClusterMemberGroup(final int numberOfMembers,
                                                  final Properties systemPropertiesToBeApplied,
@@ -46,6 +47,8 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
                                                  final String[] jarsToExcludeFromClassPath,
                                                  final String clusterMemberInstanceClassName,
                                                  final int numberOfThreadsInStartUpPool) {
+
+        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
         this.numberOfMembers = numberOfMembers;
         this.classPathUrls = classPathUrls;
         this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
@@ -60,6 +63,21 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
     }
 
+    DefaultLocalProcessClusterMemberGroup() {
+        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
+    }
+
+    int merge(DefaultLocalProcessClusterMemberGroup memberGroup) {
+        memberFutures.addAll(memberGroup.getMemberFutures());
+        startInvoked = true;
+
+        return memberFutures.size();
+    }
+
+    List<Future<ClusterMemberDelegatingWrapper>> getMemberFutures() {
+        return memberFutures;
+    }
+
     /**
      * Starts all the cluster members in the group.
      *
@@ -70,7 +88,6 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             return this;
         }
 
-        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
         SystemUtils.applyToSystemProperties(systemPropertiesToBeApplied);
         startInvoked = true;
         outputStartAllMessages();
@@ -92,8 +109,11 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             futureForSeniorMember.get();
 
             logger.info("First cluster member up, starting any remaining members to join established cluster");
-            memberFutures = executorService.invokeAll(tasks);
+            List<Future<ClusterMemberDelegatingWrapper>> futuresForOtherMembers = executorService.invokeAll(tasks);
+
             memberFutures.add(futureForSeniorMember);
+            memberFutures.addAll(futuresForOtherMembers);
+
             executorService.shutdown();
 
             List<Integer> memberIds = getStartedMemberIds();

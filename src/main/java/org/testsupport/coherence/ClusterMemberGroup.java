@@ -92,9 +92,6 @@ public interface ClusterMemberGroup {
         Builder setWkaPort(int wkaPort);
         int getWkaPort();
 
-        Builder setNumberOfThreadsInStartUpPool(int numberOfThreadsInStartUpPool);
-        int getNumberOfThreadsInStartUpPool();
-
         Builder setBuilder(Properties properties);
     }
 }

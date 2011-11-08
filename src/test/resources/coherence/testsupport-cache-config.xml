@@ -20,6 +20,11 @@
             <cache-name>known-cache</cache-name>
             <scheme-name>simple-distributed-scheme</scheme-name>
         </cache-mapping>
+
+        <cache-mapping>
+            <cache-name>known-extend-cache</cache-name>
+            <scheme-name>simple-distributed-scheme</scheme-name>
+        </cache-mapping>
     </caching-scheme-mapping>
 
     <caching-schemes>
@@ -32,7 +37,8 @@
         </distributed-scheme>
 
         <proxy-scheme>
-            <scheme-name>simple-extend-proxy-scheme</scheme-name>
+            <!--<scheme-name>simple-extend-proxy-scheme</scheme-name>-->
+            <scheme-name>extend-tcp</scheme-name>
             <service-name>ExtendProxyServerService</service-name>
 
             <acceptor-config>

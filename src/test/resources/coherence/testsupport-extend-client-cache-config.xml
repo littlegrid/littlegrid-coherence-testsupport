@@ -27,7 +27,7 @@
             <scheme-name>extend-tcp</scheme-name>
             <service-name>ExtendProxyClientService</service-name>
             <initiator-config>
-           extend-tcp     <tcp-initiator>
+                <tcp-initiator>
                     <remote-addresses>
                         <socket-address>
                             <address system-property="tangosol.coherence.extend.address">127.0.0.1</address>

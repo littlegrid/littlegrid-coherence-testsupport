@@ -1,8 +1,10 @@
 package org.testsupport.coherence;
 
+import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -48,17 +50,29 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
         performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
     }
 
-    @Test
-    public void extendProxyExample() {
-        throw new UnsupportedOperationException();
+    @Test(expected = PortableException.class)
+    public void extendProxyAndNoStorageEnabledExample() {
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setExtendProxyCount(1)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
+
+        performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
     }
 
     @Test
     public void extendProxyWithSeparateStorageEnabledExample() {
-        throw new UnsupportedOperationException();
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setExtendProxyCount(1)
+                .setStorageEnabledCount(2)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
+
+        performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
     }
 
     @Test
+    @Ignore
     public void twoAutonomousClustersWithExtendProxyAndWithSeparateStorageEnabledExample() {
         throw new UnsupportedOperationException();
     }

@@ -1,6 +1,5 @@
 package org.testsupport.coherence.impl;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.testsupport.coherence.ClusterMemberGroup;
 import org.testsupport.common.LoggerPlaceHolder;
 
@@ -55,6 +54,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private String clientCacheConfiguration;
     private String extendProxyRoleName;
     private String storageEnabledExtendProxyRoleName;
+    private String ttl;
 
 
     //TODO: Think about JMX
@@ -100,16 +100,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
-    private String ttl;
-
-    /*
-        Order of settings should be:
-            * testsupport.coherence.default.properties
-            * testsupport.coherence.project.properties
-            * ${ENV.testsupport.coherence}/testsupport.coherence.override.properties
-            * -Dtestsupport.coherence.override.properties=nameOfOverridePropertiesFile (resource or file).
-
-        The idea is to be as gently opinionated *but* must also be Developer and CI friendly!
+    /**
+     * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
         loadAndProcessProperties();
@@ -143,44 +135,48 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     @Override
     public ClusterMemberGroup build() {
+        DefaultLocalProcessClusterMemberGroup containerGroup = new DefaultLocalProcessClusterMemberGroup();
+
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
             storageEnabledCount = 1;
         }
 
-        ClusterMemberGroup storageEnabledGroup = null;
-        ClusterMemberGroup storageEnabledExtendProxyGroup;
-        ClusterMemberGroup extendProxyGroup;
+        if (classPathUrls == null) {
+            LOGGER.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
 
-        try {
-            if (classPathUrls == null) {
-                LOGGER.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
-
-                this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+            this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
         }
 
         if (storageEnabledCount > 0) {
             preparePropertiesForStorageEnabled();
 
-            storageEnabledGroup = new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
+            ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
                     classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
                     numberOfThreadsInStartUpPool).startAll();
+
+            containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
         }
 
         if (extendProxyCount > 0) {
-            extendProxyGroup = new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
+            preparePropertiesForExtendProxy();
+
+            ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
                     classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool).startAll();
+                    numberOfThreadsInStartUpPool)
+                    .startAll();
+
+            containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
         }
 
-        if (storageEnabledExtendProxyCount> 0) {
+        if (storageEnabledExtendProxyCount > 0) {
             preparePropertiesForStorageEnabledExtendProxy();
 
-            storageEnabledExtendProxyGroup = new DefaultLocalProcessClusterMemberGroup(storageEnabledExtendProxyCount,
-                    systemProperties, classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool).startAll();
+            ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(
+                    storageEnabledExtendProxyCount, systemProperties, classPathUrls,
+                    jarsToExcludeFromClassPath, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                    .startAll();
+
+            containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
         }
 
         systemProperties.clear();
@@ -195,7 +191,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         LOGGER.info(systemProperties);
         SystemUtils.applyToSystemProperties(systemProperties);
 
-        return storageEnabledGroup;
+        return containerGroup;
     }
 
     private void preparePropertiesForStorageEnabled() {
@@ -215,7 +211,21 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void preparePropertiesForExtendProxy() {
-        throw new UnsupportedOperationException();
+        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
+        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
+        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
+        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, extendProxyRoleName);
+
+        setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        setSystemPropertyWhenValid(OVERRIDE_KEY, overrideConfiguration);
+
+        setSystemPropertyWhenValid(TTL_KEY, ttl);
+        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+
+        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
     }
 
     private void preparePropertiesForStorageEnabledExtendProxy() {
@@ -455,84 +465,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return wkaPort;
     }
 
-    @Deprecated
-    private static ClusterMemberGroup createGenericClusterMemberGroup(int numberOfMembers,
-                                                                      String cacheConfiguration,
-                                                                      Properties properties,
-//                                                                      ClusterMemberGroupConfig groupConfig,
-                                                                      boolean startImmediately) {
-
-        throw new UnsupportedOperationException();
-//        if (groupConfig == null) {
-//            groupConfig = new ClusterMemberGroupConfig();
-//        }
-//
-//        properties.setProperty(CoherenceSystemPropertyConst.CACHE_CONFIGURATION_KEY, cacheConfiguration);
-//
-//        groupConfig.setNumberOfClusterMembers(numberOfMembers);
-//        ClusterMemberGroup memberGroup = null;
-//
-//        try {
-//            memberGroup = new DefaultLocalProcessClusterMemberGroup(properties, groupConfig);
-//
-//            if (startImmediately) {
-//                memberGroup.startAll();
-//            }
-//
-//            return memberGroup;
-//        } catch (Throwable throwable) {
-//            LOGGER.severe("Failed to start cluster member group - attempting to shutdown");
-////TODO: SORT THIS OUT
-////
-////            shutdownClusterMemberGroups(memberGroup);
-//
-//            throw new IllegalStateException(throwable);
-    }
-
-//    @Deprecated
-//    private static PropertyContainer internalCreateGenericClusterMemberPropertyContainerWithDefaults() {
-//        final String host = "127.0.0.1";
-//        final String port = System.getProperty(WKA_PORT_KEY, Integer.toString(DEFAULT_WKA_PORT));
-//        final String log = System.getProperty(CoherenceSystemPropertyConst.LOG_KEY, CoherenceSystemPropertyConst.DEFAULT_LOG);
-//        final String logLevel = System.getProperty(CoherenceSystemPropertyConst.LOG_LEVEL_KEY, Integer.toString(CoherenceSystemPropertyConst.DEFAULT_LOG_LEVEL));
-//
-//        PropertyContainer container = new PropertyContainer();
-//        container.addProperty(CoherenceSystemPropertyConst.TCMP_ENABLED_KEY, Boolean.TRUE.toString());
-//        container.addProperty(CoherenceSystemPropertyConst.CLUSTER_KEY, "TestLocalProcessCluster");
-//        container.addProperty(CoherenceSystemPropertyConst.LOG_LEVEL_KEY, logLevel);
-////        container.addProperty(CoherenceSystemPropertyConst.LOG_KEY, log);
-//        container.addProperty(CoherenceSystemPropertyConst.WKA_ADDRESS_KEY, host);
-//        container.addProperty(WKA_PORT_KEY, port);
-//        container.addProperty(CoherenceSystemPropertyConst.LOCAL_ADDRESS_KEY, host);
-//        container.addProperty(CoherenceSystemPropertyConst.LOCAL_PORT_KEY, port);
-//        container.addProperty(CoherenceSystemPropertyConst.TTL_KEY, "0");
-////        container.addProperty(MANAGEMENT_KEY, "all");
-////        container.addProperty(MANAGEMENT_REMOTE_KEY, Boolean.TRUE.toString());
-////        container.addProperty(JMXREMOTE_KEY, "");
-//
-//        return container;
-//    }
-
-    @Override
-    public int getNumberOfThreadsInStartUpPool() {
-        return numberOfThreadsInStartUpPool;
-    }
-
     @Override
     public ClusterMemberGroup.Builder setBuilder(Properties properties) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
         this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
 
         return this;
     }
 
-    private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPathUrls)
-            throws MalformedURLException {
-
+    private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
         //TODO: Pull out the JAR exclusion code if this feature seems like it will be required
         String pathSeparator = System.getProperty("path.separator");
         String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
@@ -544,8 +488,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             if (!partOfClassPath.startsWith(javaHome)) {
                 boolean found = false;
 
-                if (jarsToExcludeFromClassPathUrls != null) {
-                    for (String jarToExclude : jarsToExcludeFromClassPathUrls) {
+                if (jarsToExcludeFromClassPath != null) {
+                    for (String jarToExclude : jarsToExcludeFromClassPath) {
                         if (partOfClassPath.endsWith(jarToExclude)) {
                             LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
 
@@ -555,7 +499,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 }
 
                 if (!found) {
-                    classPathUrls.add(new File(partOfClassPath).toURI().toURL());
+                    try {
+                        classPathUrls.add(new File(partOfClassPath).toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        throw new IllegalStateException(e);
+                    }
                 }
             }
         }
