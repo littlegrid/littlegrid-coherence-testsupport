@@ -12,18 +12,14 @@ public class SimpleApp {
 
         ClusterMemberGroup memberGroup = null;
 
-//        try {
-//            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setStorageEnabledCount(2).build().startAll();
+        try {
+            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setStorageEnabledCount(2).build();
 
-
-            throw new UnsupportedOperationException();
-//            setStorageDisabledClientSystemProperties();
-
-//            NamedCache cache = CacheFactory.getCache("test");
-//            cache.put(key, "hello");
-//            System.out.println(cache.get(key));
-//        } finally {
-//            shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-//        }
+            NamedCache cache = CacheFactory.getCache("test");
+            cache.put(key, "hello");
+            System.out.println(cache.get(key));
+        } finally {
+            shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        }
     }
 }

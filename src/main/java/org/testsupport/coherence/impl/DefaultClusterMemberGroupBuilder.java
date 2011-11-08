@@ -1,12 +1,18 @@
 package org.testsupport.coherence.impl;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.LoggerWrapper;
+import org.testsupport.common.LoggerPlaceHolder;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
+import static java.lang.String.format;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.CACHE_CONFIGURATION_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.EXTEND_ENABLED_KEY;
@@ -15,6 +21,7 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOCAL_PORT_
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOG_LEVEL_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.OVERRIDE_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.ROLE_NAME_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.TTL_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_ADDRESS_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KEY;
@@ -23,7 +30,11 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KE
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
-    private static final LoggerWrapper LOGGER = new LoggerWrapper(DefaultClusterMemberGroupBuilder.class.getName());
+    private static final String DEFAULT_PROPERTIES_FILENAME = "testsupport.coherence.default.properties";
+    private static final String OVERRIDE_PROPERTIES_FILENAME = "testsupport.coherence.override.properties";
+    private static final LoggerPlaceHolder LOGGER =
+            new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
+
     private Properties systemProperties = new Properties();
     private int storageEnabledCount;
     private int extendProxyCount;
@@ -38,11 +49,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private int numberOfThreadsInStartUpPool;
     private int logLevel;
     private String[] jarsToExcludeFromClassPath;
-
-    private static final String DEFAULT_PROPERTIES_FILENAME = "testsupport.coherence.default.properties";
-    private static final String OVERRIDE_PROPERTIES_FILENAME = "testsupport.coherence.override.properties";
     private String storageEnabledRoleName;
     private String storageDisabledClientRoleName;
+    private URL[] classPathUrls;
+    private String clientCacheConfiguration;
+    private String extendProxyRoleName;
+    private String storageEnabledExtendProxyRoleName;
 
 
     //TODO: Think about JMX
@@ -54,24 +66,24 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return storageEnabledRoleName;
     }
 
-    @Override
     public ClusterMemberGroup.Builder setStorageEnabledRoleName(String storageEnabledRoleName) {
         this.storageEnabledRoleName = storageEnabledRoleName;
 
         return this;
     }
 
-    @Override
     public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(String roleName) {
-        throw new UnsupportedOperationException();
+        this.storageEnabledExtendProxyRoleName = roleName;
+
+        return this;
     }
 
-    @Override
     public ClusterMemberGroup.Builder setExtendProxyRoleName(String roleName) {
-        throw new UnsupportedOperationException();
+        this.extendProxyRoleName = roleName;
+
+        return this;
     }
 
-    @Override
     public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(String roleName) {
         this.storageDisabledClientRoleName = roleName;
 
@@ -82,8 +94,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return ttl;
     }
 
-    public void setTtl(String ttl) {
+    public ClusterMemberGroup.Builder setTtl(String ttl) {
         this.ttl = ttl;
+
+        return this;
     }
 
     private String ttl;
@@ -106,7 +120,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             Properties defaultProperties = new Properties();
             defaultProperties.load(this.getClass().getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_FILENAME));
 
-            System.out.println("ADD SUPPORT TO LOAD OVERRIDE PROPERTIES");
+            //TODO: ADD SUPPORT TO LOAD OVERRIDE PROPERTIES
 //            Properties overrideProperties = new Properties();
 //            overrideProperties.load(this.getClass().getClassLoader().getResourceAsStream(OVERRIDE_PROPERTIES_FILENAME));
 
@@ -129,61 +143,62 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     @Override
     public ClusterMemberGroup build() {
-        ClusterMemberGroup storageEnabledGroup;
-        ClusterMemberGroup storageEnabledExtendProxyGroup;
-        ClusterMemberGroup extendProxyGroup;
-
-        boolean clientIsExtend = false;
-
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
             storageEnabledCount = 1;
         }
 
-        if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
-            clientIsExtend = true;
-        }
+        ClusterMemberGroup storageEnabledGroup = null;
+        ClusterMemberGroup storageEnabledExtendProxyGroup;
+        ClusterMemberGroup extendProxyGroup;
 
-        prepareProperties();
+        try {
+            if (classPathUrls == null) {
+                LOGGER.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
+
+                this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
 
         if (storageEnabledCount > 0) {
+            preparePropertiesForStorageEnabled();
+
             storageEnabledGroup = new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
-                    null, null, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool).startAll();
-        } else {
-            throw new UnsupportedOperationException();
+                    classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool).startAll();
         }
-////        TODO: SET THE CLUSTER NAME TO THE TIME THE THING WAS STARTED TO HELP TELL IT APART FROM OTHERS RUNNING, PERHAPS IN A DEBUG SESSION.
-//        switch (topology) {
-//            case STORAGE_ENABLED_ONLY:
-//                return createCacheServerGroup(storageEnabledCount, cacheConfiguration, systemProperties,
-//                        groupConfig, false);
-//
-//            case COMPOSITE_STORAGE_ENABLED_PROXY:
-//                break;
-//
-//            case SEPARATE_PROXY_AND_STORAGE_ENABLED:
-//                break;
-//
-//            case EXTEND_PROXY_ONLY:
-//                return createExtendProxyServerGroup(storageEnabledCount, cacheConfiguration, systemProperties,
-//                        groupConfig, false);
-//
-//        }
+
+        if (extendProxyCount > 0) {
+            extendProxyGroup = new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
+                    classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool).startAll();
+        }
+
+        if (storageEnabledExtendProxyCount> 0) {
+            preparePropertiesForStorageEnabledExtendProxy();
+
+            storageEnabledExtendProxyGroup = new DefaultLocalProcessClusterMemberGroup(storageEnabledExtendProxyCount,
+                    systemProperties, classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool).startAll();
+        }
 
         systemProperties.clear();
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageDisabledClientRoleName);
-
-        if (clientIsExtend) {
-            setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+        if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
+            preparePropertiesForExtendProxyClient();
+        } else {
+            preparePropertiesForStorageDisabledClient();
         }
 
+        LOGGER.info(SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
+        LOGGER.info(systemProperties);
         SystemUtils.applyToSystemProperties(systemProperties);
 
         return storageEnabledGroup;
     }
 
-    private void prepareProperties() {
+    private void preparePropertiesForStorageEnabled() {
         setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
         setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
         setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
@@ -197,6 +212,50 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
 
         setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
+    }
+
+    private void preparePropertiesForExtendProxy() {
+        throw new UnsupportedOperationException();
+    }
+
+    private void preparePropertiesForStorageEnabledExtendProxy() {
+        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
+        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
+        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
+        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageEnabledExtendProxyRoleName);
+
+        setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        setSystemPropertyWhenValid(OVERRIDE_KEY, overrideConfiguration);
+
+        setSystemPropertyWhenValid(TTL_KEY, ttl);
+        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
+
+        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
+    }
+
+    private void preparePropertiesForStorageDisabledClient() {
+        //TODO: Add check for client specific configuration
+        if (clientCacheConfiguration != null) {
+            setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
+        }
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageDisabledClientRoleName);
+        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+    }
+
+    private void preparePropertiesForExtendProxyClient() {
+        //TODO: Add check for client specific configuration
+        if (clientCacheConfiguration != null) {
+            setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
+        }
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, "");
+        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
     }
 
     /**
@@ -230,7 +289,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setClientCacheConfiguration(final String cacheConfiguration) {
-        throw new UnsupportedOperationException();
+        this.clientCacheConfiguration = cacheConfiguration;
+
+        return this;
     }
 
     /**
@@ -350,14 +411,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setClassPath(final URL[] classPath) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ClusterMemberGroup.Builder setJarsToExcludeFromClassPath(final String... jarsToExcludeFromClassPath) {
         this.jarsToExcludeFromClassPath = jarsToExcludeFromClassPath;
 
@@ -402,95 +455,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return wkaPort;
     }
 
-    /**
-     * Convenience method to specifically create a group of cache servers and start them.
-     *
-     * @param numberOfMembers    Number of servers.
-     * @param cacheConfiguration cache configuration.
-     * @param properties         Properties.
-     * @param groupConfig        Cluster member group configuration.
-     * @param startImmediately   Indicates whether the group should be started immediately after creating.
-     * @return member group.
-     */
-    @Deprecated
-    private static ClusterMemberGroup createCacheServerGroup(int numberOfMembers,
-                                                             String cacheConfiguration,
-                                                             Properties properties,
-//                                                             ClusterMemberGroupConfig groupConfig,
-                                                             boolean startImmediately) {
-
-//        PropertyContainer container = internalCreateCacheServerPropertyContainerWithDefaults();
-//        container.addProperties(properties);
-//
-//        return createGenericClusterMemberGroup(numberOfMembers, cacheConfiguration, container.getProperties(),
-//                groupConfig, startImmediately);
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Convenience method to create a group of Extend proxy servers.
-     *
-     * @param numberOfMembers    Number of servers.
-     * @param cacheConfiguration cache configuration.
-     * @param properties         Properties.
-     * @param groupConfig        Cluster member group configuration.
-     * @param startImmediately   Indicates whether the group should be started immediately after creating.
-     * @return member group.
-     */
-    @Deprecated
-    private static ClusterMemberGroup createExtendProxyServerGroup(int numberOfMembers,
-                                                                   String cacheConfiguration,
-//                                                                   Properties properties,
-//                                                                   ClusterMemberGroupConfig groupConfig,
-                                                                   boolean startImmediately) {
-
-        throw new UnsupportedOperationException();
-//        if (numberOfMembers > 1) {
-//            throw new UnsupportedOperationException("Currently only one Extend proxy is supported in a group");
-//        }
-//
-//        PropertyContainer container = internalCreateExtendProxyServerPropertyContainerWithDefaults();
-//        container.addProperties(properties);
-//
-//        return createGenericClusterMemberGroup(numberOfMembers, cacheConfiguration, container.getProperties(),
-//                groupConfig, startImmediately);
-    }
-
-    /**
-     * Convenience method to specifically create a composite Extend proxy and cache server.
-     *
-     * @param cacheConfiguration cache configuration.
-     * @param properties         Properties.
-     * @param groupConfig        Cluster member group configuration.
-     * @param startImmediately   Indicates whether the group should be started immediately after creating.
-     * @return member group.
-     */
-    @Deprecated
-    private static ClusterMemberGroup createSingleCompositeProxyAndCacheServer(String cacheConfiguration,
-                                                                               Properties properties,
-//                                                                               ClusterMemberGroupConfig groupConfig,
-                                                                               boolean startImmediately) {
-
-//        PropertyContainer container = new PropertyContainer(properties);
-//        container.addProperty(CoherenceSystemPropertyConst.ROLE_NAME_KEY, "LocalProcessCombinedServer");
-//        container.addProperty(CoherenceSystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
-//
-//        return createExtendProxyServerGroup(1, cacheConfiguration, container.getProperties(),
-//                groupConfig, startImmediately);
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Convenience method to create a generic group of cluster members, typically the more specific create
-     * cache server member group and create Extend proxy server group would be used rather than this method.
-     *
-     * @param numberOfMembers    Number of servers.
-     * @param cacheConfiguration cache configuration.
-     * @param properties         Properties.
-     * @param groupConfig        Cluster member group configuration.
-     * @param startImmediately   Indicates whether the group should be started immediately after creating.
-     * @return member group.
-     */
     @Deprecated
     private static ClusterMemberGroup createGenericClusterMemberGroup(int numberOfMembers,
                                                                       String cacheConfiguration,
@@ -566,10 +530,36 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
-    @Deprecated
-    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final String numberOfThreadsInStartUpPool) {
-        setNumberOfThreadsInStartUpPool(Integer.parseInt(numberOfThreadsInStartUpPool));
+    private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPathUrls)
+            throws MalformedURLException {
 
-        return this;
+        //TODO: Pull out the JAR exclusion code if this feature seems like it will be required
+        String pathSeparator = System.getProperty("path.separator");
+        String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
+        String javaHome = System.getProperty("java.home");
+
+        List<URL> classPathUrls = new ArrayList<URL>();
+
+        for (String partOfClassPath : classPathArray) {
+            if (!partOfClassPath.startsWith(javaHome)) {
+                boolean found = false;
+
+                if (jarsToExcludeFromClassPathUrls != null) {
+                    for (String jarToExclude : jarsToExcludeFromClassPathUrls) {
+                        if (partOfClassPath.endsWith(jarToExclude)) {
+                            LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
+
+                            found = true;
+                        }
+                    }
+                }
+
+                if (!found) {
+                    classPathUrls.add(new File(partOfClassPath).toURI().toURL());
+                }
+            }
+        }
+
+        return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 }

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * Wrapper around a logger to provide consistent messages containing build information,
  * in the event of more severe log levels, additional information is also output.
  */
-public final class LoggerWrapper {
+public final class LoggerPlaceHolder {
     private final Logger logger;
 
     /**
@@ -17,7 +17,7 @@ public final class LoggerWrapper {
      *
      * @param name Logger name.
      */
-    public LoggerWrapper(final String name) {
+    public LoggerPlaceHolder(final String name) {
         this.logger = Logger.getLogger(name);
     }
 

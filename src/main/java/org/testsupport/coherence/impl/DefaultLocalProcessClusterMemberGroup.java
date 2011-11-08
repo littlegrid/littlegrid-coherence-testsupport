@@ -2,7 +2,7 @@ package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMember;
 import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.common.LoggerWrapper;
+import org.testsupport.common.LoggerPlaceHolder;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -23,10 +23,10 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
  * Default local process cluster member group implementation.
  */
 public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
-    private final LoggerWrapper logger = new LoggerWrapper(DefaultLocalProcessClusterMemberGroup.class.getName());
+    private final LoggerPlaceHolder logger = new LoggerPlaceHolder(DefaultLocalProcessClusterMemberGroup.class.getName());
     private boolean startInvoked;
-    private Properties systemPropertiesToBeApplied;
     private Properties systemPropertiesBeforeStartInvoked;
+    private Properties systemPropertiesToBeApplied;
     private List<Future<ClusterMemberDelegatingWrapper>> memberFutures;
     private int numberOfMembers;
     private URL[] classPathUrls;
@@ -55,61 +55,9 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             throw new IllegalStateException("Property container cannot be null");
         }
 
-        System.out.println("Check incoming arguments");
+        //TODO: Check incoming arguments
 
         this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
-
-        try {
-            if (classPathUrls == null) {
-                logger.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
-
-                this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
-     * Indicates if started has been invoked - be it regardless of whether the start attempt was successful or not.
-     *
-     * @return true if started has been invoked.
-     */
-    public boolean isStartInvoked() {
-        return startInvoked;
-    }
-
-    private URL[] getClassPathUrlsExcludingJavaHome(String... jarsToExcludeFromClassPathUrls)
-            throws MalformedURLException {
-
-        //TODO: Pull out the JAR exclusion code if this feature seems like it will be required
-        String pathSeparator = System.getProperty("path.separator");
-        String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
-        String javaHome = System.getProperty("java.home");
-
-        List<URL> classPathUrls = new ArrayList<URL>();
-
-        for (String partOfClassPath : classPathArray) {
-            if (!partOfClassPath.startsWith(javaHome)) {
-                boolean found = false;
-
-                if (jarsToExcludeFromClassPathUrls != null) {
-                    for (String jarToExclude : jarsToExcludeFromClassPathUrls) {
-                        if (partOfClassPath.endsWith(jarToExclude)) {
-                            logger.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
-
-                            found = true;
-                        }
-                    }
-                }
-
-                if (!found) {
-                    classPathUrls.add(new File(partOfClassPath).toURI().toURL());
-                }
-            }
-        }
-
-        return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
     /**
@@ -179,7 +127,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
                 Runtime.getRuntime().freeMemory() / oneMB));
     }
 
-    private ClusterMemberDelegatingWrapper getClusterMemberWrapper(int memberId) {
+    private ClusterMemberDelegatingWrapper getClusterMemberWrapper(final int memberId) {
         if (!startInvoked) {
             throw new IllegalStateException("Cluster member group never started");
         }
@@ -226,7 +174,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
      * {@inheritDoc}
      */
     @Override
-    public ClusterMember getClusterMember(int memberId) {
+    public ClusterMember getClusterMember(final int memberId) {
         if (!startInvoked) {
             logger.warning(format("Cluster member group never started - cannot get member '%s'", memberId));
 
@@ -242,7 +190,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup shutdownMember(int... memberIds) {
+    public ClusterMemberGroup shutdownMember(final int... memberIds) {
         if (!startInvoked) {
             logger.warning("Cluster member group never started - nothing to shutdown");
 
@@ -279,7 +227,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
 
         System.setProperties(systemPropertiesBeforeStartInvoked);
 
-        System.out.println("TODO, this should report the entire cluster size, not just this instance of the CMG");
+        //TODO: this should report the entire cluster size, not just this instance of the CMG
         logger.info(format("Shutting down '%d' cluster member(s) in group", numberOfMembers));
 
         try {
@@ -340,7 +288,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         }
 
 
-        System.out.println("TODO, this should report the entire cluster size, not just this instance of the CMG");
+        //TODO: this should report the entire cluster size, not just this instance of the CMG
         logger.info(format("Stopping '%d' cluster member(s) in this group", numberOfMembers));
 
         try {

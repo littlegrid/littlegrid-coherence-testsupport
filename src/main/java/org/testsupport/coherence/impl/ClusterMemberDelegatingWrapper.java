@@ -1,7 +1,7 @@
 package org.testsupport.coherence.impl;
 
 import org.testsupport.coherence.ClusterMember;
-import org.testsupport.common.LoggerWrapper;
+import org.testsupport.common.LoggerPlaceHolder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -14,7 +14,7 @@ import static java.lang.String.format;
  * the instance of the wrapped class.
  */
 class ClusterMemberDelegatingWrapper implements ClusterMember {
-    private LoggerWrapper logger = new LoggerWrapper(ClusterMemberDelegatingWrapper.class.getName());
+    private LoggerPlaceHolder logger = new LoggerPlaceHolder(ClusterMemberDelegatingWrapper.class.getName());
     private Object clusterMemberInstance;
 
     /**

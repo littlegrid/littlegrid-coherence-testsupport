@@ -17,6 +17,9 @@ import static org.junit.Assert.assertThat;
  */
 public abstract class AbstractClusterMemberGroupTest extends AbstractTest {
     protected static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE = "coherence/testsupport-cache-config.xml";
+    protected static final String EXTEND_CLIENT_CACHE_CONFIG_FILE = "coherence/testsupport-extend-client-cache-config.xml";
+    protected static final String KNOWN_TEST_CACHE = "known-cache";
+    protected static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
 
     protected static final int SINGLE_TEST_CLUSTER_SIZE = 1;
     protected static final int SMALL_TEST_CLUSTER_SIZE = 2;

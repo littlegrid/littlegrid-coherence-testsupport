@@ -12,8 +12,6 @@ import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMember
  * Cluster member group baseline tests.
  */
 public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
-    private static final String KNOWN_CACHE = "known-cache";
-
     @Test
     public void startAndShutdownSingleMemberGroup() {
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
@@ -35,7 +33,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
-        NamedCache cache = CacheFactory.getCache(KNOWN_CACHE);
+        NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
         cache.put("key", "value");
 
         memberGroup.shutdownAll();

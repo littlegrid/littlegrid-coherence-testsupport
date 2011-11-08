@@ -1,6 +1,5 @@
 package org.testsupport.coherence;
 
-import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Ignore;
@@ -24,7 +23,7 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
         throw new UnsupportedOperationException();
 //        setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
 
-//        NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
+//        NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
 //
 //        try {
 //            cache.put("doesn't matter", "no storage enabled members, so will throw runtime exception");
@@ -53,7 +52,7 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                     .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
 
-            NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
+            NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
             cache.put("any key", "storage enabled member(s) should be present, so this will be cached");
         } finally {
             shutdownCacheFactoryThenClusterMemberGroups(storageEnabledGroup, extendProxyGroup);
@@ -69,7 +68,7 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
             memberGroup = newClusterMemberGroupBuilder().setStorageEnabledExtendProxyCount(1)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
-            NamedCache cache = CacheFactory.getCache(EXTEND_TEST_CACHE);
+            NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
             cache.put("any key", "single combined extend proxy and stored enabled member, so this will be cached");
         } finally {
             shutdownCacheFactoryThenClusterMemberGroups(memberGroup);

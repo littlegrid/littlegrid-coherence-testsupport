@@ -2,7 +2,7 @@ package org.testsupport.coherence;
 
 import com.tangosol.net.CacheFactory;
 import org.testsupport.coherence.impl.DefaultClusterMemberGroupBuilder;
-import org.testsupport.common.LoggerWrapper;
+import org.testsupport.common.LoggerPlaceHolder;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -11,7 +11,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * Cluster member group factory.
  */
 public final class ClusterMemberGroupUtils {
-    private static final LoggerWrapper LOGGER = new LoggerWrapper(ClusterMemberGroupUtils.class.getName());
+    private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(ClusterMemberGroupUtils.class.getName());
 
     private static final float COHERENCE_VERSION_3_5 = 3.5f;
     private static final float COHERENCE_VERSION_3_6 = 3.6f;

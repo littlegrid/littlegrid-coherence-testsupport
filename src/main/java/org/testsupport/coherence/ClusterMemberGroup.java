@@ -61,11 +61,10 @@ public interface ClusterMemberGroup {
         ClusterMemberGroup build();
 
         Builder setCacheConfiguration(String cacheConfiguration);
-
         Builder setStorageEnabledSpecificCacheConfiguration(String cacheConfiguration);
         Builder setExtendProxySpecificCacheConfiguration(String cacheConfiguration);
-        Builder setClientCacheConfiguration(String cacheConfiguration);
         Builder setOverrideConfiguration(String overrideConfiguration);
+        Builder setClientCacheConfiguration(String cacheConfiguration);
         Builder setClientOverrideConfiguration(String overrideConfiguration);
 
         Builder setSystemProperties(Properties properties);
@@ -79,18 +78,11 @@ public interface ClusterMemberGroup {
         Builder setExtendProxyCount(int numberOfMembers);
         int getExtendProxyCount();
 
-        Builder setStorageEnabledRoleName(String roleName);
-        Builder setStorageEnabledExtendProxyRoleName(String roleName);
-        Builder setExtendProxyRoleName(String roleName);
-        Builder setStorageDisabledClientRoleName(String roleName);
-
         Builder setLogLevel(int logLevel);
         int getLogLevel();
 
         Builder setClusterMemberInstanceClassName(String clusterMemberInstanceClassName);
         String getClusterMemberInstanceClassName();
-
-        Builder setClassPath(URL[] classPathUrls);
 
         Builder setJarsToExcludeFromClassPath(String... jarsToExcludeFromClassPath);
 
@@ -101,7 +93,6 @@ public interface ClusterMemberGroup {
         int getWkaPort();
 
         Builder setNumberOfThreadsInStartUpPool(int numberOfThreadsInStartUpPool);
-
         int getNumberOfThreadsInStartUpPool();
 
         Builder setBuilder(Properties properties);

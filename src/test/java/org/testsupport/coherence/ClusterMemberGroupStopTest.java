@@ -1,5 +1,6 @@
 package org.testsupport.coherence;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -47,5 +48,11 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         memberGroup.shutdownAll();
+    }
+
+    @Test
+    @Ignore
+    public void attemptToStopMoreThanOneMember() {
+        throw new UnsupportedOperationException();
     }
 }
