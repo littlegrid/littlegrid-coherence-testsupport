@@ -55,6 +55,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private String extendProxyRoleName;
     private String storageEnabledExtendProxyRoleName;
     private String ttl;
+    private Properties extendProxySpecificSystemProperties;
 
 
     //TODO: Think about JMX
@@ -226,6 +227,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
 
         setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
+
+        if (extendProxySpecificSystemProperties != null) {
+            systemProperties.putAll(extendProxySpecificSystemProperties);
+        }
     }
 
     private void preparePropertiesForStorageEnabledExtendProxy() {
@@ -328,6 +333,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup.Builder setSystemProperties(final Properties properties) {
         this.systemProperties = properties;
+
+        return this;
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setExtendProxySpecificSystemProperties(final Properties properties) {
+        this.extendProxySpecificSystemProperties = properties;
 
         return this;
     }
@@ -466,8 +478,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     @Override
-    public ClusterMemberGroup.Builder setBuilder(Properties properties) {
-        throw new UnsupportedOperationException();
+    public ClusterMemberGroup.Builder setBuilderProperties(final Properties properties) {
+        BeanUtils.processProperties(this, properties);
+
+        return this;
     }
 
     public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
@@ -509,5 +523,47 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
+    }
+
+    /*
+        Below setter are required when using older versions of Coherence, such as 3.5.x - this is because the
+        reflection updater doesn't seem to set integer values.
+
+        TODO: Look at why integer values don't get set.
+     */
+    public ClusterMemberGroup.Builder setWkaPort(final String wkaPort) {
+        setWkaPort(Integer.parseInt(wkaPort));
+
+        return this;
+    }
+
+    public ClusterMemberGroup.Builder setStorageEnabledCount(final String numberOfMembers) {
+        setStorageEnabledCount(Integer.parseInt(numberOfMembers));
+
+        return this;
+    }
+
+    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyCount(final String numberOfMembers) {
+        setStorageEnabledExtendProxyCount(Integer.parseInt(numberOfMembers));
+
+        return this;
+    }
+
+    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final String numberOfThreadsInStartUpPool) {
+        setNumberOfThreadsInStartUpPool(Integer.parseInt(numberOfThreadsInStartUpPool));
+
+        return this;
+    }
+
+    public ClusterMemberGroup.Builder setExtendProxyCount(final String numberOfMembers) {
+        setExtendProxyCount(Integer.parseInt(numberOfMembers));
+
+        return this;
+    }
+
+    public ClusterMemberGroup.Builder setLogLevel(final String logLevel) {
+        setLogLevel(Integer.parseInt(logLevel));
+
+        return this;
     }
 }

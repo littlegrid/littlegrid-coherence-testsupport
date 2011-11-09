@@ -68,6 +68,7 @@ public interface ClusterMemberGroup {
         Builder setClientOverrideConfiguration(String overrideConfiguration);
 
         Builder setSystemProperties(Properties properties);
+        Builder setExtendProxySpecificSystemProperties(Properties properties);
 
         Builder setStorageEnabledCount(int numberOfMembers);
         int getStorageEnabledCount();
@@ -92,6 +93,6 @@ public interface ClusterMemberGroup {
         Builder setWkaPort(int wkaPort);
         int getWkaPort();
 
-        Builder setBuilder(Properties properties);
+        Builder setBuilderProperties(Properties properties);
     }
 }

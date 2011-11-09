@@ -102,5 +102,12 @@ public class BeanUtilsTest extends AbstractTest {
         public void setAge(final int age) {
             this.age = age;
         }
+
+        /*
+            Required for older Coherence versions, such as 3.5.x
+         */
+        public void setAge(final String age) {
+            setAge(Integer.parseInt(age));
+        }
     }
 }

@@ -71,6 +71,8 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         memberFutures.addAll(memberGroup.getMemberFutures());
         startInvoked = true;
 
+        numberOfMembers = memberFutures.size();
+
         return memberFutures.size();
     }
 
