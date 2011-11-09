@@ -12,9 +12,9 @@
     <name>${project.artifactId}</name>
 
     <scm>
-        <connection>scm:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</connection>
-        <developerConnection>scm:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</developerConnection>
-        <url>https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</url>
+        <connection>scm:git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</connection>
+        <developerConnection>scm:git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</developerConnection>
+        <url>git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</url>
     </scm>
 
     <dependencies>
