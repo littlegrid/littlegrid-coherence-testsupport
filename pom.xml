@@ -12,15 +12,9 @@
     <name>${project.artifactId}</name>
 
     <scm>
-        <!--
-                <connection>
-                    scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
-                </connection>
-                <developerConnection>
-                    scm:svn:http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12
-                </developerConnection>
-                <url>http://192.168.1.151/svn/incubator/rainbow/tumbleweed/tags/local-process-coherence-testsupport-1.12</url>
-        -->
+        <connection>scm:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</connection>
+        <developerConnection>scm:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</developerConnection>
+        <url>https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</url>
     </scm>
 
     <dependencies>
@@ -31,30 +25,30 @@
             <scope>test</scope>
         </dependency>
 
-<!--
-        <dependency>
-            <groupId>oracle</groupId>
-            <artifactId>coherence</artifactId>
-            <version>3.5.3b465</version>
-            <scope>provided</scope>
-        </dependency>
--->
-<!--
-        <dependency>
-            <groupId>oracle</groupId>
-            <artifactId>coherence</artifactId>
-            <version>3.6.1.0</version>
-            <scope>provided</scope>
-        </dependency>
--->
-<!--
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>coherence</artifactId>
-            <version>3.7.0.0</version>
-            <scope>provided</scope>
-        </dependency>
--->
+        <!--
+                <dependency>
+                    <groupId>oracle</groupId>
+                    <artifactId>coherence</artifactId>
+                    <version>3.5.3b465</version>
+                    <scope>provided</scope>
+                </dependency>
+        -->
+        <!--
+                <dependency>
+                    <groupId>oracle</groupId>
+                    <artifactId>coherence</artifactId>
+                    <version>3.6.1.0</version>
+                    <scope>provided</scope>
+                </dependency>
+        -->
+        <!--
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>coherence</artifactId>
+                    <version>3.7.0.0</version>
+                    <scope>provided</scope>
+                </dependency>
+        -->
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>coherence</artifactId>
