@@ -86,6 +86,8 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
      * @return member group.
      */
     public ClusterMemberGroup startAll() {
+        //TODO: Provide option to not stagger the start-up, e.g. for an additional member group to be
+        // started to join an established cluster.
         if (startInvoked) {
             return this;
         }
@@ -143,7 +145,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
         logger.fine(format("Current Coherence applied...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
         logger.info(format("Server system applied to set: %s", systemPropertiesToBeApplied));
-        logger.fine(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
+        logger.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,
                 Runtime.getRuntime().freeMemory() / oneMB));

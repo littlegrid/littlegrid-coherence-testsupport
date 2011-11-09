@@ -77,6 +77,8 @@ public final class LoggerPlaceHolder {
     }
 
     private String getAdditionalInformationToLog() {
+        final int oneMB = 1024 * 1024;
+
         StringBuilder sb = new StringBuilder(".  Additional info: ");
 
         try {
@@ -89,6 +91,10 @@ public final class LoggerPlaceHolder {
         } catch (UnknownHostException e) {
             sb.append("Unable to determine hostname/IP address");
         }
+
+        sb.append(".  Free memory: ");
+        sb.append(Runtime.getRuntime().freeMemory() / oneMB);
+        sb.append("MB");
 
         return sb.toString();
     }

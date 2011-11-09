@@ -33,9 +33,13 @@ final class BeanUtils {
 
             try {
                 manipulator.getUpdater().update(bean, value);
-            } catch (RuntimeException e) {
+            } catch (RuntimeException originalException) {
                 //TODO: This is a bit rough but is functional for now
-                manipulator.getUpdater().update(bean, Integer.parseInt(value));
+                try {
+                    manipulator.getUpdater().update(bean, Integer.parseInt(value));
+                } catch (RuntimeException exceptionToBeIgnoredBecauseOriginalShouldBeThrown) {
+                    throw originalException;
+                }
             }
 
             propertiesSetCounter++;

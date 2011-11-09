@@ -15,6 +15,7 @@ import static java.lang.String.format;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.CACHE_CONFIGURATION_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.EXTEND_ENABLED_KEY;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.EXTEND_PORT_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOCAL_ADDRESS_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOCAL_PORT_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOG_LEVEL_KEY;
@@ -54,8 +55,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private String clientCacheConfiguration;
     private String extendProxyRoleName;
     private String storageEnabledExtendProxyRoleName;
-    private String ttl;
     private Properties extendProxySpecificSystemProperties;
+    private int extendPort;
+    private String extendClientRoleName;
+    private int ttl;
 
 
     //TODO: Think about JMX
@@ -63,40 +66,32 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 //            properties.addSystemProperty(MANAGEMENT_REMOTE_KEY, "true");
 //            properties.addSystemProperty(JMXREMOTE_KEY, "");
 
-    public String getStorageEnabledRoleName() {
-        return storageEnabledRoleName;
-    }
-
     public ClusterMemberGroup.Builder setStorageEnabledRoleName(String storageEnabledRoleName) {
         this.storageEnabledRoleName = storageEnabledRoleName;
 
         return this;
     }
 
-    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(String roleName) {
+    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
         this.storageEnabledExtendProxyRoleName = roleName;
 
         return this;
     }
 
-    public ClusterMemberGroup.Builder setExtendProxyRoleName(String roleName) {
+    public ClusterMemberGroup.Builder setExtendProxyRoleName(final String roleName) {
         this.extendProxyRoleName = roleName;
 
         return this;
     }
 
-    public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(String roleName) {
+    public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(final String roleName) {
         this.storageDisabledClientRoleName = roleName;
 
         return this;
     }
 
-    public String getTtl() {
-        return ttl;
-    }
-
-    public ClusterMemberGroup.Builder setTtl(String ttl) {
-        this.ttl = ttl;
+    public ClusterMemberGroup.Builder setExtendClientRoleName(final String roleName) {
+        this.extendClientRoleName = roleName;
 
         return this;
     }
@@ -196,37 +191,32 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void preparePropertiesForStorageEnabled() {
-        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
-        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
-        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
-        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageEnabledRoleName);
+        preparePropertiesForTcmpClusterMember();
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
 
         setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, cacheConfiguration);
         setSystemPropertyWhenValid(OVERRIDE_KEY, overrideConfiguration);
 
-        setSystemPropertyWhenValid(TTL_KEY, ttl);
-        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageEnabledRoleName);
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
     }
 
     private void preparePropertiesForExtendProxy() {
-        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
-        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
-        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
-        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, extendProxyRoleName);
+        preparePropertiesForTcmpClusterMember();
+
+        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
 
         setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, cacheConfiguration);
         setSystemPropertyWhenValid(OVERRIDE_KEY, overrideConfiguration);
 
-        setSystemPropertyWhenValid(TTL_KEY, ttl);
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, extendProxyRoleName);
+
         setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
-
         setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(EXTEND_PORT_KEY, Integer.toString(extendPort));
 
         if (extendProxySpecificSystemProperties != null) {
             systemProperties.putAll(extendProxySpecificSystemProperties);
@@ -234,32 +224,42 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void preparePropertiesForStorageEnabledExtendProxy() {
-        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
-        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
-        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
-        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageEnabledExtendProxyRoleName);
+        preparePropertiesForTcmpClusterMember();
 
         setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, cacheConfiguration);
         setSystemPropertyWhenValid(OVERRIDE_KEY, overrideConfiguration);
 
-        setSystemPropertyWhenValid(TTL_KEY, ttl);
-        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
-
         setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
 
+        setSystemPropertyWhenValid(LOG_LEVEL_KEY, Integer.toString(logLevel));
+
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, storageEnabledExtendProxyRoleName);
+
         setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(EXTEND_PORT_KEY, Integer.toString(extendPort));
     }
 
     private void preparePropertiesForStorageDisabledClient() {
+        preparePropertiesForTcmpClusterMember();
+
         //TODO: Add check for client specific configuration
         if (clientCacheConfiguration != null) {
             setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
         }
 
         setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+
         setSystemPropertyWhenValid(ROLE_NAME_KEY, storageDisabledClientRoleName);
+
         setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+    }
+
+    private void preparePropertiesForTcmpClusterMember() {
+        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
+        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
+        setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
+        setSystemPropertyWhenValid(LOCAL_PORT_KEY, Integer.toString(localPort));
+        setSystemPropertyWhenValid(TTL_KEY, Integer.toString(ttl));
     }
 
     private void preparePropertiesForExtendProxyClient() {
@@ -269,8 +269,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, "");
+        setSystemPropertyWhenValid(ROLE_NAME_KEY, extendClientRoleName);
         setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(EXTEND_PORT_KEY, Integer.toString(extendPort));
     }
 
     /**
@@ -469,12 +470,25 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    public ClusterMemberGroup.Builder setTtl(final int ttl) {
+        this.ttl = ttl;
+
+        return this;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int getWkaPort() {
         return wkaPort;
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setExtendPort(final int extendPort) {
+        this.extendPort = extendPort;
+
+        return this;
     }
 
     @Override
@@ -525,7 +539,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
-    /*
+
+    /**********************************************************************************************************
         Below setter are required when using older versions of Coherence, such as 3.5.x - this is because the
         reflection updater doesn't seem to set integer values.
 
@@ -563,6 +578,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     public ClusterMemberGroup.Builder setLogLevel(final String logLevel) {
         setLogLevel(Integer.parseInt(logLevel));
+
+        return this;
+    }
+
+    public ClusterMemberGroup.Builder setExtendPort(final String extendPort) {
+        setExtendPort(Integer.parseInt(extendPort));
+
+        return this;
+    }
+
+    public ClusterMemberGroup.Builder setTtl(final String ttl) {
+        setTtl(Integer.parseInt(ttl));
 
         return this;
     }

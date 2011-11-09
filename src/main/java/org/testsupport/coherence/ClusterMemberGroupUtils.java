@@ -118,7 +118,8 @@ public final class ClusterMemberGroupUtils {
     }
 
     private static void sleepForSeconds(final int seconds) {
-        LOGGER.info(format("Coherence '%s' - will now sleep for '%s' seconds to allow member left to be acknowledged",
+        LOGGER.info(format(
+                "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
                 CacheFactory.VERSION, seconds));
 
         try {

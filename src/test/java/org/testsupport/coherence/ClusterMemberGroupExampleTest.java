@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -100,10 +101,31 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
 
     @Test
     @Ignore
-    public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember() {
-        throw new UnsupportedOperationException();
+    public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember()
+            throws IOException {
 
-        // Different Extend proxy ports
+        Properties cluster1Properties = new Properties();
+        cluster1Properties.load(this.getClass().getClassLoader()
+                .getResourceAsStream("properties/memberGroup1.properties"));
+
+        Properties cluster2Properties = new Properties();
+        cluster2Properties.load(this.getClass().getClassLoader()
+                .getResourceAsStream("properties/memberGroup2.properties"));
+
+        ClusterMemberGroup memberGroup1 = null;
+        ClusterMemberGroup memberGroup2 = null;
+
+        try {
+            memberGroup1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setBuilderProperties(cluster1Properties).build();
+
+            memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setBuilderProperties(cluster2Properties).build();
+
+            performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
+        } finally {
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
+        }
     }
 
     private void performSimplePutSizeGet(final String cacheName) {

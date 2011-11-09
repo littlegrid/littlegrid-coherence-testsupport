@@ -16,6 +16,7 @@ public class CoherenceSystemPropertyConst {
     public static final String ROLE_NAME_KEY = TANGOSOL_COHERENCE_DOT + "role";
     public static final String DISTRIBUTED_LOCAL_STORAGE_KEY = TANGOSOL_COHERENCE_DOT + "distributed.localstorage";
     public static final String EXTEND_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "extend.enabled";
+    public static final String EXTEND_PORT_KEY = TANGOSOL_COHERENCE_DOT + "extend.port";
     public static final String TCMP_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "tcmp.enabled";
     public static final String WKA_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "wka";
     public static final String WKA_PORT_KEY = TANGOSOL_COHERENCE_DOT + "wka.port";

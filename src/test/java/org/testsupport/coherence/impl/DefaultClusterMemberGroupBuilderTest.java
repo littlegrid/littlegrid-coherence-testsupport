@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
  */
 public class DefaultClusterMemberGroupBuilderTest {
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
-    private static final int DEFAULT_PORT = 12501;
+    private static final int DEFAULT_PORT = 21000;
 
     @Test
     public void createAndCheckDefaults() {

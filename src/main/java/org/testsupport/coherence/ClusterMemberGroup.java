@@ -93,6 +93,8 @@ public interface ClusterMemberGroup {
         Builder setWkaPort(int wkaPort);
         int getWkaPort();
 
+        Builder setExtendPort(int extendPort);
+
         Builder setBuilderProperties(Properties properties);
     }
 }
