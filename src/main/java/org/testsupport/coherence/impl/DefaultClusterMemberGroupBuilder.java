@@ -22,6 +22,7 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.LOG_LEVEL_K
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.OVERRIDE_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.ROLE_NAME_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT;
+import static org.testsupport.coherence.CoherenceSystemPropertyConst.TCMP_ENABLED_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.TTL_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_ADDRESS_KEY;
 import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KEY;
@@ -255,6 +256,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void preparePropertiesForTcmpClusterMember() {
+        setSystemPropertyWhenValid(TCMP_ENABLED_KEY, Boolean.TRUE.toString());
         setSystemPropertyWhenValid(WKA_ADDRESS_KEY, wkaAddress);
         setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, localAddress);
         setSystemPropertyWhenValid(WKA_PORT_KEY, Integer.toString(wkaPort));
@@ -269,6 +271,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(TCMP_ENABLED_KEY, Boolean.FALSE.toString());
         setSystemPropertyWhenValid(ROLE_NAME_KEY, extendClientRoleName);
         setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
         setSystemPropertyWhenValid(EXTEND_PORT_KEY, Integer.toString(extendPort));
@@ -359,27 +362,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public int getStorageEnabledCount() {
-        return storageEnabledCount;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ClusterMemberGroup.Builder setStorageEnabledExtendProxyCount(final int numberOfMembers) {
         this.storageEnabledExtendProxyCount = numberOfMembers;
 
         return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-
-    @Override
-    public int getStorageEnabledExtendProxyCount() {
-        return storageEnabledExtendProxyCount;
     }
 
     /**
@@ -392,24 +378,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getExtendProxyCount() {
-        return extendProxyCount;
-    }
-
     @Override
     public ClusterMemberGroup.Builder setLogLevel(final int logLevel) {
         this.logLevel = logLevel;
 
         return this;
-    }
-
-    @Override
-    public int getLogLevel() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -420,14 +393,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
 
         return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getClusterMemberInstanceClassName() {
-        return clusterMemberInstanceClassName;
     }
 
     /**
@@ -449,14 +414,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         this.localAddress = this.wkaAddress;
 
         return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWkaAddress() {
-        return wkaAddress;
     }
 
     /**

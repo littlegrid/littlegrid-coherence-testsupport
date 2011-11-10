@@ -3,15 +3,21 @@ package org.testsupport.coherence;
 /**
  * Coherence system property constants.
  */
-public class CoherenceSystemPropertyConst {
+public final class CoherenceSystemPropertyConst {
     /**
      * Private constructor to prevent creation.
      */
     private CoherenceSystemPropertyConst() {
     }
 
+    /**
+     * Constant for defining standard: tangosol.coherence
+     */
     public static final String TANGOSOL_COHERENCE_DOT = "tangosol.coherence.";
 
+    /**
+     * Constant for standard log level system property.
+     */
     public static final String LOG_LEVEL_KEY = TANGOSOL_COHERENCE_DOT + "log.level";
     public static final String ROLE_NAME_KEY = TANGOSOL_COHERENCE_DOT + "role";
     public static final String DISTRIBUTED_LOCAL_STORAGE_KEY = TANGOSOL_COHERENCE_DOT + "distributed.localstorage";

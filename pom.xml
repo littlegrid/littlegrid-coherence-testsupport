@@ -201,6 +201,10 @@
         <javadoc.plugin.version>2.7</javadoc.plugin.version>
         <checkstyle.version>2.7</checkstyle.version>
 
+        <!--
+[INFO] [WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-deploy-plugin is missing.
+[INFO] [WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing.
+[        -->
         <checkstyle.configuration.file>tweaked_sun_checks.xml</checkstyle.configuration.file>
     </properties>
 </project>

@@ -1,12 +1,11 @@
 package org.testsupport.coherence;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
 /**
- * Cluster member group, a collection of cluster members enabling them to be controlled as a group or
- * individually for some operations.
+ * Cluster member group, a collection of cluster members enabling them to be controlled as a
+ * group or individually for some operations.
  */
 public interface ClusterMemberGroup {
     /**
@@ -57,44 +56,201 @@ public interface ClusterMemberGroup {
     /**
      * Builder interface for cluster member group.
      */
-    static interface Builder {
+    interface Builder {
+        /**
+         * Builds and returns a running cluster member group, based upon the default values and
+         * any values that have been overridden or explicitly set.
+         *
+         * @return running cluster member group.
+         */
         ClusterMemberGroup build();
 
+        /**
+         * Sets the cache configuration to be used for the cluster member groups, this is used
+         * for configurations where all TCMP members (storage enabled, Extend proxy and
+         * storage disabled) use the same configuration then this will serve as the only cache
+         * configuration file needing to be used (note: specific cache configurations can set
+         * via other methods).
+         *
+         * @param cacheConfiguration Cache configuration.
+         * @return cluster member group builder.
+         */
         Builder setCacheConfiguration(String cacheConfiguration);
+
+        /**
+         * Sets the cache configuration file to be used specifically for the storage enabled
+         * members of the group.
+         *
+         * @param cacheConfiguration Cache configuration.
+         * @return cluster member group builder.
+         */
         Builder setStorageEnabledSpecificCacheConfiguration(String cacheConfiguration);
+
+        /**
+         * Sets the cache configuration file to be used specifically for the Extend proxy
+         * members of the group.
+         *
+         * @param cacheConfiguration Cache configuration.
+         * @return cluster member group builder.
+         */
         Builder setExtendProxySpecificCacheConfiguration(String cacheConfiguration);
+
+        /**
+         * Sets the Coherence override file to be used for the cluster member groups, this is
+         * used for configurations where all TCMP members (storage enabled, Extend proxy and
+         * storage disabled) use the same configuration.
+         *
+         * @param overrideConfiguration Override configuration.
+         * @return cluster member group builder.
+         */
         Builder setOverrideConfiguration(String overrideConfiguration);
+
+        /**
+         * Sets the client specific cache configuration file, for instance Extend based clients.
+         *
+         * @param cacheConfiguration Cache configuration.
+         * @return cluster member group builder.
+         */
         Builder setClientCacheConfiguration(String cacheConfiguration);
+
+        /**
+         * Sets the specific Coherence override file to be used, for instance when using Extend
+         * based clients or when a client requires a different override file (perhaps because the
+         * server cluster members need to be required with the SpringAwareCacheFactory).
+         *
+         * @param overrideConfiguration Override configuration.
+         * @return cluster member group builder.
+         */
         Builder setClientOverrideConfiguration(String overrideConfiguration);
 
+        /**
+         * Used to set any remaining system properties that are required, for instance if the
+         * standard Coherence names for system properties aren't being used - i.e. a different
+         * named property is used for enabling distributed local storage.
+         *
+         * @param properties Properties to be turned into system properties.
+         * @return cluster member group builder.
+         */
         Builder setSystemProperties(Properties properties);
+
+        /**
+         * Used to set any remaining Extend proxy specific system properties that are required, for
+         * instance if the standard Coherence names for system properties aren't being used - i.e.
+         * a different named property is used for enabling Extend.
+         *
+         * @param properties Properties to be turned into system properties.
+         * @return cluster member group builder.
+         */
         Builder setExtendProxySpecificSystemProperties(Properties properties);
 
+        /**
+         * Sets the number of storage enabled members (i.e. 'cache servers') the cluster member
+         * group should contain.
+         *
+         * @param numberOfMembers Number of members required.
+         * @return cluster member group builder.
+         */
         Builder setStorageEnabledCount(int numberOfMembers);
-        int getStorageEnabledCount();
 
+        /**
+         * Sets the number of storage enabled Extend proxy members (i.e. composite members running
+         * Extend and as a 'cache server').
+         *
+         * @param numberOfMembers Number of members.
+         * @return cluster member group builder.
+         */
         Builder setStorageEnabledExtendProxyCount(int numberOfMembers);
-        int getStorageEnabledExtendProxyCount();
 
+        /**
+         * Sets the number of Extend proxy members the cluster member group should contain.
+         *
+         * @param numberOfMembers Number of members.
+         * @return cluster member group builder.
+         */
         Builder setExtendProxyCount(int numberOfMembers);
-        int getExtendProxyCount();
 
+        /**
+         * Sets the log level that the cluster members should run with.
+         *
+         * @param logLevel Log level (standard Coherence 0-9).
+         * @return cluster member group builder.
+         */
         Builder setLogLevel(int logLevel);
-        int getLogLevel();
 
+        /**
+         * Sets the cluster member instance class name, essentially instances of this class act as
+         * cluster members - usually the default will suffice and this will not need to be changed,
+         * examples where a different instance class name might be required are if specific control
+         * is required before starting up a cluster member or shutting one down.
+         *
+         * @param clusterMemberInstanceClassName Class name from which instances of cluster members
+         *                                       are created.
+         * @return cluster member group builder.
+         */
         Builder setClusterMemberInstanceClassName(String clusterMemberInstanceClassName);
-        String getClusterMemberInstanceClassName();
 
+        /**
+         * Sets the names of specific JAR files to be excluded from the class loading of the
+         * cluster members, this is useful if JMX JARs or JDBC drivers are resulting in (inert)
+         * warning or error messages when starting the cluster member.
+         *
+         * @param jarsToExcludeFromClassPath Jars to be excluded, in the form of
+         *                                   name-of-the-jar-to-exclude.jar
+         * @return cluster member group builder.
+         */
         Builder setJarsToExcludeFromClassPath(String... jarsToExcludeFromClassPath);
 
+        /**
+         * Sets the well-known address which is used to control which IP address/hostname that
+         * Coherence should use - typically this value does not need to be changed, but in the
+         * case of problems starting cluster members with the default then other IP addresses
+         * on the machine can be tried.
+         *
+         * @param wkaAddress Well-known address, e.g. localhost or xxx.xxx.xxx.xxx IP address.
+         * @return cluster member group builder.
+         */
         Builder setWkaAddress(String wkaAddress);
-        String getWkaAddress();
 
+        /**
+         * Sets the well-known address port which is to be used, typically the default value will
+         * suffice, but when the need to run with two separate autonomous clusters is required,
+         * then this value will need to be changed for one of the clusters - otherwise all the
+         * cluster members will simply join the same cluster.
+         *
+         * @param wkaPort Well-known port, e.g. 12345.
+         * @return cluster member group builder.
+         */
         Builder setWkaPort(int wkaPort);
+
+        /**
+         * Returns the well-known port, this is useful to working out what the default value is
+         * and then subsequently setting it to a different number when running two autonomous
+         * clusters.
+         *
+         * @return cluster member group builder.
+         */
         int getWkaPort();
 
+        /**
+         * Sets the Extend port that the Extend proxy should listen on and for which the Extend
+         * client should connect to the Extend proxy server.
+         *
+         * @param extendPort Extend port, e.g. 23451.
+         * @return cluster member group builder.
+         */
         Builder setExtendPort(int extendPort);
 
+        /**
+         * Sets the builder properties to be used, these will override any defaults - using
+         * properties is useful if the configuration is required to be externalised, rather than
+         * the builder being controlled through code.
+         *
+         * @param properties Properties containing overrides, the keys should match the methods
+         *                   exposed on this cluster member group builder interface, minus the
+         *                   'set' - so for example to set the WKA port, the entry in the properties
+         *                   file would look like WkaPort=345612
+         * @return cluster member group builder.
+         */
         Builder setBuilderProperties(Properties properties);
     }
 }
