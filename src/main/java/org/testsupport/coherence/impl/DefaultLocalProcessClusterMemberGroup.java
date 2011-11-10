@@ -4,8 +4,6 @@ import org.testsupport.coherence.ClusterMember;
 import org.testsupport.coherence.ClusterMemberGroup;
 import org.testsupport.common.LoggerPlaceHolder;
 
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +26,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
     private Properties systemPropertiesToBeApplied;
-    private List<Future<ClusterMemberDelegatingWrapper>> memberFutures =
+    private final List<Future<ClusterMemberDelegatingWrapper>> memberFutures =
             new ArrayList<Future<ClusterMemberDelegatingWrapper>>();
     private int numberOfMembers;
     private URL[] classPathUrls;
@@ -39,7 +37,12 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
     /**
      * Constructor.
      *
-     * @param systemPropertiesToBeApplied System systemPropertiesToBeApplied.
+     * @param numberOfMembers                Number of members.
+     * @param systemPropertiesToBeApplied    System properties to be applied.
+     * @param classPathUrls                  Class path.
+     * @param jarsToExcludeFromClassPath     JARs to be excluded from class path.
+     * @param clusterMemberInstanceClassName Class name of cluster member instance.
+     * @param numberOfThreadsInStartUpPool   Number of threads in start-up pool.
      */
     public DefaultLocalProcessClusterMemberGroup(final int numberOfMembers,
                                                  final Properties systemPropertiesToBeApplied,
@@ -67,8 +70,11 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
     }
 
-    int merge(DefaultLocalProcessClusterMemberGroup memberGroup) {
-        memberFutures.addAll(memberGroup.getMemberFutures());
+    int merge(final ClusterMemberGroup memberGroup) {
+        DefaultLocalProcessClusterMemberGroup defaultClusterMemberGroup =
+                (DefaultLocalProcessClusterMemberGroup) memberGroup;
+
+        memberFutures.addAll(defaultClusterMemberGroup.getMemberFutures());
         startInvoked = true;
 
         numberOfMembers = memberFutures.size();
@@ -143,7 +149,8 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        logger.fine(format("Current Coherence applied...: %s", SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
+        logger.fine(format("Current Coherence applied...: %s",
+                SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
         logger.info(format("Server system applied to set: %s", systemPropertiesToBeApplied));
         logger.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
@@ -251,7 +258,6 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
 
         System.setProperties(systemPropertiesBeforeStartInvoked);
 
-        //TODO: this should report the entire cluster size, not just this instance of the CMG
         logger.info(format("Shutting down '%d' cluster member(s) in group", numberOfMembers));
 
         try {
@@ -276,7 +282,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup stopMember(int... memberIds) {
+    public ClusterMemberGroup stopMember(final int... memberIds) {
         if (!startInvoked) {
             logger.warning("Cluster member group never started - nothing to ");
 
@@ -311,8 +317,6 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
             return this;
         }
 
-
-        //TODO: this should report the entire cluster size, not just this instance of the CMG
         logger.info(format("Stopping '%d' cluster member(s) in this group", numberOfMembers));
 
         try {

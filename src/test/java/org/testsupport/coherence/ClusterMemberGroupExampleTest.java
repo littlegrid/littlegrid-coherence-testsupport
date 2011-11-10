@@ -100,7 +100,6 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     }
 
     @Test
-    @Ignore
     public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember()
             throws IOException {
 

@@ -31,16 +31,7 @@ final class BeanUtils {
             final String value = properties.getProperty(key);
             final ValueManipulator manipulator = new PropertyManipulator(key);
 
-            try {
-                manipulator.getUpdater().update(bean, value);
-            } catch (RuntimeException originalException) {
-                //TODO: This is a bit rough but is functional for now
-                try {
-                    manipulator.getUpdater().update(bean, Integer.parseInt(value));
-                } catch (RuntimeException exceptionToBeIgnoredBecauseOriginalShouldBeThrown) {
-                    throw originalException;
-                }
-            }
+            manipulator.getUpdater().update(bean, value);
 
             propertiesSetCounter++;
         }

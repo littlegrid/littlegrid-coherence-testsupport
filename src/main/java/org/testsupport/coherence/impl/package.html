@@ -1,5 +1,17 @@
 <html>
 <body>
-Implementation classes for cluster member group.
+Implementation classes for cluster member group - typically these should suffice unless the behaviour
+needs to be changed - possible use cases requiring a different implementation might be if specialised
+start-up or shutdown was required, for instance if a cluster member should bind to a queue or perhaps
+initialise a database connection pool or maybe perform specialised wiring before the cluster member
+was started.
+<p />
+If specialised behaviour was required and good examples might be needing to control things that happen
+before a cluster member starts up or shuts down, in these instances, the DefaultDelegatedClusterMember
+could be replaced with your own alternative implementation.
+<p/>
+Other ways that I could support the need for specific behaviour would be to provide a base-class and
+use the template method to provide hooks for things such as: doBeforeStart and doAfterShutdown - these
+are just ideas.
 </body>
 </html>

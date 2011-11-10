@@ -2,7 +2,6 @@ package org.testsupport.coherence.impl;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.testsupport.coherence.impl.SystemUtils;
 import org.testsupport.common.AbstractTest;
 
 import java.util.Map;

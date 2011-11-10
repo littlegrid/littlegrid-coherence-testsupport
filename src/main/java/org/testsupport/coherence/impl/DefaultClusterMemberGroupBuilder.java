@@ -67,30 +67,60 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 //            properties.addSystemProperty(MANAGEMENT_REMOTE_KEY, "true");
 //            properties.addSystemProperty(JMXREMOTE_KEY, "");
 
-    public ClusterMemberGroup.Builder setStorageEnabledRoleName(String storageEnabledRoleName) {
-        this.storageEnabledRoleName = storageEnabledRoleName;
+    /**
+     * Sets the storage enabled member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
+    public ClusterMemberGroup.Builder setStorageEnabledRoleName(final String roleName) {
+        this.storageEnabledRoleName = roleName;
 
         return this;
     }
 
+    /**
+     * Sets the storage enabled Extend proxy member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
     public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
         this.storageEnabledExtendProxyRoleName = roleName;
 
         return this;
     }
 
+    /**
+     * Sets the Extend proxy member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
     public ClusterMemberGroup.Builder setExtendProxyRoleName(final String roleName) {
         this.extendProxyRoleName = roleName;
 
         return this;
     }
 
+    /**
+     * Sets the storage disabled member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
     public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(final String roleName) {
         this.storageDisabledClientRoleName = roleName;
 
         return this;
     }
 
+    /**
+     * Sets the Extend client's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
     public ClusterMemberGroup.Builder setExtendClientRoleName(final String roleName) {
         this.extendClientRoleName = roleName;
 
@@ -111,7 +141,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             //TODO: ADD SUPPORT TO LOAD OVERRIDE PROPERTIES
 //            Properties overrideProperties = new Properties();
-//            overrideProperties.load(this.getClass().getClassLoader().getResourceAsStream(OVERRIDE_PROPERTIES_FILENAME));
+//            overrideProperties.load(this.getClass().getClassLoader().
+// getResourceAsStream(OVERRIDE_PROPERTIES_FILENAME));
 
             Properties properties = new Properties(defaultProperties);
 //            properties.putAll(overrideProperties);
@@ -130,8 +161,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup build() {
+        //TODO: Tidy this up
         DefaultLocalProcessClusterMemberGroup containerGroup = new DefaultLocalProcessClusterMemberGroup();
 
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
@@ -147,9 +182,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (storageEnabledCount > 0) {
             preparePropertiesForStorageEnabled();
 
-            ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
-                    classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool).startAll();
+            ClusterMemberGroup memberGroup =
+                    new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
+                            classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                            numberOfThreadsInStartUpPool).startAll();
 
             containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
         }
@@ -157,10 +193,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (extendProxyCount > 0) {
             preparePropertiesForExtendProxy();
 
-            ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
-                    classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
+            ClusterMemberGroup memberGroup =
+                    new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
+                            classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                            numberOfThreadsInStartUpPool)
+                            .startAll();
 
             containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
         }
@@ -168,10 +205,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (storageEnabledExtendProxyCount > 0) {
             preparePropertiesForStorageEnabledExtendProxy();
 
-            ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(
-                    storageEnabledExtendProxyCount, systemProperties, classPathUrls,
-                    jarsToExcludeFromClassPath, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
-                    .startAll();
+            ClusterMemberGroup memberGroup =
+                    new DefaultLocalProcessClusterMemberGroup(storageEnabledExtendProxyCount, systemProperties,
+                            classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                            numberOfThreadsInStartUpPool)
+                            .startAll();
 
             containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
         }
@@ -243,7 +281,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void preparePropertiesForStorageDisabledClient() {
         preparePropertiesForTcmpClusterMember();
 
-        //TODO: Add check for client specific configuration
         if (clientCacheConfiguration != null) {
             setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
         }
@@ -265,7 +302,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void preparePropertiesForExtendProxyClient() {
-        //TODO: Add check for client specific configuration
         if (clientCacheConfiguration != null) {
             setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
         }
@@ -341,6 +377,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setExtendProxySpecificSystemProperties(final Properties properties) {
         this.extendProxySpecificSystemProperties = properties;
@@ -378,6 +417,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setLogLevel(final int logLevel) {
         this.logLevel = logLevel;
@@ -427,12 +469,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
-    public ClusterMemberGroup.Builder setTtl(final int ttl) {
-        this.ttl = ttl;
-
-        return this;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -441,6 +477,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return wkaPort;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setExtendPort(final int extendPort) {
         this.extendPort = extendPort;
@@ -448,6 +487,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setBuilderProperties(final Properties properties) {
         BeanUtils.processProperties(this, properties);
@@ -455,6 +497,24 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * Sets the TTL.
+     *
+     * @param ttl TTL.
+     * @return cluster member group builder.
+     */
+    public ClusterMemberGroup.Builder setTtl(final int ttl) {
+        this.ttl = ttl;
+
+        return this;
+    }
+
+    /**
+     * Sets the number of threads to handle starting up the members within a cluster member group.
+     *
+     * @param numberOfThreadsInStartUpPool Number of threads available to start-up members.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
         this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
 
@@ -462,7 +522,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
-        //TODO: Pull out the JAR exclusion code if this feature seems like it will be required
+        //TODO: Pull this out and add support for wildcards, e.g. *jmx*
         String pathSeparator = System.getProperty("path.separator");
         String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
         String javaHome = System.getProperty("java.home");
@@ -497,12 +557,17 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
 
-    /**********************************************************************************************************
-        Below setter are required when using older versions of Coherence, such as 3.5.x - this is because the
-        reflection updater doesn't seem to set integer values.
-
-        TODO: Look at why integer values don't get set.
+    /*
+     * *******************************************************************************************************
+     * *******************************************************************************************************
+     * *******************************************************************************************************
+     * Below setter are required when using older versions of Coherence, such as 3.5.x - this is because the
+     * reflection updater doesn't seem to set integer values.
+     * <p/>
+     * TODO: Look at why integer values don't get set.
      */
+
+
     public ClusterMemberGroup.Builder setWkaPort(final String wkaPort) {
         setWkaPort(Integer.parseInt(wkaPort));
 

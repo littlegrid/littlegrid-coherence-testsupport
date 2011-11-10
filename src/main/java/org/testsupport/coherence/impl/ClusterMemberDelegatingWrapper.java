@@ -14,8 +14,8 @@ import static java.lang.String.format;
  * the instance of the wrapped class.
  */
 class ClusterMemberDelegatingWrapper implements ClusterMember {
-    private LoggerPlaceHolder logger = new LoggerPlaceHolder(ClusterMemberDelegatingWrapper.class.getName());
-    private Object clusterMemberInstance;
+    private final LoggerPlaceHolder logger = new LoggerPlaceHolder(ClusterMemberDelegatingWrapper.class.getName());
+    private final Object clusterMemberInstance;
 
     /**
      * Constructor.
@@ -82,8 +82,8 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
         return (ClassLoader) invokeMethod(clusterMemberInstance, "getActualContainingClassLoader");
     }
 
-    private Object invokeMethod(Object objectToInvokeMethodOn,
-                                String methodName) {
+    private Object invokeMethod(final Object objectToInvokeMethodOn,
+                                final String methodName) {
 
         try {
             Method method = objectToInvokeMethodOn.getClass().getDeclaredMethod(methodName, new Class[]{});
