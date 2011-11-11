@@ -1,6 +1,6 @@
 package org.testsupport.coherence;
 
-import org.junit.Ignore;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -10,6 +10,13 @@ import static org.junit.Assert.assertThat;
  * Cluster member group stop tests.
  */
 public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+    private ClusterMemberGroup memberGroup;
+
+    @After
+    public void afterTest() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
     @Test
     public void startAndStopSpecificMemberOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
@@ -17,7 +24,7 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         final int expectedClusterSizeAfterStop = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
         final int memberIdToStop = 3;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSizeBeforeStop);
         assertThat(doesMemberExist(memberIdToStop), is(true));
@@ -36,7 +43,7 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         int memberIdToStop = 12;
         int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
         assertThat(doesMemberExist(memberIdToStop), is(false));
@@ -48,9 +55,9 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         memberGroup.shutdownAll();
     }
 
-    @Test
-    @Ignore
-    public void attemptToStopMoreThanOneMember() {
-        throw new UnsupportedOperationException();
+    @Test(expected = UnsupportedOperationException.class)
+    public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(3).build().stopMember(1, 2);
     }
 }

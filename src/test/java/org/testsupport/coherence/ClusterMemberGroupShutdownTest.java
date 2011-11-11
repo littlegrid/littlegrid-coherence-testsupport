@@ -1,6 +1,6 @@
 package org.testsupport.coherence;
 
-import org.junit.Ignore;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -10,6 +10,13 @@ import static org.junit.Assert.assertThat;
  * Cluster member group shutdown tests.
  */
 public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+    private ClusterMemberGroup memberGroup;
+
+    @After
+    public void afterTest() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
     @Test
     public void startAndShutdownSpecificMemberOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
@@ -17,7 +24,7 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         final int expectedClusterSizeAfterShutdown = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
         final int memberIdToShutdown = 3;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSizeBeforeShutdown);
         assertThat(doesMemberExist(memberIdToShutdown), is(true));
@@ -35,7 +42,7 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         int memberIdToShutdown = 12;
         int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
         assertThat(doesMemberExist(memberIdToShutdown), is(false));
@@ -47,9 +54,9 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         memberGroup.shutdownAll();
     }
 
-    @Test
-    @Ignore
-    public void attemptToShutdownMoreThanOneMember() {
-        throw new UnsupportedOperationException();
+    @Test(expected = UnsupportedOperationException.class)
+    public void attemptToShutdownMoreThanOneMemberWhichIsNotSupported() {
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(3).build().shutdownMember(1, 2);
     }
 }
