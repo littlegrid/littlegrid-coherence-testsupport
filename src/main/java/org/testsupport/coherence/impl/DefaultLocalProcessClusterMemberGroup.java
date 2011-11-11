@@ -20,14 +20,16 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.TANGOSOL_CO
 /**
  * Default local process cluster member group implementation.
  */
-public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
+public final class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
     private final LoggerPlaceHolder logger =
             new LoggerPlaceHolder(DefaultLocalProcessClusterMemberGroup.class.getName());
+
+    private final List<Future<ClusterMemberDelegatingWrapper>> memberFutures =
+            new ArrayList<Future<ClusterMemberDelegatingWrapper>>();
+
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
     private Properties systemPropertiesToBeApplied;
-    private final List<Future<ClusterMemberDelegatingWrapper>> memberFutures =
-            new ArrayList<Future<ClusterMemberDelegatingWrapper>>();
     private int numberOfMembers;
     private URL[] classPathUrls;
     private String clusterMemberInstanceClassName;
@@ -284,7 +286,7 @@ public class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup
     @Override
     public ClusterMemberGroup stopMember(final int... memberIds) {
         if (!startInvoked) {
-            logger.warning("Cluster member group never started - nothing to ");
+            logger.warning("Cluster member group never started - nothing to do");
 
             return this;
         }

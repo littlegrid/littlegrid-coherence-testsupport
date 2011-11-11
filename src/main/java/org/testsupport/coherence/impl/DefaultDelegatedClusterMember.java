@@ -10,9 +10,8 @@ import org.testsupport.coherence.ClusterMember;
  */
 public final class DefaultDelegatedClusterMember implements ClusterMember {
     /**
-     * {@inheritDoc}
+     * Start the cluster member - this has reduced scope to prevent normal framework users from calling it.
      */
-    @Override
     public void start() {
         DefaultCacheServer.start();
     }

@@ -5,8 +5,6 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.sleepAfterPerformingMemberStop;
 
 /**
  * Cluster member group stop tests.
@@ -19,13 +17,13 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         final int expectedClusterSizeAfterStop = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
         final int memberIdToStop = 3;
 
-        final ClusterMemberGroup memberGroup =
-                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSizeBeforeStop);
         assertThat(doesMemberExist(memberIdToStop), is(true));
 
         memberGroup.stopMember(memberIdToStop);
-        sleepAfterPerformingMemberStop();
+        ClusterMemberGroupUtils.sleepAfterPerformingMemberStop();
         assertThat(doesMemberExist(memberIdToStop), is(false));
         assertThatClusterIsExpectedSize(expectedClusterSizeAfterStop);
 
@@ -38,8 +36,8 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         int memberIdToStop = 12;
         int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup =
-                newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
         assertThat(doesMemberExist(memberIdToStop), is(false));
 

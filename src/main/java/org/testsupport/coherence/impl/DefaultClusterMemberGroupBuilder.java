@@ -31,8 +31,8 @@ import static org.testsupport.coherence.CoherenceSystemPropertyConst.WKA_PORT_KE
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
-    private static final String DEFAULT_PROPERTIES_FILENAME = "testsupport.coherence.default.properties";
-    private static final String OVERRIDE_PROPERTIES_FILENAME = "testsupport.coherence.override.properties";
+    private static final String DEFAULT_PROPERTIES_FILENAME = "testsupport-coherence-builder-default.properties";
+    private static final String OVERRIDE_PROPERTIES_FILENAME = "testsupport-coherence-builder-override.properties";
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
 
@@ -187,7 +187,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                             classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool).startAll();
 
-            containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
+            containerGroup.merge(memberGroup);
         }
 
         if (extendProxyCount > 0) {
@@ -199,7 +199,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                             numberOfThreadsInStartUpPool)
                             .startAll();
 
-            containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
+            containerGroup.merge(memberGroup);
         }
 
         if (storageEnabledExtendProxyCount > 0) {
@@ -211,7 +211,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                             numberOfThreadsInStartUpPool)
                             .startAll();
 
-            containerGroup.merge((DefaultLocalProcessClusterMemberGroup) memberGroup);
+            containerGroup.merge(memberGroup);
         }
 
         systemProperties.clear();
@@ -531,19 +531,19 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         for (String partOfClassPath : classPathArray) {
             if (!partOfClassPath.startsWith(javaHome)) {
-                boolean found = false;
+                boolean includeInClassPath = true;
 
                 if (jarsToExcludeFromClassPath != null) {
                     for (String jarToExclude : jarsToExcludeFromClassPath) {
                         if (partOfClassPath.endsWith(jarToExclude)) {
                             LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
 
-                            found = true;
+                            includeInClassPath = false;
                         }
                     }
                 }
 
-                if (!found) {
+                if (includeInClassPath) {
                     try {
                         classPathUrls.add(new File(partOfClassPath).toURI().toURL());
                     } catch (MalformedURLException e) {
@@ -568,48 +568,96 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
 
 
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param wkaPort WKA port.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setWkaPort(final String wkaPort) {
         setWkaPort(Integer.parseInt(wkaPort));
 
         return this;
     }
 
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param numberOfMembers Number of members.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setStorageEnabledCount(final String numberOfMembers) {
         setStorageEnabledCount(Integer.parseInt(numberOfMembers));
 
         return this;
     }
 
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param numberOfMembers Number of members.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setStorageEnabledExtendProxyCount(final String numberOfMembers) {
         setStorageEnabledExtendProxyCount(Integer.parseInt(numberOfMembers));
 
         return this;
     }
 
-    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final String numberOfThreadsInStartUpPool) {
-        setNumberOfThreadsInStartUpPool(Integer.parseInt(numberOfThreadsInStartUpPool));
-
-        return this;
-    }
-
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param numberOfMembers Number of members.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setExtendProxyCount(final String numberOfMembers) {
         setExtendProxyCount(Integer.parseInt(numberOfMembers));
 
         return this;
     }
 
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param numberOfThreadsInStartUpPool Number of threads in start-up pool.
+     * @return cluster member group.
+     */
+    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final String numberOfThreadsInStartUpPool) {
+        setNumberOfThreadsInStartUpPool(Integer.parseInt(numberOfThreadsInStartUpPool));
+
+        return this;
+    }
+
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param logLevel Log level.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setLogLevel(final String logLevel) {
         setLogLevel(Integer.parseInt(logLevel));
 
         return this;
     }
 
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param extendPort Extend port.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setExtendPort(final String extendPort) {
         setExtendPort(Integer.parseInt(extendPort));
 
         return this;
     }
 
+    /**
+     * Required to support older version of Coherence.
+     *
+     * @param ttl TTL.
+     * @return cluster member group.
+     */
     public ClusterMemberGroup.Builder setTtl(final String ttl) {
         setTtl(Integer.parseInt(ttl));
 

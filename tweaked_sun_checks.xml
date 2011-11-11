@@ -74,7 +74,10 @@
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
-        <module name="JavadocMethod"/>
+        <!--JH <module name="JavadocMethod"/>-->
+        <module name="JavadocMethod">
+            <property name="scope" value="protected" />
+        </module>
         <module name="JavadocType"/>
         <!-- JH <module name="JavadocVariable"/> -->
         <module name="JavadocVariable">

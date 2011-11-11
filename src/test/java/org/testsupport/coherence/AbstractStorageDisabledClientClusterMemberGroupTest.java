@@ -4,11 +4,9 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.Member;
 import org.junit.After;
-import org.junit.Before;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-//import static org.testsupport.coherence.ClusterMemberGroupUtils.setStorageDisabledClientSystemProperties;
 
 /**
  * Abstract base class for cluster member group tests.

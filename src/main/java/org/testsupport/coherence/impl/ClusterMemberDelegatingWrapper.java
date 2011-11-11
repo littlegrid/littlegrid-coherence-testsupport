@@ -37,10 +37,9 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
     }
 
     /**
-     * {@inheritDoc}
+     * Start the cluster member - this has reduced scope to prevent normal framework users from calling it.
      */
-    @Override
-    public void start() {
+    void start() {
         logger.fine("About to start this cluster member");
 
         invokeMethod(clusterMemberInstance, "start");

@@ -13,22 +13,18 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public final class ClusterMemberGroupUtils {
     private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(ClusterMemberGroupUtils.class.getName());
 
-    private static final float COHERENCE_VERSION_3_5 = 3.5f;
-    private static final float COHERENCE_VERSION_3_6 = 3.6f;
-    private static final float COHERENCE_VERSION_3_7 = 3.7f;
+    private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
+    private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;
+    private static final float COHERENCE_VERSION_NUMBER_3_7 = 3.7f;
     private static final String COHERENCE_VERSION_3_7_0 = "3.7.0";
 
+    //TODO: Remove the stop times and put in a properties file
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5 = 60;
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5 = 45;
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6 = 3;
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0 = 3;
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER = 3;
 
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_PRE_3_5 = 1;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_5 = 1;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_6 = 1;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_7_0 = 0;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_7_1_OR_LATER = 0;
 
     /**
      * Private constructor to prevent creation.
@@ -46,32 +42,6 @@ public final class ClusterMemberGroupUtils {
     }
 
     /**
-     * Returns the sleep time based upon Coherence version in which to sleep after a member shutdown.
-     *
-     * @return sleep time.
-     */
-    public static int getSecondsToSleepAfterPerformingMemberShutdown() {
-        final float majorMinorVersion = getMajorMinorVersion();
-
-        if (majorMinorVersion < COHERENCE_VERSION_3_5) {
-            return SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_PRE_3_5;
-
-        } else if (majorMinorVersion < COHERENCE_VERSION_3_6) {
-            return SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_5;
-
-        } else if (majorMinorVersion < COHERENCE_VERSION_3_7) {
-            return SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_6;
-
-        } else {
-            if (CacheFactory.VERSION.startsWith(COHERENCE_VERSION_3_7_0)) {
-                return SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_7_0;
-            }
-        }
-
-        return SECONDS_TO_SLEEP_AFTER_PERFORMING_SHUTDOWN_FOR_VERSION_3_7_1_OR_LATER;
-    }
-
-    /**
      * Returns the sleep time based upon Coherence version in which to sleep after a member has been stopped.
      *
      * @return sleep time.
@@ -79,13 +49,13 @@ public final class ClusterMemberGroupUtils {
     public static int getSecondsToSleepAfterPerformingMemberStop() {
         final float majorMinorVersion = getMajorMinorVersion();
 
-        if (majorMinorVersion < COHERENCE_VERSION_3_5) {
+        if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_5) {
             return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5;
 
-        } else if (majorMinorVersion < COHERENCE_VERSION_3_6) {
+        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_6) {
             return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5;
 
-        } else if (majorMinorVersion < COHERENCE_VERSION_3_7) {
+        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_7) {
             return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6;
 
         } else {
@@ -101,13 +71,6 @@ public final class ClusterMemberGroupUtils {
         final String majorMinorVersionString = CacheFactory.VERSION.substring(0, 3);
 
         return Float.parseFloat(majorMinorVersionString);
-    }
-
-    /**
-     * Sleeps for a period of time (dependent upon Coherence version) after a member has been shutdown.
-     */
-    public static void sleepAfterPerformingMemberShutdown() {
-        sleepForSeconds(getSecondsToSleepAfterPerformingMemberShutdown());
     }
 
     /**

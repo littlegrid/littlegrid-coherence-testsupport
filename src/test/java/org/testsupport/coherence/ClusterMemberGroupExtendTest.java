@@ -1,39 +1,36 @@
 package org.testsupport.coherence;
 
+import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
-//import static org.testsupport.coherence.ClusterMemberGroupUtils.setExtendClientSystemProperties;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups;
 
 /**
  * Cluster member group Extend tests.
  */
-public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientClusterMemberGroupTest {
+public class ClusterMemberGroupExtendTest extends AbstractExtendClientClusterMemberGroupTest {
     @Test
-    @Ignore
     public void noStorageEnabledMembersCannotStoreData() {
-        ClusterMemberGroup extendProxyGroup = newClusterMemberGroupBuilder().setStorageEnabledExtendProxyCount(1)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
+        ClusterMemberGroup extendProxyGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledExtendProxyCount(1)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .build();
 
-        throw new UnsupportedOperationException();
-//        setExtendClientSystemProperties(EXTEND_CLIENT_CACHE_CONFIG_FILE);
+        NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
 
-//        NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
-//
-//        try {
-//            cache.put("doesn't matter", "no storage enabled members, so will throw runtime exception");
-//
-//            fail("Test should have failed due to no storage enabled members");
-//        } catch (PortableException e) {
-//            // A exception is expected for this test
-//        } finally {
-//            shutdownCacheFactoryThenClusterMemberGroups(extendProxyGroup);
-//        }
+        try {
+            cache.put("doesn't matter", "no storage enabled members, so will throw runtime exception");
+
+            fail("Test should have failed due to no storage enabled members");
+        } catch (PortableException e) {
+            // A exception is expected for this test
+        } finally {
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(extendProxyGroup);
+        }
     }
 
     @Test
@@ -45,17 +42,19 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
         ClusterMemberGroup extendProxyGroup = null;
 
         try {
-            storageEnabledGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfCacheServers).
+            storageEnabledGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setStorageEnabledCount(numberOfCacheServers).
                     setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
-            extendProxyGroup = newClusterMemberGroupBuilder().setExtendProxyCount(1)
+            extendProxyGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setExtendProxyCount(1)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                     .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
 
             NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
             cache.put("any key", "storage enabled member(s) should be present, so this will be cached");
         } finally {
-            shutdownCacheFactoryThenClusterMemberGroups(storageEnabledGroup, extendProxyGroup);
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(storageEnabledGroup, extendProxyGroup);
         }
     }
 
@@ -65,13 +64,14 @@ public class ClusterMemberGroupCompositeExtendTest extends AbstractExtendClientC
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = newClusterMemberGroupBuilder().setStorageEnabledExtendProxyCount(1)
+            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setStorageEnabledExtendProxyCount(1)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
             NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
             cache.put("any key", "single combined extend proxy and stored enabled member, so this will be cached");
         } finally {
-            shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
         }
     }
 

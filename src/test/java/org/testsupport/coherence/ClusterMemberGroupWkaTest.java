@@ -5,8 +5,6 @@ import org.junit.Test;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.shutdownClusterMemberGroups;
 
 /**
  * Cluster member group WKA tests.
@@ -23,12 +21,14 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
+            memberGroup1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setStorageEnabledCount(numberOfMembers).build();
 
-            memberGroup2 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
+            memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setStorageEnabledCount(numberOfMembers).build();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
-            shutdownClusterMemberGroups(memberGroup1, memberGroup2);
+            ClusterMemberGroupUtils.shutdownClusterMemberGroups(memberGroup1, memberGroup2);
         }
     }
 
@@ -41,18 +41,19 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            ClusterMemberGroup.Builder builder =
-                    newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers);
+            ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setStorageEnabledCount(numberOfMembers);
             memberGroup1 = builder.build();
 
             final int differentPort = builder.getWkaPort() + 20;
             logger.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
 
-            memberGroup2 = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).
-                    setWkaPort(differentPort).build();
+            memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setStorageEnabledCount(numberOfMembers)
+                    .setWkaPort(differentPort).build();
             assertThatClusterIsExpectedSize(expectedClusterSize);
         } finally {
-            shutdownClusterMemberGroups(memberGroup1, memberGroup2);
+            ClusterMemberGroupUtils.shutdownClusterMemberGroups(memberGroup1, memberGroup2);
         }
     }
 }

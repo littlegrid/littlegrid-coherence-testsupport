@@ -17,6 +17,11 @@
 
     <caching-scheme-mapping>
         <cache-mapping>
+            <cache-name>test</cache-name>
+            <scheme-name>simple-distributed-scheme</scheme-name>
+        </cache-mapping>
+
+        <cache-mapping>
             <cache-name>known-cache</cache-name>
             <scheme-name>simple-distributed-scheme</scheme-name>
         </cache-mapping>

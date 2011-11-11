@@ -1,6 +1,5 @@
 package org.testsupport.common;
 
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Logger;
@@ -19,16 +18,6 @@ public final class LoggerPlaceHolder {
      */
     public LoggerPlaceHolder(final String name) {
         this.logger = Logger.getLogger(name);
-    }
-
-    /**
-     * Checks if debug level is enabled.
-     *
-     * @return status.
-     */
-    public boolean isDebugEnabled() {
-        throw new UnsupportedOperationException();
-//        return logger.isDebugEnabled();
     }
 
     /**

@@ -8,11 +8,6 @@ package org.testsupport.coherence;
  */
 public interface ClusterMember {
     /**
-     * Starts the member up.
-     */
-    void start();
-
-    /**
      * Shutdown the member.
      */
     void shutdown();

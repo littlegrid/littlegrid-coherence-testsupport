@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.testupport</groupId>
@@ -11,7 +12,8 @@
 
     <scm>
         <connection>scm:git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</connection>
-        <developerConnection>scm:git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</developerConnection>
+        <developerConnection>scm:git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git
+        </developerConnection>
         <url>git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</url>
     </scm>
 
@@ -23,14 +25,16 @@
             <scope>test</scope>
         </dependency>
 
-        <!--
-                <dependency>
-                    <groupId>oracle</groupId>
-                    <artifactId>coherence</artifactId>
-                    <version>3.5.3b465</version>
-                    <scope>provided</scope>
-                </dependency>
+        <!-- **************************************************************************************
+            USE ONE OF THE BELOW VERSIONS OF COHERENCE FOR WHICH TO BE USED FOR BUILD AND TEST
         -->
+
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>coherence</artifactId>
+            <version>3.5.3b465</version>
+            <scope>provided</scope>
+        </dependency>
         <!--
                 <dependency>
                     <groupId>oracle</groupId>
@@ -47,12 +51,15 @@
                     <scope>provided</scope>
                 </dependency>
         -->
+
+<!--
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>coherence</artifactId>
             <version>${coherence.version}</version>
             <scope>provided</scope>
         </dependency>
+-->
     </dependencies>
 
     <build>
@@ -105,6 +112,18 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${javadoc.plugin.version}</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.source.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -150,7 +169,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>${checkstyle.version}</version>
+                        <version>${checkstyle.plugin.version}</version>
                         <configuration>
                             <configLocation>${checkstyle.configuration.file}</configLocation>
                         </configuration>
@@ -199,12 +218,10 @@
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <surefire.plugin.version>2.10</surefire.plugin.version>
         <javadoc.plugin.version>2.7</javadoc.plugin.version>
-        <checkstyle.version>2.7</checkstyle.version>
+        <checkstyle.plugin.version>2.7</checkstyle.plugin.version>
+        <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
+        <maven.deploy.plugin.version>2.5</maven.deploy.plugin.version>
 
-        <!--
-[INFO] [WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-deploy-plugin is missing.
-[INFO] [WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing.
-[        -->
         <checkstyle.configuration.file>tweaked_sun_checks.xml</checkstyle.configuration.file>
     </properties>
 </project>

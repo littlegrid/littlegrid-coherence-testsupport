@@ -3,6 +3,7 @@ package org.testsupport.coherence.impl;
 import org.junit.Test;
 import org.testsupport.coherence.ClusterMember;
 import org.testsupport.coherence.ClusterMemberGroup;
+import org.testsupport.coherence.ClusterMemberGroupUtils;
 import org.testsupport.common.AbstractTest;
 
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 
 /**
  * Cluster member tests.
@@ -19,7 +19,8 @@ public class ClusterMemberClassLoaderTest extends AbstractTest {
     @Test
     public void getClassLoader() {
         final int numberOfMembers = 3;
-        ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder().setStorageEnabledCount(numberOfMembers).build();
+        ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers).build();
         List<Integer> memberIds = memberGroup.getStartedMemberIds();
 
         assertThat(memberIds.size(), is(numberOfMembers));

@@ -2,11 +2,7 @@ package org.testsupport.coherence;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.fail;
-import static org.testsupport.coherence.ClusterMemberGroupUtils.newClusterMemberGroupBuilder;
 
 /**
  * Cluster member group baseline tests.
@@ -17,7 +13,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
@@ -30,7 +26,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
 
     @Test
     public void simpleMemberGroupWithCacheConfigurationAndKnownCache() {
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
         NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
@@ -39,12 +35,12 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         memberGroup.shutdownAll();
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void simpleMemberGroupWithCacheConfigurationAndUnknownCache() {
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = newClusterMemberGroupBuilder()
+            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
             NamedCache cache = CacheFactory.getCache("unknown-cache-this-will-not-be-found-in-cache-configuration");
@@ -59,7 +55,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
@@ -73,7 +69,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = newClusterMemberGroupBuilder()
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
@@ -88,21 +84,10 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
     }
 
     @Test
-    @Ignore
-    public void addTestWhereNoCacheConfigurationIsSpecifiedAndHaveFileCalledCoherenceCacheConfigToBePickedUp() {
-    }
-
-    @Test
-    @Ignore
-    public void addTestWhereSpecificCacheConfigurationIsUsedAndItHasSpecificSchemes() {
-
-    }
-
-    @Test
-    @Ignore
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
         final String jarToExclude = "junit-4.8.2.jar";
 
-        newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath(jarToExclude).build().shutdownAll();
+        ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath(jarToExclude)
+                .build().shutdownAll();
     }
 }

@@ -18,7 +18,6 @@ import static org.junit.Assert.fail;
  * Cluster member group example tests to show how to use the API.
  */
 public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTest {
-    private static final String CACHE_NAME = "example-cache";
     private static final String KEY = "key";
     private static final String VALUE = "value";
 
@@ -33,7 +32,7 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     public void exampleOfSimplestUse() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().build();
 
-        performSimplePutSizeGet(CACHE_NAME);
+        performSimplePutSizeGet(KNOWN_TEST_CACHE);
     }
 
     @Test
@@ -86,7 +85,7 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     @Test
     public void exampleOfConfiguringExtendProxyWithSeparateStorageEnabledMembersThroughProperties() {
         /*
-            This properties could be read from a file.
+            These properties could be read from a file.
          */
         Properties properties = new Properties();
         properties.setProperty("StorageEnabledCount", "2");
