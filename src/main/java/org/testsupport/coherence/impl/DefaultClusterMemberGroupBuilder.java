@@ -190,7 +190,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             containerGroup.merge(memberGroup);
         }
 
-        if (extendProxyCount > 0) {
+        if (extendProxyCount == 1) {
             preparePropertiesForExtendProxy();
 
             ClusterMemberGroup memberGroup =
@@ -200,9 +200,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                             .startAll();
 
             containerGroup.merge(memberGroup);
+        } else if (extendProxyCount > 1) {
+            throw new UnsupportedOperationException("Currently only one Extend proxy is currently supported");
         }
 
-        if (storageEnabledExtendProxyCount > 0) {
+        if (storageEnabledExtendProxyCount == 1) {
             preparePropertiesForStorageEnabledExtendProxy();
 
             ClusterMemberGroup memberGroup =
@@ -212,6 +214,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                             .startAll();
 
             containerGroup.merge(memberGroup);
+        } else if (storageEnabledExtendProxyCount > 1) {
+            throw new UnsupportedOperationException("Currently only one Extend proxy is currently supported");
         }
 
         systemProperties.clear();
