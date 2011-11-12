@@ -1,7 +1,7 @@
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import org.littlegrid.coherence.ClusterMemberGroup;
-import org.littlegrid.coherence.ClusterMemberGroupUtils;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
 public class SimpleApp {
     public static void main(String[] args) {
