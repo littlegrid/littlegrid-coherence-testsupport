@@ -9,7 +9,7 @@
             <init-params>
                 <init-param>
                     <param-type>java.lang.String</param-type>
-                    <param-value>coherence/testdg-test-pof-config.xml</param-value>
+                    <param-value>coherence/littlegrid-test-pof-config.xml</param-value>
                 </init-param>
             </init-params>
         </serializer>
