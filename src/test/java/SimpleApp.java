@@ -1,7 +1,7 @@
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import org.testsupport.coherence.ClusterMemberGroup;
-import org.testsupport.coherence.ClusterMemberGroupUtils;
+import org.testdg.coherence.support.ClusterMemberGroup;
+import org.testdg.coherence.support.ClusterMemberGroupUtils;
 
 public class SimpleApp {
     public static void main(String[] args) {

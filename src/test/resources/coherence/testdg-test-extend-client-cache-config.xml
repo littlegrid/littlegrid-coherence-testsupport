@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE cache-config SYSTEM "cache-config.dtd">
+
+<cache-config>
+    <defaults>
+        <serializer>
+            <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name>
+            <init-params>
+                <init-param>
+                    <param-type>java.lang.String</param-type>
+                    <param-value>coherence/testdg-test-pof-config.xml</param-value>
+                </init-param>
+            </init-params>
+        </serializer>
+    </defaults>
+
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>known-extend-cache</cache-name>
+            <scheme-name>extend-tcp</scheme-name>
+        </cache-mapping>
+    </caching-scheme-mapping>
+
+    <caching-schemes>
+        <remote-cache-scheme>
+            <scheme-name>extend-tcp</scheme-name>
+            <service-name>ExtendProxyClientService</service-name>
+            <initiator-config>
+                <tcp-initiator>
+                    <remote-addresses>
+                        <socket-address>
+                            <address system-property="tangosol.coherence.extend.address">127.0.0.1</address>
+                            <port system-property="tangosol.coherence.extend.port">9099</port>
+                        </socket-address>
+                    </remote-addresses>
+                </tcp-initiator>
+                <outgoing-message-handler>
+                    <request-timeout>30s</request-timeout>
+                </outgoing-message-handler>
+            </initiator-config>
+        </remote-cache-scheme>
+    </caching-schemes>
+</cache-config>
