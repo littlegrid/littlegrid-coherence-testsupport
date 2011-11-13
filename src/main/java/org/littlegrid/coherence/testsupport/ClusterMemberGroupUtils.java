@@ -30,7 +30,7 @@ public final class ClusterMemberGroupUtils {
         if (stream == null) {
             String message = format("Unable to load '%s'", COHERENCE_SLEEP_PROPERTIES_FILENAME);
 
-            LOGGER.severe(message);
+            LOGGER.error(message);
             throw new IllegalStateException(message);
         }
 
@@ -39,7 +39,7 @@ public final class ClusterMemberGroupUtils {
         } catch (IOException e) {
             String message = format("Problem with loading Coherence sleep properties");
 
-            LOGGER.severe(message);
+            LOGGER.error(message);
             throw new IllegalStateException(message);
         }
     }
@@ -141,7 +141,7 @@ public final class ClusterMemberGroupUtils {
             } catch (Exception e) {
                 exceptionOccurredDuringShutdown = true;
 
-                LOGGER.severe("Could not shutdown cluster member group: " + e);
+                LOGGER.error("Could not shutdown cluster member group: " + e);
                 // Ignore and allow looping to try and shutdown any other cluster member groups if running
             }
         }

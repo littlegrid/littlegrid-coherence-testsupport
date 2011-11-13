@@ -25,7 +25,7 @@ public final class LoggerPlaceHolder {
      *
      * @param message Message.
      */
-    public void fine(final Object message) {
+    public void debug(final Object message) {
         logger.fine(message.toString());
     }
 
@@ -43,7 +43,7 @@ public final class LoggerPlaceHolder {
      *
      * @param message Message.
      */
-    public void warning(final Object message) {
+    public void warn(final Object message) {
         logger.warning(message.toString());
     }
 
@@ -52,7 +52,7 @@ public final class LoggerPlaceHolder {
      *
      * @param message Message.
      */
-    public void severe(final Object message) {
+    public void error(final Object message) {
         StringBuilder sb = getMessageAndAdditionalInformationToLog(message);
 
         logger.severe(sb.toString());

@@ -34,6 +34,7 @@ import static org.littlegrid.coherence.testsupport.SystemPropertyConst.WKA_PORT_
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
     private static final String DEFAULT_PROPERTIES_FILENAME = "coherence/littlegrid-builder-default.properties";
     private static final String OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
+    private static final String LITTLEGRID_COHERENCE_OVERRIDE = "littlegrid-builder-override";
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
 
@@ -76,6 +77,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void loadAndProcessProperties() {
+        final String overridePropertiesFile =
+                System.getProperty(LITTLEGRID_COHERENCE_OVERRIDE, OVERRIDE_PROPERTIES_FILENAME);
+
         try {
             InputStream defaultStream =
                     this.getClass().getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_FILENAME);
@@ -90,16 +94,16 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             Properties propertiesToProcess = new Properties(defaultProperties);
 
             InputStream overrideStream =
-                    this.getClass().getClassLoader().getResourceAsStream(OVERRIDE_PROPERTIES_FILENAME);
+                    this.getClass().getClassLoader().getResourceAsStream(overridePropertiesFile);
 
             if (overrideStream == null) {
-                LOGGER.info(format("'%s' properties not found - no overrides to apply", OVERRIDE_PROPERTIES_FILENAME));
+                LOGGER.info(format("'%s' resource found - no overrides to apply", overridePropertiesFile));
             } else {
-                LOGGER.info(format("About to load override configuration from '%s'", OVERRIDE_PROPERTIES_FILENAME));
+                LOGGER.info(format("About to load override configuration from '%s'", overridePropertiesFile));
                 Properties overrideProperties = new Properties();
                 overrideProperties.load(overrideStream);
                 LOGGER.info(format("Loaded '%s' properties from '%s'", overrideProperties.size(),
-                        OVERRIDE_PROPERTIES_FILENAME));
+                        overridePropertiesFile));
 
                 propertiesToProcess.putAll(overrideProperties);
             }
@@ -131,7 +135,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         if (classPathUrls == null) {
-            LOGGER.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
+            LOGGER.debug("Cluster member group config class path URLs null, setting to current (minus Java home)");
 
             this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
         }
@@ -183,9 +187,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             preparePropertiesForStorageDisabledClient();
         }
 
-        LOGGER.info(SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
-        LOGGER.info(systemProperties);
         SystemUtils.applyToSystemProperties(systemProperties);
+        LOGGER.info(format("Coherence system properties for client: %s",
+                SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
 
         return containerGroup;
     }
@@ -382,11 +386,25 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
+    public ClusterMemberGroup.Builder setLogDestination(final String logDestination) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setClusterName(final String clusterName) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ClusterMemberGroup.Builder setLogLevel(final int logLevel) {
         this.logLevel = logLevel;
 
         return this;
     }
+
 
     /**
      * Sets the storage enabled member's role name.
@@ -557,7 +575,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 if (jarsToExcludeFromClassPath != null) {
                     for (String jarToExclude : jarsToExcludeFromClassPath) {
                         if (partOfClassPath.endsWith(jarToExclude)) {
-                            LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
+                            LOGGER.debug(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
 
                             includeInClassPath = false;
                         }

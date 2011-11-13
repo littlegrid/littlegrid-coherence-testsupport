@@ -58,8 +58,8 @@ public interface ClusterMemberGroup {
      */
     interface Builder {
         /**
-         * Builds and returns a running cluster member group, based upon the default values and
-         * any values that have been overridden or explicitly set.
+         * Builds and returns a <em>running cluster member group</em>, based upon the default
+         * values and any values that have been overridden or explicitly set.
          *
          * @return running cluster member group.
          */
@@ -168,6 +168,22 @@ public interface ClusterMemberGroup {
          * @return cluster member group builder.
          */
         Builder setExtendProxyCount(int numberOfMembers);
+
+        /**
+         * Sets the log destination where the cluster members should output to.
+         *
+         * @param logDestination Log destination (standard Coherence log - stdout, log4j, java).
+         * @return cluster member group builder.
+         */
+        Builder setLogDestination(String logDestination);
+
+        /**
+         * Sets the cluster name that the cluster members belong to.
+         *
+         * @param clusterName  Cluster name.
+         * @return cluster member group builder.
+         */
+        Builder setClusterName(String clusterName);
 
         /**
          * Sets the log level that the cluster members should run with.

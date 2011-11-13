@@ -116,7 +116,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
 
             ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
 
-            logger.fine("About to establish a cluster using a single member initially");
+            logger.debug("About to establish a cluster using a single member initially");
             Future<ClusterMemberDelegatingWrapper> futureForSeniorMember = executorService.submit(taskForSeniorMember);
             futureForSeniorMember.get();
 
@@ -137,7 +137,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
                     SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
 
             System.setProperties(systemPropertiesBeforeStartInvoked);
-            logger.severe(message);
+            logger.error(message);
             throw new IllegalStateException(message, e);
         }
 
@@ -150,8 +150,8 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
         logger.info(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
-        logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        logger.fine(format("Current Coherence properties...: %s",
+        logger.debug(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
+        logger.debug(format("Current Coherence properties...: %s",
                 SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
         logger.info(format("Coherence properties to be set.: %s", systemPropertiesToBeApplied));
         logger.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
@@ -209,12 +209,12 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
     @Override
     public ClusterMember getClusterMember(final int memberId) {
         if (!startInvoked) {
-            logger.warning(format("Cluster member group never started - cannot get member '%s'", memberId));
+            logger.warn(format("Cluster member group never started - cannot get member '%s'", memberId));
 
             return null;
         }
 
-        logger.fine(format("About to get cluster member '%d'", memberId));
+        logger.debug(format("About to get cluster member '%d'", memberId));
 
         return getClusterMemberWrapper(memberId);
     }
@@ -225,7 +225,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
     @Override
     public ClusterMemberGroup shutdownMember(final int... memberIds) {
         if (!startInvoked) {
-            logger.warning("Cluster member group never started - nothing to shutdown");
+            logger.warn("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
@@ -253,7 +253,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
     @Override
     public ClusterMemberGroup shutdownAll() {
         if (!startInvoked) {
-            logger.warning("Cluster member group never started - nothing to shutdown");
+            logger.warn("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
@@ -286,7 +286,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
     @Override
     public ClusterMemberGroup stopMember(final int... memberIds) {
         if (!startInvoked) {
-            logger.warning("Cluster member group never started - nothing to do");
+            logger.warn("Cluster member group never started - nothing to do");
 
             return this;
         }
@@ -314,7 +314,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
     @Override
     public ClusterMemberGroup stopAll() {
         if (!startInvoked) {
-            logger.warning("Cluster member group never started - nothing to shutdown");
+            logger.warn("Cluster member group never started - nothing to shutdown");
 
             return this;
         }

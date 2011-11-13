@@ -26,7 +26,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
     public ClusterMemberDelegatingWrapper(final String clusterMemberInstanceClassName,
                                           final ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
-            logger.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
+            logger.debug(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
 
             Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
             Constructor constructor = clusterMemberClass.getConstructor();
@@ -40,7 +40,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      * Start the cluster member - this has reduced scope to prevent normal framework users from calling it.
      */
     void start() {
-        logger.fine("About to start this cluster member");
+        logger.debug("About to start this cluster member");
 
         invokeMethod(clusterMemberInstance, "start");
     }
@@ -50,7 +50,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      */
     @Override
     public void shutdown() {
-        logger.fine("Shutting down this cluster member");
+        logger.debug("Shutting down this cluster member");
 
         invokeMethod(clusterMemberInstance, "shutdown");
     }
@@ -60,7 +60,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      */
     @Override
     public void stop() {
-        logger.fine("Stopping this cluster member");
+        logger.debug("Stopping this cluster member");
 
         invokeMethod(clusterMemberInstance, "stop");
     }
@@ -85,7 +85,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
                                 final String methodName) {
 
         try {
-            Method method = objectToInvokeMethodOn.getClass().getDeclaredMethod(methodName, new Class[]{});
+            Method method = objectToInvokeMethodOn.getClass().getMethod(methodName, new Class[]{});
 
             return method.invoke(objectToInvokeMethodOn);
         } catch (Exception e) {

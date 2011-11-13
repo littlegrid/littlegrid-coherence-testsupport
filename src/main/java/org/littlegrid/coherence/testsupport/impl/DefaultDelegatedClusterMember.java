@@ -1,50 +1,36 @@
 package org.littlegrid.coherence.testsupport.impl;
 
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.DefaultCacheServer;
-import org.littlegrid.coherence.testsupport.ClusterMember;
-
 /**
- * Default cluster member delegate implementation that performs the necessary cluster member actions - this
- * implementation simply delegates to a Default cache server where possible.
+ * Default cluster member delegate implementation - this doesn't perform any before
+ * or after actions.
  */
-public final class DefaultDelegatedClusterMember implements ClusterMember {
+public final class DefaultDelegatedClusterMember extends AbstractDelegatedClusterMember {
+
     /**
-     * Start the cluster member - this has reduced scope to prevent normal framework users from calling it.
+     * {@inheritDoc}
      */
-    public void start() {
-        DefaultCacheServer.start();
+    @Override
+    public void doBeforeStart() {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void shutdown() {
-        DefaultCacheServer.shutdown();
+    public void doAfterStart() {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void stop() {
-        CacheFactory.getCluster().stop();
+    public void doBeforeShutdown() {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int getLocalMemberId() {
-        return CacheFactory.getCluster().getLocalMember().getId();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClassLoader getActualContainingClassLoader() {
-        return this.getClass().getClassLoader();
+    public void doAfterShutdown() {
     }
 }
