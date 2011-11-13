@@ -3,11 +3,11 @@ package org.littlegrid.coherence.testsupport;
 /**
  * Coherence system property constants.
  */
-public final class CoherenceSystemPropertyConst {
+public final class SystemPropertyConst {
     /**
      * Private constructor to prevent creation.
      */
-    private CoherenceSystemPropertyConst() {
+    private SystemPropertyConst() {
     }
 
     /**
@@ -90,12 +90,18 @@ public final class CoherenceSystemPropertyConst {
      */
     public static final String CLUSTER_NAME_KEY = TANGOSOL_COHERENCE_DOT + "cluster";
 
-    @Deprecated
+    /**
+     * Constant for standard management property.
+     */
     public static final String MANAGEMENT_KEY = TANGOSOL_COHERENCE_DOT + "management";
 
-    @Deprecated
+    /**
+     * Constant for standard remote management property.
+     */
     public static final String MANAGEMENT_REMOTE_KEY = "management.remote";
 
-    @Deprecated
+    /**
+     * Constant for standard JMX remote management property.
+     */
     public static final String JMXREMOTE_KEY = "com.sun.management.jmxremote";
 }

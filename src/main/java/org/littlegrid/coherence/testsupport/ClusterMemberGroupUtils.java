@@ -4,6 +4,10 @@ import com.tangosol.net.CacheFactory;
 import org.littlegrid.coherence.testsupport.impl.DefaultClusterMemberGroupBuilder;
 import org.littlegrid.common.LoggerPlaceHolder;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -11,19 +15,49 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * Cluster member group factory.
  */
 public final class ClusterMemberGroupUtils {
+    private static final String COHERENCE_SLEEP_PROPERTIES_FILENAME = "coherence/littlegrid-coherence-sleep.properties";
     private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(ClusterMemberGroupUtils.class.getName());
-
     private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
     private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;
     private static final float COHERENCE_VERSION_NUMBER_3_7 = 3.7f;
     private static final String COHERENCE_VERSION_3_7_0 = "3.7.0";
+    private static final Properties SLEEP_PROPERTIES = new Properties();
 
-    //TODO: Remove the stop times and put in a properties file
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5 = 60;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5 = 45;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6 = 3;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0 = 3;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER = 3;
+    static {
+        InputStream stream = ClusterMemberGroupUtils.class.getClassLoader()
+                .getResourceAsStream(COHERENCE_SLEEP_PROPERTIES_FILENAME);
+
+        if (stream == null) {
+            String message = format("Unable to load '%s'", COHERENCE_SLEEP_PROPERTIES_FILENAME);
+
+            LOGGER.severe(message);
+            throw new IllegalStateException(message);
+        }
+
+        try {
+            SLEEP_PROPERTIES.load(stream);
+        } catch (IOException e) {
+            String message = format("Problem with loading Coherence sleep properties");
+
+            LOGGER.severe(message);
+            throw new IllegalStateException(message);
+        }
+    }
+
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5 =
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-pre-3.5", "60"));
+
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5 =
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.5", "45"));
+
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6 =
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.6", "3"));
+
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0 =
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.7.0", "3"));
+
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER =
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.7.1-or-later", "3"));
 
 
     /**
@@ -84,7 +118,6 @@ public final class ClusterMemberGroupUtils {
         LOGGER.info(format(
                 "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
                 CacheFactory.VERSION, seconds));
-
         try {
             SECONDS.sleep(seconds);
         } catch (InterruptedException e) {

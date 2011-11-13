@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static java.lang.String.format;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TANGOSOL_COHERENCE_DOT;
 
 /**
  * Default local process cluster member group implementation.
@@ -63,7 +63,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
             throw new IllegalStateException("Property container cannot be null");
         }
 
-        //TODO: Check incoming arguments
+        //TODO: littlegrid#9 Check incoming arguments
 
         this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
     }
@@ -94,7 +94,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
      * @return member group.
      */
     public ClusterMemberGroup startAll() {
-        //TODO: Provide option to not stagger the start-up, e.g. for an additional member group to be
+        //TODO: littlegrid#10 Provide option to not stagger the start-up, e.g. for an additional member group to be
         // started to join an established cluster.
         if (startInvoked) {
             return this;
@@ -151,9 +151,9 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         logger.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        logger.fine(format("Current Coherence applied...: %s",
+        logger.fine(format("Current Coherence properties...: %s",
                 SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
-        logger.info(format("Server system applied to set: %s", systemPropertiesToBeApplied));
+        logger.info(format("Coherence properties to be set.: %s", systemPropertiesToBeApplied));
         logger.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,

@@ -5,6 +5,7 @@ import org.littlegrid.common.LoggerPlaceHolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,27 +13,27 @@ import java.util.List;
 import java.util.Properties;
 
 import static java.lang.String.format;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.EXTEND_ENABLED_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.EXTEND_PORT_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.LOCAL_ADDRESS_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.LOCAL_PORT_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.LOG_LEVEL_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.OVERRIDE_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.ROLE_NAME_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.TANGOSOL_COHERENCE_DOT;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.TCMP_ENABLED_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.TTL_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.WKA_ADDRESS_KEY;
-import static org.littlegrid.coherence.testsupport.CoherenceSystemPropertyConst.WKA_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.EXTEND_ENABLED_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.EXTEND_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOCAL_ADDRESS_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOCAL_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOG_LEVEL_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.OVERRIDE_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.ROLE_NAME_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TANGOSOL_COHERENCE_DOT;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TCMP_ENABLED_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TTL_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.WKA_ADDRESS_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.WKA_PORT_KEY;
 
 /**
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
-    private static final String DEFAULT_PROPERTIES_FILENAME = "littlegrid-coherence-testsupport-builder-config-default.properties";
-    private static final String OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-config-override.properties";
+    private static final String DEFAULT_PROPERTIES_FILENAME = "coherence/littlegrid-builder-default.properties";
+    private static final String OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
 
@@ -62,70 +63,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private int ttl;
 
 
-    //TODO: Think about JMX
+    //TODO: littlegrid#5 Think about JMX
 //            properties.addSystemProperty(MANAGEMENT_KEY, "all");
 //            properties.addSystemProperty(MANAGEMENT_REMOTE_KEY, "true");
 //            properties.addSystemProperty(JMXREMOTE_KEY, "");
-
-    /**
-     * Sets the storage enabled member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
-     */
-    public ClusterMemberGroup.Builder setStorageEnabledRoleName(final String roleName) {
-        this.storageEnabledRoleName = roleName;
-
-        return this;
-    }
-
-    /**
-     * Sets the storage enabled Extend proxy member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
-     */
-    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
-        this.storageEnabledExtendProxyRoleName = roleName;
-
-        return this;
-    }
-
-    /**
-     * Sets the Extend proxy member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
-     */
-    public ClusterMemberGroup.Builder setExtendProxyRoleName(final String roleName) {
-        this.extendProxyRoleName = roleName;
-
-        return this;
-    }
-
-    /**
-     * Sets the storage disabled member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
-     */
-    public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(final String roleName) {
-        this.storageDisabledClientRoleName = roleName;
-
-        return this;
-    }
-
-    /**
-     * Sets the Extend client's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
-     */
-    public ClusterMemberGroup.Builder setExtendClientRoleName(final String roleName) {
-        this.extendClientRoleName = roleName;
-
-        return this;
-    }
 
     /**
      * Default constructor.
@@ -136,18 +77,34 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private void loadAndProcessProperties() {
         try {
+            InputStream defaultStream =
+                    this.getClass().getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_FILENAME);
+
+            if (defaultStream == null) {
+                throw new IllegalStateException(format("Unable to load '%s'", DEFAULT_PROPERTIES_FILENAME));
+            }
+
+            LOGGER.info(format("About to load default configuration from '%s'", DEFAULT_PROPERTIES_FILENAME));
             Properties defaultProperties = new Properties();
-            defaultProperties.load(this.getClass().getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_FILENAME));
+            defaultProperties.load(defaultStream);
+            Properties propertiesToProcess = new Properties(defaultProperties);
 
-            //TODO: ADD SUPPORT TO LOAD OVERRIDE PROPERTIES
-//            Properties overrideProperties = new Properties();
-//            overrideProperties.load(this.getClass().getClassLoader().
-// getResourceAsStream(OVERRIDE_PROPERTIES_FILENAME));
+            InputStream overrideStream =
+                    this.getClass().getClassLoader().getResourceAsStream(OVERRIDE_PROPERTIES_FILENAME);
 
-            Properties properties = new Properties(defaultProperties);
-//            properties.putAll(overrideProperties);
+            if (overrideStream == null) {
+                LOGGER.info(format("'%s' properties not found - no overrides to apply", OVERRIDE_PROPERTIES_FILENAME));
+            } else {
+                LOGGER.info(format("About to load override configuration from '%s'", OVERRIDE_PROPERTIES_FILENAME));
+                Properties overrideProperties = new Properties();
+                overrideProperties.load(overrideStream);
+                LOGGER.info(format("Loaded '%s' properties from '%s'", overrideProperties.size(),
+                        OVERRIDE_PROPERTIES_FILENAME));
 
-            BeanUtils.processProperties(this, properties);
+                propertiesToProcess.putAll(overrideProperties);
+            }
+
+            BeanUtils.processProperties(this, propertiesToProcess);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -166,7 +123,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup build() {
-        //TODO: Tidy this up
+        //TODO: littlegrid#6 Tidy this up
         DefaultLocalProcessClusterMemberGroup containerGroup = new DefaultLocalProcessClusterMemberGroup();
 
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
@@ -432,6 +389,66 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     /**
+     * Sets the storage enabled member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
+    public ClusterMemberGroup.Builder setStorageEnabledRoleName(final String roleName) {
+        this.storageEnabledRoleName = roleName;
+
+        return this;
+    }
+
+    /**
+     * Sets the storage enabled Extend proxy member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
+    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
+        this.storageEnabledExtendProxyRoleName = roleName;
+
+        return this;
+    }
+
+    /**
+     * Sets the Extend proxy member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
+    public ClusterMemberGroup.Builder setExtendProxyRoleName(final String roleName) {
+        this.extendProxyRoleName = roleName;
+
+        return this;
+    }
+
+    /**
+     * Sets the storage disabled member's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
+    public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(final String roleName) {
+        this.storageDisabledClientRoleName = roleName;
+
+        return this;
+    }
+
+    /**
+     * Sets the Extend client's role name.
+     *
+     * @param roleName Role name.
+     * @return cluster member group builder.
+     */
+    public ClusterMemberGroup.Builder setExtendClientRoleName(final String roleName) {
+        this.extendClientRoleName = roleName;
+
+        return this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -526,7 +543,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
-        //TODO: Pull this out and add support for wildcards, e.g. *jmx*
+        //TODO: littlegrid#7 Pull this out and add support for wildcards, e.g. *jmx*
         String pathSeparator = System.getProperty("path.separator");
         String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
         String javaHome = System.getProperty("java.home");
@@ -568,7 +585,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Below setter are required when using older versions of Coherence, such as 3.5.x - this is because the
      * reflection updater doesn't seem to set integer values.
      * <p/>
-     * TODO: Look at why integer values don't get set.
+     * TODO: littlegrid#8 Look at why integer values don't get set.
      */
 
 
