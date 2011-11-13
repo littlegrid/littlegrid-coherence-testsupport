@@ -11,10 +11,9 @@
     <name>${project.artifactId}</name>
 
     <scm>
-        <connection>scm:git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</connection>
-        <developerConnection>scm:git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git
-        </developerConnection>
-        <url>git:https://practicalblend@bitbucket.org/practicalblend/coherence-testsupport.git</url>
+        <connection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid.git</connection>
+        <developerConnection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid.git</developerConnection>
+        <url>git:https://littlegrid@bitbucket.org/littlegrid/littlegrid.git</url>
     </scm>
 
     <dependencies>
