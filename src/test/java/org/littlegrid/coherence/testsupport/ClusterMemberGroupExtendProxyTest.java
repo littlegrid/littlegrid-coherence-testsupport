@@ -34,7 +34,9 @@ public class ClusterMemberGroupExtendProxyTest extends AbstractExtendClientClust
 
             fail("Test should have failed due to no storage enabled members");
         } catch (PortableException e) {
-            // A exception is expected for this test
+            // Coherence 3.6.x and above
+        } catch (RuntimeException e) {
+            // Coherence 3.5.x etc.
         }
     }
 

@@ -1,11 +1,11 @@
 package org.littlegrid.coherence.testsupport.impl;
 
+import com.tangosol.util.Resources;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 import org.littlegrid.common.LoggerPlaceHolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -80,28 +80,25 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final String overridePropertiesFile =
                 System.getProperty(LITTLEGRID_COHERENCE_OVERRIDE, OVERRIDE_PROPERTIES_FILENAME);
 
+        URL defaultPropertiesUrl = Resources.findFileOrResource(DEFAULT_PROPERTIES_FILENAME,
+                this.getClass().getClassLoader());
+
+        URL overridePropertiesUrl = Resources.findFileOrResource(overridePropertiesFile,
+                this.getClass().getClassLoader());
+
         try {
-            InputStream defaultStream =
-                    this.getClass().getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_FILENAME);
-
-            if (defaultStream == null) {
-                throw new IllegalStateException(format("Unable to load '%s'", DEFAULT_PROPERTIES_FILENAME));
-            }
-
-            LOGGER.info(format("About to load default configuration from '%s'", DEFAULT_PROPERTIES_FILENAME));
+            LOGGER.info(format("About to load default configuration from '%s'", defaultPropertiesUrl));
             Properties defaultProperties = new Properties();
-            defaultProperties.load(defaultStream);
+            defaultProperties.load(defaultPropertiesUrl.openStream());
+
             Properties propertiesToProcess = new Properties(defaultProperties);
 
-            InputStream overrideStream =
-                    this.getClass().getClassLoader().getResourceAsStream(overridePropertiesFile);
-
-            if (overrideStream == null) {
-                LOGGER.info(format("'%s' resource found - no overrides to apply", overridePropertiesFile));
+            if (overridePropertiesUrl == null) {
+                LOGGER.info(format("'%s' resource not found - no overrides to apply", overridePropertiesFile));
             } else {
-                LOGGER.info(format("About to load override configuration from '%s'", overridePropertiesFile));
+                LOGGER.info(format("About to load override configuration from '%s'", overridePropertiesUrl));
                 Properties overrideProperties = new Properties();
-                overrideProperties.load(overrideStream);
+                overrideProperties.load(overridePropertiesUrl.openStream());
                 LOGGER.info(format("Loaded '%s' properties from '%s'", overrideProperties.size(),
                         overridePropertiesFile));
 

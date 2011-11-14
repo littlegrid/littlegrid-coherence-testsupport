@@ -85,9 +85,16 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
 
     @Test
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
         final String jarToExclude = "junit-4.8.2.jar";
 
-        ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setJarsToExcludeFromClassPath(jarToExclude)
-                .build().shutdownAll();
+        ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setJarsToExcludeFromClassPath(jarToExclude)
+                .build();
+
+        assertThatClusterIsExpectedSize(expectedClusterSize);
+
+        memberGroup.shutdownAll();
     }
 }
