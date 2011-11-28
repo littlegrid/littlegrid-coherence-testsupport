@@ -125,6 +125,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup build() {
         //TODO: littlegrid#6 Tidy this up
+        //TODO: on exception output: class path, tangosol system properties, all system properties and message to suggest checking for another running cluster
         DefaultLocalProcessClusterMemberGroup containerGroup = new DefaultLocalProcessClusterMemberGroup();
 
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
@@ -142,7 +143,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             ClusterMemberGroup memberGroup =
                     new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
-                            classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                            classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool).startAll();
 
             containerGroup.merge(memberGroup);
@@ -153,7 +154,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             ClusterMemberGroup memberGroup =
                     new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
-                            classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                            classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
                             .startAll();
 
@@ -167,7 +168,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             ClusterMemberGroup memberGroup =
                     new DefaultLocalProcessClusterMemberGroup(storageEnabledExtendProxyCount, systemProperties,
-                            classPathUrls, jarsToExcludeFromClassPath, clusterMemberInstanceClassName,
+                            classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
                             .startAll();
 

@@ -42,30 +42,42 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
      * @param numberOfMembers                Number of members.
      * @param systemPropertiesToBeApplied    System properties to be applied.
      * @param classPathUrls                  Class path.
-     * @param jarsToExcludeFromClassPath     JARs to be excluded from class path.
      * @param clusterMemberInstanceClassName Class name of cluster member instance.
      * @param numberOfThreadsInStartUpPool   Number of threads in start-up pool.
      */
     public DefaultLocalProcessClusterMemberGroup(final int numberOfMembers,
                                                  final Properties systemPropertiesToBeApplied,
                                                  final URL[] classPathUrls,
-                                                 final String[] jarsToExcludeFromClassPath,
                                                  final String clusterMemberInstanceClassName,
                                                  final int numberOfThreadsInStartUpPool) {
 
-        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
+        if (numberOfMembers < 1) {
+            throw new IllegalArgumentException("Number of members must be 1 or more");
+        }
+
+        if (systemPropertiesToBeApplied == null || systemPropertiesToBeApplied.size() == 0) {
+            throw new IllegalArgumentException("No system properties specified, cannot setup cluster");
+        }
+
+        if (classPathUrls == null || classPathUrls.length == 0) {
+            throw new IllegalArgumentException("No class path URLs specified - will not be able to necessary classes");
+        }
+
+        if (clusterMemberInstanceClassName == null || clusterMemberInstanceClassName.trim().length() == 0) {
+            throw new IllegalArgumentException("No cluster member instance class name, cannot setup cluster");
+        }
+
+        if (numberOfThreadsInStartUpPool < 1) {
+            throw new IllegalArgumentException("Invalid number of threads specified for start-up pool, cannot start");
+        }
+
         this.numberOfMembers = numberOfMembers;
         this.classPathUrls = classPathUrls;
         this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
         this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
-
-        if (systemPropertiesToBeApplied == null) {
-            throw new IllegalStateException("Property container cannot be null");
-        }
-
-        //TODO: littlegrid#9 Check incoming arguments
-
         this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
+
+        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
     }
 
     DefaultLocalProcessClusterMemberGroup() {
@@ -297,7 +309,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
 
         int memberId = memberIds[0];
 
-        logger.info(format("About to stop cluster member '%d'", memberId));
+        logger.info(format("About to stop cluster member with id '%d'", memberId));
 
         ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
 

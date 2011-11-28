@@ -27,12 +27,14 @@
             USE ONE OF THE BELOW VERSIONS OF COHERENCE FOR WHICH TO BE USED FOR BUILD AND TEST
         -->
 
+<!--
                 <dependency>
                     <groupId>oracle</groupId>
                     <artifactId>coherence</artifactId>
                     <version>3.5.3b465</version>
                     <scope>provided</scope>
                 </dependency>
+-->
         <!--
                 <dependency>
                     <groupId>oracle</groupId>
@@ -49,14 +51,12 @@
                     <scope>provided</scope>
                 </dependency>
         -->
-<!--
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>coherence</artifactId>
             <version>${coherence.version}</version>
             <scope>provided</scope>
         </dependency>
--->
     </dependencies>
 
     <build>
