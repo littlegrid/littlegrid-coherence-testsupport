@@ -26,10 +26,6 @@
         <!-- **************************************************************************************
             USE ONE OF THE BELOW VERSIONS OF COHERENCE FOR WHICH TO BE USED FOR BUILD AND TEST
         -->
-<<<<<<< HEAD
-
-=======
->>>>>>> 9067a978111e1570538a9b9e945a8f06564d1a5d
 <!--
                 <dependency>
                     <groupId>oracle</groupId>
@@ -54,10 +50,6 @@
                     <scope>provided</scope>
                 </dependency>
         -->
-<<<<<<< HEAD
-=======
-
->>>>>>> 9067a978111e1570538a9b9e945a8f06564d1a5d
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>coherence</artifactId>
