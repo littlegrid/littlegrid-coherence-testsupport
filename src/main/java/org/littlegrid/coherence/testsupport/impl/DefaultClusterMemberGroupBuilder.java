@@ -144,7 +144,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             ClusterMemberGroup memberGroup =
                     new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
                             classPathUrls, clusterMemberInstanceClassName,
-                            numberOfThreadsInStartUpPool).startAll();
+                            numberOfThreadsInStartUpPool)
+                            .startAll();
 
             containerGroup.merge(memberGroup);
         }

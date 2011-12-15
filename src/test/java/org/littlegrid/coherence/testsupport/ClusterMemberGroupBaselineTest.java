@@ -14,7 +14,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build();
+                .setStorageEnabledCount(numberOfMembers).setWkaAddress("abc").build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
         NamedCache cache = CacheFactory.getCache("test");

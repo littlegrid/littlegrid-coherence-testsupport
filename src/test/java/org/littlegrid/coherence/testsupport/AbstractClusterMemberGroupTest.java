@@ -1,8 +1,5 @@
 package org.littlegrid.coherence.testsupport;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 /**
  * Abstract base class for cluster member group tests.
  */
