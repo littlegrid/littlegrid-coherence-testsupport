@@ -101,6 +101,7 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember()
             throws IOException {
 
+        //TODO: littlegrid#18 - move over to common resource loading
         Properties cluster1Properties = new Properties();
         cluster1Properties.load(this.getClass().getClassLoader()
                 .getResourceAsStream("properties/memberGroup1.properties"));

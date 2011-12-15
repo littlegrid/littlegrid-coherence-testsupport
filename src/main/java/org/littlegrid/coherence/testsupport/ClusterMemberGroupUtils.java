@@ -1,5 +1,8 @@
 package org.littlegrid.coherence.testsupport;
 
+/*
+
+ */
 import com.tangosol.net.CacheFactory;
 import org.littlegrid.coherence.testsupport.impl.DefaultClusterMemberGroupBuilder;
 import org.littlegrid.common.LoggerPlaceHolder;
@@ -24,6 +27,7 @@ public final class ClusterMemberGroupUtils {
     private static final Properties SLEEP_PROPERTIES = new Properties();
 
     static {
+        //TODO: littlegrid#18 - move over to common resource loading
         InputStream stream = ClusterMemberGroupUtils.class.getClassLoader()
                 .getResourceAsStream(COHERENCE_SLEEP_PROPERTIES_FILENAME);
 
