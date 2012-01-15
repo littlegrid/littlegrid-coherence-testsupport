@@ -47,8 +47,9 @@ public abstract class AbstractDelegatedClusterMember implements ClusterMember {
     public abstract void doBeforeStart();
 
     /**
-     * Start the cluster member - this has reduced scope to prevent normal framework
-     * users from calling it.
+     * Start the cluster member, the start method is purposely not on cluster member interface to
+     * prevent normal framework users from calling it from their test code - thus generally
+     * avoiding things like multiple invocations of start.
      */
     public void start() {
         doBeforeStart();
