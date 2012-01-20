@@ -103,7 +103,7 @@ public class BeanUtilsTest {
         assertThat(person.getAge(), is(EXPECTED_AGE));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalStateException.class)
     public void setWhenPropertyDoesNotExist() {
         Properties properties = new Properties();
         properties.setProperty("NonExistentProperty", "DoesNotMatterPropertyDoesNotExist");
