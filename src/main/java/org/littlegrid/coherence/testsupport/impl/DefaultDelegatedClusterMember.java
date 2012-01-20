@@ -31,30 +31,42 @@
 
 package org.littlegrid.coherence.testsupport.impl;
 
-/**
- * Default cluster member delegate implementation - this doesn't perform any before
- * or after actions.
- */
-public final class DefaultDelegatedClusterMember extends AbstractDelegatedClusterMember {
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.DefaultCacheServer;
+import org.littlegrid.coherence.testsupport.ClusterMember;
 
+/**
+ * Default delegated cluster member (which may be extended if specialised behaviour is required,
+ * such as before start-up etc.), it performs the necessary cluster member actions - this
+ * implementation simply delegates to a Default cache server where possible.
+ */
+public class DefaultDelegatedClusterMember implements ClusterMember {
     /**
-     * {@inheritDoc}
+     * Performs any necessary setup before cluster member is started.
      */
-    @Override
     public void doBeforeStart() {
     }
 
     /**
-     * {@inheritDoc}
+     * Start the cluster member, the start method is purposely not on cluster member interface to
+     * prevent normal framework users from calling it from their test code - thus generally
+     * avoiding things like multiple invocations of start.
      */
-    @Override
+    public void start() {
+        doBeforeStart();
+        DefaultCacheServer.start();
+        doAfterStart();
+    }
+
+    /**
+     * Performs any necessary actions after the cluster member has been started.
+     */
     public void doAfterStart() {
     }
 
     /**
-     * {@inheritDoc}
+     * Performs any necessary actions before the cluster member is shutdown.
      */
-    @Override
     public void doBeforeShutdown() {
     }
 
@@ -62,6 +74,39 @@ public final class DefaultDelegatedClusterMember extends AbstractDelegatedCluste
      * {@inheritDoc}
      */
     @Override
+    public void shutdown() {
+        doBeforeShutdown();
+        DefaultCacheServer.shutdown();
+        doAfterShutdown();
+    }
+
+    /**
+     * Performs any necessary actions after the cluster member has been shutdown.
+     */
     public void doAfterShutdown() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop() {
+        CacheFactory.getCluster().stop();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getLocalMemberId() {
+        return CacheFactory.getCluster().getLocalMember().getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClassLoader getActualContainingClassLoader() {
+        return this.getClass().getClassLoader();
     }
 }

@@ -46,7 +46,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * Cluster member group factory.
  */
 public final class ClusterMemberGroupUtils {
-    private static final String COHERENCE_SLEEP_PROPERTIES_FILENAME = "coherence/littlegrid-coherence-sleep.properties";
+    private static final String COHERENCE_SLEEP_PROPERTIES_FILENAME = "coherence/littlegrid-coherence-sleep-default.properties";
     private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(ClusterMemberGroupUtils.class.getName());
     private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
     private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;
@@ -77,19 +77,19 @@ public final class ClusterMemberGroupUtils {
     }
 
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-pre-3.5", "60"));
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.pre.3.5", "60"));
 
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.5", "45"));
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.5", "45"));
 
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.6", "3"));
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.6", "3"));
 
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.7.0", "3"));
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.7.0", "3"));
 
     private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep-after-stop-3.7.1-or-later", "3"));
+            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.7.1.or.later", "3"));
 
 
     /**

@@ -33,6 +33,7 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.util.Resources;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.SystemPropertyConst;
 import org.littlegrid.common.LoggerPlaceHolder;
 
 import java.io.File;
@@ -48,6 +49,7 @@ import static org.littlegrid.coherence.testsupport.SystemPropertyConst.CACHE_CON
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.EXTEND_ENABLED_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.EXTEND_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LITTLEGRID_BUILDER_OVERRIDE;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOCAL_ADDRESS_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOCAL_PORT_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOG_LEVEL_KEY;
@@ -65,7 +67,6 @@ import static org.littlegrid.coherence.testsupport.SystemPropertyConst.WKA_PORT_
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
     private static final String DEFAULT_PROPERTIES_FILENAME = "coherence/littlegrid-builder-default.properties";
     private static final String OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
-    private static final String LITTLEGRID_COHERENCE_OVERRIDE = "littlegrid-builder-override";
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
 
@@ -109,7 +110,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private void loadAndProcessProperties() {
         final String overridePropertiesFile =
-                System.getProperty(LITTLEGRID_COHERENCE_OVERRIDE, OVERRIDE_PROPERTIES_FILENAME);
+                System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, OVERRIDE_PROPERTIES_FILENAME);
 
         URL defaultPropertiesUrl = Resources.findFileOrResource(DEFAULT_PROPERTIES_FILENAME,
                 this.getClass().getClassLoader());

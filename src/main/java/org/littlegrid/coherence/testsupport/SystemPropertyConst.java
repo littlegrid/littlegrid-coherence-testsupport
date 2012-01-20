@@ -42,6 +42,12 @@ public final class SystemPropertyConst {
     }
 
     /**
+     * Constant for specifying the name of an override file that is different
+     * from the standard name of 'littlegrid-builder-override.properties'.
+     */
+    public static final String LITTLEGRID_BUILDER_OVERRIDE = "littlegrid.builder.override";
+
+    /**
      * Constant for defining standard: tangosol.coherence.
      */
     public static final String TANGOSOL_COHERENCE_DOT = "tangosol.coherence.";
