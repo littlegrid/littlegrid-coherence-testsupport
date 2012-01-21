@@ -46,22 +46,22 @@ import java.util.Map;
 import java.util.Properties;
 
 import static java.lang.String.format;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.CLUSTER_NAME_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.DISTRIBUTED_LOCAL_STORAGE_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.EXTEND_ENABLED_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.EXTEND_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_CLUSTER_NAME_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_EXTEND_ENABLED_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_EXTEND_PORT_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LITTLEGRID_BUILDER_OVERRIDE;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOCAL_ADDRESS_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOCAL_PORT_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LOG_LEVEL_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.OVERRIDE_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.ROLE_NAME_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_LOCAL_ADDRESS_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_LOCAL_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_LOG_LEVEL_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_OVERRIDE_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_ROLE_NAME_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TANGOSOL_COHERENCE_DOT;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TCMP_ENABLED_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TTL_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.WKA_ADDRESS_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.WKA_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_TCMP_ENABLED_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_TTL_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_WKA_ADDRESS_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_WKA_PORT_KEY;
 
 /**
  * Default cluster member group builder implementation.
@@ -109,9 +109,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
 
     //TODO: littlegrid#5 Think about JMX
-//            properties.addSystemProperty(MANAGEMENT_KEY, "all");
-//            properties.addSystemProperty(MANAGEMENT_REMOTE_KEY, "true");
-//            properties.addSystemProperty(JMXREMOTE_KEY, "");
+//            properties.addSystemProperty(COHERENCE_MANAGEMENT_KEY, "all");
+//            properties.addSystemProperty(JMX_MANAGEMENT_REMOTE_KEY, "true");
+//            properties.addSystemProperty(JMX_JMXREMOTE_KEY, "");
 
     /**
      * Default constructor.
@@ -266,30 +266,30 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void preparePropertiesForStorageEnabled() {
         preparePropertiesForTcmpClusterMember();
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
-        setSystemPropertyWhenValid(OVERRIDE_KEY, getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY, getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(COHERENCE_OVERRIDE_KEY, getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
 
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, getBuilderSettingAsString(BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY));
+        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY, getBuilderSettingAsString(BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY));
 
-        setSystemPropertyWhenValid(LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
+        setSystemPropertyWhenValid(COHERENCE_LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
     }
 
     private void preparePropertiesForExtendProxy() {
         preparePropertiesForTcmpClusterMember();
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
-        setSystemPropertyWhenValid(OVERRIDE_KEY, getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY, getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(COHERENCE_OVERRIDE_KEY, getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
 
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PROXY_ROLE_NAME_KEY));
+        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PROXY_ROLE_NAME_KEY));
 
-        setSystemPropertyWhenValid(LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
+        setSystemPropertyWhenValid(COHERENCE_LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
 
-        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
-        setSystemPropertyWhenValid(EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
+        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(COHERENCE_EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
 
         if (extendProxySpecificSystemProperties != null) {
             systemProperties.putAll(extendProxySpecificSystemProperties);
@@ -299,18 +299,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void preparePropertiesForStorageEnabledExtendProxy() {
         preparePropertiesForTcmpClusterMember();
 
-        setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
-        setSystemPropertyWhenValid(OVERRIDE_KEY, getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY, getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(COHERENCE_OVERRIDE_KEY, getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
+        setSystemPropertyWhenValid(COHERENCE_LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
 
-        setSystemPropertyWhenValid(ROLE_NAME_KEY,
+        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY,
                 getBuilderSettingAsString(BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY));
 
-        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
-        setSystemPropertyWhenValid(EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
+        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(COHERENCE_EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
     }
 
     private void preparePropertiesForStorageDisabledClient() {
@@ -319,39 +319,39 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
         if (clientCacheConfiguration != null) {
-            setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
+            setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
         }
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(ROLE_NAME_KEY,
+        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY,
                 getBuilderSettingAsString(BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY));
 
-        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
     }
 
     private void preparePropertiesForTcmpClusterMember() {
-        setSystemPropertyWhenValid(TCMP_ENABLED_KEY, Boolean.TRUE.toString());
-        setSystemPropertyWhenValid(WKA_ADDRESS_KEY, getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
-        setSystemPropertyWhenValid(LOCAL_ADDRESS_KEY, getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
-        setSystemPropertyWhenValid(WKA_PORT_KEY, getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
-        setSystemPropertyWhenValid(LOCAL_PORT_KEY, getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
-        setSystemPropertyWhenValid(TTL_KEY, getBuilderSettingAsString(BUILDER_TTL_KEY));
-        setSystemPropertyWhenValid(CLUSTER_NAME_KEY, getBuilderSettingAsString(BUILDER_CLUSTER_NAME_KEY));
+        setSystemPropertyWhenValid(COHERENCE_TCMP_ENABLED_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(COHERENCE_WKA_ADDRESS_KEY, getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
+        setSystemPropertyWhenValid(COHERENCE_LOCAL_ADDRESS_KEY, getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
+        setSystemPropertyWhenValid(COHERENCE_WKA_PORT_KEY, getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
+        setSystemPropertyWhenValid(COHERENCE_LOCAL_PORT_KEY, getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
+        setSystemPropertyWhenValid(COHERENCE_TTL_KEY, getBuilderSettingAsString(BUILDER_TTL_KEY));
+        setSystemPropertyWhenValid(COHERENCE_CLUSTER_NAME_KEY, getBuilderSettingAsString(BUILDER_CLUSTER_NAME_KEY));
     }
 
     private void preparePropertiesForExtendProxyClient() {
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
         if (clientCacheConfiguration != null) {
-            setSystemPropertyWhenValid(CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
+            setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
         }
 
-        setSystemPropertyWhenValid(DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(TCMP_ENABLED_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(ROLE_NAME_KEY, getBuilderSettingAsString(BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY));
-        setSystemPropertyWhenValid(EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
+        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(COHERENCE_TCMP_ENABLED_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY, getBuilderSettingAsString(BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY));
+        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(COHERENCE_EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
     }
 
     /**
