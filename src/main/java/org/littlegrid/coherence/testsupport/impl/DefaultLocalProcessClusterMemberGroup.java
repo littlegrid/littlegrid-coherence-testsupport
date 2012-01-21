@@ -311,13 +311,15 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
      */
     @Override
     public ClusterMemberGroup shutdownAll() {
+        logger.info("Resetting system properties to before member group started");
+
+        System.setProperties(systemPropertiesBeforeStartInvoked);
+
         if (!startInvoked) {
             logger.warn("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
-
-        System.setProperties(systemPropertiesBeforeStartInvoked);
 
         logger.info(format("Shutting down '%d' cluster member(s) in group", numberOfMembers));
 

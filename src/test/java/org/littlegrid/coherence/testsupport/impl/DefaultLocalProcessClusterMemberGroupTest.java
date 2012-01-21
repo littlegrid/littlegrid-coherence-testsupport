@@ -31,12 +31,16 @@
 
 package org.littlegrid.coherence.testsupport.impl;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * Direct (i.e. not going through ClusterMemberGroupUtils) default local process cluster member
@@ -90,12 +94,23 @@ public class DefaultLocalProcessClusterMemberGroupTest {
     }
 
     @Test
-    @Ignore
-    public void shutdownAllRestoreOfSystemProperties() {
+    public void shutdownAllRestoreOfSystemProperties()
+            throws MalformedURLException {
+
+        final String key = "this-is-a-key-of-a-new-property";
+
         Properties propertiesBefore = SystemUtils.snapshotSystemProperties();
 
-        System.setProperty("key", "Adding a new system property");
-        throw new UnsupportedOperationException();
+        final ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(1,
+                getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 1);
+
+        System.setProperty(key, "Adding a new system property");
+
+        assertThat(System.getProperty(key), notNullValue());
+
+        memberGroup.shutdownAll();
+
+        assertThat(System.getProperty(key), nullValue());
     }
 
     private static Properties getPopulatedProperties() {
