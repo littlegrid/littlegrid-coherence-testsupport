@@ -5,7 +5,7 @@ import java.util.Properties;
 /**
  * Properties utilities class, containing useful convenience methods for working with properties.
  */
-public final class PropertiesUtils {
+final class PropertiesUtils {
     /**
      * Private constructor to prevent creation.
      */

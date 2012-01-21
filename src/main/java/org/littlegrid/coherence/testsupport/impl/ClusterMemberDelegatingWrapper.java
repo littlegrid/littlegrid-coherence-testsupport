@@ -32,7 +32,7 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import org.littlegrid.coherence.testsupport.ClusterMember;
-import org.littlegrid.common.LoggerPlaceHolder;
+import org.littlegrid.coherence.testsupport.impl.LoggerPlaceHolder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

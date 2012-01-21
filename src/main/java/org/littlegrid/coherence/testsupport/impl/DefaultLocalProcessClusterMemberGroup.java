@@ -33,7 +33,7 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import org.littlegrid.coherence.testsupport.ClusterMember;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.common.LoggerPlaceHolder;
+import org.littlegrid.coherence.testsupport.impl.LoggerPlaceHolder;
 
 import java.net.URL;
 import java.util.ArrayList;

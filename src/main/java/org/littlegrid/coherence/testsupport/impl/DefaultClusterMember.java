@@ -36,11 +36,11 @@ import com.tangosol.net.DefaultCacheServer;
 import org.littlegrid.coherence.testsupport.ClusterMember;
 
 /**
- * Default delegated cluster member (which may be extended if specialised behaviour is required,
+ * Default cluster member (which may be extended if specialised behaviour is required,
  * such as before start-up etc.), it performs the necessary cluster member actions - this
  * implementation simply delegates to a Default cache server where possible.
  */
-public class DefaultDelegatedClusterMember implements ClusterMember {
+public class DefaultClusterMember implements ClusterMember {
     /**
      * Performs any necessary setup before cluster member is started.
      */

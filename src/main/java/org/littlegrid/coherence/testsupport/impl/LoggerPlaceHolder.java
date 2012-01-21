@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.common;
+package org.littlegrid.coherence.testsupport.impl;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  * Wrapper around a logger to provide consistent messages containing build information,
  * in the event of more severe log levels, additional information is also output.
  */
-public final class LoggerPlaceHolder {
+final class LoggerPlaceHolder {
     private final Logger logger;
 
     /**

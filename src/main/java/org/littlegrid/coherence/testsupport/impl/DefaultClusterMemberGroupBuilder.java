@@ -33,7 +33,7 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.util.Resources;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.common.LoggerPlaceHolder;
+import org.littlegrid.coherence.testsupport.impl.LoggerPlaceHolder;
 
 import java.io.File;
 import java.io.IOException;

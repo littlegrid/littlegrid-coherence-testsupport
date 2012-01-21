@@ -33,7 +33,6 @@ package org.littlegrid.coherence.testsupport;
 
 import com.tangosol.net.CacheFactory;
 import org.littlegrid.coherence.testsupport.impl.DefaultClusterMemberGroupBuilder;
-import org.littlegrid.common.LoggerPlaceHolder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +48,6 @@ public final class ClusterMemberGroupUtils {
     private static final String COHERENCE_SLEEP_PROPERTIES_FILENAME =
             "coherence/littlegrid-coherence-sleep-default.properties";
 
-    private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(ClusterMemberGroupUtils.class.getName());
     private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
     private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;
     private static final float COHERENCE_VERSION_NUMBER_3_7 = 3.7f;
@@ -64,7 +62,6 @@ public final class ClusterMemberGroupUtils {
         if (stream == null) {
             final String message = format("Unable to load '%s'", COHERENCE_SLEEP_PROPERTIES_FILENAME);
 
-            LOGGER.error(message);
             throw new IllegalStateException(message);
         }
 
@@ -73,7 +70,6 @@ public final class ClusterMemberGroupUtils {
         } catch (IOException e) {
             final String message = format("Problem with loading Coherence sleep properties");
 
-            LOGGER.error(message);
             throw new IllegalStateException(message);
         }
     }
@@ -150,9 +146,9 @@ public final class ClusterMemberGroupUtils {
     }
 
     private static void sleepForSeconds(final int seconds) {
-        LOGGER.info(format(
-                "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
-                CacheFactory.VERSION, seconds));
+//        LOGGER.info(format(
+//                "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
+//                CacheFactory.VERSION, seconds));
         try {
             SECONDS.sleep(seconds);
         } catch (InterruptedException e) {
@@ -176,7 +172,6 @@ public final class ClusterMemberGroupUtils {
             } catch (Exception e) {
                 exceptionOccurredDuringShutdown = true;
 
-                LOGGER.error("Could not shutdown cluster member group: " + e);
                 // Ignore and allow looping to try and shutdown any other cluster member groups if running
             }
         }
