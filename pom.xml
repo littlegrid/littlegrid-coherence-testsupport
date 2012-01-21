@@ -34,14 +34,14 @@
                     <scope>provided</scope>
                 </dependency>
 -->
-        <!--
+<!--
                 <dependency>
                     <groupId>oracle</groupId>
                     <artifactId>coherence</artifactId>
                     <version>3.6.1.0</version>
                     <scope>provided</scope>
                 </dependency>
-        -->
+-->
         <!--
                 <dependency>
                     <groupId>com.oracle</groupId>

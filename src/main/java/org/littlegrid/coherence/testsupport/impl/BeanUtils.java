@@ -64,10 +64,16 @@ final class BeanUtils {
             final String methodName = "set" + key;
 
             try {
+                // Try invoking with string as parameter
                 ClassHelper.invoke(bean, methodName, new Object[]{value});
             } catch (Exception e) {
-                throw new IllegalStateException(format(
-                        "Unable to invoke '%s' to set value to: '%s'", methodName, value));
+                try {
+                    // Try invoking with an int as a parameter
+                    ClassHelper.invoke(bean, methodName, new Object[]{Integer.parseInt(value)});
+                } catch (Exception e2) {
+                    throw new IllegalStateException(format(
+                            "Unable to invoke '%s' to set value to: '%s' due to: %s", methodName, value, e2));
+                }
             }
 
             propertiesSetCounter++;

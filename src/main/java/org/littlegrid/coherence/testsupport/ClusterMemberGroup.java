@@ -211,7 +211,7 @@ public interface ClusterMemberGroup {
         /**
          * Sets the cluster name that the cluster members belong to.
          *
-         * @param clusterName  Cluster name.
+         * @param clusterName Cluster name.
          * @return cluster member group builder.
          */
         Builder setClusterName(String clusterName);
@@ -299,5 +299,17 @@ public interface ClusterMemberGroup {
          * @return cluster member group builder.
          */
         Builder setBuilderProperties(Properties properties);
+
+        Builder setCoherence35xOrOlderSleepAfterStopDuration(int sleepAfterStopDuration);
+
+        Builder setCoherence35xSleepAfterStopDuration(int sleepAfterStopDuration);
+
+        Builder setCoherence36xSleepAfterStopDuration(int sleepAfterStopDuration);
+
+        Builder setCoherence370SleepAfterStopDuration(int sleepAfterStopDuration);
+
+        Builder setCoherence371SleepAfterStopDuration(int sleepAfterStopDuration);
+
+        Builder setCoherenceDefaultSleepAfterStopDuration(int sleepAfterStopDuration);
     }
 }

@@ -612,13 +612,73 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCoherence35xOrOlderSleepAfterStopDuration(final int sleepAfterStopDuration) {
+//        throw new UnsupportedOperationException();
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCoherence35xSleepAfterStopDuration(final int sleepAfterStopDuration) {
+//        throw new UnsupportedOperationException();
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCoherence36xSleepAfterStopDuration(final int sleepAfterStopDuration) {
+//        throw new UnsupportedOperationException();
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCoherence370SleepAfterStopDuration(final int sleepAfterStopDuration) {
+//        throw new UnsupportedOperationException();
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCoherence371SleepAfterStopDuration(final int sleepAfterStopDuration) {
+//        throw new UnsupportedOperationException();
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCoherenceDefaultSleepAfterStopDuration(final int sleepAfterStopDuration) {
+//        throw new UnsupportedOperationException();
+
+        return this;
+    }
+
+    /**
      * Sets the TTL.
      *
      * @param ttl TTL.
      * @return cluster member group builder.
      */
     public ClusterMemberGroup.Builder setTtl(final int ttl) {
-        builderSettings.put(BUILDER_LOG_LEVEL_KEY, ttl);
+        builderSettings.put(BUILDER_TTL_KEY, ttl);
 
         return this;
     }
@@ -668,113 +728,5 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
-    }
-
-
-    /*
-     * *******************************************************************************************************
-     * *******************************************************************************************************
-     * *******************************************************************************************************
-     * Below setter are required when using older versions of Coherence, such as 3.5.x - this is because the
-     * reflection updater doesn't seem to set integer values.
-     * <p/>
-     * TODO: littlegrid#8 Look at why integer values don't get set.
-     */
-
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param wkaPort WKA port.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setWkaPort(final String wkaPort) {
-        setWkaPort(Integer.parseInt(wkaPort));
-
-        return this;
-    }
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param numberOfMembers Number of members.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setStorageEnabledCount(final String numberOfMembers) {
-        setStorageEnabledCount(Integer.parseInt(numberOfMembers));
-
-        return this;
-    }
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param numberOfMembers Number of members.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyCount(final String numberOfMembers) {
-        setStorageEnabledExtendProxyCount(Integer.parseInt(numberOfMembers));
-
-        return this;
-    }
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param numberOfMembers Number of members.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setExtendProxyCount(final String numberOfMembers) {
-        setExtendProxyCount(Integer.parseInt(numberOfMembers));
-
-        return this;
-    }
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param numberOfThreadsInStartUpPool Number of threads in start-up pool.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final String numberOfThreadsInStartUpPool) {
-        setNumberOfThreadsInStartUpPool(Integer.parseInt(numberOfThreadsInStartUpPool));
-
-        return this;
-    }
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param logLevel Log level.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setLogLevel(final String logLevel) {
-        setLogLevel(Integer.parseInt(logLevel));
-
-        return this;
-    }
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param extendPort Extend port.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setExtendPort(final String extendPort) {
-        setExtendPort(Integer.parseInt(extendPort));
-
-        return this;
-    }
-
-    /**
-     * Required to support older version of Coherence.
-     *
-     * @param ttl TTL.
-     * @return cluster member group.
-     */
-    public ClusterMemberGroup.Builder setTtl(final String ttl) {
-        setTtl(Integer.parseInt(ttl));
-
-        return this;
     }
 }

@@ -144,6 +144,7 @@ public final class ClusterMemberGroupUtils {
     /**
      * Sleeps for a period of time (dependent upon Coherence version) after a member has been stopped.
      */
+    @Deprecated
     public static void sleepAfterPerformingMemberStop() {
         sleepForSeconds(getSecondsToSleepAfterPerformingMemberStop());
     }
