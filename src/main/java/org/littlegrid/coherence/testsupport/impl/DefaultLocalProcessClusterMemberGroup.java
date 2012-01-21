@@ -111,12 +111,21 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
     }
 
+    /**
+     * Constructor with reduced scope.
+     */
     DefaultLocalProcessClusterMemberGroup() {
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
     }
 
+    /**
+     * Reduced scope method to merge in a cluster member group with this cluster member group.
+     *
+     * @param memberGroup Cluster member group to be merged.
+     * @return new size of combined member group.
+     */
     int merge(final ClusterMemberGroup memberGroup) {
-        DefaultLocalProcessClusterMemberGroup defaultClusterMemberGroup =
+        final DefaultLocalProcessClusterMemberGroup defaultClusterMemberGroup =
                 (DefaultLocalProcessClusterMemberGroup) memberGroup;
 
         memberFutures.addAll(defaultClusterMemberGroup.getMemberFutures());
@@ -127,6 +136,12 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
         return memberFutures.size();
     }
 
+    /**
+     * Reduced scope method to get this members list of futures, the references to the
+     * cluster members.
+     *
+     * @return list of member's futures.
+     */
     List<Future<ClusterMemberDelegatingWrapper>> getMemberFutures() {
         return memberFutures;
     }
@@ -148,34 +163,35 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
         outputStartAllMessages();
 
         try {
-            List<Callable<ClusterMemberDelegatingWrapper>> tasks =
+            final List<Callable<ClusterMemberDelegatingWrapper>> tasks =
                     new ArrayList<Callable<ClusterMemberDelegatingWrapper>>(numberOfMembers);
 
             for (int i = 0; i < numberOfMembers; i++) {
                 tasks.add(new ClusterMemberCallable(clusterMemberInstanceClassName, classPathUrls));
             }
 
-            Callable<ClusterMemberDelegatingWrapper> taskForSeniorMember = tasks.remove(0);
+            final Callable<ClusterMemberDelegatingWrapper> taskForSeniorMember = tasks.remove(0);
 
-            ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
+            final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
 
             logger.debug("About to establish a cluster using a single member initially");
-            Future<ClusterMemberDelegatingWrapper> futureForSeniorMember = executorService.submit(taskForSeniorMember);
+            final Future<ClusterMemberDelegatingWrapper> futureForSeniorMember =
+                    executorService.submit(taskForSeniorMember);
+
             futureForSeniorMember.get();
 
             logger.info("First cluster member up, starting any remaining members to join established cluster");
-            List<Future<ClusterMemberDelegatingWrapper>> futuresForOtherMembers = executorService.invokeAll(tasks);
+            final List<Future<ClusterMemberDelegatingWrapper>> futuresForOtherMembers =
+                    executorService.invokeAll(tasks);
 
             memberFutures.add(futureForSeniorMember);
             memberFutures.addAll(futuresForOtherMembers);
 
             executorService.shutdown();
 
-            List<Integer> memberIds = getStartedMemberIds();
-
-            logger.info(format("Group of cluster member(s) started, member Ids: %s", memberIds));
+            logger.info(format("Group of cluster member(s) started, member Ids: %s", getStartedMemberIds()));
         } catch (Exception e) {
-            String message = format(
+            final String message = format(
                     "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
                     SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
 
@@ -210,9 +226,9 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
 
                 if (memberWrapper.getLocalMemberId() == memberId) {
                     return memberWrapper;
@@ -231,12 +247,12 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
     @Override
     public List<Integer> getStartedMemberIds() {
         try {
-            List<Integer> memberIds = new ArrayList<Integer>();
+            final List<Integer> memberIds = new ArrayList<Integer>();
 
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
                 memberIds.add(memberWrapper.getLocalMemberId());
             }
 
@@ -277,11 +293,11 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
             throw new UnsupportedOperationException("Shutting down multiple members is not supported currently");
         }
 
-        int memberId = memberIds[0];
+        final int memberId = memberIds[0];
 
         logger.info(format("About to shutdown cluster member '%d'", memberId));
 
-        ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
+        final ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
         if (memberWrapper != null) {
             memberWrapper.shutdown();
@@ -307,9 +323,10 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
+
                 memberWrapper.shutdown();
             }
 
@@ -338,11 +355,11 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
             throw new UnsupportedOperationException("Stopping multiple members is not supported currently");
         }
 
-        int memberId = memberIds[0];
+        final int memberId = memberIds[0];
 
         logger.info(format("About to stop cluster member with id '%d'", memberId));
 
-        ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
+        final ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
         if (memberWrapper != null) {
             memberWrapper.stop();
@@ -366,9 +383,10 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
 
-                ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
+
                 memberWrapper.stop();
             }
         } catch (Exception e) {

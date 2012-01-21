@@ -44,8 +44,8 @@ class ClusterMemberCallable implements Callable<ClusterMemberDelegatingWrapper> 
     /**
      * Constructor.
      *
-     * @param clusterMemberInstanceClassName  Cluster member class name.
-     * @param classPathUrls  Class path.
+     * @param clusterMemberInstanceClassName Cluster member class name.
+     * @param classPathUrls                  Class path.
      */
     public ClusterMemberCallable(final String clusterMemberInstanceClassName,
                                  final URL[] classPathUrls) {

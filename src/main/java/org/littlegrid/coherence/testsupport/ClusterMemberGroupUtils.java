@@ -46,7 +46,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * Cluster member group factory.
  */
 public final class ClusterMemberGroupUtils {
-    private static final String COHERENCE_SLEEP_PROPERTIES_FILENAME = "coherence/littlegrid-coherence-sleep-default.properties";
+    private static final String COHERENCE_SLEEP_PROPERTIES_FILENAME =
+            "coherence/littlegrid-coherence-sleep-default.properties";
+
     private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(ClusterMemberGroupUtils.class.getName());
     private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
     private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;

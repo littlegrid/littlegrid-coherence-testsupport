@@ -92,8 +92,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_LOG_LEVEL_KEY = "logLevel";
 
-    private static final String DEFAULT_PROPERTIES_FILENAME = "coherence/littlegrid-builder-default.properties";
-    private static final String OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
+    private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME = "coherence/littlegrid-builder-default.properties";
+    private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
 
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
@@ -122,9 +122,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private void loadAndProcessProperties() {
         final String overridePropertiesFile =
-                System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, OVERRIDE_PROPERTIES_FILENAME);
+                System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
 
-        URL defaultPropertiesUrl = Resources.findFileOrResource(DEFAULT_PROPERTIES_FILENAME,
+        URL defaultPropertiesUrl = Resources.findFileOrResource(BUILDER_DEFAULT_PROPERTIES_FILENAME,
                 this.getClass().getClassLoader());
 
         URL overridePropertiesUrl = Resources.findFileOrResource(overridePropertiesFile,

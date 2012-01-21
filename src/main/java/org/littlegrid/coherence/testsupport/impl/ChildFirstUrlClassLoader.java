@@ -62,7 +62,7 @@ class ChildFirstUrlClassLoader extends URLClassLoader {
 
         if (loadedClass == null) {
             try {
-                // Hasn't already been loaded, so check if this child class-loader has the class
+                // Hasn't already been loaded, so check if this child class-loader can load the class
                 loadedClass = findClass(name);
             } catch (ClassNotFoundException e) {
                 // Child didn't have the class, delegate to parent class-loader
