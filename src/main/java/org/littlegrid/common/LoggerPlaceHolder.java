@@ -84,13 +84,14 @@ public final class LoggerPlaceHolder {
      * @param message Message.
      */
     public void error(final Object message) {
-        StringBuilder sb = getMessageAndAdditionalInformationToLog(message);
+        final StringBuilder sb = getMessageAndAdditionalInformationToLog(message);
 
         logger.severe(sb.toString());
     }
 
     private StringBuilder getMessageAndAdditionalInformationToLog(final Object message) {
-        StringBuilder sb = new StringBuilder(message.toString());
+        final StringBuilder sb = new StringBuilder(message.toString());
+
         sb.append(getAdditionalInformationToLog());
 
         return sb;
@@ -99,10 +100,10 @@ public final class LoggerPlaceHolder {
     private String getAdditionalInformationToLog() {
         final int oneMB = 1024 * 1024;
 
-        StringBuilder sb = new StringBuilder(".  Additional info: ");
+        final StringBuilder sb = new StringBuilder(".  Additional info: ");
 
         try {
-            InetAddress inetAddress = InetAddress.getLocalHost();
+            final InetAddress inetAddress = InetAddress.getLocalHost();
 
             sb.append(inetAddress.getHostName());
             sb.append(" (");

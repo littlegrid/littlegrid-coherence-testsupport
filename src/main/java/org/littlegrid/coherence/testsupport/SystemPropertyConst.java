@@ -32,7 +32,7 @@
 package org.littlegrid.coherence.testsupport;
 
 /**
- * Coherence system property constants.
+ * System property constants for Coherence, JMX and LittleGrid.
  */
 public final class SystemPropertyConst {
     /**

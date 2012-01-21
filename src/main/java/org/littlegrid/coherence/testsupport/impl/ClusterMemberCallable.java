@@ -69,14 +69,15 @@ class ClusterMemberCallable implements Callable<ClusterMemberDelegatingWrapper> 
     public ClusterMemberDelegatingWrapper call()
             throws Exception {
 
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 
         try {
-            ChildFirstUrlClassLoader childFirstUrlClassLoader = new ChildFirstUrlClassLoader(classPathUrls);
+            final ChildFirstUrlClassLoader childFirstUrlClassLoader = new ChildFirstUrlClassLoader(classPathUrls);
             Thread.currentThread().setContextClassLoader(childFirstUrlClassLoader);
 
-            ClusterMemberDelegatingWrapper memberWrapper =
+            final ClusterMemberDelegatingWrapper memberWrapper =
                     new ClusterMemberDelegatingWrapper(clusterMemberInstanceClassName, childFirstUrlClassLoader);
+
             memberWrapper.start();
 
             return memberWrapper;

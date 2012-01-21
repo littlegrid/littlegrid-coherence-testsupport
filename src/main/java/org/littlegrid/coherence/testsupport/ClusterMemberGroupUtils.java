@@ -58,11 +58,11 @@ public final class ClusterMemberGroupUtils {
 
     static {
         //TODO: littlegrid#18 - move over to common resource loading
-        InputStream stream = ClusterMemberGroupUtils.class.getClassLoader()
+        final InputStream stream = ClusterMemberGroupUtils.class.getClassLoader()
                 .getResourceAsStream(COHERENCE_SLEEP_PROPERTIES_FILENAME);
 
         if (stream == null) {
-            String message = format("Unable to load '%s'", COHERENCE_SLEEP_PROPERTIES_FILENAME);
+            final String message = format("Unable to load '%s'", COHERENCE_SLEEP_PROPERTIES_FILENAME);
 
             LOGGER.error(message);
             throw new IllegalStateException(message);
@@ -71,7 +71,7 @@ public final class ClusterMemberGroupUtils {
         try {
             SLEEP_PROPERTIES.load(stream);
         } catch (IOException e) {
-            String message = format("Problem with loading Coherence sleep properties");
+            final String message = format("Problem with loading Coherence sleep properties");
 
             LOGGER.error(message);
             throw new IllegalStateException(message);
@@ -167,7 +167,7 @@ public final class ClusterMemberGroupUtils {
     public static void shutdownClusterMemberGroups(final ClusterMemberGroup... clusterMemberGroups) {
         boolean exceptionOccurredDuringShutdown = false;
 
-        for (ClusterMemberGroup clusterMemberGroup : clusterMemberGroups) {
+        for (final ClusterMemberGroup clusterMemberGroup : clusterMemberGroups) {
             try {
                 if (clusterMemberGroup != null) {
                     clusterMemberGroup.shutdownAll();

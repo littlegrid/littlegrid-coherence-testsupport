@@ -59,8 +59,9 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
         try {
             logger.debug(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
 
-            Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
-            Constructor constructor = clusterMemberClass.getConstructor();
+            final Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
+            final Constructor constructor = clusterMemberClass.getConstructor();
+
             clusterMemberInstance = constructor.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -116,7 +117,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
                                 final String methodName) {
 
         try {
-            Method method = objectToInvokeMethodOn.getClass().getMethod(methodName, new Class[]{});
+            final Method method = objectToInvokeMethodOn.getClass().getMethod(methodName, new Class[]{});
 
             return method.invoke(objectToInvokeMethodOn);
         } catch (Exception e) {

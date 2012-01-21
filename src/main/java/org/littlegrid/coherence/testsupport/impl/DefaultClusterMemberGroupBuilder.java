@@ -124,18 +124,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final String overridePropertiesFile =
                 System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
 
-        URL defaultPropertiesUrl = Resources.findFileOrResource(BUILDER_DEFAULT_PROPERTIES_FILENAME,
+        final URL defaultPropertiesUrl = Resources.findFileOrResource(BUILDER_DEFAULT_PROPERTIES_FILENAME,
                 this.getClass().getClassLoader());
 
-        URL overridePropertiesUrl = Resources.findFileOrResource(overridePropertiesFile,
+        final URL overridePropertiesUrl = Resources.findFileOrResource(overridePropertiesFile,
                 this.getClass().getClassLoader());
 
         try {
             LOGGER.info(format("About to load default configuration from '%s'", defaultPropertiesUrl));
-            Properties defaultProperties = new Properties();
+            final Properties defaultProperties = new Properties();
             defaultProperties.load(defaultPropertiesUrl.openStream());
 
-            Properties propertiesToProcess = new Properties(defaultProperties);
+            final Properties propertiesToProcess = new Properties(defaultProperties);
 
             if (overridePropertiesUrl == null) {
                 LOGGER.info(format("'%s' resource not found - no overrides to apply", overridePropertiesFile));
@@ -211,7 +211,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (storageEnabledCount > 0) {
             preparePropertiesForStorageEnabled();
 
-            ClusterMemberGroup memberGroup =
+            final ClusterMemberGroup memberGroup =
                     new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
                             classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
@@ -223,7 +223,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (extendProxyCount == 1) {
             preparePropertiesForExtendProxy();
 
-            ClusterMemberGroup memberGroup =
+            final ClusterMemberGroup memberGroup =
                     new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
                             classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
@@ -237,7 +237,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (storageEnabledExtendProxyCount == 1) {
             preparePropertiesForStorageEnabledExtendProxy();
 
-            ClusterMemberGroup memberGroup =
+            final ClusterMemberGroup memberGroup =
                     new DefaultLocalProcessClusterMemberGroup(storageEnabledExtendProxyCount, systemProperties,
                             classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
@@ -637,18 +637,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
         //TODO: littlegrid#7 Pull this out and add support for wildcards, e.g. *jmx*
-        String pathSeparator = System.getProperty("path.separator");
-        String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
-        String javaHome = System.getProperty("java.home");
+        final String pathSeparator = System.getProperty("path.separator");
+        final String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
+        final String javaHome = System.getProperty("java.home");
 
-        List<URL> classPathUrls = new ArrayList<URL>();
+        final List<URL> classPathUrls = new ArrayList<URL>();
 
-        for (String partOfClassPath : classPathArray) {
+        for (final String partOfClassPath : classPathArray) {
             if (!partOfClassPath.startsWith(javaHome)) {
                 boolean includeInClassPath = true;
 
                 if (jarsToExcludeFromClassPath != null) {
-                    for (String jarToExclude : jarsToExcludeFromClassPath) {
+                    for (final String jarToExclude : jarsToExcludeFromClassPath) {
                         if (partOfClassPath.endsWith(jarToExclude)) {
                             LOGGER.debug(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
 
