@@ -33,7 +33,6 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.util.Resources;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.impl.LoggerPlaceHolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,17 +50,17 @@ import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_EXTEND_ENABLED_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_EXTEND_PORT_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LITTLEGRID_BUILDER_OVERRIDE;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_LOCAL_ADDRESS_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_LOCAL_PORT_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_LOG_LEVEL_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_OVERRIDE_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_ROLE_NAME_KEY;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TANGOSOL_COHERENCE_DOT;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_TCMP_ENABLED_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_TTL_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_WKA_ADDRESS_KEY;
 import static org.littlegrid.coherence.testsupport.SystemPropertyConst.COHERENCE_WKA_PORT_KEY;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.LITTLEGRID_BUILDER_OVERRIDE;
+import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TANGOSOL_COHERENCE_DOT;
 
 /**
  * Default cluster member group builder implementation.
@@ -120,6 +119,31 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         loadAndProcessProperties();
     }
 
+    /**
+     * Returns the current builder settings with their internal builder keys.
+     *
+     * @return builder settings.
+     */
+    public Map<String, Object> getBuilderSettings() {
+        return builderSettings;
+    }
+
+    public Properties getStorageEnabledPropertiesFromBuilderSettings() {
+        throw new UnsupportedOperationException();
+    }
+    
+    public Properties getExtendProxyPropertiesFromBuilderSettings() {
+        throw new UnsupportedOperationException();
+    }
+    
+    public Properties getStorageEnabledExtendProxyPropertiesFromBuilderSettings() {
+        throw new UnsupportedOperationException();
+    }
+    
+    public Properties getExtendClientPropertiesFromBuilderSettings() {
+        throw new UnsupportedOperationException();
+    }
+    
     private void loadAndProcessProperties() {
         final String overridePropertiesFile =
                 System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
@@ -196,7 +220,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         //TODO: littlegrid#6 Tidy this up
         //TODO: on exception output: class path, tangosol system properties, all system properties and message to suggest checking for another running cluster
-        final DefaultLocalProcessClusterMemberGroup containerGroup = new DefaultLocalProcessClusterMemberGroup();
+        final DefaultClusterMemberGroup containerGroup = new DefaultClusterMemberGroup();
 
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
             storageEnabledCount = 1;
@@ -212,7 +236,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             preparePropertiesForStorageEnabled();
 
             final ClusterMemberGroup memberGroup =
-                    new DefaultLocalProcessClusterMemberGroup(storageEnabledCount, systemProperties,
+                    new DefaultClusterMemberGroup(storageEnabledCount, systemProperties,
                             classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
                             .startAll();
@@ -224,7 +248,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             preparePropertiesForExtendProxy();
 
             final ClusterMemberGroup memberGroup =
-                    new DefaultLocalProcessClusterMemberGroup(extendProxyCount, systemProperties,
+                    new DefaultClusterMemberGroup(extendProxyCount, systemProperties,
                             classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
                             .startAll();
@@ -238,7 +262,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             preparePropertiesForStorageEnabledExtendProxy();
 
             final ClusterMemberGroup memberGroup =
-                    new DefaultLocalProcessClusterMemberGroup(storageEnabledExtendProxyCount, systemProperties,
+                    new DefaultClusterMemberGroup(storageEnabledExtendProxyCount, systemProperties,
                             classPathUrls, clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool)
                             .startAll();
@@ -599,6 +623,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         builderSettings.put(BUILDER_EXTEND_PORT_KEY, extendPort);
 
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getExtendPort() {
+        return getBuilderSettingAsInt(BUILDER_EXTEND_PORT_KEY);
     }
 
     /**

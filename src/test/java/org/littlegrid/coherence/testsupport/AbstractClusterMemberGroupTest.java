@@ -31,10 +31,19 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import com.tangosol.net.CacheFactory;
+
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
  * Abstract base class for cluster member group tests.
  */
 public abstract class AbstractClusterMemberGroupTest {
+    protected static final Logger LOGGER = Logger.getLogger(AbstractClusterMemberGroupTest.class.getName());
+
     protected static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE = "coherence/littlegrid-test-cache-config.xml";
     protected static final String EXTEND_CLIENT_CACHE_CONFIG_FILE = "coherence/littlegrid-test-extend-client-cache-config.xml";
     protected static final String KNOWN_TEST_CACHE = "known-cache";
@@ -44,4 +53,17 @@ public abstract class AbstractClusterMemberGroupTest {
     protected static final int SMALL_TEST_CLUSTER_SIZE = 2;
     protected static final int MEDIUM_TEST_CLUSTER_SIZE = 3;
     protected static final int LARGE_TEST_CLUSTER_SIZE = 6;
+
+    protected static void sleepForSeconds(final int seconds) {
+        LOGGER.info(format(
+                "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
+                CacheFactory.VERSION, seconds));
+
+        try {
+            SECONDS.sleep(seconds);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 }

@@ -107,7 +107,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         memberGroup.stopAll();
         memberGroup.stopAll();
 
-        ClusterMemberGroupUtils.sleepAfterPerformingMemberStop();
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
 

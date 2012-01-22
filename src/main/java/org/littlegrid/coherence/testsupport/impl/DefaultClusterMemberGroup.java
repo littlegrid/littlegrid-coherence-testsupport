@@ -33,7 +33,6 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import org.littlegrid.coherence.testsupport.ClusterMember;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.impl.LoggerPlaceHolder;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,9 +50,9 @@ import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TANGOSOL_
 /**
  * Default local process cluster member group implementation.
  */
-public final class DefaultLocalProcessClusterMemberGroup implements ClusterMemberGroup {
+public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final LoggerPlaceHolder logger =
-            new LoggerPlaceHolder(DefaultLocalProcessClusterMemberGroup.class.getName());
+            new LoggerPlaceHolder(DefaultClusterMemberGroup.class.getName());
 
     private final List<Future<ClusterMemberDelegatingWrapper>> memberFutures =
             new ArrayList<Future<ClusterMemberDelegatingWrapper>>();
@@ -76,11 +75,11 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
      * @param clusterMemberInstanceClassName Class name of cluster member instance.
      * @param numberOfThreadsInStartUpPool   Number of threads in start-up pool.
      */
-    public DefaultLocalProcessClusterMemberGroup(final int numberOfMembers,
-                                                 final Properties systemPropertiesToBeApplied,
-                                                 final URL[] classPathUrls,
-                                                 final String clusterMemberInstanceClassName,
-                                                 final int numberOfThreadsInStartUpPool) {
+    public DefaultClusterMemberGroup(final int numberOfMembers,
+                                     final Properties systemPropertiesToBeApplied,
+                                     final URL[] classPathUrls,
+                                     final String clusterMemberInstanceClassName,
+                                     final int numberOfThreadsInStartUpPool) {
 
         if (numberOfMembers < 1) {
             throw new IllegalArgumentException("Number of members must be 1 or more");
@@ -114,7 +113,7 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
     /**
      * Constructor with reduced scope.
      */
-    DefaultLocalProcessClusterMemberGroup() {
+    DefaultClusterMemberGroup() {
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
     }
 
@@ -125,8 +124,8 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
      * @return new size of combined member group.
      */
     int merge(final ClusterMemberGroup memberGroup) {
-        final DefaultLocalProcessClusterMemberGroup defaultClusterMemberGroup =
-                (DefaultLocalProcessClusterMemberGroup) memberGroup;
+        final DefaultClusterMemberGroup defaultClusterMemberGroup =
+                (DefaultClusterMemberGroup) memberGroup;
 
         memberFutures.addAll(defaultClusterMemberGroup.getMemberFutures());
         startInvoked = true;
@@ -261,6 +260,49 @@ public final class DefaultLocalProcessClusterMemberGroup implements ClusterMembe
             throw new IllegalStateException(e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getSuggestedSleepAfterStopDuration() {
+        return 3;
+    }
+//        final float majorMinorVersion = getMajorMinorVersion();
+//
+//        if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_5) {
+//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5;
+//
+//        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_6) {
+//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5;
+//
+//        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_7) {
+//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6;
+//
+//        } else {
+//            if (CacheFactory.VERSION.startsWith(COHERENCE_VERSION_3_7_0)) {
+//                return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0;
+//            }
+
+    /*
+//            /**
+//     * Returns the sleep time based upon Coherence version in which to sleep after a member has been stopped.
+//     *
+//     * @return sleep time.
+//     */
+//    @Deprecated
+//    public static int getSuggestedSleepAfterStopDuration() {
+//        }
+//
+//        return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER;
+//    }
+//
+//    private static float getMajorMinorVersion() {
+//        final String majorMinorVersionString = CacheFactory.VERSION.substring(0, 3);
+//
+//        return Float.parseFloat(majorMinorVersionString);
+//    }
+//    }
 
     /**
      * {@inheritDoc}

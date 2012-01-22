@@ -51,9 +51,9 @@ public class ClusterMemberGroupLargeTest extends AbstractStorageDisabledClientCl
         /*
             Wait longer because all of them are being stopped.
          */
-        ClusterMemberGroupUtils.sleepAfterPerformingMemberStop();
-        ClusterMemberGroupUtils.sleepAfterPerformingMemberStop();
-        ClusterMemberGroupUtils.sleepAfterPerformingMemberStop();
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
         memberGroup.shutdownAll();
         assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);

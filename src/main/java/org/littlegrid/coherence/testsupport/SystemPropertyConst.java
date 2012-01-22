@@ -34,6 +34,7 @@ package org.littlegrid.coherence.testsupport;
 /**
  * System property constants for Coherence, JMX and LittleGrid.
  */
+@Deprecated
 public final class SystemPropertyConst {
     /**
      * Private constructor to prevent creation.

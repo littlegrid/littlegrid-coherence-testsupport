@@ -1,8 +1,11 @@
 package org.littlegrid.coherence.testsupport.impl;
 
+import org.junit.Ignore;
+
 /**
  * Properties utilities tests.
  */
+@Ignore
 public class PropertiesUtilsTest {
     /*
         File doesn't exist

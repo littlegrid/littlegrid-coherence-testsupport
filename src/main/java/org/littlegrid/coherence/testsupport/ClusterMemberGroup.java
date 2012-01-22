@@ -85,6 +85,14 @@ public interface ClusterMemberGroup {
     List<Integer> getStartedMemberIds();
 
     /**
+     * Returns the suggested seconds to sleep after performing a member stop, the sleep
+     * time is dependent upon the version of Coherence.
+     *
+     * @return seconds to sleep.
+     */
+    int getSuggestedSleepAfterStopDuration();
+
+    /**
      * Builder interface for cluster member group.
      */
     interface Builder {
@@ -270,11 +278,11 @@ public interface ClusterMemberGroup {
         Builder setWkaPort(int wkaPort);
 
         /**
-         * Returns the well-known port, this is useful to working out what the default value is
+         * Returns the well-known port, this is useful for working out what the default value is
          * and then subsequently setting it to a different number when running two autonomous
          * clusters.
          *
-         * @return cluster member group builder.
+         * @return WKA port.
          */
         int getWkaPort();
 
@@ -286,6 +294,14 @@ public interface ClusterMemberGroup {
          * @return cluster member group builder.
          */
         Builder setExtendPort(int extendPort);
+
+        /**
+         * Returns the Extend proxy port, for working out what the default value is and then
+         * subsequently setting it to a different number when running multiple proxy servers.
+         *
+         * @return Extend port.
+         */
+        int getExtendPort();
 
         /**
          * Sets the builder properties to be used, these will override any defaults - using

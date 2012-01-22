@@ -61,7 +61,9 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         assertThat(doesMemberExist(memberIdToStop), is(true));
 
         memberGroup.stopMember(memberIdToStop);
-        ClusterMemberGroupUtils.sleepAfterPerformingMemberStop();
+
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
         assertThat(doesMemberExist(memberIdToStop), is(false));
         assertThatClusterIsExpectedSize(expectedClusterSizeAfterStop);
 

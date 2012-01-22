@@ -46,51 +46,51 @@ import static org.junit.Assert.assertThat;
  * Direct (i.e. not going through ClusterMemberGroupUtils) default local process cluster member
  * group tests.
  */
-public class DefaultLocalProcessClusterMemberGroupTest {
+public class DefaultClusterMemberGroupTest {
     @Test(expected = IllegalArgumentException.class)
     public void constructWithInvalidNumberOfMembers() {
-        new DefaultLocalProcessClusterMemberGroup(0, null, null, null, 0);
+        new DefaultClusterMemberGroup(0, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithNullSystemProperties() {
-        new DefaultLocalProcessClusterMemberGroup(1, null, null, null, 0);
+        new DefaultClusterMemberGroup(1, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithNoSystemProperties() {
-        new DefaultLocalProcessClusterMemberGroup(1, new Properties(), null, null, 0);
+        new DefaultClusterMemberGroup(1, new Properties(), null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithNullClassPath() {
-        new DefaultLocalProcessClusterMemberGroup(1, getPopulatedProperties(), null, null, 0);
+        new DefaultClusterMemberGroup(1, getPopulatedProperties(), null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithNoClassPath() {
-        new DefaultLocalProcessClusterMemberGroup(1, getPopulatedProperties(), new URL[]{}, null, 0);
+        new DefaultClusterMemberGroup(1, getPopulatedProperties(), new URL[]{}, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithNullInstanceClassName()
             throws MalformedURLException {
 
-        new DefaultLocalProcessClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), null, 0);
+        new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithEmptyInstanceClassName()
             throws MalformedURLException {
 
-        new DefaultLocalProcessClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), " ", 0);
+        new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), " ", 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithInvalidNumberOfThreads()
             throws MalformedURLException {
 
-        new DefaultLocalProcessClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 0);
+        new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 0);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class DefaultLocalProcessClusterMemberGroupTest {
 
         Properties propertiesBefore = SystemUtils.snapshotSystemProperties();
 
-        final ClusterMemberGroup memberGroup = new DefaultLocalProcessClusterMemberGroup(1,
+        final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1,
                 getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 1);
 
         System.setProperty(key, "Adding a new system property");
