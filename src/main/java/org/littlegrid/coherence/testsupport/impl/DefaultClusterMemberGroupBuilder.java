@@ -282,7 +282,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         //TODO: littlegrid#6 Tidy this up
-        //TODO: on exception output: class path, tangosol system properties, all system properties and message to suggest checking for another running cluster
+        // on exception output: class path, tangosol system properties, all system properties and message
+        // to suggest checking for another running cluster
         final DefaultClusterMemberGroup containerGroup = new DefaultClusterMemberGroup();
 
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
@@ -298,11 +299,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (storageEnabledCount > 0) {
             preparePropertiesForStorageEnabled();
 
-            final ClusterMemberGroup memberGroup =
-                    new DefaultClusterMemberGroup(storageEnabledCount, systemProperties,
-                            classPathUrls, clusterMemberInstanceClassName,
-                            numberOfThreadsInStartUpPool)
-                            .startAll();
+            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
+                    systemProperties, classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                    .startAll();
 
             containerGroup.merge(memberGroup);
         }
@@ -310,11 +309,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (extendProxyCount == 1) {
             preparePropertiesForExtendProxy();
 
-            final ClusterMemberGroup memberGroup =
-                    new DefaultClusterMemberGroup(extendProxyCount, systemProperties,
-                            classPathUrls, clusterMemberInstanceClassName,
-                            numberOfThreadsInStartUpPool)
-                            .startAll();
+            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(extendProxyCount,
+                    systemProperties, classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                    .startAll();
 
             containerGroup.merge(memberGroup);
         } else if (extendProxyCount > 1) {
@@ -324,11 +321,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (storageEnabledExtendProxyCount == 1) {
             preparePropertiesForStorageEnabledExtendProxy();
 
-            final ClusterMemberGroup memberGroup =
-                    new DefaultClusterMemberGroup(storageEnabledExtendProxyCount, systemProperties,
-                            classPathUrls, clusterMemberInstanceClassName,
-                            numberOfThreadsInStartUpPool)
-                            .startAll();
+            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledExtendProxyCount,
+                    systemProperties, classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                    .startAll();
 
             containerGroup.merge(memberGroup);
         } else if (storageEnabledExtendProxyCount > 1) {
@@ -512,8 +507,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSystemProperties(final Properties properties) {
-        this.systemProperties = properties;
+    public ClusterMemberGroup.Builder setAdditionalSystemProperties(final Properties properties) {
+        systemProperties.putAll(properties);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setAdditionalSystemProperties(String propertiesFilenames) {
+        setAdditionalSystemProperties(PropertiesUtils.loadProperties(propertiesFilenames));
 
         return this;
     }

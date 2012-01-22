@@ -170,7 +170,17 @@ public interface ClusterMemberGroup {
          * @param properties Properties to be turned into system properties.
          * @return cluster member group builder.
          */
-        Builder setSystemProperties(Properties properties);
+        Builder setAdditionalSystemProperties(Properties properties);
+
+        /**
+         * Used to set any remaining system properties that are required, for instance if the
+         * standard Coherence names for system properties aren't being used - i.e. a different
+         * named property is used for enabling distributed local storage.
+         *
+         * @param propertiesFilenames Properties to be turned into system properties.
+         * @return cluster member group builder.
+         */
+        Builder setAdditionalSystemProperties(String propertiesFilenames);
 
         /**
          * Used to set any remaining Extend proxy specific system properties that are required, for

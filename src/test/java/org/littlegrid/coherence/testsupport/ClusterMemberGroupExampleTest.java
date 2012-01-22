@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -148,6 +149,15 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
         } finally {
             ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
         }
+    }
+
+    @Test
+    public void exampleOfAdditionalSystemProperties() {
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setAdditionalSystemProperties("properties/additionalSystemProperties.properties")
+                .build();
+
+        assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
     }
 
     private void performSimplePutSizeGet(final String cacheName) {
