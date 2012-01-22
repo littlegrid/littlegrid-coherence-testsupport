@@ -31,6 +31,7 @@
 
 package org.littlegrid.coherence.testsupport.impl;
 
+import com.tangosol.net.CacheFactory;
 import org.littlegrid.coherence.testsupport.ClusterMember;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 
@@ -45,12 +46,29 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static java.lang.String.format;
-import static org.littlegrid.coherence.testsupport.SystemPropertyConst.TANGOSOL_COHERENCE_DOT;
 
 /**
  * Default local process cluster member group implementation.
  */
 public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
+    @Deprecated
+    private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
+
+    @Deprecated
+    private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;
+
+    @Deprecated
+    private static final float COHERENCE_VERSION_NUMBER_3_7 = 3.7f;
+
+    @Deprecated
+    private static final String COHERENCE_VERSION_3_7_0 = "3.7.0";
+
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5 = 60;
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5 = 45;
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6 = 3;
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0 = 3;
+    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER = 3;
+
     private final LoggerPlaceHolder logger =
             new LoggerPlaceHolder(DefaultClusterMemberGroup.class.getName());
 
@@ -192,7 +210,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         } catch (Exception e) {
             final String message = format(
                     "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
-                    SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT));
+                    systemPropertiesToBeApplied);
 
             System.setProperties(systemPropertiesBeforeStartInvoked);
             logger.error(message);
@@ -210,7 +228,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         logger.debug(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
         logger.debug(format("Current Coherence properties...: %s",
-                SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
+                SystemUtils.getSystemPropertiesWithPrefix("tangosol.coherence.")));
         logger.info(format("Coherence properties to be set.: %s", systemPropertiesToBeApplied));
         logger.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
@@ -266,43 +284,31 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public int getSuggestedSleepAfterStopDuration() {
-        return 3;
-    }
-//        final float majorMinorVersion = getMajorMinorVersion();
-//
-//        if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_5) {
-//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5;
-//
-//        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_6) {
-//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5;
-//
-//        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_7) {
-//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6;
-//
-//        } else {
-//            if (CacheFactory.VERSION.startsWith(COHERENCE_VERSION_3_7_0)) {
-//                return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0;
-//            }
+        final float majorMinorVersion = getMajorMinorVersion();
 
-    /*
-//            /**
-//     * Returns the sleep time based upon Coherence version in which to sleep after a member has been stopped.
-//     *
-//     * @return sleep time.
-//     */
-//    @Deprecated
-//    public static int getSuggestedSleepAfterStopDuration() {
-//        }
-//
-//        return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER;
-//    }
-//
-//    private static float getMajorMinorVersion() {
-//        final String majorMinorVersionString = CacheFactory.VERSION.substring(0, 3);
-//
-//        return Float.parseFloat(majorMinorVersionString);
-//    }
-//    }
+        if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_5) {
+            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5;
+
+        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_6) {
+            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5;
+
+        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_7) {
+            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6;
+
+        } else {
+            if (CacheFactory.VERSION.startsWith(COHERENCE_VERSION_3_7_0)) {
+                return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0;
+            }
+        }
+
+        return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER;
+    }
+
+    private static float getMajorMinorVersion() {
+        final String majorMinorVersionString = CacheFactory.VERSION.substring(0, 3);
+
+        return Float.parseFloat(majorMinorVersionString);
+    }
 
     /**
      * {@inheritDoc}

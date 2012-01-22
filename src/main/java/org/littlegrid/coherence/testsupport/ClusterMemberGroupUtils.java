@@ -34,36 +34,10 @@ package org.littlegrid.coherence.testsupport;
 import com.tangosol.net.CacheFactory;
 import org.littlegrid.coherence.testsupport.impl.DefaultClusterMemberGroupBuilder;
 
-import java.util.Properties;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 /**
  * Cluster member group factory.
  */
 public final class ClusterMemberGroupUtils {
-    private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
-    private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;
-    private static final float COHERENCE_VERSION_NUMBER_3_7 = 3.7f;
-    private static final String COHERENCE_VERSION_3_7_0 = "3.7.0";
-    private static final Properties SLEEP_PROPERTIES = new Properties();
-
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.pre.3.5", "60"));
-
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.5", "45"));
-
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.6", "3"));
-
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0 =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.7.0", "3"));
-
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER =
-            Integer.parseInt(SLEEP_PROPERTIES.getProperty("sleep.after.stop.3.7.1.or.later", "3"));
-
-
     /**
      * Private constructor to prevent creation.
      */
@@ -105,7 +79,7 @@ public final class ClusterMemberGroupUtils {
     }
 
     /**
-     * Shutdown cluster member groups and the cache factory.
+     * Shutdown cluster member groups followed by the cache factory.
      *
      * @param memberGroups Member groups.
      */
@@ -118,7 +92,7 @@ public final class ClusterMemberGroupUtils {
     }
 
     /**
-     * Shutdown cache factory and then cluster member groups.
+     * Shutdown the cache factory and then the cluster member groups.
      *
      * @param memberGroups Member groups.
      */

@@ -10,9 +10,9 @@
     <name>${project.artifactId}</name>
 
     <scm>
-        <connection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid.git</connection>
-        <developerConnection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid.git</developerConnection>
-        <url>git:https://littlegrid@bitbucket.org/littlegrid/littlegrid.git</url>
+        <connection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</connection>
+        <developerConnection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</developerConnection>
+        <url>git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</url>
     </scm>
 
     <dependencies>

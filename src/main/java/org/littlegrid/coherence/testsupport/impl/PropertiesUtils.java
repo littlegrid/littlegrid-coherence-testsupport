@@ -11,8 +11,8 @@ final class PropertiesUtils {
      */
     private PropertiesUtils() {
     }
-    
-    public static Properties loadProperties(String... propertiesFilename) {
+
+    public static Properties loadProperties(final String... propertiesFilename) {
         throw new UnsupportedOperationException();
     }
 }
