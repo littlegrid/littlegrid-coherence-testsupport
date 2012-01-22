@@ -108,6 +108,33 @@ public class ClusterMemberGroupExtendProxyTest extends AbstractExtendClientClust
         }
     }
 
+    @Test
+    public void twoExtendProxiesInDifferentGroups() {
+        int numberOfExtendProxies = SINGLE_TEST_CLUSTER_SIZE;
+        
+        ClusterMemberGroup extendProxyGroup1 = null;
+        ClusterMemberGroup extendProxyGroup2 = null;
+        
+        try {
+            final ClusterMemberGroup.Builder builder1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
+            
+            extendProxyGroup1 = builder1
+                    .setExtendProxyCount(numberOfExtendProxies)
+                    .build();
+
+            final int nextExtendPort = builder1.getExtendPort() + 1;
+
+            extendProxyGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setExtendProxyCount(numberOfExtendProxies)
+                    .setExtendPort(nextExtendPort)
+                    .build();
+
+
+        } finally {
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(extendProxyGroup1, extendProxyGroup2);
+        }
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void multipleExtendProxiesWhichIsNotSupported() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()

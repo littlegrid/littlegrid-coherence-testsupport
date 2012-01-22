@@ -56,7 +56,9 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         final int memberIdToStop = 3;
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build();
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
         assertThatClusterIsExpectedSize(expectedClusterSizeBeforeStop);
         assertThat(doesMemberExist(memberIdToStop), is(true));
 
@@ -72,12 +74,13 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
 
     @Test
     public void startAndStopNonExistentMemberOfGroup() {
-        int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
-        int memberIdToStop = 12;
-        int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int memberIdToStop = 12;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
+
         assertThatClusterIsExpectedSize(expectedClusterSize);
         assertThat(doesMemberExist(memberIdToStop), is(false));
 
@@ -88,6 +91,36 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         memberGroup.shutdownAll();
     }
 
+    @Test
+    public void startAndStopExtendProxyMemberOfGroup() {
+        final int numberOfExtendProxyMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int numberOfStorageEnabledMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int memberIdToStop = 2;
+        final int expectedClusterSizeBeforeStop = numberOfExtendProxyMembers + numberOfStorageEnabledMembers
+                + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        final int expectedClusterSizeAfterStop = numberOfStorageEnabledMembers
+                + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfStorageEnabledMembers)
+                .setExtendProxyCount(numberOfExtendProxyMembers)
+                .build();
+
+        System.setProperty("tangosol.coherence.tcmp.enabled", "true");
+
+        assertThatClusterIsExpectedSize(expectedClusterSizeBeforeStop);
+        assertThat(doesMemberExist(memberIdToStop), is(true));
+
+        memberGroup.stopMember(memberIdToStop);
+
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
+        assertThatClusterIsExpectedSize(expectedClusterSizeAfterStop);
+
+        memberGroup.shutdownAll();
+    }
+    
     @Test(expected = UnsupportedOperationException.class)
     public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()

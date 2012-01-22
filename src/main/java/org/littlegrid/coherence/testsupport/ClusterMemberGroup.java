@@ -316,6 +316,20 @@ public interface ClusterMemberGroup {
          */
         Builder setBuilderProperties(Properties properties);
 
+        /**
+         * Sets the builder properties to be used, these will override any defaults - using
+         * properties is useful if the configuration is required to be externalised, rather than
+         * the builder being controlled through code.
+         *
+         * @param commaDelimitedPropertiesFilenames
+         *         Filenames of properties containing overrides, the keys should match the methods
+         *         exposed on this cluster member group builder interface, minus the
+         *         'set' - so for example to set the WKA port, the entry in the properties
+         *         file would look like WkaPort=345612
+         * @return cluster member group builder.
+         */
+        Builder setBuilderProperties(String commaDelimitedPropertiesFilenames);
+
         Builder setCoherence35xOrOlderSleepAfterStopDuration(int sleepAfterStopDuration);
 
         Builder setCoherence35xSleepAfterStopDuration(int sleepAfterStopDuration);

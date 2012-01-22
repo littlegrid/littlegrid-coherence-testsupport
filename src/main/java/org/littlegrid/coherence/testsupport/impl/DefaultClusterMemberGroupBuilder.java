@@ -31,11 +31,10 @@
 
 package org.littlegrid.coherence.testsupport.impl;
 
-import com.tangosol.util.Resources;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.common.PropertiesUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,98 +52,98 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     /**
      * Constant for defining standard: tangosol.coherence.
      */
-    public static final String TANGOSOL_COHERENCE_DOT = "tangosol.coherence.";
+    private static final String TANGOSOL_COHERENCE_DOT = "tangosol.coherence.";
 
     /**
      * Constant for standard log level system property.
      */
-    public static final String COHERENCE_LOG_LEVEL_KEY = TANGOSOL_COHERENCE_DOT + "log.level";
+    private static final String COHERENCE_LOG_LEVEL_KEY = TANGOSOL_COHERENCE_DOT + "log.level";
 
     /**
      * Constant for standard role property.
      */
-    public static final String COHERENCE_ROLE_NAME_KEY = TANGOSOL_COHERENCE_DOT + "role";
+    private static final String COHERENCE_ROLE_NAME_KEY = TANGOSOL_COHERENCE_DOT + "role";
 
     /**
      * Constant for standard distributed local storage property.
      */
-    public static final String COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY = TANGOSOL_COHERENCE_DOT
+    private static final String COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY = TANGOSOL_COHERENCE_DOT
             + "distributed.localstorage";
 
     /**
      * Constant for standard Extend enabled property.
      */
-    public static final String COHERENCE_EXTEND_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "extend.enabled";
+    private static final String COHERENCE_EXTEND_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "extend.enabled";
 
     /**
      * Constant for standard Extend port property.
      */
-    public static final String COHERENCE_EXTEND_PORT_KEY = TANGOSOL_COHERENCE_DOT + "extend.port";
+    private static final String COHERENCE_EXTEND_PORT_KEY = TANGOSOL_COHERENCE_DOT + "extend.port";
 
     /**
      * Constant for standard TCMP enabled property.
      */
-    public static final String COHERENCE_TCMP_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "tcmp.enabled";
+    private static final String COHERENCE_TCMP_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "tcmp.enabled";
 
     /**
      * Constant for standard WKA address property.
      */
-    public static final String COHERENCE_WKA_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "wka";
+    private static final String COHERENCE_WKA_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "wka";
 
     /**
      * Constant for standard WKA port property.
      */
-    public static final String COHERENCE_WKA_PORT_KEY = TANGOSOL_COHERENCE_DOT + "wka.port";
+    private static final String COHERENCE_WKA_PORT_KEY = TANGOSOL_COHERENCE_DOT + "wka.port";
 
     /**
      * Constant for standard local address property.
      */
-    public static final String COHERENCE_LOCAL_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "localhost";
+    private static final String COHERENCE_LOCAL_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "localhost";
 
     /**
      * Constant for standard local port property.
      */
-    public static final String COHERENCE_LOCAL_PORT_KEY = TANGOSOL_COHERENCE_DOT + "localport";
+    private static final String COHERENCE_LOCAL_PORT_KEY = TANGOSOL_COHERENCE_DOT + "localport";
 
     /**
      * Constant for standard TTL property.
      */
-    public static final String COHERENCE_TTL_KEY = TANGOSOL_COHERENCE_DOT + "ttl";
+    private static final String COHERENCE_TTL_KEY = TANGOSOL_COHERENCE_DOT + "ttl";
 
     /**
      * Constant for standard log property.
      */
-    public static final String COHERENCE_LOG_KEY = TANGOSOL_COHERENCE_DOT + "log";
+    private static final String COHERENCE_LOG_KEY = TANGOSOL_COHERENCE_DOT + "log";
 
     /**
      * Constant for standard cache configuration property.
      */
-    public static final String COHERENCE_CACHE_CONFIGURATION_KEY = TANGOSOL_COHERENCE_DOT + "cacheconfig";
+    private static final String COHERENCE_CACHE_CONFIGURATION_KEY = TANGOSOL_COHERENCE_DOT + "cacheconfig";
 
     /**
      * Constant for standard override configuration property.
      */
-    public static final String COHERENCE_OVERRIDE_KEY = TANGOSOL_COHERENCE_DOT + "override";
+    private static final String COHERENCE_OVERRIDE_KEY = TANGOSOL_COHERENCE_DOT + "override";
 
     /**
      * Constant for standard cluster configuration property.
      */
-    public static final String COHERENCE_CLUSTER_NAME_KEY = TANGOSOL_COHERENCE_DOT + "cluster";
+    private static final String COHERENCE_CLUSTER_NAME_KEY = TANGOSOL_COHERENCE_DOT + "cluster";
 
     /**
      * Constant for standard management property.
      */
-    public static final String COHERENCE_MANAGEMENT_KEY = TANGOSOL_COHERENCE_DOT + "management";
+    private static final String COHERENCE_MANAGEMENT_KEY = TANGOSOL_COHERENCE_DOT + "management";
 
     /**
      * Constant for standard remote management property.
      */
-    public static final String JMX_MANAGEMENT_REMOTE_KEY = "management.remote";
+    private static final String JMX_MANAGEMENT_REMOTE_KEY = "management.remote";
 
     /**
      * Constant for standard JMX remote management property.
      */
-    public static final String JMX_JMXREMOTE_KEY = "com.sun.management.jmxremote";
+    private static final String JMX_JMXREMOTE_KEY = "com.sun.management.jmxremote";
 
     private static final String LITTLEGRID_BUILDER_OVERRIDE = "littlegrid.builder.override";
 
@@ -227,38 +226,20 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void loadAndProcessProperties() {
-        final String overridePropertiesFile =
+        final String overridePropertiesFilename =
                 System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
 
-        final URL defaultPropertiesUrl = Resources.findFileOrResource(BUILDER_DEFAULT_PROPERTIES_FILENAME,
-                this.getClass().getClassLoader());
+        final Properties defaultProperties = PropertiesUtils.loadProperties(BUILDER_DEFAULT_PROPERTIES_FILENAME);
+        final Properties overrideProperties = PropertiesUtils.loadProperties(overridePropertiesFilename);
 
-        final URL overridePropertiesUrl = Resources.findFileOrResource(overridePropertiesFile,
-                this.getClass().getClassLoader());
+        LOGGER.info(format("Loaded '%s' properties from '%s'", overrideProperties.size(),
+                overridePropertiesFilename));
 
-        try {
-            LOGGER.info(format("About to load default configuration from '%s'", defaultPropertiesUrl));
-            final Properties defaultProperties = new Properties();
-            defaultProperties.load(defaultPropertiesUrl.openStream());
+        final Properties propertiesToProcess = new Properties();
+        propertiesToProcess.putAll(defaultProperties);
+        propertiesToProcess.putAll(overrideProperties);
 
-            final Properties propertiesToProcess = new Properties(defaultProperties);
-
-            if (overridePropertiesUrl == null) {
-                LOGGER.info(format("'%s' resource not found - no overrides to apply", overridePropertiesFile));
-            } else {
-                LOGGER.info(format("About to load override configuration from '%s'", overridePropertiesUrl));
-                Properties overrideProperties = new Properties();
-                overrideProperties.load(overridePropertiesUrl.openStream());
-                LOGGER.info(format("Loaded '%s' properties from '%s'", overrideProperties.size(),
-                        overridePropertiesFile));
-
-                propertiesToProcess.putAll(overrideProperties);
-            }
-
-            BeanUtils.processProperties(this, propertiesToProcess);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        BeanUtils.processProperties(this, propertiesToProcess);
     }
 
     private int getBuilderSettingAsInt(final String builderKey) {
@@ -734,6 +715,16 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup.Builder setBuilderProperties(final Properties properties) {
         BeanUtils.processProperties(this, properties);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setBuilderProperties(final String commaDelimitedPropertiesFilenames) {
+        setBuilderProperties(PropertiesUtils.loadProperties(commaDelimitedPropertiesFilenames));
 
         return this;
     }

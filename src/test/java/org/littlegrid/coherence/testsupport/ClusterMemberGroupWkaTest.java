@@ -41,8 +41,6 @@ import static java.lang.String.format;
  * Cluster member group WKA tests.
  */
 public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
-    Logger logger = Logger.getLogger(ClusterMemberGroupWkaTest.class.getName());
-
     @Test
     public void twoSmallMemberGroupsWithSameWka() {
         int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
@@ -77,7 +75,7 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
             memberGroup1 = builder.build();
 
             final int differentPort = builder.getWkaPort() + 20;
-            logger.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
+            LOGGER.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
 
             memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                     .setStorageEnabledCount(numberOfMembers)

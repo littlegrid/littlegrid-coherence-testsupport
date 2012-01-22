@@ -44,8 +44,11 @@ import static java.lang.String.format;
  * the instance of the wrapped class.
  */
 class ClusterMemberDelegatingWrapper implements ClusterMember {
-    private final LoggerPlaceHolder logger = new LoggerPlaceHolder(ClusterMemberDelegatingWrapper.class.getName());
+    private static final LoggerPlaceHolder LOGGER =
+            new LoggerPlaceHolder(ClusterMemberDelegatingWrapper.class.getName());
+
     private final Object clusterMemberInstance;
+
 
     /**
      * Constructor.
@@ -56,7 +59,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
     public ClusterMemberDelegatingWrapper(final String clusterMemberInstanceClassName,
                                           final ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
-            logger.debug(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
+            LOGGER.debug(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
 
             final Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
             final Constructor constructor = clusterMemberClass.getConstructor();
@@ -71,7 +74,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      * Start the cluster member - this has reduced scope to prevent normal framework users from calling it.
      */
     void start() {
-        logger.debug("About to start this cluster member");
+        LOGGER.debug("About to start this cluster member");
 
         invokeMethod(clusterMemberInstance, "start");
     }
@@ -81,7 +84,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      */
     @Override
     public void shutdown() {
-        logger.debug("Shutting down this cluster member");
+        LOGGER.debug("Shutting down this cluster member");
 
         invokeMethod(clusterMemberInstance, "shutdown");
     }
@@ -91,7 +94,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      */
     @Override
     public void stop() {
-        logger.debug("Stopping this cluster member");
+        LOGGER.debug("Stopping this cluster member");
 
         invokeMethod(clusterMemberInstance, "stop");
     }

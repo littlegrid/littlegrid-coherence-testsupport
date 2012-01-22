@@ -36,6 +36,8 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.impl.PropertiesUtilsTest;
+import org.littlegrid.common.PropertiesUtils;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -132,24 +134,15 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember()
             throws IOException {
 
-        //TODO: littlegrid#18 - move over to common resource loading
-        Properties cluster1Properties = new Properties();
-        cluster1Properties.load(this.getClass().getClassLoader()
-                .getResourceAsStream("properties/memberGroup1.properties"));
-
-        Properties cluster2Properties = new Properties();
-        cluster2Properties.load(this.getClass().getClassLoader()
-                .getResourceAsStream("properties/memberGroup2.properties"));
-
         ClusterMemberGroup memberGroup1 = null;
         ClusterMemberGroup memberGroup2 = null;
 
         try {
             memberGroup1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setBuilderProperties(cluster1Properties).build();
+                    .setBuilderProperties("properties/memberGroup1.properties").build();
 
             memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setBuilderProperties(cluster2Properties).build();
+                    .setBuilderProperties("properties/memberGroup2.properties").build();
 
             performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
         } finally {
