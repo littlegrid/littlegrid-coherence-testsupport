@@ -1,7 +1,6 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import org.junit.Test;
-import org.littlegrid.common.PropertiesUtils;
 
 import java.util.Properties;
 

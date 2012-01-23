@@ -32,7 +32,6 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.common.PropertiesUtils;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -231,9 +230,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final Properties defaultProperties = PropertiesUtils.loadProperties(BUILDER_DEFAULT_PROPERTIES_FILENAME);
         final Properties overrideProperties = PropertiesUtils.loadProperties(overridePropertiesFilename);
-
-        LOGGER.info(format("Loaded '%s' properties from '%s'", overrideProperties.size(),
-                overridePropertiesFilename));
 
         final Properties propertiesToProcess = new Properties();
         propertiesToProcess.putAll(defaultProperties);

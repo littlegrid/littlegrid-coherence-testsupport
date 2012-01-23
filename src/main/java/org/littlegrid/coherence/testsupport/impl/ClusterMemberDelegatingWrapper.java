@@ -31,6 +31,7 @@
 
 package org.littlegrid.coherence.testsupport.impl;
 
+import com.tangosol.util.ClassHelper;
 import org.littlegrid.coherence.testsupport.ClusterMember;
 
 import java.lang.reflect.Constructor;
@@ -119,9 +120,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
                                 final String methodName) {
 
         try {
-            final Method method = objectToInvokeMethodOn.getClass().getMethod(methodName, new Class[]{});
-
-            return method.invoke(objectToInvokeMethodOn);
+            return ClassHelper.invoke(objectToInvokeMethodOn, methodName, new Object[]{});
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

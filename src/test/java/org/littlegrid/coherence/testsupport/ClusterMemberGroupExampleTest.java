@@ -36,8 +36,6 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.impl.PropertiesUtilsTest;
-import org.littlegrid.common.PropertiesUtils;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -71,7 +69,8 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     @Test
     public void exampleOfStorageEnabledMembersWithCacheConfiguration() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(2).setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
+                .setStorageEnabledCount(2).setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .build();
 
         performSimplePutSizeGet(KNOWN_TEST_CACHE);
     }
@@ -81,7 +80,8 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setStorageEnabledExtendProxyCount(1)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .build();
 
         performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
     }
@@ -91,7 +91,8 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setExtendProxyCount(1)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .build();
 
         try {
             performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
@@ -126,7 +127,9 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
         properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
         properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIG_FILE);
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setBuilderProperties(properties).build();
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setBuilderProperties(properties)
+                .build();
 
         performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
     }
@@ -140,10 +143,12 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
 
         try {
             memberGroup1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setBuilderProperties("properties/memberGroup1.properties").build();
+                    .setBuilderProperties("properties/memberGroup1.properties")
+                    .build();
 
             memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setBuilderProperties("properties/memberGroup2.properties").build();
+                    .setBuilderProperties("properties/memberGroup2.properties")
+                    .build();
 
             performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
         } finally {
@@ -158,6 +163,11 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
                 .build();
 
         assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
+    }
+
+    @Test
+    public void exampleOfDifferentOverrideFileSpecified() {
+
     }
 
     private void performSimplePutSizeGet(final String cacheName) {

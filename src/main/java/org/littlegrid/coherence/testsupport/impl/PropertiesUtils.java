@@ -1,4 +1,4 @@
-package org.littlegrid.common;
+package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.util.Resources;
 
@@ -10,7 +10,9 @@ import static java.lang.String.format;
 /**
  * Properties utilities class, containing useful convenience methods for working with properties.
  */
-public final class PropertiesUtils {
+final class PropertiesUtils {
+    private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(PropertiesUtils.class.getName());
+
     private static final String DELIMITER = ",";
 
     /**
@@ -44,12 +46,17 @@ public final class PropertiesUtils {
                     PropertiesUtils.class.getClass().getClassLoader());
 
             if (url == null) {
+                LOGGER.info(format("File '%s' not found - no properties load", propertiesFilename));
+
                 continue;
             }
 
             try {
                 final Properties currentProperties = new Properties();
                 currentProperties.load(url.openStream());
+
+                LOGGER.info(format("File '%s' found and '%s' properties loaded", propertiesFilename,
+                        currentProperties.size()));
 
                 properties.putAll(currentProperties);
             } catch (Exception e) {
