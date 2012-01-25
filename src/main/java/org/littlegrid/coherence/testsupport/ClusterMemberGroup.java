@@ -340,16 +340,14 @@ public interface ClusterMemberGroup {
          */
         Builder setBuilderProperties(String commaDelimitedPropertiesFilenames);
 
-        Builder setCoherence35xOrOlderSleepAfterStopDuration(int sleepAfterStopDuration);
+        Builder setSleepAfterStopDurationPre35x(int sleepAfterStopDuration);
 
-        Builder setCoherence35xSleepAfterStopDuration(int sleepAfterStopDuration);
+        Builder setSleepAfterStopDuration35x(int sleepAfterStopDuration);
 
-        Builder setCoherence36xSleepAfterStopDuration(int sleepAfterStopDuration);
+        Builder setSleepAfterStopDuration36x(int sleepAfterStopDuration);
 
-        Builder setCoherence370SleepAfterStopDuration(int sleepAfterStopDuration);
+        Builder setSleepAfterStopDuration370(int sleepAfterStopDuration);
 
-        Builder setCoherence371SleepAfterStopDuration(int sleepAfterStopDuration);
-
-        Builder setCoherenceDefaultSleepAfterStopDuration(int sleepAfterStopDuration);
+        Builder setSleepAfterStopDurationDefault(int sleepAfterStopDuration);
     }
 }

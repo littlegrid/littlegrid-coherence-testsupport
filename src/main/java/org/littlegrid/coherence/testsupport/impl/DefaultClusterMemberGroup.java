@@ -39,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -51,29 +52,11 @@ import static java.lang.String.format;
  * Default local process cluster member group implementation.
  */
 public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
-    @Deprecated
-    private static final float COHERENCE_VERSION_NUMBER_3_5 = 3.5f;
-
-    @Deprecated
-    private static final float COHERENCE_VERSION_NUMBER_3_6 = 3.6f;
-
-    @Deprecated
-    private static final float COHERENCE_VERSION_NUMBER_3_7 = 3.7f;
-
-    @Deprecated
-    private static final String COHERENCE_VERSION_3_7_0 = "3.7.0";
-
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5 = 60;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5 = 45;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6 = 3;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0 = 3;
-    private static final int SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER = 3;
-
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroup.class.getName());
 
-    private final List<Future<ClusterMemberDelegatingWrapper>> memberFutures =
-            new ArrayList<Future<ClusterMemberDelegatingWrapper>>();
+    private final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
+            new ArrayList<Future<DelegatingClusterMemberWrapper>>();
 
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
@@ -83,6 +66,13 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private String clusterMemberInstanceClassName;
     private int numberOfThreadsInStartUpPool;
 
+
+    /**
+     * Constructor with reduced scope.
+     */
+    DefaultClusterMemberGroup() {
+        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
+    }
 
     /**
      * Constructor.
@@ -129,21 +119,13 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     }
 
     /**
-     * Constructor with reduced scope.
-     */
-    DefaultClusterMemberGroup() {
-        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
-    }
-
-    /**
      * Reduced scope method to merge in a cluster member group with this cluster member group.
      *
      * @param memberGroup Cluster member group to be merged.
      * @return new size of combined member group.
      */
     int merge(final ClusterMemberGroup memberGroup) {
-        final DefaultClusterMemberGroup defaultClusterMemberGroup =
-                (DefaultClusterMemberGroup) memberGroup;
+        final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
 
         memberFutures.addAll(defaultClusterMemberGroup.getMemberFutures());
         startInvoked = true;
@@ -159,7 +141,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      *
      * @return list of member's futures.
      */
-    List<Future<ClusterMemberDelegatingWrapper>> getMemberFutures() {
+    List<Future<DelegatingClusterMemberWrapper>> getMemberFutures() {
         return memberFutures;
     }
 
@@ -180,25 +162,25 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         outputStartAllMessages();
 
         try {
-            final List<Callable<ClusterMemberDelegatingWrapper>> tasks =
-                    new ArrayList<Callable<ClusterMemberDelegatingWrapper>>(numberOfMembers);
+            final List<Callable<DelegatingClusterMemberWrapper>> tasks =
+                    new ArrayList<Callable<DelegatingClusterMemberWrapper>>(numberOfMembers);
 
             for (int i = 0; i < numberOfMembers; i++) {
                 tasks.add(new ClusterMemberCallable(clusterMemberInstanceClassName, classPathUrls));
             }
 
-            final Callable<ClusterMemberDelegatingWrapper> taskForSeniorMember = tasks.remove(0);
+            final Callable<DelegatingClusterMemberWrapper> taskForSeniorMember = tasks.remove(0);
 
             final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
 
             LOGGER.debug("About to establish a cluster using a single member initially");
-            final Future<ClusterMemberDelegatingWrapper> futureForSeniorMember =
+            final Future<DelegatingClusterMemberWrapper> futureForSeniorMember =
                     executorService.submit(taskForSeniorMember);
 
             futureForSeniorMember.get();
 
             LOGGER.info("First cluster member up, starting any remaining members to join established cluster");
-            final List<Future<ClusterMemberDelegatingWrapper>> futuresForOtherMembers =
+            final List<Future<DelegatingClusterMemberWrapper>> futuresForOtherMembers =
                     executorService.invokeAll(tasks);
 
             memberFutures.add(futureForSeniorMember);
@@ -236,16 +218,16 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 Runtime.getRuntime().freeMemory() / oneMB));
     }
 
-    private ClusterMemberDelegatingWrapper getClusterMemberWrapper(final int memberId) {
+    private DelegatingClusterMemberWrapper getClusterMemberWrapper(final int memberId) {
         if (!startInvoked) {
             throw new IllegalStateException("Cluster member group never started");
         }
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
-                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
                 if (memberWrapper.getLocalMemberId() == memberId) {
                     return memberWrapper;
@@ -267,9 +249,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             final List<Integer> memberIds = new ArrayList<Integer>();
 
             for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
-                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final DelegatingClusterMemberWrapper memberWrapper = task.get();
                 memberIds.add(memberWrapper.getLocalMemberId());
             }
 
@@ -284,24 +266,31 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public int getSuggestedSleepAfterStopDuration() {
-        final float majorMinorVersion = getMajorMinorVersion();
+//        throw new UnsupportedOperationException();
+        return 3;
+//        return getSleepTimeBasedUponVersion(sleepTimePerVersionMapping, getMajorMinorVersion());
+    }
 
-        if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_5) {
-            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5;
-
-        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_6) {
-            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5;
-
-        } else if (majorMinorVersion < COHERENCE_VERSION_NUMBER_3_7) {
-            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6;
-
-        } else {
-            if (CacheFactory.VERSION.startsWith(COHERENCE_VERSION_3_7_0)) {
-                return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_0;
-            }
-        }
-
-        return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_7_1_OR_LATER;
+    public static int getSleepTimeBasedUponVersion(final Map<String, Integer> sleepTimePerVersionMapping,
+                                                   final float majorMinorVersion) {
+        
+//        final float coherenceVersionNumber35x = 3.5f;
+//        final float coherenceVersionNumber36x = 3.6f;
+//        final float coherenceVersionNumber370 = 3.7f;
+//
+//        if (majorMinorVersion < coherenceVersionNumber35x) {
+//            return sleepTimePerVersionMapping
+//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5;
+//
+//        } else if (majorMinorVersion < coherenceVersionNumber36x) {
+//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5;
+//
+//        } else if (majorMinorVersion < coherenceVersionNumber370) {
+//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6;
+//        }
+//
+//        return ;
+        return 0;
     }
 
     private static float getMajorMinorVersion() {
@@ -345,7 +334,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         LOGGER.info(format("About to shutdown cluster member '%d'", memberId));
 
-        final ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
+        final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
         if (memberWrapper != null) {
             memberWrapper.shutdown();
@@ -373,9 +362,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
-                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
                 memberWrapper.shutdown();
             }
@@ -409,7 +398,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         LOGGER.info(format("About to stop cluster member with id '%d'", memberId));
 
-        final ClusterMemberDelegatingWrapper memberWrapper = getClusterMemberWrapper(memberId);
+        final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
         if (memberWrapper != null) {
             memberWrapper.stop();
@@ -424,7 +413,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public ClusterMemberGroup stopAll() {
         if (!startInvoked) {
-            LOGGER.warn("Cluster member group never started - nothing to shutdown");
+            LOGGER.warn("Cluster member group never started - nothing to stop");
 
             return this;
         }
@@ -433,9 +422,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<ClusterMemberDelegatingWrapper> task = memberFutures.get(i);
+                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
-                final ClusterMemberDelegatingWrapper memberWrapper = task.get();
+                final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
                 memberWrapper.stop();
             }

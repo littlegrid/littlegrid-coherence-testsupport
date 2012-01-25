@@ -35,7 +35,6 @@ import com.tangosol.util.ClassHelper;
 import org.littlegrid.coherence.testsupport.ClusterMember;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 
 import static java.lang.String.format;
 
@@ -44,9 +43,9 @@ import static java.lang.String.format;
  * into a separate class loader and then delegates requests (start, stop, shutdown etc.) to
  * the instance of the wrapped class.
  */
-class ClusterMemberDelegatingWrapper implements ClusterMember {
+class DelegatingClusterMemberWrapper implements ClusterMember {
     private static final LoggerPlaceHolder LOGGER =
-            new LoggerPlaceHolder(ClusterMemberDelegatingWrapper.class.getName());
+            new LoggerPlaceHolder(DelegatingClusterMemberWrapper.class.getName());
 
     private final Object clusterMemberInstance;
 
@@ -57,7 +56,7 @@ class ClusterMemberDelegatingWrapper implements ClusterMember {
      * @param clusterMemberInstanceClassName Name of class to instantiate and delegate calls to.
      * @param childFirstUrlClassLoader       Instance of child first class loader.
      */
-    public ClusterMemberDelegatingWrapper(final String clusterMemberInstanceClassName,
+    public DelegatingClusterMemberWrapper(final String clusterMemberInstanceClassName,
                                           final ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
             LOGGER.debug(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
