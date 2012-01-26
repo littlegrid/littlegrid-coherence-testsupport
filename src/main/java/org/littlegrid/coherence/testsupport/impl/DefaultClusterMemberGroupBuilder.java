@@ -48,126 +48,39 @@ import static java.lang.String.format;
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
-    /**
-     * Constant for defining standard: tangosol.coherence.
-     */
     private static final String TANGOSOL_COHERENCE_DOT = "tangosol.coherence.";
 
-    /**
-     * Constant for standard log level system property.
-     */
-    private static final String COHERENCE_LOG_LEVEL_KEY = TANGOSOL_COHERENCE_DOT + "log.level";
+    private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
+    private static final String BUILDER_EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
+    private static final String BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
 
-    /**
-     * Constant for standard role property.
-     */
-    private static final String COHERENCE_ROLE_NAME_KEY = TANGOSOL_COHERENCE_DOT + "role";
+    private static final String BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
+    private static final String BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
 
-    /**
-     * Constant for standard distributed local storage property.
-     */
-    private static final String COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY = TANGOSOL_COHERENCE_DOT
-            + "distributed.localstorage";
+    private static final String BUILDER_CACHE_CONFIGURATION_KEY = "CacheConfiguration";
+    private static final String BUILDER_CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
+    private static final String BUILDER_OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
 
-    /**
-     * Constant for standard Extend enabled property.
-     */
-    private static final String COHERENCE_EXTEND_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "extend.enabled";
+    private static final String BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY = "DistributedLocalStorage";
+    private static final String BUILDER_TCMP_ENABLED_KEY = "TcmpEnabled";
 
-    /**
-     * Constant for standard Extend port property.
-     */
-    private static final String COHERENCE_EXTEND_PORT_KEY = TANGOSOL_COHERENCE_DOT + "extend.port";
+    private static final String BUILDER_CLUSTER_NAME_KEY = "ClusterName";
+    private static final String BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY = "StorageEnabledRoleName";
+    private static final String BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
+    private static final String BUILDER_EXTEND_PROXY_ROLE_NAME_KEY = "ExtendProxyRoleName";
+    private static final String BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY = "StorageEnabledExtendProxyRoleName";
+    private static final String BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY = "ExtendClientRoleName";
 
-    /**
-     * Constant for standard TCMP enabled property.
-     */
-    private static final String COHERENCE_TCMP_ENABLED_KEY = TANGOSOL_COHERENCE_DOT + "tcmp.enabled";
+    private static final String BUILDER_WKA_PORT_KEY = "WkaPort";
+    private static final String BUILDER_LOCAL_ADDRESS_KEY = "LocalAddress";
+    private static final String BUILDER_LOCAL_PORT_KEY = "LocalPort";
+    private static final String BUILDER_WKA_ADDRESS_KEY = "WkaAddress";
+    private static final String BUILDER_EXTEND_PORT_KEY = "ExtendPort";
+    private static final String BUILDER_TTL_KEY = "Ttl";
 
-    /**
-     * Constant for standard WKA address property.
-     */
-    private static final String COHERENCE_WKA_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "wka";
+    private static final String BUILDER_EXTEND_ENABLED_KEY = "ExtendEnabled";
 
-    /**
-     * Constant for standard WKA port property.
-     */
-    private static final String COHERENCE_WKA_PORT_KEY = TANGOSOL_COHERENCE_DOT + "wka.port";
-
-    /**
-     * Constant for standard local address property.
-     */
-    private static final String COHERENCE_LOCAL_ADDRESS_KEY = TANGOSOL_COHERENCE_DOT + "localhost";
-
-    /**
-     * Constant for standard local port property.
-     */
-    private static final String COHERENCE_LOCAL_PORT_KEY = TANGOSOL_COHERENCE_DOT + "localport";
-
-    /**
-     * Constant for standard TTL property.
-     */
-    private static final String COHERENCE_TTL_KEY = TANGOSOL_COHERENCE_DOT + "ttl";
-
-    /**
-     * Constant for standard log property.
-     */
-    private static final String COHERENCE_LOG_KEY = TANGOSOL_COHERENCE_DOT + "log";
-
-    /**
-     * Constant for standard cache configuration property.
-     */
-    private static final String COHERENCE_CACHE_CONFIGURATION_KEY = TANGOSOL_COHERENCE_DOT + "cacheconfig";
-
-    /**
-     * Constant for standard override configuration property.
-     */
-    private static final String COHERENCE_OVERRIDE_KEY = TANGOSOL_COHERENCE_DOT + "override";
-
-    /**
-     * Constant for standard cluster configuration property.
-     */
-    private static final String COHERENCE_CLUSTER_NAME_KEY = TANGOSOL_COHERENCE_DOT + "cluster";
-
-    /**
-     * Constant for standard management property.
-     */
-    private static final String COHERENCE_MANAGEMENT_KEY = TANGOSOL_COHERENCE_DOT + "management";
-
-    /**
-     * Constant for standard remote management property.
-     */
-    private static final String JMX_MANAGEMENT_REMOTE_KEY = "management.remote";
-
-    /**
-     * Constant for standard JMX remote management property.
-     */
-    private static final String JMX_JMXREMOTE_KEY = "com.sun.management.jmxremote";
-
-    private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "storageEnabledCount";
-    private static final String BUILDER_EXTEND_PROXY_COUNT_KEY = "extendProxyCount";
-    private static final String BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY = "storageEnabledExtendProxyCount";
-
-    private static final String BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "numberOfThreadsInStartUpPool";
-    private static final String BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "clusterMemberInstanceClassName";
-
-    private static final String BUILDER_CACHE_CONFIGURATION_KEY = "cacheConfiguration";
-    private static final String BUILDER_CLIENT_CACHE_CONFIGURATION_KEY = "clientCacheConfiguration";
-    private static final String BUILDER_OVERRIDE_CONFIGURATION_KEY = "overrideConfiguration";
-
-    private static final String BUILDER_CLUSTER_NAME_KEY = "clusterName";
-    private static final String BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY = "storageEnabledRoleName";
-    private static final String BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "storageDisabledClientRoleName";
-    private static final String BUILDER_EXTEND_PROXY_ROLE_NAME_KEY = "extendProxyRoleName";
-    private static final String BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY = "storageEnabledExtendProxyRoleName";
-    private static final String BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY = "extendClientRoleName";
-
-    private static final String BUILDER_WKA_PORT_KEY = "wkaPort";
-    private static final String BUILDER_WKA_ADDRESS_KEY = "wkaAddress";
-    private static final String BUILDER_EXTEND_PORT_KEY = "extendPort";
-    private static final String BUILDER_TTL_KEY = "ttl";
-
-    private static final String BUILDER_LOG_LEVEL_KEY = "logLevel";
+    private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
 
     private static final String SLEEP_AFTER_STOP_DURATION_PRE35X = "sleepAfterStopDurationPre35x";
     private static final String SLEEP_AFTER_STOP_DURATION_35X = "version35xSleepAfterStopDuration";
@@ -189,13 +102,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private Map<String, Object> builderSettings = new HashMap<String, Object>();
 
     private Properties systemProperties = new Properties();
-    private Properties systemPropertyMapping;
+    private Properties builderMappingSettings = new Properties();
 
     private String[] jarsToExcludeFromClassPath;
     private URL[] classPathUrls;
 
     private Properties extendProxySpecificSystemProperties;
-
 
     //TODO: littlegrid#5 Think about JMX
 //            properties.addSystemProperty(COHERENCE_MANAGEMENT_KEY, "all");
@@ -206,9 +118,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        loadAndProcessProperties();
+        loadAndProcessBuilderSettings();
+        loadBuilderMappingSettings();
+    }
 
-        systemPropertyMapping = PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
+    private void loadBuilderMappingSettings() {
+        builderMappingSettings = PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
     }
 
     /**
@@ -236,7 +151,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         throw new UnsupportedOperationException();
     }
 
-    private void loadAndProcessProperties() {
+    private void loadAndProcessBuilderSettings() {
         final String overridePropertiesFilename =
                 System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
 
@@ -267,7 +182,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void setSystemPropertyWhenValid(final String key,
                                             final String value) {
 
-        if (key != null && value != null && !value.isEmpty()) {
+        if (key == null) {
+            throw new IllegalArgumentException(format("System property key cannot be null for value of: '%s'", value));
+        }
+
+        if (value != null && !value.isEmpty()) {
             systemProperties.setProperty(key, value);
         }
     }
@@ -746,38 +665,34 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void preparePropertiesForStorageEnabled() {
         preparePropertiesForTcmpClusterMember();
 
-        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY,
-                getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
+        setSystemPropertyWhenValid(BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        setSystemPropertyWhenValid(BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY);
+        setSystemPropertyWhenValid(BUILDER_LOG_LEVEL_KEY);
+    }
 
-        setSystemPropertyWhenValid(COHERENCE_OVERRIDE_KEY,
-                getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY,
-                getBuilderSettingAsString(BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
+    private void setSystemPropertyWhenValid(final String builderSettingKey) {
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(builderSettingKey),
+                getBuilderSettingAsString(builderSettingKey));
     }
 
     private void preparePropertiesForExtendProxy() {
         preparePropertiesForTcmpClusterMember();
 
-        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY,
-                getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
+        setSystemPropertyWhenValid(BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        setSystemPropertyWhenValid(BUILDER_EXTEND_PROXY_ROLE_NAME_KEY);
+        setSystemPropertyWhenValid(BUILDER_LOG_LEVEL_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(COHERENCE_OVERRIDE_KEY,
-                getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY,
-                getBuilderSettingAsString(BUILDER_EXTEND_PROXY_ROLE_NAME_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
-        setSystemPropertyWhenValid(COHERENCE_EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
+        setSystemPropertyWhenValid(BUILDER_EXTEND_PORT_KEY);
 
         if (extendProxySpecificSystemProperties != null) {
             systemProperties.putAll(extendProxySpecificSystemProperties);
@@ -787,21 +702,17 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void preparePropertiesForStorageEnabledExtendProxy() {
         preparePropertiesForTcmpClusterMember();
 
-        setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY,
-                getBuilderSettingAsString(BUILDER_CACHE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
+        setSystemPropertyWhenValid(BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(COHERENCE_OVERRIDE_KEY,
-                getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY));
+        setSystemPropertyWhenValid(BUILDER_LOG_LEVEL_KEY);
+        setSystemPropertyWhenValid(BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.TRUE.toString());
-
-        setSystemPropertyWhenValid(COHERENCE_LOG_LEVEL_KEY, getBuilderSettingAsString(BUILDER_LOG_LEVEL_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY,
-                getBuilderSettingAsString(BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.TRUE.toString());
-        setSystemPropertyWhenValid(COHERENCE_EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
+        setSystemPropertyWhenValid(BUILDER_EXTEND_PORT_KEY);
     }
 
     private void preparePropertiesForStorageDisabledClient() {
@@ -809,41 +720,53 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
-        if (clientCacheConfiguration != null) {
-            setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
+        if (clientCacheConfiguration == null) {
+            setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
+        } else {
+            setSystemPropertyWhenValid(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
         }
 
-        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY,
-                getBuilderSettingAsString(BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY));
-
-        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                Boolean.FALSE.toString());
     }
 
     private void preparePropertiesForTcmpClusterMember() {
-        setSystemPropertyWhenValid(COHERENCE_TCMP_ENABLED_KEY, Boolean.TRUE.toString());
-        setSystemPropertyWhenValid(COHERENCE_WKA_ADDRESS_KEY, getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
-        setSystemPropertyWhenValid(COHERENCE_LOCAL_ADDRESS_KEY, getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
-        setSystemPropertyWhenValid(COHERENCE_WKA_PORT_KEY, getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
-        setSystemPropertyWhenValid(COHERENCE_LOCAL_PORT_KEY, getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
-        setSystemPropertyWhenValid(COHERENCE_TTL_KEY, getBuilderSettingAsString(BUILDER_TTL_KEY));
-        setSystemPropertyWhenValid(COHERENCE_CLUSTER_NAME_KEY, getBuilderSettingAsString(BUILDER_CLUSTER_NAME_KEY));
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
+                Boolean.TRUE.toString());
+
+        setSystemPropertyWhenValid(BUILDER_WKA_ADDRESS_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
+                getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
+
+        setSystemPropertyWhenValid(BUILDER_WKA_PORT_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_PORT_KEY),
+                getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
+
+        setSystemPropertyWhenValid(BUILDER_TTL_KEY);
+        setSystemPropertyWhenValid(BUILDER_CLUSTER_NAME_KEY);
     }
 
     private void preparePropertiesForExtendProxyClient() {
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
-        if (clientCacheConfiguration != null) {
-            setSystemPropertyWhenValid(COHERENCE_CACHE_CONFIGURATION_KEY, clientCacheConfiguration);
+        if (clientCacheConfiguration == null) {
+            LOGGER.warn("No client cache configuration has been specified for Extend clients");
+        } else {
+            setSystemPropertyWhenValid(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
         }
 
-        setSystemPropertyWhenValid(COHERENCE_DISTRIBUTED_LOCAL_STORAGE_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(COHERENCE_TCMP_ENABLED_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(COHERENCE_ROLE_NAME_KEY,
-                getBuilderSettingAsString(BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY));
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(COHERENCE_EXTEND_ENABLED_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(COHERENCE_EXTEND_PORT_KEY, getBuilderSettingAsString(BUILDER_EXTEND_PORT_KEY));
+        setSystemPropertyWhenValid(BUILDER_TCMP_ENABLED_KEY, Boolean.FALSE.toString());
+        setSystemPropertyWhenValid(BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                Boolean.FALSE.toString());
+
+        setSystemPropertyWhenValid(BUILDER_EXTEND_PORT_KEY);
     }
 }

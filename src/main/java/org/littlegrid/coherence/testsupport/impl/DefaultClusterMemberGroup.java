@@ -266,6 +266,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public int getSuggestedSleepAfterStopDuration() {
+        System.out.println("SLEEP NEEDS TO BE FLESHED OUT WITH CONTAINER-GROUP AND SUB-GROUPS");
 //        throw new UnsupportedOperationException();
         return 3;
 //        return getSleepTimeBasedUponVersion(sleepTimePerVersionMapping, getMajorMinorVersion());

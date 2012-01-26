@@ -135,10 +135,12 @@ public class ClusterMemberGroupExtendProxyTest extends AbstractExtendClientClust
         }
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void multipleExtendProxiesWhichIsNotSupported() {
+    @Test
+    public void extendClientCacheConfigurationNotSpecified() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setExtendProxyCount(2)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
+                .setStorageEnabledExtendProxyCount(1)
+                .build();
+
+        // This should work, only a log message is logged when no Extend client cache config is specified
     }
 }
