@@ -135,19 +135,39 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return builderSettings;
     }
 
-    public Properties getStorageEnabledPropertiesFromBuilderSettings() {
+    public Properties getStorageEnabledSystemPropertiesToApply() {
+        final Properties properties = new Properties();
+
+        properties.setProperty(builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
+                Boolean.TRUE.toString());
+
+        setSystemPropertyWhenValid(BUILDER_WKA_ADDRESS_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
+                getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
+
+        setSystemPropertyWhenValid(BUILDER_WKA_PORT_KEY);
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_PORT_KEY),
+                getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
+
+        setSystemPropertyWhenValid(BUILDER_TTL_KEY);
+        setSystemPropertyWhenValid(BUILDER_CLUSTER_NAME_KEY);
+        throw new UnsupportedOperationException();
+//        return properties;
+    }
+
+    public Properties getStorageDisabledSystemPropertiesToApply() {
         throw new UnsupportedOperationException();
     }
 
-    public Properties getExtendProxyPropertiesFromBuilderSettings() {
+    public Properties getExtendProxySystemPropertiesToApply() {
         throw new UnsupportedOperationException();
     }
 
-    public Properties getStorageEnabledExtendProxyPropertiesFromBuilderSettings() {
+    public Properties getStorageEnabledExtendProxySystemPropertiesToApply() {
         throw new UnsupportedOperationException();
     }
 
-    public Properties getExtendClientPropertiesFromBuilderSettings() {
+    public Properties getExtendClientSystemPropertiesToApply() {
         throw new UnsupportedOperationException();
     }
 
@@ -663,6 +683,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void preparePropertiesForStorageEnabled() {
+
         preparePropertiesForTcmpClusterMember();
 
         setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
@@ -674,7 +695,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setSystemPropertyWhenValid(BUILDER_LOG_LEVEL_KEY);
     }
 
+    @Deprecated
     private void setSystemPropertyWhenValid(final String builderSettingKey) {
+        setSystemPropertyWhenValid(builderMappingSettings.getProperty(builderSettingKey),
+                getBuilderSettingAsString(builderSettingKey));
+    }
+
+    private void setSystemPropertyWhenValid(final Properties properties,
+                                            final String builderSettingKey) {
         setSystemPropertyWhenValid(builderMappingSettings.getProperty(builderSettingKey),
                 getBuilderSettingAsString(builderSettingKey));
     }

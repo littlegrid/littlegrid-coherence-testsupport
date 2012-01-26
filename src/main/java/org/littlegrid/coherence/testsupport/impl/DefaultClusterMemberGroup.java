@@ -274,7 +274,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
     public static int getSleepTimeBasedUponVersion(final Map<String, Integer> sleepTimePerVersionMapping,
                                                    final float majorMinorVersion) {
-        
+
 //        final float coherenceVersionNumber35x = 3.5f;
 //        final float coherenceVersionNumber36x = 3.6f;
 //        final float coherenceVersionNumber370 = 3.7f;
