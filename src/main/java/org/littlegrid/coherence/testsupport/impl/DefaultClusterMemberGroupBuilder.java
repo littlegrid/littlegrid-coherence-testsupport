@@ -48,8 +48,6 @@ import static java.lang.String.format;
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
-    private static final String TANGOSOL_COHERENCE_DOT = "tangosol.coherence.";
-
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
     private static final String BUILDER_EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
     private static final String BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
@@ -82,24 +80,24 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
 
-    private static final String SLEEP_AFTER_STOP_DURATION_PRE35X = "sleepAfterStopDurationPre35x";
-    private static final String SLEEP_AFTER_STOP_DURATION_35X = "version35xSleepAfterStopDuration";
-    private static final String SLEEP_AFTER_STOP_DURATION_36X = "version36xSleepAfterStopDuration";
-    private static final String SLEEP_AFTER_STOP_DURATION_370 = "version370SleepAfterStopDuration";
-    private static final String SLEEP_AFTER_STOP_DURATION_DEFAULT = "defaultSleepAfterStopDuration";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY = "sleepAfterStopDurationPre35x";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY = "version35xSleepAfterStopDuration";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY = "version36xSleepAfterStopDuration";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_370_KEY = "version370SleepAfterStopDuration";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "defaultSleepAfterStopDuration";
 
     private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME = "coherence/littlegrid-builder-default.properties";
     private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
-    private static final String LITTLEGRID_BUILDER_OVERRIDE = "littlegrid.builder.override";
-
     private static final String BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME =
             "coherence/littlegrid-builder-default-mapping.properties";
+
+    private static final String LITTLEGRID_BUILDER_OVERRIDE = "littlegrid.builder.override";
 
 
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
 
-    private Map<String, Object> builderSettings = new HashMap<String, Object>();
+    private Map<String, String> builderSettings = new HashMap<String, String>();
 
     private Properties systemProperties = new Properties();
     private Properties builderMappingSettings = new Properties();
@@ -107,7 +105,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private String[] jarsToExcludeFromClassPath;
     private URL[] classPathUrls;
 
-    private Properties extendProxySpecificSystemProperties;
 
     //TODO: littlegrid#5 Think about JMX
 //            properties.addSystemProperty(COHERENCE_MANAGEMENT_KEY, "all");
@@ -131,7 +128,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return builder settings.
      */
-    public Map<String, Object> getBuilderSettings() {
+    public Map<String, String> getBuilderSettings() {
         return builderSettings;
     }
 
@@ -182,7 +179,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private int getBuilderSettingAsInt(final String builderKey) {
-        return (Integer) builderSettings.get(builderKey);
+        return Integer.parseInt(builderSettings.get(builderKey));
     }
 
     private String getBuilderSettingAsString(final String builderKey) {
@@ -273,6 +270,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             throw new UnsupportedOperationException("Currently only one Extend proxy is currently supported");
         }
 
+        // Clear and now prepare system properties based upon the anticipated client type.
         systemProperties.clear();
 
         if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
@@ -283,7 +281,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         SystemUtils.applyToSystemProperties(systemProperties);
         LOGGER.info(format("Coherence system properties for client: %s",
-                SystemUtils.getSystemPropertiesWithPrefix(TANGOSOL_COHERENCE_DOT)));
+                SystemUtils.getSystemPropertiesWithPrefix("tangosol.coherence.")));
 
         return containerGroup;
     }
@@ -366,18 +364,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExtendProxySpecificSystemProperties(final Properties properties) {
-        this.extendProxySpecificSystemProperties = properties;
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ClusterMemberGroup.Builder setStorageEnabledCount(final int numberOfMembers) {
-        builderSettings.put(BUILDER_STORAGE_ENABLED_COUNT_KEY, numberOfMembers);
+        builderSettings.put(BUILDER_STORAGE_ENABLED_COUNT_KEY, Integer.toString(numberOfMembers));
 
         return this;
     }
@@ -387,7 +375,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setStorageEnabledExtendProxyCount(final int numberOfMembers) {
-        builderSettings.put(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY, numberOfMembers);
+        builderSettings.put(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY, Integer.toString(numberOfMembers));
 
         return this;
     }
@@ -397,7 +385,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setExtendProxyCount(final int numberOfMembers) {
-        builderSettings.put(BUILDER_EXTEND_PROXY_COUNT_KEY, numberOfMembers);
+        builderSettings.put(BUILDER_EXTEND_PROXY_COUNT_KEY, Integer.toString(numberOfMembers));
 
         return this;
     }
@@ -410,6 +398,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setClusterName(final String clusterName) {
         builderSettings.put(BUILDER_CLUSTER_NAME_KEY, clusterName);
@@ -422,17 +413,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setLogLevel(final int logLevel) {
-        builderSettings.put(BUILDER_LOG_LEVEL_KEY, logLevel);
+        builderSettings.put(BUILDER_LOG_LEVEL_KEY, Integer.toString(logLevel));
 
         return this;
     }
 
     /**
-     * Sets the storage enabled member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
+     * {@inheritDoc}
      */
+    @Override
     public ClusterMemberGroup.Builder setStorageEnabledRoleName(final String roleName) {
         builderSettings.put(BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY, roleName);
 
@@ -440,11 +429,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     /**
-     * Sets the storage enabled Extend proxy member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
+     * {@inheritDoc}
      */
+    @Override
     public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
         builderSettings.put(BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY, roleName);
 
@@ -452,11 +439,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     /**
-     * Sets the Extend proxy member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
+     * {@inheritDoc}
      */
+    @Override
     public ClusterMemberGroup.Builder setExtendProxyRoleName(final String roleName) {
         builderSettings.put(BUILDER_EXTEND_PROXY_ROLE_NAME_KEY, roleName);
 
@@ -464,11 +449,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     /**
-     * Sets the storage disabled member's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
+     * {@inheritDoc}
      */
+    @Override
     public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(final String roleName) {
         builderSettings.put(BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY, roleName);
 
@@ -476,11 +459,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     /**
-     * Sets the Extend client's role name.
-     *
-     * @param roleName Role name.
-     * @return cluster member group builder.
+     * {@inheritDoc}
      */
+    @Override
     public ClusterMemberGroup.Builder setExtendClientRoleName(final String roleName) {
         builderSettings.put(BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY, roleName);
 
@@ -522,7 +503,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setWkaPort(final int wkaPort) {
-        builderSettings.put(BUILDER_WKA_PORT_KEY, wkaPort);
+        builderSettings.put(BUILDER_WKA_PORT_KEY, Integer.toString(wkaPort));
 
         return this;
     }
@@ -540,7 +521,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setExtendPort(final int extendPort) {
-        builderSettings.put(BUILDER_EXTEND_PORT_KEY, extendPort);
+        builderSettings.put(BUILDER_EXTEND_PORT_KEY, Integer.toString(extendPort));
 
         return this;
     }
@@ -578,7 +559,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setSleepAfterStopDurationPre35x(final int sleepAfterStopDuration) {
-        builderSettings.put(SLEEP_AFTER_STOP_DURATION_PRE35X, sleepAfterStopDuration);
+        builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
     }
@@ -588,7 +569,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setSleepAfterStopDuration35x(final int sleepAfterStopDuration) {
-        builderSettings.put(SLEEP_AFTER_STOP_DURATION_35X, sleepAfterStopDuration);
+        builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
     }
@@ -598,7 +579,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setSleepAfterStopDuration36x(final int sleepAfterStopDuration) {
-        builderSettings.put(SLEEP_AFTER_STOP_DURATION_36X, sleepAfterStopDuration);
+        builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
     }
@@ -608,7 +589,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setSleepAfterStopDuration370(final int sleepAfterStopDuration) {
-        builderSettings.put(SLEEP_AFTER_STOP_DURATION_370, sleepAfterStopDuration);
+        builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_370_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
     }
@@ -618,31 +599,28 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
-        builderSettings.put(SLEEP_AFTER_STOP_DURATION_DEFAULT, sleepAfterStopDuration);
+        builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
     }
 
     /**
-     * Sets the TTL.
-     *
-     * @param ttl TTL.
-     * @return cluster member group builder.
+     * {@inheritDoc}
      */
+    @Override
     public ClusterMemberGroup.Builder setTtl(final int ttl) {
-        builderSettings.put(BUILDER_TTL_KEY, ttl);
+        builderSettings.put(BUILDER_TTL_KEY, Integer.toString(ttl));
 
         return this;
     }
 
     /**
-     * Sets the number of threads to handle starting up the members within a cluster member group.
-     *
-     * @param numberOfThreadsInStartUpPool Number of threads available to start-up members.
-     * @return cluster member group.
+     * {@inheritDoc}
      */
+    @Override
     public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
-        builderSettings.put(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY, numberOfThreadsInStartUpPool);
+        builderSettings.put(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY,
+                Integer.toString(numberOfThreadsInStartUpPool));
 
         return this;
     }
@@ -721,10 +699,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 Boolean.TRUE.toString());
 
         setSystemPropertyWhenValid(BUILDER_EXTEND_PORT_KEY);
-
-        if (extendProxySpecificSystemProperties != null) {
-            systemProperties.putAll(extendProxySpecificSystemProperties);
-        }
     }
 
     private void preparePropertiesForStorageEnabledExtendProxy() {

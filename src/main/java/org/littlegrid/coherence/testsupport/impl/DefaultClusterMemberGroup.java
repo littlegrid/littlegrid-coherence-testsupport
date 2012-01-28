@@ -209,8 +209,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         LOGGER.debug(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        LOGGER.debug(format("Current Coherence properties...: %s",
-                SystemUtils.getSystemPropertiesWithPrefix("tangosol.coherence.")));
         LOGGER.info(format("Coherence properties to be set.: %s", systemPropertiesToBeApplied));
         LOGGER.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,

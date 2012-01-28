@@ -183,16 +183,6 @@ public interface ClusterMemberGroup {
         Builder setAdditionalSystemProperties(String propertiesFilenames);
 
         /**
-         * Used to set any remaining Extend proxy specific system properties that are required, for
-         * instance if the standard Coherence names for system properties aren't being used - i.e.
-         * a different named property is used for enabling Extend.
-         *
-         * @param properties Properties to be turned into system properties.
-         * @return cluster member group builder.
-         */
-        Builder setExtendProxySpecificSystemProperties(Properties properties);
-
-        /**
          * Sets the number of storage enabled members (i.e. 'cache servers') the cluster member
          * group should contain.
          *
@@ -241,6 +231,54 @@ public interface ClusterMemberGroup {
          * @return cluster member group builder.
          */
         Builder setLogLevel(int logLevel);
+
+        /**
+         * Sets the storage enabled member's role name.
+         *
+         * @param roleName Role name.
+         * @return cluster member group builder.
+         */
+        Builder setStorageEnabledRoleName(final String roleName);
+
+        /**
+         * Sets the storage enabled Extend proxy member's role name.
+         *
+         * @param roleName Role name.
+         * @return cluster member group builder.
+         */
+        Builder setStorageEnabledExtendProxyRoleName(final String roleName);
+
+        /**
+         * Sets the Extend proxy member's role name.
+         *
+         * @param roleName Role name.
+         * @return cluster member group builder.
+         */
+        Builder setExtendProxyRoleName(final String roleName);
+
+        /**
+         * Sets the storage disabled member's role name.
+         *
+         * @param roleName Role name.
+         * @return cluster member group builder.
+         */
+        Builder setStorageDisabledClientRoleName(final String roleName);
+
+        /**
+         * Sets the Extend client's role name.
+         *
+         * @param roleName Role name.
+         * @return cluster member group builder.
+         */
+        Builder setExtendClientRoleName(final String roleName);
+
+        /**
+         * Sets the TTL.
+         *
+         * @param ttl TTL.
+         * @return cluster member group builder.
+         */
+        Builder setTtl(final int ttl);
 
         /**
          * Sets the cluster member instance class name, essentially instances of this class act as
@@ -339,6 +377,14 @@ public interface ClusterMemberGroup {
          * @return cluster member group builder.
          */
         Builder setBuilderProperties(String commaDelimitedPropertiesFilenames);
+
+        /**
+         * Sets the number of threads to handle starting up the members within a cluster member group.
+         *
+         * @param numberOfThreadsInStartUpPool Number of threads available to start-up members.
+         * @return cluster member group.
+         */
+        Builder setNumberOfThreadsInStartUpPool(int numberOfThreadsInStartUpPool);
 
         Builder setSleepAfterStopDurationPre35x(int sleepAfterStopDuration);
 
