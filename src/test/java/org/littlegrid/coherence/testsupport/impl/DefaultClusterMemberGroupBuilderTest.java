@@ -197,12 +197,12 @@ setExtendProxySpecificCacheConfiguration
     public void storageEnabledSystemPropertiesUsingDefaultMapping() {
         final DefaultClusterMemberGroupBuilder builder = new DefaultClusterMemberGroupBuilder();
 
-        final Properties properties = builder.getStorageEnabledSystemPropertiesToApply();
+//        final Properties properties = builder.getStorageEnabledSystemPropertiesToApply();
 
 
-        assertThat(properties.getProperty("tangosol.coherence.distributed.localstorage"), is("true"));
-        assertThat(properties.getProperty("tangosol.coherence.tcmp.enabled"), is("true"));
-        assertThat(properties.getProperty("tangosol.coherence.extend.enabled"), is("false"));
+//        assertThat(properties.getProperty("tangosol.coherence.distributed.localstorage"), is("true"));
+//        assertThat(properties.getProperty("tangosol.coherence.tcmp.enabled"), is("true"));
+//        assertThat(properties.getProperty("tangosol.coherence.extend.enabled"), is("false"));
 
 
 //        assertThat(builder.getStorageEnabledCount(), is(0));

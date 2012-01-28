@@ -9,7 +9,7 @@
             <init-params>
                 <init-param>
                     <param-type>java.lang.String</param-type>
-                    <param-value>littlegrid/littlegrid-test-pof-config.xml</param-value>
+                    <param-value>coherence/littlegrid-test-pof-config.xml</param-value>
                 </init-param>
             </init-params>
         </serializer>
@@ -49,13 +49,13 @@
             <acceptor-config>
                 <tcp-acceptor>
                     <local-address>
-                        <address system-property="tangosol.littlegrid.extend.address">127.0.0.1</address>
-                        <port system-property="tangosol.littlegrid.extend.port">9099</port>
+                        <address system-property="tangosol.coherence.extend.address">127.x.2.3</address>
+                        <port system-property="tangosol.coherence.extend.port">9099</port>
                     </local-address>
                 </tcp-acceptor>
             </acceptor-config>
 
-            <autostart system-property="tangosol.littlegrid.extend.enabled">false</autostart>
+            <autostart system-property="tangosol.coherence.extend.enabled">false</autostart>
         </proxy-scheme>
     </caching-schemes>
 </cache-config>

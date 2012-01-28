@@ -73,6 +73,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_LOCAL_ADDRESS_KEY = "LocalAddress";
     private static final String BUILDER_LOCAL_PORT_KEY = "LocalPort";
     private static final String BUILDER_WKA_ADDRESS_KEY = "WkaAddress";
+    private static final String BUILDER_EXTEND_ADDRESS_KEY = "ExtendAddress";
     private static final String BUILDER_EXTEND_PORT_KEY = "ExtendPort";
     private static final String BUILDER_TTL_KEY = "Ttl";
 
@@ -86,10 +87,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_370_KEY = "version370SleepAfterStopDuration";
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "defaultSleepAfterStopDuration";
 
-    private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME = "coherence/littlegrid-builder-default.properties";
+    private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME = "littlegrid/littlegrid-builder-default.properties";
     private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
     private static final String BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME =
-            "coherence/littlegrid-builder-default-mapping.properties";
+            "littlegrid/littlegrid-builder-default-mapping.properties";
 
     private static final String LITTLEGRID_BUILDER_OVERRIDE = "littlegrid.builder.override";
 
@@ -99,7 +100,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private Map<String, String> builderSettings = new HashMap<String, String>();
 
-    private Properties systemProperties = new Properties();
+    private Properties additionalSystemProperties = new Properties();
     private Properties builderMappingSettings = new Properties();
 
     private String[] jarsToExcludeFromClassPath;
@@ -132,42 +133,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return builderSettings;
     }
 
-    public Properties getStorageEnabledSystemPropertiesToApply() {
-        final Properties properties = new Properties();
-
-        properties.setProperty(builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
-                Boolean.TRUE.toString());
-
-        setSystemPropertyWhenValid(BUILDER_WKA_ADDRESS_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
-                getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
-
-        setSystemPropertyWhenValid(BUILDER_WKA_PORT_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_PORT_KEY),
-                getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
-
-        setSystemPropertyWhenValid(BUILDER_TTL_KEY);
-        setSystemPropertyWhenValid(BUILDER_CLUSTER_NAME_KEY);
-        throw new UnsupportedOperationException();
-//        return properties;
-    }
-
-    public Properties getStorageDisabledSystemPropertiesToApply() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Properties getExtendProxySystemPropertiesToApply() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Properties getStorageEnabledExtendProxySystemPropertiesToApply() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Properties getExtendClientSystemPropertiesToApply() {
-        throw new UnsupportedOperationException();
-    }
-
     private void loadAndProcessBuilderSettings() {
         final String overridePropertiesFilename =
                 System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
@@ -193,18 +158,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             return (String) value;
         } else {
             return value.toString();
-        }
-    }
-
-    private void setSystemPropertyWhenValid(final String key,
-                                            final String value) {
-
-        if (key == null) {
-            throw new IllegalArgumentException(format("System property key cannot be null for value of: '%s'", value));
-        }
-
-        if (value != null && !value.isEmpty()) {
-            systemProperties.setProperty(key, value);
         }
     }
 
@@ -237,20 +190,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         if (storageEnabledCount > 0) {
-            preparePropertiesForStorageEnabled();
-
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
-                    systemProperties, classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                    getSystemPropertiesForStorageEnabled(), classPathUrls, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool)
                     .startAll();
 
             containerGroup.merge(memberGroup);
         }
 
         if (extendProxyCount == 1) {
-            preparePropertiesForExtendProxy();
-
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(extendProxyCount,
-                    systemProperties, classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                    getSystemPropertiesForExtendProxy(), classPathUrls, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool)
                     .startAll();
 
             containerGroup.merge(memberGroup);
@@ -259,10 +210,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         if (storageEnabledExtendProxyCount == 1) {
-            preparePropertiesForStorageEnabledExtendProxy();
-
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledExtendProxyCount,
-                    systemProperties, classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                    getSystemPropertiesForStorageEnabledExtendProxy(), classPathUrls, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool)
                     .startAll();
 
             containerGroup.merge(memberGroup);
@@ -271,15 +221,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         // Clear and now prepare system properties based upon the anticipated client type.
-        systemProperties.clear();
-
         if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
-            preparePropertiesForExtendProxyClient();
+            SystemUtils.applyToSystemProperties(getSystemPropertiesForExtendProxyClient());
         } else {
-            preparePropertiesForStorageDisabledClient();
+            SystemUtils.applyToSystemProperties(getSystemPropertiesForStorageDisabledClient());
         }
 
-        SystemUtils.applyToSystemProperties(systemProperties);
         LOGGER.info(format("Coherence system properties for client: %s",
                 SystemUtils.getSystemPropertiesWithPrefix("tangosol.coherence.")));
 
@@ -345,7 +292,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setAdditionalSystemProperties(final Properties properties) {
-        systemProperties.putAll(properties);
+        additionalSystemProperties.putAll(properties);
 
         return this;
     }
@@ -558,6 +505,27 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
+    public ClusterMemberGroup.Builder setTtl(final int ttl) {
+        builderSettings.put(BUILDER_TTL_KEY, Integer.toString(ttl));
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
+        builderSettings.put(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY,
+                Integer.toString(numberOfThreadsInStartUpPool));
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ClusterMemberGroup.Builder setSleepAfterStopDurationPre35x(final int sleepAfterStopDuration) {
         builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY, Integer.toString(sleepAfterStopDuration));
 
@@ -604,27 +572,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup.Builder setTtl(final int ttl) {
-        builderSettings.put(BUILDER_TTL_KEY, Integer.toString(ttl));
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
-        builderSettings.put(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY,
-                Integer.toString(numberOfThreadsInStartUpPool));
-
-        return this;
-    }
-
     private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
         //TODO: littlegrid#7 Pull this out and add support for wildcards, e.g. *jmx*
         final String pathSeparator = System.getProperty("path.separator");
@@ -660,115 +607,165 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
-    private void preparePropertiesForStorageEnabled() {
+    private Properties getSystemPropertiesForStorageEnabled() {
+        final Properties properties = new Properties();
 
-        preparePropertiesForTcmpClusterMember();
+        getSystemPropertiesForTcmpClusterMember(properties);
 
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
-        setSystemPropertyWhenValid(BUILDER_OVERRIDE_CONFIGURATION_KEY);
-        setSystemPropertyWhenValid(BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY);
-        setSystemPropertyWhenValid(BUILDER_LOG_LEVEL_KEY);
+        setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties, BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY);
+        setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
+
+        properties.putAll(additionalSystemProperties);
+
+        return properties;
     }
 
-    @Deprecated
-    private void setSystemPropertyWhenValid(final String builderSettingKey) {
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(builderSettingKey),
-                getBuilderSettingAsString(builderSettingKey));
-    }
+    private Properties getSystemPropertiesForExtendProxy() {
+        final Properties properties = new Properties();
 
-    private void setSystemPropertyWhenValid(final Properties properties,
-                                            final String builderSettingKey) {
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(builderSettingKey),
-                getBuilderSettingAsString(builderSettingKey));
-    }
+        getSystemPropertiesForTcmpClusterMember(properties);
 
-    private void preparePropertiesForExtendProxy() {
-        preparePropertiesForTcmpClusterMember();
-
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
-        setSystemPropertyWhenValid(BUILDER_OVERRIDE_CONFIGURATION_KEY);
-        setSystemPropertyWhenValid(BUILDER_EXTEND_PROXY_ROLE_NAME_KEY);
-        setSystemPropertyWhenValid(BUILDER_LOG_LEVEL_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+        setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties, BUILDER_EXTEND_PROXY_ROLE_NAME_KEY);
+        setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_EXTEND_PORT_KEY);
+        setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
+
+        properties.putAll(additionalSystemProperties);
+
+        return properties;
     }
 
-    private void preparePropertiesForStorageEnabledExtendProxy() {
-        preparePropertiesForTcmpClusterMember();
+    public Properties getSystemPropertiesForStorageEnabledExtendProxy() {
+        final Properties properties = new Properties();
 
-        setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
-        setSystemPropertyWhenValid(BUILDER_OVERRIDE_CONFIGURATION_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+        getSystemPropertiesForTcmpClusterMember(properties);
+
+        setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_LOG_LEVEL_KEY);
-        setSystemPropertyWhenValid(BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+        setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
+        setPropertyWhenValid(properties, BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY);
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_EXTEND_PORT_KEY);
+        setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
+
+        properties.putAll(additionalSystemProperties);
+
+        return properties;
     }
 
-    private void preparePropertiesForStorageDisabledClient() {
-        preparePropertiesForTcmpClusterMember();
+    public Properties getSystemPropertiesForStorageDisabledClient() {
+        final Properties properties = new Properties();
+
+        getSystemPropertiesForTcmpClusterMember(properties);
 
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
         if (clientCacheConfiguration == null) {
-            setSystemPropertyWhenValid(BUILDER_CACHE_CONFIGURATION_KEY);
+            setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         } else {
-            setSystemPropertyWhenValid(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
+            setPropertyWhenValid(properties, BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
         }
 
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+        setPropertyWhenValid(properties, BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY);
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
+
+        properties.putAll(additionalSystemProperties);
+
+        return properties;
     }
 
-    private void preparePropertiesForTcmpClusterMember() {
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
+    private void getSystemPropertiesForTcmpClusterMember(final Properties properties) {
+        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_WKA_ADDRESS_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
+        setPropertyWhenValid(properties, BUILDER_WKA_ADDRESS_KEY);
+        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
+                getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
+        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_EXTEND_ADDRESS_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
 
-        setSystemPropertyWhenValid(BUILDER_WKA_PORT_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_LOCAL_PORT_KEY),
+        setPropertyWhenValid(properties, BUILDER_WKA_PORT_KEY);
+        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_LOCAL_PORT_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
 
-        setSystemPropertyWhenValid(BUILDER_TTL_KEY);
-        setSystemPropertyWhenValid(BUILDER_CLUSTER_NAME_KEY);
+        setPropertyWhenValid(properties, BUILDER_TTL_KEY);
+        setPropertyWhenValid(properties, BUILDER_CLUSTER_NAME_KEY);
     }
 
-    private void preparePropertiesForExtendProxyClient() {
+    public Properties getSystemPropertiesForExtendProxyClient() {
+        final Properties properties = new Properties();
+
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
         if (clientCacheConfiguration == null) {
             LOGGER.warn("No client cache configuration has been specified for Extend clients");
         } else {
-            setSystemPropertyWhenValid(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
+            setPropertyWhenValid(properties, BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
         }
 
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_TCMP_ENABLED_KEY, Boolean.FALSE.toString());
-        setSystemPropertyWhenValid(BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY);
-        setSystemPropertyWhenValid(builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
                 Boolean.FALSE.toString());
 
-        setSystemPropertyWhenValid(BUILDER_EXTEND_PORT_KEY);
+        setPropertyWhenValid(properties, BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY);
+        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                Boolean.FALSE.toString());
+
+        setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
+
+        properties.putAll(additionalSystemProperties);
+
+        return properties;
+    }
+
+    private void setPropertyWhenValid(final Properties properties,
+                                      final String builderSettingKey) {
+
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(builderSettingKey),
+                getBuilderSettingAsString(builderSettingKey));
+    }
+
+    private void setPropertyWhenValid(final Properties properties,
+                                      final String key,
+                                      final String value) {
+
+        if (key == null) {
+            throw new IllegalArgumentException(format("System property key cannot be null for value of: '%s'", value));
+        }
+
+        if (value != null && !value.isEmpty()) {
+            properties.setProperty(key, value);
+        }
     }
 }
