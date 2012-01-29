@@ -538,7 +538,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSleepAfterStopDurationPre35x(final int sleepAfterStopDuration) {
+    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDurationPre35x(final int sleepAfterStopDuration) {
         builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
@@ -548,7 +548,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSleepAfterStopDuration35x(final int sleepAfterStopDuration) {
+    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDuration35x(final int sleepAfterStopDuration) {
         builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
@@ -558,7 +558,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSleepAfterStopDuration36x(final int sleepAfterStopDuration) {
+    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDuration36x(final int sleepAfterStopDuration) {
         builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
@@ -568,7 +568,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
+    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
         builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
@@ -609,6 +609,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
+    /**
+     * Returns the system properties that have been configured and will be used for a storage
+     * enabled member.
+     *
+     * @return properties to be applied to system properties.
+     */
     public Properties getSystemPropertiesForStorageEnabled() {
         final Properties properties = new Properties();
 
@@ -628,6 +634,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return properties;
     }
 
+    /**
+     * Returns the system properties that have been configured and will be used for an Extend
+     * proxy member.
+     *
+     * @return properties to be applied to system properties.
+     */
     public Properties getSystemPropertiesForExtendProxy() {
         final Properties properties = new Properties();
 
@@ -653,6 +665,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return properties;
     }
 
+    /**
+     * Returns the system properties that have been configured and will be used for a storage
+     * enabled Extend proxy member.
+     *
+     * @return properties to be applied to system properties.
+     */
     public Properties getSystemPropertiesForStorageEnabledExtendProxy() {
         final Properties properties = new Properties();
 
@@ -679,6 +697,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return properties;
     }
 
+    /**
+     * Returns the system properties that have been configured and will be used for a storage
+     * disabled client member.
+     *
+     * @return properties to be applied to system properties.
+     */
     public Properties getSystemPropertiesForStorageDisabledClient() {
         final Properties properties = new Properties();
 
@@ -728,6 +752,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_CLUSTER_NAME_KEY);
     }
 
+    /**
+     * Returns the system properties that have been configured and will be used for an Extend
+     * client member.
+     *
+     * @return properties to be applied to system properties.
+     */
     public Properties getSystemPropertiesForExtendProxyClient() {
         final Properties properties = new Properties();
 

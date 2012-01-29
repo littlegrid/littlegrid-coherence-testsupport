@@ -386,12 +386,36 @@ public interface ClusterMemberGroup {
          */
         Builder setNumberOfThreadsInStartUpPool(int numberOfThreadsInStartUpPool);
 
-        Builder setSleepAfterStopDurationPre35x(int sleepAfterStopDuration);
+        /**
+         * Suggested sleep duration for pre-3.5.x.
+         *
+         * @param sleepAfterStopDuration  Sleep duration.
+         * @return suggested sleep duration.
+         */
+        Builder setSuggestedSleepAfterStopDurationPre35x(int sleepAfterStopDuration);
 
-        Builder setSleepAfterStopDuration35x(int sleepAfterStopDuration);
+        /**
+         * Suggested sleep duration for 3.5.x.
+         *
+         * @param sleepAfterStopDuration  Sleep duration.
+         * @return suggested sleep duration.
+         */
+        Builder setSuggestedSleepAfterStopDuration35x(int sleepAfterStopDuration);
 
-        Builder setSleepAfterStopDuration36x(int sleepAfterStopDuration);
+        /**
+         * Suggested sleep duration for 3.6.x.
+         *
+         * @param sleepAfterStopDuration  Sleep duration.
+         * @return suggested sleep duration.
+         */
+        Builder setSuggestedSleepAfterStopDuration36x(int sleepAfterStopDuration);
 
-        Builder setSleepAfterStopDurationDefault(int sleepAfterStopDuration);
+        /**
+         * Default suggested sleep duration.
+         *
+         * @param sleepAfterStopDuration  Sleep duration.
+         * @return suggested sleep duration.
+         */
+        Builder setSuggestedSleepAfterStopDurationDefault(int sleepAfterStopDuration);
     }
 }

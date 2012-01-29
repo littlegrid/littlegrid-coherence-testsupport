@@ -37,7 +37,6 @@ import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
 import java.util.Map;
-import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -145,10 +144,10 @@ setExtendProxySpecificCacheConfiguration
         builder.setExtendPort(expectedExtendPort);
         builder.setTtl(expectedTtl);
         builder.setLogLevel(expectedLogLevel);
-        builder.setSleepAfterStopDurationPre35x(expectedSleepDurationPre35x);
-        builder.setSleepAfterStopDuration35x(expectedSleepDuration35x);
-        builder.setSleepAfterStopDuration36x(expectedSleepDuration36x);
-        builder.setSleepAfterStopDurationDefault(expectedSleepDurationDefault);
+        builder.setSuggestedSleepAfterStopDurationPre35x(expectedSleepDurationPre35x);
+        builder.setSuggestedSleepAfterStopDuration35x(expectedSleepDuration35x);
+        builder.setSuggestedSleepAfterStopDuration36x(expectedSleepDuration36x);
+        builder.setSuggestedSleepAfterStopDurationDefault(expectedSleepDurationDefault);
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
