@@ -87,8 +87,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_370_KEY = "version370SleepAfterStopDuration";
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "defaultSleepAfterStopDuration";
 
-    private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME = "littlegrid/littlegrid-builder-default.properties";
+    private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME =
+            "littlegrid/littlegrid-builder-default.properties";
+
     private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
+
     private static final String BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME =
             "littlegrid/littlegrid-builder-default-mapping.properties";
 
@@ -177,7 +180,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         //TODO: littlegrid#6 Tidy this up
         // on exception output: class path, tangosol system properties, all system properties and message
         // to suggest checking for another running cluster
-        final DefaultClusterMemberGroup containerGroup = new DefaultClusterMemberGroup();
+        final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
 
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
             storageEnabledCount = 1;
@@ -231,6 +234,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 SystemUtils.getSystemPropertiesWithPrefix("tangosol.coherence.")));
 
         return containerGroup;
+    }
+
+    private DefaultClusterMemberGroup createDefaultClusterMemberGroupWithSleepDurations() {
+        final int durationPre35x = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY);
+        final int duration35x = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY);
+        final int duration36x = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY);
+        final int durationDefault = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
+
+        return new DefaultClusterMemberGroup(durationPre35x, duration35x, duration36x, durationDefault);
     }
 
     /**
@@ -301,7 +313,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setAdditionalSystemProperties(String propertiesFilenames) {
+    public ClusterMemberGroup.Builder setAdditionalSystemProperties(final String propertiesFilenames) {
         setAdditionalSystemProperties(PropertiesUtils.loadProperties(propertiesFilenames));
 
         return this;
@@ -556,16 +568,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSleepAfterStopDuration370(final int sleepAfterStopDuration) {
-        builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_370_KEY, Integer.toString(sleepAfterStopDuration));
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ClusterMemberGroup.Builder setSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
         builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY, Integer.toString(sleepAfterStopDuration));
 
@@ -607,7 +609,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
-    private Properties getSystemPropertiesForStorageEnabled() {
+    public Properties getSystemPropertiesForStorageEnabled() {
         final Properties properties = new Properties();
 
         getSystemPropertiesForTcmpClusterMember(properties);
@@ -626,7 +628,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return properties;
     }
 
-    private Properties getSystemPropertiesForExtendProxy() {
+    public Properties getSystemPropertiesForExtendProxy() {
         final Properties properties = new Properties();
 
         getSystemPropertiesForTcmpClusterMember(properties);
@@ -639,6 +641,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_EXTEND_PROXY_ROLE_NAME_KEY);
         setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
+
         setPropertyWhenValid(properties,
                 builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
@@ -657,12 +660,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
+
         setPropertyWhenValid(properties,
                 builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
         setPropertyWhenValid(properties, BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY);
+
         setPropertyWhenValid(properties,
                 builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
@@ -692,6 +697,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY);
+
         setPropertyWhenValid(properties,
                 builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
@@ -706,12 +712,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_WKA_ADDRESS_KEY);
+
         setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
+
         setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_EXTEND_ADDRESS_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
 
         setPropertyWhenValid(properties, BUILDER_WKA_PORT_KEY);
+
         setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_LOCAL_PORT_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
 
@@ -738,6 +747,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY);
+
         setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
 

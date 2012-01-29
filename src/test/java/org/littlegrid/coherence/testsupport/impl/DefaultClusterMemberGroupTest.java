@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -113,6 +114,22 @@ public class DefaultClusterMemberGroupTest {
         assertThat(System.getProperty(key), nullValue());
     }
 
+    @Test
+    public void getSleepDurationBasedUponVersion() {
+        final int expectedDurationPre35x = 19;
+        final int expectedDuration35x = 18;
+        final int expectedDuration36x = 17;
+        final int expectedDurationDefault = 15;
+        
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(expectedDurationPre35x,
+                expectedDuration35x, expectedDuration36x, expectedDurationDefault);
+
+        assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.4f), is(expectedDurationPre35x));
+        assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.5f), is(expectedDuration35x));
+        assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.6f), is(expectedDuration36x));
+        assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.7f), is(expectedDurationDefault));
+    }
+    
     private static Properties getPopulatedProperties() {
         Properties properties = new Properties();
         properties.setProperty("key", "value");

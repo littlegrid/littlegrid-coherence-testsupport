@@ -392,8 +392,6 @@ public interface ClusterMemberGroup {
 
         Builder setSleepAfterStopDuration36x(int sleepAfterStopDuration);
 
-        Builder setSleepAfterStopDuration370(int sleepAfterStopDuration);
-
         Builder setSleepAfterStopDurationDefault(int sleepAfterStopDuration);
     }
 }

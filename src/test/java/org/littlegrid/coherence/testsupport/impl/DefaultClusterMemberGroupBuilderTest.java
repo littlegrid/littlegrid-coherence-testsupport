@@ -122,8 +122,7 @@ setExtendProxySpecificCacheConfiguration
         final int expectedSleepDurationPre35x = 21;
         final int expectedSleepDuration35x = 22;
         final int expectedSleepDuration36x = 23;
-        final int expectedSleepDuration370 = 24;
-        final int expectedSleepDurationDefault = 25;
+        final int expectedSleepDurationDefault = 24;
 
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
 
@@ -149,7 +148,6 @@ setExtendProxySpecificCacheConfiguration
         builder.setSleepAfterStopDurationPre35x(expectedSleepDurationPre35x);
         builder.setSleepAfterStopDuration35x(expectedSleepDuration35x);
         builder.setSleepAfterStopDuration36x(expectedSleepDuration36x);
-        builder.setSleepAfterStopDuration370(expectedSleepDuration370);
         builder.setSleepAfterStopDurationDefault(expectedSleepDurationDefault);
 
 
@@ -188,7 +186,6 @@ setExtendProxySpecificCacheConfiguration
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_PRE35X_KEY), is(Integer.toString(expectedSleepDurationPre35x)));
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_35X_KEY), is(Integer.toString(expectedSleepDuration35x)));
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_36X_KEY), is(Integer.toString(expectedSleepDuration36x)));
-        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_370_KEY), is(Integer.toString(expectedSleepDuration370)));
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY), is(Integer.toString(expectedSleepDurationDefault)));
     }
 

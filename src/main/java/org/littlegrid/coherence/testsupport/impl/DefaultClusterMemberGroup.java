@@ -39,7 +39,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -65,12 +64,30 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private URL[] classPathUrls;
     private String clusterMemberInstanceClassName;
     private int numberOfThreadsInStartUpPool;
+    private int sleepAfterStopDurationPre35x;
+    private int sleepAfterStopDuration35x;
+    private int sleepAfterStopDuration36x;
+    private int sleepAfterStopDurationDefault;
 
 
     /**
      * Constructor with reduced scope.
+     *
+     * @param sleepAfterStopDurationPre35x  Sleep duration for pre 3.5.x.
+     * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
+     * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
+     * @param sleepAfterStopDurationDefault Default sleep duration.
      */
-    DefaultClusterMemberGroup() {
+    DefaultClusterMemberGroup(final int sleepAfterStopDurationPre35x,
+                              final int sleepAfterStopDuration35x,
+                              final int sleepAfterStopDuration36x,
+                              final int sleepAfterStopDurationDefault) {
+
+        this.sleepAfterStopDurationPre35x = sleepAfterStopDurationPre35x;
+        this.sleepAfterStopDuration35x = sleepAfterStopDuration35x;
+        this.sleepAfterStopDuration36x = sleepAfterStopDuration36x;
+        this.sleepAfterStopDurationDefault = sleepAfterStopDurationDefault;
+
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
     }
 
@@ -264,32 +281,31 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public int getSuggestedSleepAfterStopDuration() {
-        System.out.println("SLEEP NEEDS TO BE FLESHED OUT WITH CONTAINER-GROUP AND SUB-GROUPS");
-//        throw new UnsupportedOperationException();
-        return 3;
-//        return getSleepTimeBasedUponVersion(sleepTimePerVersionMapping, getMajorMinorVersion());
+        return getSuggestedSleepDurationBasedUponVersion(getMajorMinorVersion());
     }
 
-    public static int getSleepTimeBasedUponVersion(final Map<String, Integer> sleepTimePerVersionMapping,
-                                                   final float majorMinorVersion) {
+    /**
+     * Gets the suggested sleep duration based upon the version.
+     *
+     * @param majorMinorVersion Version of Coherence.
+     * @return returns the suggested sleep duration.
+     */
+    public int getSuggestedSleepDurationBasedUponVersion(final float majorMinorVersion) {
+        final float coherenceVersionNumber35x = 3.5f;
+        final float coherenceVersionNumber36x = 3.6f;
+        final float coherenceVersionNumber370 = 3.7f;
 
-//        final float coherenceVersionNumber35x = 3.5f;
-//        final float coherenceVersionNumber36x = 3.6f;
-//        final float coherenceVersionNumber370 = 3.7f;
-//
-//        if (majorMinorVersion < coherenceVersionNumber35x) {
-//            return sleepTimePerVersionMapping
-//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_PRE_3_5;
-//
-//        } else if (majorMinorVersion < coherenceVersionNumber36x) {
-//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_5;
-//
-//        } else if (majorMinorVersion < coherenceVersionNumber370) {
-//            return SECONDS_TO_SLEEP_AFTER_PERFORMING_STOP_FOR_VERSION_3_6;
-//        }
-//
-//        return ;
-        return 0;
+        if (majorMinorVersion < coherenceVersionNumber35x) {
+            return sleepAfterStopDurationPre35x;
+
+        } else if (majorMinorVersion < coherenceVersionNumber36x) {
+            return sleepAfterStopDuration35x;
+
+        } else if (majorMinorVersion < coherenceVersionNumber370) {
+            return sleepAfterStopDuration36x;
+        }
+
+        return sleepAfterStopDurationDefault;
     }
 
     private static float getMajorMinorVersion() {
