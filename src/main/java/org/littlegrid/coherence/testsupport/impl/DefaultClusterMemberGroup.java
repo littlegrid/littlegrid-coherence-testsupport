@@ -64,7 +64,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private URL[] classPathUrls;
     private String clusterMemberInstanceClassName;
     private int numberOfThreadsInStartUpPool;
-    private int sleepAfterStopDurationPre35x;
     private int sleepAfterStopDuration35x;
     private int sleepAfterStopDuration36x;
     private int sleepAfterStopDurationDefault;
@@ -73,17 +72,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     /**
      * Constructor with reduced scope.
      *
-     * @param sleepAfterStopDurationPre35x  Sleep duration for pre 3.5.x.
      * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
      * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
      * @param sleepAfterStopDurationDefault Default sleep duration.
      */
-    DefaultClusterMemberGroup(final int sleepAfterStopDurationPre35x,
-                              final int sleepAfterStopDuration35x,
+    DefaultClusterMemberGroup(final int sleepAfterStopDuration35x,
                               final int sleepAfterStopDuration36x,
                               final int sleepAfterStopDurationDefault) {
 
-        this.sleepAfterStopDurationPre35x = sleepAfterStopDurationPre35x;
         this.sleepAfterStopDuration35x = sleepAfterStopDuration35x;
         this.sleepAfterStopDuration36x = sleepAfterStopDuration36x;
         this.sleepAfterStopDurationDefault = sleepAfterStopDurationDefault;
@@ -291,14 +287,10 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @return returns the suggested sleep duration.
      */
     public int getSuggestedSleepDurationBasedUponVersion(final float majorMinorVersion) {
-        final float coherenceVersionNumber35x = 3.5f;
         final float coherenceVersionNumber36x = 3.6f;
         final float coherenceVersionNumber370 = 3.7f;
 
-        if (majorMinorVersion < coherenceVersionNumber35x) {
-            return sleepAfterStopDurationPre35x;
-
-        } else if (majorMinorVersion < coherenceVersionNumber36x) {
+        if (majorMinorVersion < coherenceVersionNumber36x) {
             return sleepAfterStopDuration35x;
 
         } else if (majorMinorVersion < coherenceVersionNumber370) {

@@ -387,14 +387,6 @@ public interface ClusterMemberGroup {
         Builder setNumberOfThreadsInStartUpPool(int numberOfThreadsInStartUpPool);
 
         /**
-         * Suggested sleep duration for pre-3.5.x.
-         *
-         * @param sleepAfterStopDuration  Sleep duration.
-         * @return suggested sleep duration.
-         */
-        Builder setSuggestedSleepAfterStopDurationPre35x(int sleepAfterStopDuration);
-
-        /**
          * Suggested sleep duration for 3.5.x.
          *
          * @param sleepAfterStopDuration  Sleep duration.

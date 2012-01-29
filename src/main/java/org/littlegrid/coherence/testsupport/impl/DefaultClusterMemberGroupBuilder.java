@@ -81,10 +81,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
 
-    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY = "sleepAfterStopDurationPre35x";
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY = "version35xSleepAfterStopDuration";
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY = "version36xSleepAfterStopDuration";
-    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_370_KEY = "version370SleepAfterStopDuration";
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "defaultSleepAfterStopDuration";
 
     private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME =
@@ -237,12 +235,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private DefaultClusterMemberGroup createDefaultClusterMemberGroupWithSleepDurations() {
-        final int durationPre35x = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY);
         final int duration35x = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY);
         final int duration36x = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY);
         final int durationDefault = getBuilderSettingAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
 
-        return new DefaultClusterMemberGroup(durationPre35x, duration35x, duration36x, durationDefault);
+        return new DefaultClusterMemberGroup(duration35x, duration36x, durationDefault);
     }
 
     /**
@@ -530,16 +527,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
         builderSettings.put(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY,
                 Integer.toString(numberOfThreadsInStartUpPool));
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDurationPre35x(final int sleepAfterStopDuration) {
-        builderSettings.put(BUILDER_SLEEP_AFTER_STOP_DURATION_PRE35X_KEY, Integer.toString(sleepAfterStopDuration));
 
         return this;
     }

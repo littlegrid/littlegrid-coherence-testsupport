@@ -69,12 +69,9 @@ public class DefaultClusterMemberGroupBuilderTest {
     private static final String EXTEND_PORT_KEY = "ExtendPort";
     private static final String TTL_KEY = "Ttl";
     private static final String LOG_LEVEL_KEY = "LogLevel";
-    private static final String SLEEP_AFTER_STOP_DURATION_PRE35X_KEY = "sleepAfterStopDurationPre35x";
 
     private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "version35xSleepAfterStopDuration";
-
     private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "version36xSleepAfterStopDuration";
-    private static final String SLEEP_AFTER_STOP_DURATION_370_KEY = "version370SleepAfterStopDuration";
     private static final String SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "defaultSleepAfterStopDuration";
 
     private static final String DISTRIBUTED_LOCAL_STORAGE_KEY = "DistributedLocalStorage";
@@ -118,7 +115,6 @@ setExtendProxySpecificCacheConfiguration
         final int expectedExtendPort = 23456;
         final int expectedTtl = 3;
         final int expectedLogLevel = 8;
-        final int expectedSleepDurationPre35x = 21;
         final int expectedSleepDuration35x = 22;
         final int expectedSleepDuration36x = 23;
         final int expectedSleepDurationDefault = 24;
@@ -144,7 +140,6 @@ setExtendProxySpecificCacheConfiguration
         builder.setExtendPort(expectedExtendPort);
         builder.setTtl(expectedTtl);
         builder.setLogLevel(expectedLogLevel);
-        builder.setSuggestedSleepAfterStopDurationPre35x(expectedSleepDurationPre35x);
         builder.setSuggestedSleepAfterStopDuration35x(expectedSleepDuration35x);
         builder.setSuggestedSleepAfterStopDuration36x(expectedSleepDuration36x);
         builder.setSuggestedSleepAfterStopDurationDefault(expectedSleepDurationDefault);
@@ -182,7 +177,6 @@ setExtendProxySpecificCacheConfiguration
         assertThat(builderSettings.get(TCMP_ENABLED_KEY), nullValue());
         assertThat(builderSettings.get(EXTEND_ENABLED_KEY), nullValue());
 
-        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_PRE35X_KEY), is(Integer.toString(expectedSleepDurationPre35x)));
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_35X_KEY), is(Integer.toString(expectedSleepDuration35x)));
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_36X_KEY), is(Integer.toString(expectedSleepDuration36x)));
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY), is(Integer.toString(expectedSleepDurationDefault)));
