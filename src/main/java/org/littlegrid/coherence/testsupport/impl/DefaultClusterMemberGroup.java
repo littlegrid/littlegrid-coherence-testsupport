@@ -201,7 +201,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             executorService.shutdown();
 
-            LOGGER.info(format("Group of cluster member(s) started, member Ids: %s", getStartedMemberIds()));
+            LOGGER.info(format("Group of cluster member(s) started, member Ids: %s", getMemberIdsAsString()));
         } catch (Exception e) {
             final String message = format(
                     "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
@@ -213,6 +213,17 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         return this;
+    }
+
+    private StringBuilder getMemberIdsAsString() {
+        final StringBuilder sb = new StringBuilder();
+
+        for (final int memberId : getStartedMemberIds()) {
+            sb.append(memberId);
+            sb.append(" ");
+        }
+
+        return sb;
     }
 
     private void outputStartAllMessages() {
@@ -255,7 +266,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
-    public List<Integer> getStartedMemberIds() {
+    public int[] getStartedMemberIds() {
         try {
             final List<Integer> memberIds = new ArrayList<Integer>();
 
@@ -266,7 +277,13 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 memberIds.add(memberWrapper.getLocalMemberId());
             }
 
-            return memberIds;
+            int[] memberIdsArray = new int[memberIds.size()];
+
+            for (int i = 0; i < memberIds.size(); i++) {
+                memberIdsArray[i] = memberIds.get(i);
+            }
+
+            return memberIdsArray;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

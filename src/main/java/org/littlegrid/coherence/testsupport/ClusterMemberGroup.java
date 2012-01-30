@@ -31,7 +31,6 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -82,7 +81,7 @@ public interface ClusterMemberGroup {
      *
      * @return members Ids.
      */
-    List<Integer> getStartedMemberIds();
+    int[] getStartedMemberIds();
 
     /**
      * Returns the suggested seconds to sleep after performing a member stop, the sleep
@@ -405,7 +404,7 @@ public interface ClusterMemberGroup {
         /**
          * Suggested sleep duration for 3.5.x.
          *
-         * @param sleepAfterStopDuration  Sleep duration.
+         * @param sleepAfterStopDuration Sleep duration.
          * @return suggested sleep duration.
          */
         Builder setSuggestedSleepAfterStopDuration35x(int sleepAfterStopDuration);
@@ -413,7 +412,7 @@ public interface ClusterMemberGroup {
         /**
          * Suggested sleep duration for 3.6.x.
          *
-         * @param sleepAfterStopDuration  Sleep duration.
+         * @param sleepAfterStopDuration Sleep duration.
          * @return suggested sleep duration.
          */
         Builder setSuggestedSleepAfterStopDuration36x(int sleepAfterStopDuration);
@@ -421,7 +420,7 @@ public interface ClusterMemberGroup {
         /**
          * Default suggested sleep duration.
          *
-         * @param sleepAfterStopDuration  Sleep duration.
+         * @param sleepAfterStopDuration Sleep duration.
          * @return suggested sleep duration.
          */
         Builder setSuggestedSleepAfterStopDurationDefault(int sleepAfterStopDuration);

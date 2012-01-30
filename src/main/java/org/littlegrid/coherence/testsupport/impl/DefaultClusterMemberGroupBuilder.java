@@ -627,7 +627,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     /**
      * Returns the system properties that have been configured and will be used for a storage
-     * enabled/disabled member.
+     * enabled member.
      *
      * @return properties to be applied to system properties.
      */
@@ -649,6 +649,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return properties;
     }
 
+    /**
+     * Returns the system properties that have been configured and will be used for a
+     * configurable member.
+     *
+     * @return properties to be applied to system properties.
+     */
     public Properties getSystemPropertiesForConfigurableMember() {
         final Properties properties = new Properties();
 

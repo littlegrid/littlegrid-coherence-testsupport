@@ -35,9 +35,11 @@ import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -166,8 +168,33 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     }
 
     @Test
+    @Ignore
     public void exampleOfDifferentOverrideFileSpecified() {
 
+    }
+    
+    @Test
+    public void exampleOfUsingContainingClassLoaderToControlObject() 
+            throws Exception {
+        
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int memberId = 1;
+        
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setConfigurableMemberCount(numberOfMembers)
+                .build();
+        
+        assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
+
+        final ClassLoader containingClassLoader =
+                memberGroup.getClusterMember(memberId).getActualContainingClassLoader();
+
+        System.out.println("ABOUT DO STUFF");
+        final Class classWithinClusterMember = containingClassLoader.loadClass("java.util.Date");
+        final Object object = classWithinClusterMember.newInstance();
+
+        System.out.println("HERRRRRRRRRRRRRRRRRRR" + object.toString());
+        System.out.println("DONESTUFF");
     }
 
     private void performSimplePutSizeGet(final String cacheName) {
