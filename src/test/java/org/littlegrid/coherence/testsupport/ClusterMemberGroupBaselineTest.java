@@ -48,7 +48,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(expectedClusterSize);
 
-        NamedCache cache = CacheFactory.getCache("test");
+        final NamedCache cache = CacheFactory.getCache("test");
         cache.put("key", "value");
 
         memberGroup.shutdownAll();
@@ -60,7 +60,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
-        NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
         cache.put("key", "value");
 
         memberGroup.shutdownAll();
@@ -74,7 +74,7 @@ public class ClusterMemberGroupBaselineTest extends AbstractStorageDisabledClien
             memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
-            NamedCache cache = CacheFactory.getCache("unknown-cache-this-will-not-be-found-in-cache-configuration");
+            final NamedCache cache = CacheFactory.getCache("unknown-cache-this-will-not-be-found-in-cache-configuration");
             cache.put("key", "value");
         } finally {
             memberGroup.shutdownAll();

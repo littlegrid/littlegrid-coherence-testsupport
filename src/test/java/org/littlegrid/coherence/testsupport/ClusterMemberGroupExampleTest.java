@@ -171,7 +171,7 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     }
 
     private void performSimplePutSizeGet(final String cacheName) {
-        NamedCache cache = CacheFactory.getCache(cacheName);
+        final NamedCache cache = CacheFactory.getCache(cacheName);
         cache.put(KEY, VALUE);
 
         assertThat(cache.size(), is(1));

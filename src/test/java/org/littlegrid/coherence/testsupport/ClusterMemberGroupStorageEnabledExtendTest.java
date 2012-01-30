@@ -36,6 +36,9 @@ import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 /**
  * Cluster member group Extend tests.
  */
@@ -55,8 +58,10 @@ public class ClusterMemberGroupStorageEnabledExtendTest extends AbstractExtendCl
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .build();
 
-        NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
-        cache.put("doesn't matter", "no storage enabled members, so will throw runtime exception");
+        final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
+        cache.put("key", "value");
+
+        assertThat(cache.size(), is(1));
     }
 
     @Test(expected = UnsupportedOperationException.class)

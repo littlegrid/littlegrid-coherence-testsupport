@@ -48,6 +48,7 @@ import static java.lang.String.format;
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
+    private static final String BUILDER_CONFIGURABLE_MEMBER_COUNT_KEY = "ConfigurableMemberCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
     private static final String BUILDER_EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
     private static final String BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
@@ -68,6 +69,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_EXTEND_ENABLED_KEY = "ExtendEnabled";
 
     private static final String BUILDER_CLUSTER_NAME_KEY = "ClusterName";
+    private static final String BUILDER_CONFIGURABLE_MEMBER_ROLE_NAME_KEY = "ConfigurableMemberRoleName";
     private static final String BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY = "StorageEnabledRoleName";
     private static final String BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
     private static final String BUILDER_EXTEND_PROXY_ROLE_NAME_KEY = "ExtendProxyRoleName";
@@ -121,10 +123,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         loadBuilderMappingSettings();
     }
 
-    private void loadBuilderMappingSettings() {
-        builderMappingSettings = PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
-    }
-
     /**
      * Returns the current builder settings with their internal builder keys.
      *
@@ -142,6 +140,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 BUILDER_DEFAULT_PROPERTIES_FILENAME, overridePropertiesFilename);
 
         BeanUtils.processProperties(this, properties);
+    }
+
+    private void loadBuilderMappingSettings() {
+        builderMappingSettings = PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
     }
 
     private int getBuilderSettingAsInt(final String builderKey) {
@@ -168,6 +170,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup build() {
         int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
+        int configurableMemberCount = getBuilderSettingAsInt(BUILDER_CONFIGURABLE_MEMBER_COUNT_KEY);
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
 
@@ -180,7 +183,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         // to suggest checking for another running cluster
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
 
-        if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0 && extendProxyCount == 0) {
+        if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0
+                && extendProxyCount == 0 && configurableMemberCount == 0) {
             storageEnabledCount = 1;
         }
 
@@ -193,6 +197,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (storageEnabledCount > 0) {
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
                     getSystemPropertiesForStorageEnabled(), classPathUrls, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool)
+                    .startAll();
+
+            containerGroup.merge(memberGroup);
+        }
+
+        if (configurableMemberCount > 0) {
+            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(configurableMemberCount,
+                    getSystemPropertiesForConfigurableMember(), classPathUrls, clusterMemberInstanceClassName,
                     numberOfThreadsInStartUpPool)
                     .startAll();
 
@@ -326,6 +339,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    @Override
+    public ClusterMemberGroup.Builder setConfigurableMemberCount(final int numberOfMembers) {
+        builderSettings.put(BUILDER_CONFIGURABLE_MEMBER_COUNT_KEY, Integer.toString(numberOfMembers));
+
+        return this;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -372,6 +392,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup.Builder setLogLevel(final int logLevel) {
         builderSettings.put(BUILDER_LOG_LEVEL_KEY, Integer.toString(logLevel));
+
+        return this;
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setConfigurableMemberRoleName(final String roleName) {
+        builderSettings.put(BUILDER_CONFIGURABLE_MEMBER_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -600,7 +627,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     /**
      * Returns the system properties that have been configured and will be used for a storage
-     * enabled member.
+     * enabled/disabled member.
      *
      * @return properties to be applied to system properties.
      */
@@ -616,6 +643,24 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_STORAGE_ENABLED_ROLE_NAME_KEY);
+
+        properties.putAll(additionalSystemProperties);
+
+        return properties;
+    }
+
+    public Properties getSystemPropertiesForConfigurableMember() {
+        final Properties properties = new Properties();
+
+        getSystemPropertiesForTcmpClusterMember(properties);
+
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                Boolean.FALSE.toString());
+
+        setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        setPropertyWhenValid(properties, BUILDER_CONFIGURABLE_MEMBER_ROLE_NAME_KEY);
 
         properties.putAll(additionalSystemProperties);
 

@@ -47,6 +47,7 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public class DefaultClusterMemberGroupBuilderTest {
+    private static final String CONFIGURABLE_MEMBER_COUNT_KEY = "ConfigurableMemberCount";
     private static final String STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
     private static final String EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
     private static final String STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
@@ -63,6 +64,7 @@ public class DefaultClusterMemberGroupBuilderTest {
     private static final String OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
 
     private static final String CLUSTER_NAME_KEY = "ClusterName";
+    private static final String CONFIGURABLE_MEMBER_ROLE_NAME_KEY = "ConfigurableMemberRoleName";
     private static final String STORAGE_ENABLED_ROLE_NAME_KEY = "StorageEnabledRoleName";
     private static final String STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
     private static final String STORAGE_ENABLED_PROXY_ROLE_NAME_KEY = "StorageEnabledExtendProxyRoleName";
@@ -91,6 +93,7 @@ public class DefaultClusterMemberGroupBuilderTest {
 //        setJarsToExcludeFromClassPath
 //        setBuilderProperties
 
+        final int expectedConfigurableMemberCount = 10;
         final int expectedStorageEnabledCount = 11;
         final int expectedExtendProxyCount = 12;
         final int expectedStorageEnabledProxyCount = 13;
@@ -104,6 +107,7 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
 
+        builder.setConfigurableMemberCount(expectedConfigurableMemberCount);
         builder.setStorageEnabledCount(expectedStorageEnabledCount);
         builder.setExtendProxyCount(expectedExtendProxyCount);
         builder.setStorageEnabledExtendProxyCount(expectedStorageEnabledProxyCount);
@@ -119,6 +123,7 @@ public class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Map<String, String> builderSettings = defaultBuilder.getBuilderSettings();
 
+        assertThat(builderSettings.get(CONFIGURABLE_MEMBER_COUNT_KEY), is(Integer.toString(expectedConfigurableMemberCount)));
         assertThat(builderSettings.get(STORAGE_ENABLED_COUNT_KEY), is(Integer.toString(expectedStorageEnabledCount)));
         assertThat(builderSettings.get(EXTEND_PROXY_COUNT_KEY), is(Integer.toString(expectedExtendProxyCount)));
         assertThat(builderSettings.get(STORAGE_ENABLED_PROXY_COUNT_KEY), is(Integer.toString(expectedStorageEnabledProxyCount)));
@@ -143,8 +148,9 @@ public class DefaultClusterMemberGroupBuilderTest {
         final String expectedOverrideConfiguration = "override-configuration.xml";
 
         final String expectedClusterName = "cluster-name";
+        final String expectedConfigurableMemberRoleName = "configurable-member";
         final String expectedStorageEnabledRoleName = "storage-enabled";
-        final String expectedStorageDisabledClientRoleName = "storage-disabled";
+        final String expectedStorageDisabledClientRoleName = "storage-disabled-client";
         final String expectedExtendProxyRoleName = "extend-proxy";
         final String expectedStorageEnabledProxyRoleName = "storage-enabled-proxy";
         final String expectedExtendClientRoleName = "extend-client";
@@ -164,6 +170,7 @@ public class DefaultClusterMemberGroupBuilderTest {
         builder.setOverrideConfiguration(expectedOverrideConfiguration);
 
         builder.setClusterName(expectedClusterName);
+        builder.setConfigurableMemberRoleName(expectedConfigurableMemberRoleName);
         builder.setStorageEnabledRoleName(expectedStorageEnabledRoleName);
         builder.setStorageDisabledClientRoleName(expectedStorageDisabledClientRoleName);
         builder.setExtendProxyRoleName(expectedExtendProxyRoleName);
@@ -187,6 +194,7 @@ public class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(OVERRIDE_CONFIGURATION_KEY), is(expectedOverrideConfiguration));
 
         assertThat(builderSettings.get(CLUSTER_NAME_KEY), is(expectedClusterName));
+        assertThat(builderSettings.get(CONFIGURABLE_MEMBER_ROLE_NAME_KEY), is(expectedConfigurableMemberRoleName));
         assertThat(builderSettings.get(STORAGE_ENABLED_ROLE_NAME_KEY), is(expectedStorageEnabledRoleName));
         assertThat(builderSettings.get(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY), is(expectedStorageDisabledClientRoleName));
         assertThat(builderSettings.get(EXTEND_PROXY_ROLE_NAME_KEY), is(expectedExtendProxyRoleName));
