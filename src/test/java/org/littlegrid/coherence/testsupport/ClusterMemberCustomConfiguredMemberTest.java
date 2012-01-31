@@ -10,9 +10,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Configurable member tests.
+ * Custom configured member tests.
  */
-public class ClusterMemberConfigurableMemberTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+public class ClusterMemberCustomConfiguredMemberTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
     private ClusterMemberGroup memberGroup;
 
     @After
@@ -27,7 +27,7 @@ public class ClusterMemberConfigurableMemberTest extends AbstractStorageDisabled
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setConfigurableMemberCount(numberOfMembers)
+                .setCustomConfiguredCount(numberOfMembers)
                 .build();
 
         assertThatClusterIsExpectedSize(expectedClusterSize);

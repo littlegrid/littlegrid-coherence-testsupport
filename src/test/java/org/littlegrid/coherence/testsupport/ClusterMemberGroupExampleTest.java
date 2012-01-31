@@ -34,12 +34,13 @@ package org.littlegrid.coherence.testsupport;
 import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import com.tangosol.util.ClassHelper;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.impl.DefaultClusterMember;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -172,29 +173,44 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
     public void exampleOfDifferentOverrideFileSpecified() {
 
     }
-    
+
     @Test
-    public void exampleOfUsingContainingClassLoaderToControlObject() 
+    public void exampleOfUsingContainingClassLoaderToControlObject()
             throws Exception {
-        
-        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
-        final int memberId = 1;
-        
+
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int memberIdToRunPretendServerIn = 2;
+
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setConfigurableMemberCount(numberOfMembers)
+                .setCustomConfiguredCount(numberOfMembers)
                 .build();
-        
+
         assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
 
         final ClassLoader containingClassLoader =
-                memberGroup.getClusterMember(memberId).getActualContainingClassLoader();
+                memberGroup.getClusterMember(memberIdToRunPretendServerIn).getActualContainingClassLoader();
 
-        System.out.println("ABOUT DO STUFF");
-        final Class classWithinClusterMember = containingClassLoader.loadClass("java.util.Date");
-        final Object object = classWithinClusterMember.newInstance();
+        final Class classWithinClusterMember = containingClassLoader.loadClass(
+                "org.littlegrid.coherence.testsupport.ClusterMemberGroupExampleTest$PretendServer");
 
-        System.out.println("HERRRRRRRRRRRRRRRRRRR" + object.toString());
-        System.out.println("DONESTUFF");
+        final Object pretendServer = classWithinClusterMember.newInstance();
+        ClassHelper.invoke(pretendServer, "start", new Object[]{});
+        ClassHelper.invoke(pretendServer, "shutdown", new Object[]{});
+    }
+
+    @Test
+    public void exampleOfExtendingDefaultClusterMemberToUseLifeCycleMethods()
+            throws Exception {
+
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setCustomConfiguredCount(numberOfMembers)
+                .setClusterMemberInstanceClassName(
+                        "org.littlegrid.coherence.testsupport.ClusterMemberGroupExampleTest$PretendServerClusterMember")
+                .build();
+
+        assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
     }
 
     private void performSimplePutSizeGet(final String cacheName) {
@@ -203,5 +219,65 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
 
         assertThat(cache.size(), is(1));
         assertThat((String) cache.get(KEY), is(VALUE));
+    }
+
+    /**
+     * A pretend server class, used to demonstrate how getting a handle to the 'containing class loader'
+     * allows classes to be loaded, objects created and methods invoked that are accessible only to
+     * the particular cluster member.
+     */
+    public static class PretendServer {
+        public void start() {
+            System.out.println("Started server in member: " + getCoherenceRunningContext());
+        }
+
+        public void shutdown() {
+            System.out.println("Stopped server in member: " + getCoherenceRunningContext());
+        }
+
+        private String getCoherenceRunningContext() {
+            return CacheFactory.getCluster().getLocalMember().getId() + ", class loader: "
+                    + this.getClass().getClassLoader();
+        }
+    }
+
+    public static class PretendServerClusterMember extends DefaultClusterMember {
+        private PretendServer server = new PretendServer();
+
+        @Override
+        public void doBeforeStart() {
+            /*
+                 At this point, Coherence hasn't been started in the other class loader - so functions
+                 such as getting the member Id won't work (because it isn't running).
+
+                 However, if you wanted to start out a JMS consumer or run a server then that is fine
+                 because it will be in a different class loader.
+             */
+
+            System.out.println("Performing do before start - class loader: " + this.getClass().getClassLoader());
+        }
+
+        @Override
+        public void doAfterStart() {
+            server.start();
+        }
+
+        @Override
+        public void doBeforeShutdown() {
+            server.shutdown();
+        }
+
+        @Override
+        public void doAfterShutdown() {
+            /*
+                 At this point, Coherence has been stopped - so functions such as getting the member Id
+                 won't work (because it isn't running).
+
+                 However, if you wanted to shutdown JMS consumer or shutdown a server then that is fine
+                 because it will be in a different class loader.
+             */
+
+            System.out.println("Performing do after shutdown - class loader: " + this.getClass().getClassLoader());
+        }
     }
 }

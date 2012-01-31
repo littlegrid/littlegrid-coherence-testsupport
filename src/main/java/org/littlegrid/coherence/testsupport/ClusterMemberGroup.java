@@ -191,12 +191,12 @@ public interface ClusterMemberGroup {
         Builder setStorageEnabledCount(int numberOfMembers);
 
         /**
-         * Sets the number of storage disabled members that the cluster member group should contain.
+         * Sets the number of custom configured members that the cluster member group should contain.
          *
          * @param numberOfMembers Number of members required.
          * @return cluster member group builder.
          */
-        Builder setConfigurableMemberCount(int numberOfMembers);
+        Builder setCustomConfiguredCount(int numberOfMembers);
 
         /**
          * Sets the number of storage enabled Extend proxy members (i.e. composite members running
@@ -240,12 +240,12 @@ public interface ClusterMemberGroup {
         Builder setLogLevel(int logLevel);
 
         /**
-         * Sets the storage disabled member's role name.
+         * Sets the custom configured member's role name.
          *
          * @param roleName Role name.
          * @return cluster member group builder.
          */
-        Builder setConfigurableMemberRoleName(final String roleName);
+        Builder setCustomConfiguredRoleName(final String roleName);
 
         /**
          * Sets the storage enabled member's role name.
