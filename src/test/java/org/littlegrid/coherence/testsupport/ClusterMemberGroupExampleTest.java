@@ -206,7 +206,7 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCustomConfiguredCount(numberOfMembers)
-                .setClusterMemberInstanceClassName(
+                .setCustomConfiguredClusterMemberInstanceClassName(
                         "org.littlegrid.coherence.testsupport.ClusterMemberGroupExampleTest$PretendServerClusterMember")
                 .build();
 

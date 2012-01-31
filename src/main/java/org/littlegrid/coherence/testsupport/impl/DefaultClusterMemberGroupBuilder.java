@@ -55,6 +55,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
+    private static final String BUILDER_CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
+            "CustomConfigurationClusterMemberInstanceClassName";
 
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY = "version35xSleepAfterStopDuration";
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY = "version36xSleepAfterStopDuration";
@@ -175,8 +177,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
 
         final int numberOfThreadsInStartUpPool = getBuilderSettingAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
+
         final String clusterMemberInstanceClassName =
                 getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+
+        final String customConfiguredclusterMemberInstanceClassName =
+                getBuilderSettingAsString(BUILDER_CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         //TODO: littlegrid#6 Tidy this up
         // on exception output: class path, tangosol system properties, all system properties and message
@@ -205,7 +211,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (customConfiguredCount > 0) {
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(customConfiguredCount,
-                    getSystemPropertiesForCustomConfigured(), classPathUrls, clusterMemberInstanceClassName,
+                    getSystemPropertiesForCustomConfigured(), classPathUrls,
+                    customConfiguredclusterMemberInstanceClassName,
                     numberOfThreadsInStartUpPool)
                     .startAll();
 
@@ -459,6 +466,19 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup.Builder setClusterMemberInstanceClassName(final String clusterMemberInstanceClassName) {
         builderSettings.put(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY, clusterMemberInstanceClassName);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCustomConfiguredClusterMemberInstanceClassName(
+            final String clusterMemberInstanceClassName) {
+
+        builderSettings.put(BUILDER_CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY,
+                clusterMemberInstanceClassName);
 
         return this;
     }

@@ -308,6 +308,18 @@ public interface ClusterMemberGroup {
         Builder setClusterMemberInstanceClassName(String clusterMemberInstanceClassName);
 
         /**
+         * Sets the cluster member instance class name, essentially instances of this class act as
+         * cluster members - usually the default will suffice and this will not need to be changed,
+         * examples where a different instance class name might be required are if specific control
+         * is required before starting up a cluster member or shutting one down.
+         *
+         * @param clusterMemberInstanceClassName Class name from which instances of cluster members
+         *                                       are created.
+         * @return cluster member group builder.
+         */
+        Builder setCustomConfiguredClusterMemberInstanceClassName(String clusterMemberInstanceClassName);
+
+        /**
          * Sets the names of specific JAR files to be excluded from the class loading of the
          * cluster members, this is useful if JMX JARs or JDBC drivers are resulting in (inert)
          * warning or error messages when starting the cluster member.
