@@ -31,12 +31,24 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import com.tangosol.io.pof.PofReader;
+import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableException;
+import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.AbstractInvocable;
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 /**
@@ -109,30 +121,23 @@ public class ClusterMemberGroupExtendProxyTest extends AbstractExtendClientClust
     }
 
     @Test
-    public void twoExtendProxiesInDifferentGroups() {
-        int numberOfExtendProxies = SINGLE_TEST_CLUSTER_SIZE;
+    public void multipleExtendProxiesInSameGroup() {
+        int numberOfExtendProxies = MEDIUM_TEST_CLUSTER_SIZE;
+
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setExtendProxyCount(numberOfExtendProxies)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .build();
+
+        final InvocationService invocationService =
+                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+
+        final Map result = invocationService.query(new ClusterSizeInvocable(), null);
+        assertThat(result.size(), is(1));
         
-        ClusterMemberGroup extendProxyGroup1 = null;
-        ClusterMemberGroup extendProxyGroup2 = null;
-        
-        try {
-            final ClusterMemberGroup.Builder builder1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
-            
-            extendProxyGroup1 = builder1
-                    .setExtendProxyCount(numberOfExtendProxies)
-                    .build();
-
-            final int nextExtendPort = builder1.getExtendPort() + 1;
-
-            extendProxyGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setExtendProxyCount(numberOfExtendProxies)
-                    .setExtendPort(nextExtendPort)
-                    .build();
-
-
-        } finally {
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(extendProxyGroup1, extendProxyGroup2);
-        }
+        final List<Integer> list = new ArrayList<Integer>(result.values());
+        final int clusterSize = list.get(0);
+        assertThat(clusterSize, is(numberOfExtendProxies));
     }
 
     @Test
@@ -142,5 +147,22 @@ public class ClusterMemberGroupExtendProxyTest extends AbstractExtendClientClust
                 .build();
 
         // This should work, only a log message is logged when no Extend client cache config is specified
+    }
+
+    public static class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
+        @Override
+        public void run() {
+            setResult(getService().getCluster().getMemberSet().size());
+        }
+
+        @Override
+        public void readExternal(PofReader reader)
+                throws IOException {
+        }
+
+        @Override
+        public void writeExternal(PofWriter writer)
+                throws IOException {
+        }
     }
 }

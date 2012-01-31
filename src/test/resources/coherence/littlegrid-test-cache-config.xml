@@ -41,6 +41,12 @@
             <autostart>true</autostart>
         </distributed-scheme>
 
+        <invocation-scheme>
+            <scheme-name>InvocationService</scheme-name>
+            <service-name>invocation-service</service-name>
+            <autostart>true</autostart>
+        </invocation-scheme>
+
         <proxy-scheme>
             <!--<scheme-name>simple-extend-proxy-scheme</scheme-name>-->
             <scheme-name>extend-tcp</scheme-name>

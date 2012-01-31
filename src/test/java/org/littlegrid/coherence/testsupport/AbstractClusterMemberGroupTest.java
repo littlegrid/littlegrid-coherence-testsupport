@@ -48,6 +48,7 @@ public abstract class AbstractClusterMemberGroupTest {
     protected static final String EXTEND_CLIENT_CACHE_CONFIG_FILE = "coherence/littlegrid-test-extend-client-cache-config.xml";
     protected static final String KNOWN_TEST_CACHE = "known-cache";
     protected static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
+    protected static final String INVOCATION_SERVICE_NAME = "InvocationService";
 
     protected static final int SINGLE_TEST_CLUSTER_SIZE = 1;
     protected static final int SMALL_TEST_CLUSTER_SIZE = 2;

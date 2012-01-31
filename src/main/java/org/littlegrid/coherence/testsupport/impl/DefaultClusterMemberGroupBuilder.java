@@ -171,28 +171,22 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup build() {
+        //TODO: littlegrid#6 Tidy this up
+        // on exception output: class path, tangosol system properties, all system properties and message
+        // to suggest checking for another running cluster
+
         int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
         int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
 
-        final int numberOfThreadsInStartUpPool = getBuilderSettingAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
-
-        final String clusterMemberInstanceClassName =
-                getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
-
-        final String customConfiguredclusterMemberInstanceClassName =
-                getBuilderSettingAsString(BUILDER_CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
-
-        //TODO: littlegrid#6 Tidy this up
-        // on exception output: class path, tangosol system properties, all system properties and message
-        // to suggest checking for another running cluster
-        final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
-
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0
                 && extendProxyCount == 0 && customConfiguredCount == 0) {
+
             storageEnabledCount = 1;
         }
+
+        final int numberOfThreadsInStartUpPool = getBuilderSettingAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
 
         if (classPathUrls == null) {
             LOGGER.debug("Cluster member group config class path URLs null, setting to current (minus Java home)");
@@ -200,46 +194,16 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
         }
 
-        if (storageEnabledCount > 0) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
-                    getSystemPropertiesForStorageEnabled(), classPathUrls, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
+        final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
 
-            containerGroup.merge(memberGroup);
-        }
+        buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
+        buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
+                numberOfThreadsInStartUpPool);
 
-        if (customConfiguredCount > 0) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(customConfiguredCount,
-                    getSystemPropertiesForCustomConfigured(), classPathUrls,
-                    customConfiguredclusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
+        buildExtendProxyMembers(extendProxyCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
+        buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
+                numberOfThreadsInStartUpPool);
 
-            containerGroup.merge(memberGroup);
-        }
-
-        if (extendProxyCount == 1) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(extendProxyCount,
-                    getSystemPropertiesForExtendProxy(), classPathUrls, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
-
-            containerGroup.merge(memberGroup);
-        } else if (extendProxyCount > 1) {
-            throw new UnsupportedOperationException("Currently only one Extend proxy is currently supported");
-        }
-
-        if (storageEnabledExtendProxyCount == 1) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledExtendProxyCount,
-                    getSystemPropertiesForStorageEnabledExtendProxy(), classPathUrls, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
-
-            containerGroup.merge(memberGroup);
-        } else if (storageEnabledExtendProxyCount > 1) {
-            throw new UnsupportedOperationException("Currently only one Extend proxy is currently supported");
-        }
 
         // Clear and now prepare system properties based upon the anticipated client type.
         if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
@@ -252,6 +216,86 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 SystemUtils.getSystemPropertiesWithPrefix("tangosol.coherence.")));
 
         return containerGroup;
+    }
+
+    private void buildCustomConfiguredMembers(final int customConfiguredCount,
+                                              final DefaultClusterMemberGroup containerGroup,
+                                              final URL[] classPathUrls,
+                                              final int numberOfThreadsInStartUpPool) {
+
+        final String customConfiguredClusterMemberInstanceClassName =
+                getBuilderSettingAsString(BUILDER_CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+
+        if (customConfiguredCount > 0) {
+            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(customConfiguredCount,
+                    getSystemPropertiesForCustomConfigured(), classPathUrls,
+                    customConfiguredClusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool)
+                    .startAll();
+
+            containerGroup.merge(memberGroup);
+        }
+    }
+
+    private void buildStorageEnabledExtendProxyMembers(final int storageEnabledExtendProxyCount,
+                                                       final DefaultClusterMemberGroup containerGroup,
+                                                       final URL[] classPathUrls,
+                                                       final int numberOfThreadsInStartUpPool) {
+
+        final String clusterMemberInstanceClassName =
+                getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+
+        if (storageEnabledExtendProxyCount == 1) {
+            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledExtendProxyCount,
+                    getSystemPropertiesForStorageEnabledExtendProxy(), classPathUrls, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool)
+                    .startAll();
+
+            containerGroup.merge(memberGroup);
+        } else if (storageEnabledExtendProxyCount > 1) {
+            throw new UnsupportedOperationException("Currently only one Extend proxy is currently supported");
+        }
+    }
+
+    private void buildExtendProxyMembers(final int extendProxyCount,
+                                         final DefaultClusterMemberGroup containerGroup,
+                                         final URL[] classPathUrls,
+                                         final int numberOfThreadsInStartUpPool) {
+
+        final String clusterMemberInstanceClassName =
+                getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+
+        if (extendProxyCount > 0) {
+            final int extendStartingPort = getBuilderSettingAsInt(BUILDER_EXTEND_PORT_KEY);
+
+            //TODO: Currently each it launched separately
+            for (int i = 0; i < extendProxyCount; i++) {
+                final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1,
+                        getSystemPropertiesForExtendProxy(extendStartingPort + i), classPathUrls,
+                        clusterMemberInstanceClassName, 1)
+                        .startAll();
+
+                containerGroup.merge(memberGroup);
+            }
+        }
+    }
+
+    private void buildStorageEnabledMembers(final int storageEnabledCount,
+                                            final DefaultClusterMemberGroup containerGroup,
+                                            final URL[] classPathUrls,
+                                            final int numberOfThreadsInStartUpPool) {
+
+        final String clusterMemberInstanceClassName =
+                getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+
+        if (storageEnabledCount > 0) {
+            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
+                    getSystemPropertiesForStorageEnabled(), classPathUrls, clusterMemberInstanceClassName,
+                    numberOfThreadsInStartUpPool)
+                    .startAll();
+
+            containerGroup.merge(memberGroup);
+        }
     }
 
     private DefaultClusterMemberGroup createDefaultClusterMemberGroupWithSleepDurations() {
@@ -652,9 +696,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * @return properties to be applied to system properties.
      */
     public Properties getSystemPropertiesForStorageEnabled() {
-        final Properties properties = new Properties();
-
-        getSystemPropertiesForTcmpClusterMember(properties);
+        final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
                 builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
@@ -676,9 +718,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * @return properties to be applied to system properties.
      */
     public Properties getSystemPropertiesForCustomConfigured() {
-        final Properties properties = new Properties();
-
-        getSystemPropertiesForTcmpClusterMember(properties);
+        final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
                 builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
@@ -699,10 +739,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForExtendProxy() {
-        final Properties properties = new Properties();
-
-        getSystemPropertiesForTcmpClusterMember(properties);
+    public Properties getSystemPropertiesForExtendProxy(final int extendPort) {
+        final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
                 builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
@@ -716,7 +754,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
-        setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_EXTEND_PORT_KEY),
+                Integer.toString(extendPort));
 
         properties.putAll(additionalSystemProperties);
 
@@ -730,9 +770,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * @return properties to be applied to system properties.
      */
     public Properties getSystemPropertiesForStorageEnabledExtendProxy() {
-        final Properties properties = new Properties();
-
-        getSystemPropertiesForTcmpClusterMember(properties);
+        final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
@@ -761,9 +799,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * @return properties to be applied to system properties.
      */
     public Properties getSystemPropertiesForStorageDisabledClient() {
-        final Properties properties = new Properties();
-
-        getSystemPropertiesForTcmpClusterMember(properties);
+        final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
@@ -788,7 +824,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return properties;
     }
 
-    private void getSystemPropertiesForTcmpClusterMember(final Properties properties) {
+    private Properties getSystemPropertiesForTcmpClusterMember() {
+        final Properties properties = new Properties();
+
         setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
@@ -810,6 +848,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         setPropertyWhenValid(properties, BUILDER_LOG_DESTINATION_KEY);
         setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
+
+        return properties;
     }
 
     /**
