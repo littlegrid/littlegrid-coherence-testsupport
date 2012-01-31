@@ -31,8 +31,31 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import com.tangosol.io.pof.PofReader;
+import com.tangosol.io.pof.PofWriter;
+import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.AbstractInvocable;
+
+import java.io.IOException;
+
 /**
  * Abstract base class for cluster member group tests.
  */
 public abstract class AbstractExtendClientClusterMemberGroupTest extends AbstractClusterMemberGroupTest {
+    public static class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
+        @Override
+        public void run() {
+            setResult(getService().getCluster().getMemberSet().size());
+        }
+
+        @Override
+        public void readExternal(PofReader reader)
+                throws IOException {
+        }
+
+        @Override
+        public void writeExternal(PofWriter writer)
+                throws IOException {
+        }
+    }
 }

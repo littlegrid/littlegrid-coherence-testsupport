@@ -32,9 +32,14 @@
 package org.littlegrid.coherence.testsupport;
 
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -64,12 +69,23 @@ public class ClusterMemberGroupStorageEnabledExtendTest extends AbstractExtendCl
         assertThat(cache.size(), is(1));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void multipleStorageEnabledExtendProxiesWhichIsNotSupported() {
+    @Test
+    public void multipleExtendProxiesInSameGroup() {
+        int numberOfStorageEnabledExtendProxies = MEDIUM_TEST_CLUSTER_SIZE;
+
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledExtendProxyCount(2)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setStorageEnabledExtendProxyCount(numberOfStorageEnabledExtendProxies)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .build();
+
+        final InvocationService invocationService =
+                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+
+        final Map result = invocationService.query(new ClusterSizeInvocable(), null);
+        assertThat(result.size(), is(1));
+
+        final List<Integer> list = new ArrayList<Integer>(result.values());
+        final int clusterSize = list.get(0);
+        assertThat(clusterSize, is(numberOfStorageEnabledExtendProxies));
     }
 }

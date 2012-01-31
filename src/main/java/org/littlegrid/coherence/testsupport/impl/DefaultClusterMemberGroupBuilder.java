@@ -242,18 +242,22 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                                                        final URL[] classPathUrls,
                                                        final int numberOfThreadsInStartUpPool) {
 
+        final int singleMember = 1;
         final String clusterMemberInstanceClassName =
                 getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
-        if (storageEnabledExtendProxyCount == 1) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledExtendProxyCount,
-                    getSystemPropertiesForStorageEnabledExtendProxy(), classPathUrls, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
+        if (storageEnabledExtendProxyCount > 0) {
+            final int extendStartingPort = getBuilderSettingAsInt(BUILDER_EXTEND_PORT_KEY);
 
-            containerGroup.merge(memberGroup);
-        } else if (storageEnabledExtendProxyCount > 1) {
-            throw new UnsupportedOperationException("Currently only one Extend proxy is currently supported");
+            //TODO: Currently each it launched separately
+            for (int i = 0; i < storageEnabledExtendProxyCount; i++) {
+                final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(singleMember,
+                        getSystemPropertiesForStorageEnabledExtendProxy(extendStartingPort + i),
+                        classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
+                        .startAll();
+
+                containerGroup.merge(memberGroup);
+            }
         }
     }
 
@@ -262,6 +266,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                                          final URL[] classPathUrls,
                                          final int numberOfThreadsInStartUpPool) {
 
+        final int singleMember = 1;
         final String clusterMemberInstanceClassName =
                 getBuilderSettingAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
@@ -270,9 +275,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             //TODO: Currently each it launched separately
             for (int i = 0; i < extendProxyCount; i++) {
-                final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1,
-                        getSystemPropertiesForExtendProxy(extendStartingPort + i), classPathUrls,
-                        clusterMemberInstanceClassName, 1)
+                final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(singleMember,
+                        getSystemPropertiesForExtendProxy(extendStartingPort + i),
+                        classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
                         .startAll();
 
                 containerGroup.merge(memberGroup);
@@ -769,7 +774,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForStorageEnabledExtendProxy() {
+    public Properties getSystemPropertiesForStorageEnabledExtendProxy(final int extendPort) {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
@@ -785,7 +790,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
-        setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
+        setPropertyWhenValid(properties,
+                builderMappingSettings.getProperty(BUILDER_EXTEND_PORT_KEY),
+                Integer.toString(extendPort));
 
         properties.putAll(additionalSystemProperties);
 

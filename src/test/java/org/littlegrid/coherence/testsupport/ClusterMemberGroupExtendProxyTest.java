@@ -31,18 +31,13 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import com.tangosol.io.pof.PofReader;
-import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableException;
-import com.tangosol.io.pof.PortableObject;
-import com.tangosol.net.AbstractInvocable;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +129,7 @@ public class ClusterMemberGroupExtendProxyTest extends AbstractExtendClientClust
 
         final Map result = invocationService.query(new ClusterSizeInvocable(), null);
         assertThat(result.size(), is(1));
-        
+
         final List<Integer> list = new ArrayList<Integer>(result.values());
         final int clusterSize = list.get(0);
         assertThat(clusterSize, is(numberOfExtendProxies));
@@ -147,22 +142,5 @@ public class ClusterMemberGroupExtendProxyTest extends AbstractExtendClientClust
                 .build();
 
         // This should work, only a log message is logged when no Extend client cache config is specified
-    }
-
-    public static class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
-        @Override
-        public void run() {
-            setResult(getService().getCluster().getMemberSet().size());
-        }
-
-        @Override
-        public void readExternal(PofReader reader)
-                throws IOException {
-        }
-
-        @Override
-        public void writeExternal(PofWriter writer)
-                throws IOException {
-        }
     }
 }
