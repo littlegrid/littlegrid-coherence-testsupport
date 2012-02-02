@@ -29,38 +29,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport.impl;
+package org.littlegrid.coherence.testsupport;
 
-import org.junit.Test;
-import org.littlegrid.coherence.testsupport.ClusterMember;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.Cluster;
+import com.tangosol.net.Member;
+import org.junit.After;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 /**
- * Cluster member class loader tests.
+ * Abstract base class for cluster member group tests.
  */
-public class ClusterMemberClassLoaderTest {
-    @Test
-    public void getContainingClassLoader() {
-        final int numberOfMembers = 3;
-        ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers)
-                .build();
+public abstract class AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+    protected static final int CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP = 1;
 
-        final int[] memberIds = memberGroup.getStartedMemberIds();
+    @After
+    public void afterTest() {
+        assertThat("Only storage disabled client is expected to be running after the cluster member tests have run",
+                CacheFactory.ensureCluster().getMemberSet().size(), is(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
 
-        assertThat(memberIds.length, is(numberOfMembers));
-
-        for (int memberId : memberIds) {
-            ClusterMember member = memberGroup.getClusterMember(memberId);
-            assertThat(member.getActualContainingClassLoader() instanceof ChildFirstUrlClassLoader, is(true));
-            assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));
-        }
-
-        memberGroup.shutdownAll();
+        CacheFactory.shutdown();
     }
 }

@@ -31,19 +31,26 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import com.tangosol.net.CacheFactory;
 import org.junit.Test;
-
-import java.util.logging.Logger;
+import org.littlegrid.utils.LoggerPlaceHolder;
 
 import static java.lang.String.format;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Cluster member group WKA tests.
  */
-public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+public class WkaClusterMemberGroupIntegrationTest
+        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+
+    private static final LoggerPlaceHolder LOGGER =
+            new LoggerPlaceHolder(WkaClusterMemberGroupIntegrationTest.class.getName());
+
     @Test
     public void twoSmallMemberGroupsWithSameWka() {
-        int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
+        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
         int expectedClusterSize = (numberOfMembers * 2) + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         ClusterMemberGroup memberGroup1 = null;
@@ -51,11 +58,14 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
 
         try {
             memberGroup1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setStorageEnabledCount(numberOfMembers).build();
+                    .setStorageEnabledCount(numberOfMembers)
+                    .build();
 
             memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setStorageEnabledCount(numberOfMembers).build();
-            assertThatClusterIsExpectedSize(expectedClusterSize);
+                    .setStorageEnabledCount(numberOfMembers)
+                    .build();
+
+            assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
         } finally {
             ClusterMemberGroupUtils.shutdownClusterMemberGroups(memberGroup1, memberGroup2);
         }
@@ -63,8 +73,8 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
 
     @Test
     public void twoSmallMemberGroupsWithDifferentWkas() {
-        int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
-        int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         ClusterMemberGroup memberGroup1 = null;
         ClusterMemberGroup memberGroup2 = null;
@@ -75,12 +85,14 @@ public class ClusterMemberGroupWkaTest extends AbstractStorageDisabledClientClus
             memberGroup1 = builder.build();
 
             final int differentPort = builder.getWkaPort() + 20;
-            LOGGER.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
+            LOGGER.warn(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
 
             memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                     .setStorageEnabledCount(numberOfMembers)
-                    .setWkaPort(differentPort).build();
-            assertThatClusterIsExpectedSize(expectedClusterSize);
+                    .setWkaPort(differentPort)
+                    .build();
+
+            assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
         } finally {
             ClusterMemberGroupUtils.shutdownClusterMemberGroups(memberGroup1, memberGroup2);
         }

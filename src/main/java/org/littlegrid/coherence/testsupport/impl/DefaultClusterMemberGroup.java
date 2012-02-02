@@ -34,6 +34,8 @@ package org.littlegrid.coherence.testsupport.impl;
 import com.tangosol.net.CacheFactory;
 import org.littlegrid.coherence.testsupport.ClusterMember;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.utils.LoggerPlaceHolder;
+import org.littlegrid.utils.SystemUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -125,7 +127,13 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         this.numberOfMembers = numberOfMembers;
         this.classPathUrls = classPathUrls;
         this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
-        this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
+
+        if (numberOfThreadsInStartUpPool > numberOfMembers) {
+            this.numberOfThreadsInStartUpPool = numberOfMembers;
+        } else {
+            this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
+        }
+
         this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
 
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
@@ -233,7 +241,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         LOGGER.debug(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        LOGGER.info(format("Coherence properties to be set.: %s", systemPropertiesToBeApplied));
+        LOGGER.info(format("System properties to be set.: %s", systemPropertiesToBeApplied));
         LOGGER.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,

@@ -32,6 +32,10 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.utils.BeanUtils;
+import org.littlegrid.utils.LoggerPlaceHolder;
+import org.littlegrid.utils.PropertiesUtils;
+import org.littlegrid.utils.SystemUtils;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -48,6 +52,15 @@ import static java.lang.String.format;
  * Default cluster member group builder implementation.
  */
 public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
+    private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME =
+            "littlegrid/littlegrid-builder-default.properties";
+
+    private static final String BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME =
+            "littlegrid/littlegrid-builder-default-mapping.properties";
+
+    private static final String BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME = "littlegrid.builder.override";
+    private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
+
     private static final String BUILDER_CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
     private static final String BUILDER_EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
@@ -89,16 +102,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_LOG_DESTINATION_KEY = "LogDestination";
     private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
 
-    private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME =
-            "littlegrid/littlegrid-builder-default.properties";
-
-    private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
-
-    private static final String BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME =
-            "littlegrid/littlegrid-builder-default-mapping.properties";
-
-    private static final String LITTLEGRID_BUILDER_OVERRIDE = "littlegrid.builder.override";
-
 
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
@@ -136,7 +139,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private void loadAndProcessBuilderSettings() {
         final String overridePropertiesFilename =
-                System.getProperty(LITTLEGRID_BUILDER_OVERRIDE, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
+                System.getProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
 
         final Properties properties = PropertiesUtils.loadProperties(
                 BUILDER_DEFAULT_PROPERTIES_FILENAME, overridePropertiesFilename);
@@ -742,6 +745,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Returns the system properties that have been configured and will be used for an Extend
      * proxy member.
      *
+     * @param extendPort Extend port.
      * @return properties to be applied to system properties.
      */
     public Properties getSystemPropertiesForExtendProxy(final int extendPort) {
@@ -772,6 +776,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Returns the system properties that have been configured and will be used for a storage
      * enabled Extend proxy member.
      *
+     * @param extendPort Extend port.
      * @return properties to be applied to system properties.
      */
     public Properties getSystemPropertiesForStorageEnabledExtendProxy(final int extendPort) {

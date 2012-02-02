@@ -47,11 +47,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 
 /**
  * Cluster member group example tests to show how to use the API.
  */
-public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTest {
+public class ExampleClusterMemberGroupIntegrationTest {
     private static final String KEY = "key";
     private static final String VALUE = "value";
 
@@ -191,7 +197,7 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
                 memberGroup.getClusterMember(memberIdToRunPretendServerIn).getActualContainingClassLoader();
 
         final Class classWithinClusterMember = containingClassLoader.loadClass(
-                "org.littlegrid.coherence.testsupport.ClusterMemberGroupExampleTest$PretendServer");
+                "org.littlegrid.coherence.testsupport.ExampleClusterMemberGroupIntegrationTest$PretendServer");
 
         final Object pretendServer = classWithinClusterMember.newInstance();
         ClassHelper.invoke(pretendServer, "start", new Object[]{});
@@ -207,7 +213,7 @@ public class ClusterMemberGroupExampleTest extends AbstractClusterMemberGroupTes
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCustomConfiguredCount(numberOfMembers)
                 .setCustomConfiguredClusterMemberInstanceClassName(
-                        "org.littlegrid.coherence.testsupport.ClusterMemberGroupExampleTest$PretendServerClusterMember")
+                        "org.littlegrid.coherence.testsupport.ExampleClusterMemberGroupIntegrationTest$PretendServerClusterMember")
                 .build();
 
         assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));

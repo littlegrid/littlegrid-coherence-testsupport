@@ -31,6 +31,8 @@
 
 package org.littlegrid.coherence.testsupport.impl;
 
+import org.littlegrid.utils.ChildFirstUrlClassLoader;
+
 import java.net.URL;
 import java.util.concurrent.Callable;
 

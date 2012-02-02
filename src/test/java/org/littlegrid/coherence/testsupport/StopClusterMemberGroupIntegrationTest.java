@@ -31,16 +31,25 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.doesMemberExist;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
  * Cluster member group stop tests.
  */
-public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+public class StopClusterMemberGroupIntegrationTest
+        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+
     private ClusterMemberGroup memberGroup;
 
     @After
@@ -59,15 +68,17 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
-        assertThatClusterIsExpectedSize(expectedClusterSizeBeforeStop);
-        assertThat(doesMemberExist(memberIdToStop), is(true));
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeBeforeStop);
+        assertThat(doesMemberExist(cluster, memberIdToStop), is(true));
 
         memberGroup.stopMember(memberIdToStop);
 
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
-        assertThat(doesMemberExist(memberIdToStop), is(false));
-        assertThatClusterIsExpectedSize(expectedClusterSizeAfterStop);
+        assertThat(doesMemberExist(cluster, memberIdToStop), is(false));
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterStop);
 
         memberGroup.shutdownAll();
     }
@@ -81,12 +92,15 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
 
-        assertThatClusterIsExpectedSize(expectedClusterSize);
-        assertThat(doesMemberExist(memberIdToStop), is(false));
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
+        assertThat(doesMemberExist(cluster, memberIdToStop), is(false));
 
         memberGroup.stopMember(memberIdToStop);
+
         // No need to wait - it never existed
-        assertThatClusterIsExpectedSize(expectedClusterSize);
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
 
         memberGroup.shutdownAll();
     }
@@ -109,21 +123,25 @@ public class ClusterMemberGroupStopTest extends AbstractStorageDisabledClientClu
 
         System.setProperty("tangosol.coherence.tcmp.enabled", "true");
 
-        assertThatClusterIsExpectedSize(expectedClusterSizeBeforeStop);
-        assertThat(doesMemberExist(memberIdToStop), is(true));
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeBeforeStop);
+        assertThat(doesMemberExist(cluster, memberIdToStop), is(true));
 
         memberGroup.stopMember(memberIdToStop);
 
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
-        assertThatClusterIsExpectedSize(expectedClusterSizeAfterStop);
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterStop);
 
         memberGroup.shutdownAll();
     }
-    
+
     @Test(expected = UnsupportedOperationException.class)
     public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(3).build().stopMember(1, 2);
+                .setStorageEnabledCount(3)
+                .build()
+                .stopMember(1, 2);
     }
 }

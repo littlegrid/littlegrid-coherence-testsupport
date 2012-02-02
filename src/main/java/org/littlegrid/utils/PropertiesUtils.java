@@ -1,4 +1,4 @@
-package org.littlegrid.coherence.testsupport.impl;
+package org.littlegrid.utils;
 
 import com.tangosol.util.Resources;
 
@@ -10,7 +10,7 @@ import static java.lang.String.format;
 /**
  * Properties utilities class, containing useful convenience methods for working with properties.
  */
-final class PropertiesUtils {
+public final class PropertiesUtils {
     private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(PropertiesUtils.class.getName());
 
     private static final String DELIMITER = ",";

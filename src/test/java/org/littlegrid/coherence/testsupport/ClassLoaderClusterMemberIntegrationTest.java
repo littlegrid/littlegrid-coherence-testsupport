@@ -31,40 +31,36 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import com.tangosol.net.CacheFactory;
+import org.junit.Test;
+import org.littlegrid.utils.ChildFirstUrlClassLoader;
 
-import java.util.logging.Logger;
-
-import static java.lang.String.format;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 
 /**
- * Abstract base class for cluster member group tests.
+ * Cluster member class loader tests.
  */
-public abstract class AbstractClusterMemberGroupTest {
-    protected static final Logger LOGGER = Logger.getLogger(AbstractClusterMemberGroupTest.class.getName());
+public class ClassLoaderClusterMemberIntegrationTest {
+    @Test
+    public void getContainingClassLoader() {
+        final int numberOfMembers = 3;
+        ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
 
-    protected static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE = "coherence/littlegrid-test-cache-config.xml";
-    protected static final String EXTEND_CLIENT_CACHE_CONFIG_FILE = "coherence/littlegrid-test-extend-client-cache-config.xml";
-    protected static final String KNOWN_TEST_CACHE = "known-cache";
-    protected static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
-    protected static final String INVOCATION_SERVICE_NAME = "InvocationService";
+        final int[] memberIds = memberGroup.getStartedMemberIds();
 
-    protected static final int SINGLE_TEST_CLUSTER_SIZE = 1;
-    protected static final int SMALL_TEST_CLUSTER_SIZE = 2;
-    protected static final int MEDIUM_TEST_CLUSTER_SIZE = 3;
-    protected static final int LARGE_TEST_CLUSTER_SIZE = 6;
+        assertThat(memberIds.length, is(numberOfMembers));
 
-    protected static void sleepForSeconds(final int seconds) {
-        LOGGER.info(format(
-                "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
-                CacheFactory.VERSION, seconds));
+        for (final int memberId : memberIds) {
+            final ClusterMember member = memberGroup.getClusterMember(memberId);
 
-        try {
-            SECONDS.sleep(seconds);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
+            assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
+            assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));
         }
-    }
 
+        memberGroup.shutdownAll();
+    }
 }

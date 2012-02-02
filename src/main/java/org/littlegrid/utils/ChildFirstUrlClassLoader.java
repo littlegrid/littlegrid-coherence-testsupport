@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport.impl;
+package org.littlegrid.utils;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -38,7 +38,7 @@ import java.net.URLClassLoader;
  * Child-first URL class-loader, changes the normal class-loading order by attempting
  * to load the class locally from the child before delegating to the parent.
  */
-class ChildFirstUrlClassLoader extends URLClassLoader {
+public class ChildFirstUrlClassLoader extends URLClassLoader {
     /**
      * Constructor.
      *

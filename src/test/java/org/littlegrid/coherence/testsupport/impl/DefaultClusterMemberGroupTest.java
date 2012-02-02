@@ -33,6 +33,7 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import org.junit.Test;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.utils.SystemUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;

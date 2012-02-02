@@ -31,31 +31,41 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import com.tangosol.io.pof.PofReader;
-import com.tangosol.io.pof.PofWriter;
-import com.tangosol.io.pof.PortableObject;
-import com.tangosol.net.AbstractInvocable;
+import com.tangosol.net.CacheFactory;
+import org.junit.Test;
 
-import java.io.IOException;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
- * Abstract base class for cluster member group tests.
+ * Large cluster member group tests.
  */
-public abstract class AbstractExtendClientClusterMemberGroupTest extends AbstractClusterMemberGroupTest {
-    public static class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
-        @Override
-        public void run() {
-            setResult(getService().getCluster().getMemberSet().size());
-        }
+public class LargeClusterMemberGroupIntegrationTest
+        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
-        @Override
-        public void readExternal(PofReader reader)
-                throws IOException {
-        }
+    @Test
+    public void startAndStopThenShutdownLargeMemberGroup() {
+        final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        @Override
-        public void writeExternal(PofWriter writer)
-                throws IOException {
-        }
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+
+        memberGroup.stopAll();
+
+        /*
+            Wait longer because all of them are being stopped.
+         */
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
+        memberGroup.shutdownAll();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 }

@@ -8,11 +8,17 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Custom configured member tests.
  */
-public class ClusterMemberCustomConfiguredMemberTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+public class CustomConfiguredClusterMemberIntegrationTest
+        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+
     private ClusterMemberGroup memberGroup;
 
     @After
@@ -30,7 +36,7 @@ public class ClusterMemberCustomConfiguredMemberTest extends AbstractStorageDisa
                 .setCustomConfiguredCount(numberOfMembers)
                 .build();
 
-        assertThatClusterIsExpectedSize(expectedClusterSize);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
         cache.put("key", "value");

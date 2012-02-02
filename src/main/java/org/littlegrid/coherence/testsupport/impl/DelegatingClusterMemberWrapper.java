@@ -33,6 +33,8 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.coherence.testsupport.ClusterMember;
+import org.littlegrid.utils.ChildFirstUrlClassLoader;
+import org.littlegrid.utils.LoggerPlaceHolder;
 
 import java.lang.reflect.Constructor;
 

@@ -29,9 +29,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport.impl;
+package org.littlegrid.utils;
 
 import org.junit.Test;
+import org.littlegrid.utils.ChildFirstUrlClassLoader;
 
 import java.io.File;
 import java.net.URL;
@@ -45,7 +46,7 @@ import static org.junit.Assert.assertThat;
  */
 public class ChildFirstUrlClassLoaderTest {
     private static final String CLASS_TO_TRY_AND_LOAD =
-            "org.littlegrid.coherence.testsupport.impl.ChildFirstUrlClassLoaderTest$Dummy";
+            "org.littlegrid.utils.ChildFirstUrlClassLoaderTest$Dummy";
 
     @Test
     public void loadClassFromChildClassLoader()

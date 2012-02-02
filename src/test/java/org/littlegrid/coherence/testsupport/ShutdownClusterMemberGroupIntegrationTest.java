@@ -31,16 +31,23 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.doesMemberExist;
 
 /**
  * Cluster member group shutdown tests.
  */
-public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
+public class ShutdownClusterMemberGroupIntegrationTest
+        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+
     private ClusterMemberGroup memberGroup;
 
     @After
@@ -56,31 +63,40 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
         final int memberIdToShutdown = 3;
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build();
-        assertThatClusterIsExpectedSize(expectedClusterSizeBeforeShutdown);
-        assertThat(doesMemberExist(memberIdToShutdown), is(true));
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeBeforeShutdown);
+        assertThat(doesMemberExist(cluster, memberIdToShutdown), is(true));
 
         memberGroup.shutdownMember(memberIdToShutdown);
-        assertThat(doesMemberExist(memberIdToShutdown), is(false));
-        assertThatClusterIsExpectedSize(expectedClusterSizeAfterShutdown);
+
+        assertThat(doesMemberExist(cluster, memberIdToShutdown), is(false));
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterShutdown);
 
         memberGroup.shutdownAll();
     }
 
     @Test
     public void startAndShutdownNonExistentMemberOfGroup() {
-        int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
-        int memberIdToShutdown = 12;
-        int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int memberIdToShutdown = 12;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build();
-        assertThatClusterIsExpectedSize(expectedClusterSize);
-        assertThat(doesMemberExist(memberIdToShutdown), is(false));
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
+        assertThat(doesMemberExist(cluster, memberIdToShutdown), is(false));
 
         memberGroup.shutdownMember(memberIdToShutdown);
         // No need to wait - it never existed
-        assertThatClusterIsExpectedSize(expectedClusterSize);
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
 
         memberGroup.shutdownAll();
     }
@@ -88,6 +104,8 @@ public class ClusterMemberGroupShutdownTest extends AbstractStorageDisabledClien
     @Test(expected = UnsupportedOperationException.class)
     public void attemptToShutdownMoreThanOneMemberWhichIsNotSupported() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(3).build().shutdownMember(1, 2);
+                .setStorageEnabledCount(3)
+                .build()
+                .shutdownMember(1, 2);
     }
 }

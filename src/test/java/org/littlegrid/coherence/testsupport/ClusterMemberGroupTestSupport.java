@@ -34,37 +34,49 @@ package org.littlegrid.coherence.testsupport;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.Member;
-import org.junit.After;
 
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Abstract base class for cluster member group tests.
+ * Class containing constants for cluster member group tests.
  */
-public abstract class AbstractStorageDisabledClientClusterMemberGroupTest extends AbstractClusterMemberGroupTest {
-    protected static final int CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP = 1;
-
-    protected Cluster cluster;
-
-
-    protected void assertThatClusterIsExpectedSize(final int expectedClusterSize) {
-        cluster = CacheFactory.ensureCluster();
-
-        assertThat(cluster.getMemberSet().size(), is(expectedClusterSize));
+public final class ClusterMemberGroupTestSupport {
+    private ClusterMemberGroupTestSupport() {
     }
 
-    @After
-    public void afterTest() {
-        cluster = CacheFactory.ensureCluster();
+    public static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupTestSupport.class.getName());
 
-        assertThat("Only storage disabled client is expected to be running after the cluster member tests have run",
-                cluster.getMemberSet().size(), is(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
+    public static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE = "coherence/littlegrid-test-cache-config.xml";
+    public static final String EXTEND_CLIENT_CACHE_CONFIG_FILE = "coherence/littlegrid-test-extend-client-cache-config.xml";
+    public static final String KNOWN_TEST_CACHE = "known-cache";
+    public static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
+    public static final String INVOCATION_SERVICE_NAME = "InvocationService";
 
-        CacheFactory.shutdown();
+    public static final int SINGLE_TEST_CLUSTER_SIZE = 1;
+    public static final int SMALL_TEST_CLUSTER_SIZE = 2;
+    public static final int MEDIUM_TEST_CLUSTER_SIZE = 3;
+    public static final int LARGE_TEST_CLUSTER_SIZE = 6;
+
+    public static void sleepForSeconds(final int seconds) {
+        LOGGER.info(format(
+                "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
+                CacheFactory.VERSION, seconds));
+
+        try {
+            SECONDS.sleep(seconds);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    protected boolean doesMemberExist(int specifiedMemberId) {
+    public static boolean doesMemberExist(final Cluster cluster,
+                                          final int specifiedMemberId) {
+
         for (Object object : cluster.getMemberSet()) {
             Member member = (Member) object;
 
@@ -74,5 +86,11 @@ public abstract class AbstractStorageDisabledClientClusterMemberGroupTest extend
         }
 
         return false;
+    }
+
+    public static void assertThatClusterIsExpectedSize(final Cluster cluster,
+                                                       final int expectedClusterSize) {
+
+        assertThat(cluster.getMemberSet().size(), is(expectedClusterSize));
     }
 }

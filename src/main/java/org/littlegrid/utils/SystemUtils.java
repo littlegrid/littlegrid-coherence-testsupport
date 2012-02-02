@@ -29,56 +29,69 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport.impl;
-
-import com.tangosol.util.ClassHelper;
+package org.littlegrid.utils;
 
 import java.util.Properties;
 
-import static java.lang.String.format;
-
 /**
- * Bean utilities class.
+ * System utilities class providing useful system related methods.
  */
-final class BeanUtils {
+public final class SystemUtils {
     /**
      * Private constructor to prevent creation.
      */
-    private BeanUtils() {
+    private SystemUtils() {
     }
 
     /**
-     * Invokes setter methods to set state on bean using properties as the method name and value to set.
+     * Captures current system properties.
      *
-     * @param bean       Bean on which to invoke methods.
-     * @param properties Properties, keys are used for method names, whilst values are used to set state.
-     * @return number of methods invoked.
+     * @return current properties.
      */
-    public static int processProperties(final Object bean,
-                                        final Properties properties) {
+    public static Properties snapshotSystemProperties() {
+        final Properties properties = new Properties();
 
-        int propertiesSetCounter = 0;
+        for (final String key : System.getProperties().stringPropertyNames()) {
+            final String value = System.getProperty(key);
 
-        for (final String key : properties.stringPropertyNames()) {
-            final String value = properties.getProperty(key);
-            final String methodName = "set" + key;
-
-            try {
-                // Try invoking with string as parameter
-                ClassHelper.invoke(bean, methodName, new Object[]{value});
-            } catch (Exception e) {
-                try {
-                    // Try invoking with an int as a parameter
-                    ClassHelper.invoke(bean, methodName, new Object[]{Integer.parseInt(value)});
-                } catch (Exception e2) {
-                    throw new IllegalStateException(format(
-                            "Unable to invoke '%s' to set value to: '%s' due to: %s", methodName, value, e2));
-                }
-            }
-
-            propertiesSetCounter++;
+            properties.setProperty(key, value);
         }
 
-        return propertiesSetCounter;
+        return properties;
+    }
+
+    /**
+     * Apply the properties to the system properties.
+     *
+     * @param properties New and updated system properties.
+     */
+    public static void applyToSystemProperties(final Properties properties) {
+        for (final String key : properties.stringPropertyNames()) {
+            final String value = properties.getProperty(key);
+
+            if (!value.trim().isEmpty()) {
+                System.setProperty(key, value);
+            }
+        }
+    }
+
+    /**
+     * Get current system properties which start with the specified prefix.
+     *
+     * @param prefix Prefix.
+     * @return properties.
+     */
+    public static Properties getSystemPropertiesWithPrefix(final String prefix) {
+        final Properties prefixedProperties = new Properties();
+
+        for (final String key : System.getProperties().stringPropertyNames()) {
+            if (key.contains(prefix)) {
+                final String value = System.getProperty(key);
+
+                prefixedProperties.setProperty(key, value);
+            }
+        }
+
+        return prefixedProperties;
     }
 }

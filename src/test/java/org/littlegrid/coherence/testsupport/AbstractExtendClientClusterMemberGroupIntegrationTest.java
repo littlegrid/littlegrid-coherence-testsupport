@@ -31,31 +31,31 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import org.junit.Test;
+import com.tangosol.io.pof.PofReader;
+import com.tangosol.io.pof.PofWriter;
+import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.AbstractInvocable;
+
+import java.io.IOException;
 
 /**
- * Large cluster member group tests.
+ * Abstract base class for cluster member group tests.
  */
-public class ClusterMemberGroupLargeTest extends AbstractStorageDisabledClientClusterMemberGroupTest {
-    @Test
-    public void startAndStopThenShutdownLargeMemberGroup() {
-        final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+public abstract class AbstractExtendClientClusterMemberGroupIntegrationTest {
+    public static class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
+        @Override
+        public void run() {
+            setResult(getService().getCluster().getMemberSet().size());
+        }
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers).build();
-        assertThatClusterIsExpectedSize(expectedClusterSize);
+        @Override
+        public void readExternal(PofReader reader)
+                throws IOException {
+        }
 
-        memberGroup.stopAll();
-
-        /*
-            Wait longer because all of them are being stopped.
-         */
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-
-        memberGroup.shutdownAll();
-        assertThatClusterIsExpectedSize(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+        @Override
+        public void writeExternal(PofWriter writer)
+                throws IOException {
+        }
     }
 }
