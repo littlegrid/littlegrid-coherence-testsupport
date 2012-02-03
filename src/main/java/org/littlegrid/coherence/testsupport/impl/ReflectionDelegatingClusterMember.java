@@ -32,7 +32,6 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.util.ClassHelper;
-import org.littlegrid.utils.LoggerPlaceHolder;
 import org.littlegrid.utils.PropertiesUtils;
 
 import java.lang.reflect.Constructor;
@@ -57,9 +56,6 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     private static final String GET_LOCAL_MEMBER_ID_METHOD_NAME_KEY = "GetLocalMemberIdMethodName";
     private static final String GET_ACTUAL_CONTAINING_CLASS_LOADER_METHOD_NAME_KEY =
             "GetActualContainingClassLoaderMethodName";
-
-    private static final LoggerPlaceHolder LOGGER =
-            new LoggerPlaceHolder(ReflectionDelegatingClusterMember.class.getName());
 
     private Object delegateInstance;
     private String startMethodName;
@@ -149,6 +145,12 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
         }
     }
 
+    /**
+     * Returns the object that the reflection delegating object is delegating the
+     * behaviour to.
+     *
+     * @return delegate.
+     */
     public Object getDelegateInstance() {
         return delegateInstance;
     }
