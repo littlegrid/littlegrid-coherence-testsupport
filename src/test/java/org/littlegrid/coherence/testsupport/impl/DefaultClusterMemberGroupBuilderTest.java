@@ -31,10 +31,13 @@
 
 package org.littlegrid.coherence.testsupport.impl;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
+import org.littlegrid.utils.SystemUtils;
 
 import java.util.Map;
 import java.util.Properties;
@@ -47,6 +50,8 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public class DefaultClusterMemberGroupBuilderTest {
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 27;
+
     private static final String CUSTOM_CONFIGURED_MEMBER_COUNT_KEY = "CustomConfiguredCount";
     private static final String STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
     private static final String EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
@@ -54,10 +59,11 @@ public class DefaultClusterMemberGroupBuilderTest {
 
     private static final String NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
+    private static final String CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
 
-    private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "version35xSleepAfterStopDuration";
-    private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "version36xSleepAfterStopDuration";
-    private static final String SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "defaultSleepAfterStopDuration";
+    private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
+    private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
+    private static final String SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "SuggestedSleepAfterStopDurationDefault";
 
     private static final String CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
@@ -86,6 +92,24 @@ public class DefaultClusterMemberGroupBuilderTest {
     private static final String TCMP_ENABLED_KEY = "TcmpEnabled";
     private static final String EXTEND_ENABLED_KEY = "ExtendEnabled";
 
+    private static final String FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
+
+
+    private Properties systemPropertiesBeforeTest;
+
+    @Before
+    public void beforeTest() {
+        systemPropertiesBeforeTest = SystemUtils.snapshotSystemProperties();
+
+        // Ensure that override settings aren't picked up and applied - thus only the defaults are
+        // used which these tests can then safely assert against.
+        System.setProperty("littlegrid.builder.override", "");
+    }
+
+    @After
+    public void afterTest() {
+        System.setProperties(systemPropertiesBeforeTest);
+    }
 
     @Test
     public void nonSystemPropertyBuilderSettings() {
@@ -100,6 +124,7 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         final int expectedNumberOfThreads = 14;
         final String expectedInstanceClassName = "com.a.b.c.ClusterMember";
+        final String expectedCustomConfiguredInstanceClassName = "com.d.e.f.ClusterMember";
 
         final int expectedSleepDuration35x = 22;
         final int expectedSleepDuration36x = 23;
@@ -114,6 +139,7 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         builder.setNumberOfThreadsInStartUpPool(expectedNumberOfThreads);
         builder.setClusterMemberInstanceClassName(expectedInstanceClassName);
+        builder.setCustomConfiguredClusterMemberInstanceClassName(expectedCustomConfiguredInstanceClassName);
 
         builder.setSuggestedSleepAfterStopDuration35x(expectedSleepDuration35x);
         builder.setSuggestedSleepAfterStopDuration36x(expectedSleepDuration36x);
@@ -122,6 +148,9 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Map<String, String> builderSettings = defaultBuilder.getBuilderSettings();
+
+        assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE));
+
 
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_COUNT_KEY), is(Integer.toString(expectedCustomConfiguredMemberCount)));
         assertThat(builderSettings.get(STORAGE_ENABLED_COUNT_KEY), is(Integer.toString(expectedStorageEnabledCount)));
@@ -163,6 +192,8 @@ public class DefaultClusterMemberGroupBuilderTest {
         final String expectedLogDestination = "log4j";
         final int expectedLogLevel = 8;
 
+        final int expectedFastStartJoinTimeoutMilliseconds = 231;
+
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
 
         builder.setCacheConfiguration(expectedCacheConfiguration);
@@ -185,9 +216,14 @@ public class DefaultClusterMemberGroupBuilderTest {
         builder.setLogDestination(expectedLogDestination);
         builder.setLogLevel(expectedLogLevel);
 
+        builder.setFastStartJoinTimeoutMilliseconds(expectedFastStartJoinTimeoutMilliseconds);
+
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Map<String, String> builderSettings = defaultBuilder.getBuilderSettings();
+
+        assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE));
+
 
         assertThat(builderSettings.get(CACHE_CONFIGURATION_KEY), is(expectedCacheConfiguration));
         assertThat(builderSettings.get(CLIENT_CACHE_CONFIGURATION_KEY), is(expectedClientCacheConfiguration));
@@ -208,6 +244,9 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.get(LOG_LEVEL_KEY), is(Integer.toString(expectedLogLevel)));
         assertThat(builderSettings.get(LOG_DESTINATION_KEY), is(expectedLogDestination));
+
+        assertThat(builderSettings.get(FAST_START_JOIN_TIMEOUT_MILLISECONDS),
+                is(Integer.toString(expectedFastStartJoinTimeoutMilliseconds)));
 
         // Values that are set at the point of the system properties being prepared using WKA values.
         assertThat(builderSettings.get(LOCAL_ADDRESS_KEY), nullValue());

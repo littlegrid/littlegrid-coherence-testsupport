@@ -56,24 +56,25 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             "littlegrid/littlegrid-builder-default.properties";
 
     private static final String BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME =
-            "littlegrid/littlegrid-builder-default-mapping.properties";
+            "littlegrid/littlegrid-builder-system-property-mapping-default.properties";
 
     private static final String BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME = "littlegrid.builder.override";
     private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
 
     private static final String BUILDER_CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
-    private static final String BUILDER_EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
     private static final String BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
+    private static final String BUILDER_EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
 
     private static final String BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
     private static final String BUILDER_CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
-            "CustomConfigurationClusterMemberInstanceClassName";
+            "CustomConfiguredClusterMemberInstanceClassName";
 
-    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY = "version35xSleepAfterStopDuration";
-    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY = "version36xSleepAfterStopDuration";
-    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "defaultSleepAfterStopDuration";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY
+            = "SuggestedSleepAfterStopDurationDefault";
 
     private static final String BUILDER_CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String BUILDER_CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
@@ -102,6 +103,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_LOG_DESTINATION_KEY = "LogDestination";
     private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
 
+    private static final String BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
@@ -109,7 +111,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private Map<String, String> builderSettings = new HashMap<String, String>();
 
     private Properties additionalSystemProperties = new Properties();
-    private Properties builderMappingSettings = new Properties();
+    private Properties builderSystemPropertyMapping = new Properties();
 
     private String[] jarsToExcludeFromClassPath;
     private URL[] classPathUrls;
@@ -139,16 +141,22 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private void loadAndProcessBuilderSettings() {
         final String overridePropertiesFilename =
-                System.getProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, BUILDER_OVERRIDE_PROPERTIES_FILENAME);
+                System.getProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, BUILDER_OVERRIDE_PROPERTIES_FILENAME
+                        + ", littlegrid/" + BUILDER_OVERRIDE_PROPERTIES_FILENAME);
 
-        final Properties properties = PropertiesUtils.loadProperties(
-                BUILDER_DEFAULT_PROPERTIES_FILENAME, overridePropertiesFilename);
+        final String propertiesFilenames;
 
-        BeanUtils.processProperties(this, properties);
+        if (overridePropertiesFilename.trim().isEmpty()) {
+            propertiesFilenames = BUILDER_DEFAULT_PROPERTIES_FILENAME;
+        } else {
+            propertiesFilenames = BUILDER_DEFAULT_PROPERTIES_FILENAME + ", " + overridePropertiesFilename;
+        }
+
+        BeanUtils.processProperties(this, PropertiesUtils.loadProperties(propertiesFilenames));
     }
 
     private void loadBuilderMappingSettings() {
-        builderMappingSettings = PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
+        builderSystemPropertyMapping = PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
     }
 
     private int getBuilderSettingAsInt(final String builderKey) {
@@ -662,6 +670,16 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final int joinTimeoutMilliseconds) {
+        builderSettings.put(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS, Integer.toString(joinTimeoutMilliseconds));
+
+        return this;
+    }
+
     private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
         //TODO: littlegrid#7 Pull this out and add support for wildcards, e.g. *jmx*
         final String pathSeparator = System.getProperty("path.separator");
@@ -707,7 +725,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
@@ -729,7 +747,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
@@ -752,7 +770,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
@@ -760,11 +778,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_EXTEND_PROXY_ROLE_NAME_KEY);
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_EXTEND_PORT_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_EXTEND_PORT_KEY),
                 Integer.toString(extendPort));
 
         properties.putAll(additionalSystemProperties);
@@ -786,17 +804,17 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY);
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_EXTEND_PORT_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_EXTEND_PORT_KEY),
                 Integer.toString(extendPort));
 
         properties.putAll(additionalSystemProperties);
@@ -822,13 +840,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY);
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
 
         properties.putAll(additionalSystemProperties);
@@ -839,20 +857,20 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private Properties getSystemPropertiesForTcmpClusterMember() {
         final Properties properties = new Properties();
 
-        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
+        setPropertyWhenValid(properties, builderSystemPropertyMapping.getProperty(BUILDER_TCMP_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_WKA_ADDRESS_KEY);
 
-        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
+        setPropertyWhenValid(properties, builderSystemPropertyMapping.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
 
-        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_EXTEND_ADDRESS_KEY),
+        setPropertyWhenValid(properties, builderSystemPropertyMapping.getProperty(BUILDER_EXTEND_ADDRESS_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
 
         setPropertyWhenValid(properties, BUILDER_WKA_PORT_KEY);
 
-        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_LOCAL_PORT_KEY),
+        setPropertyWhenValid(properties, builderSystemPropertyMapping.getProperty(BUILDER_LOCAL_PORT_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
 
         setPropertyWhenValid(properties, BUILDER_TTL_KEY);
@@ -860,6 +878,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         setPropertyWhenValid(properties, BUILDER_LOG_DESTINATION_KEY);
         setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
+
+        setPropertyWhenValid(properties, BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS);
 
         return properties;
     }
@@ -882,15 +902,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderSystemPropertyMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
-        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_TCMP_ENABLED_KEY),
+        setPropertyWhenValid(properties, builderSystemPropertyMapping.getProperty(BUILDER_TCMP_ENABLED_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY);
 
-        setPropertyWhenValid(properties, builderMappingSettings.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+        setPropertyWhenValid(properties, builderSystemPropertyMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
@@ -906,9 +926,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void setPropertyWhenValid(final Properties properties,
                                       final String builderSettingKey) {
 
-        setPropertyWhenValid(properties,
-                builderMappingSettings.getProperty(builderSettingKey),
-                getBuilderSettingAsString(builderSettingKey));
+        final String systemPropertyName = builderSystemPropertyMapping.getProperty(builderSettingKey);
+
+        if (systemPropertyName == null) {
+            throw new IllegalStateException(format(
+                    "Builder setting key of: '%s' didn't return a mapping to system property name - check "
+                            + "mapping of system properties", builderSettingKey));
+        }
+
+        setPropertyWhenValid(properties, systemPropertyName, getBuilderSettingAsString(builderSettingKey));
     }
 
     private void setPropertyWhenValid(final Properties properties,

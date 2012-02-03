@@ -226,9 +226,16 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private StringBuilder getMemberIdsAsString() {
         final StringBuilder sb = new StringBuilder();
 
+        boolean subsequentIterationOfLoop = false;
+
         for (final int memberId : getStartedMemberIds()) {
+            if (subsequentIterationOfLoop) {
+                sb.append(", ");
+            }
+
             sb.append(memberId);
-            sb.append(" ");
+
+            subsequentIterationOfLoop = true;
         }
 
         return sb;

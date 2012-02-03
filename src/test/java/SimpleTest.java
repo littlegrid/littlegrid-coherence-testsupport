@@ -48,7 +48,8 @@ public class SimpleTest {
     @BeforeClass
     public static void beforeTests() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(2).build();
+                .setStorageEnabledCount(2)
+                .build();
     }
 
     @AfterClass
@@ -58,7 +59,7 @@ public class SimpleTest {
 
     @Test
     public void simpleExample() {
-        NamedCache cache = CacheFactory.getCache("test");
+        final NamedCache cache = CacheFactory.getCache("test");
         cache.put("key", "hello");
 
         assertEquals(1, cache.size());

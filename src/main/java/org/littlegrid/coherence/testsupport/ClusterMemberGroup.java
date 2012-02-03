@@ -111,7 +111,7 @@ public interface ClusterMemberGroup {
          * via other methods).
          *
          * @param cacheConfiguration Cache configuration.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setCacheConfiguration(String cacheConfiguration);
 
@@ -120,7 +120,7 @@ public interface ClusterMemberGroup {
          * members of the group.
          *
          * @param cacheConfiguration Cache configuration.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setStorageEnabledSpecificCacheConfiguration(String cacheConfiguration);
 
@@ -129,7 +129,7 @@ public interface ClusterMemberGroup {
          * members of the group.
          *
          * @param cacheConfiguration Cache configuration.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setExtendProxySpecificCacheConfiguration(String cacheConfiguration);
 
@@ -139,7 +139,7 @@ public interface ClusterMemberGroup {
          * storage disabled) use the same configuration.
          *
          * @param overrideConfiguration Override configuration.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setOverrideConfiguration(String overrideConfiguration);
 
@@ -147,7 +147,7 @@ public interface ClusterMemberGroup {
          * Sets the client specific cache configuration file, for instance Extend based clients.
          *
          * @param cacheConfiguration Cache configuration.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setClientCacheConfiguration(String cacheConfiguration);
 
@@ -157,7 +157,7 @@ public interface ClusterMemberGroup {
          * server cluster members need to be required with the SpringAwareCacheFactory).
          *
          * @param overrideConfiguration Override configuration.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setClientOverrideConfiguration(String overrideConfiguration);
 
@@ -167,7 +167,7 @@ public interface ClusterMemberGroup {
          * named property is used for enabling distributed local storage.
          *
          * @param properties Properties to be turned into system properties.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setAdditionalSystemProperties(Properties properties);
 
@@ -177,7 +177,7 @@ public interface ClusterMemberGroup {
          * named property is used for enabling distributed local storage.
          *
          * @param propertiesFilenames Properties to be turned into system properties.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setAdditionalSystemProperties(String propertiesFilenames);
 
@@ -186,7 +186,7 @@ public interface ClusterMemberGroup {
          * group should contain.
          *
          * @param numberOfMembers Number of members required.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setStorageEnabledCount(int numberOfMembers);
 
@@ -194,7 +194,7 @@ public interface ClusterMemberGroup {
          * Sets the number of custom configured members that the cluster member group should contain.
          *
          * @param numberOfMembers Number of members required.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setCustomConfiguredCount(int numberOfMembers);
 
@@ -203,7 +203,7 @@ public interface ClusterMemberGroup {
          * Extend and as a 'cache server').
          *
          * @param numberOfMembers Number of members.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setStorageEnabledExtendProxyCount(int numberOfMembers);
 
@@ -211,7 +211,7 @@ public interface ClusterMemberGroup {
          * Sets the number of Extend proxy members the cluster member group should contain.
          *
          * @param numberOfMembers Number of members.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setExtendProxyCount(int numberOfMembers);
 
@@ -219,7 +219,7 @@ public interface ClusterMemberGroup {
          * Sets the log destination where the cluster members should output to.
          *
          * @param logDestination Log destination (standard Coherence log - stdout, log4j, java).
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setLogDestination(String logDestination);
 
@@ -227,7 +227,7 @@ public interface ClusterMemberGroup {
          * Sets the cluster name that the cluster members belong to.
          *
          * @param clusterName Cluster name.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setClusterName(String clusterName);
 
@@ -235,7 +235,7 @@ public interface ClusterMemberGroup {
          * Sets the log level that the cluster members should run with.
          *
          * @param logLevel Log level (standard Coherence 0-9).
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setLogLevel(int logLevel);
 
@@ -243,7 +243,7 @@ public interface ClusterMemberGroup {
          * Sets the custom configured member's role name.
          *
          * @param roleName Role name.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setCustomConfiguredRoleName(final String roleName);
 
@@ -251,7 +251,7 @@ public interface ClusterMemberGroup {
          * Sets the storage enabled member's role name.
          *
          * @param roleName Role name.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setStorageEnabledRoleName(final String roleName);
 
@@ -259,7 +259,7 @@ public interface ClusterMemberGroup {
          * Sets the storage enabled Extend proxy member's role name.
          *
          * @param roleName Role name.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setStorageEnabledExtendProxyRoleName(final String roleName);
 
@@ -267,7 +267,7 @@ public interface ClusterMemberGroup {
          * Sets the Extend proxy member's role name.
          *
          * @param roleName Role name.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setExtendProxyRoleName(final String roleName);
 
@@ -275,7 +275,7 @@ public interface ClusterMemberGroup {
          * Sets the storage disabled member's role name.
          *
          * @param roleName Role name.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setStorageDisabledClientRoleName(final String roleName);
 
@@ -283,7 +283,7 @@ public interface ClusterMemberGroup {
          * Sets the Extend client's role name.
          *
          * @param roleName Role name.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setExtendClientRoleName(final String roleName);
 
@@ -291,7 +291,7 @@ public interface ClusterMemberGroup {
          * Sets the TTL.
          *
          * @param ttl TTL.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setTtl(final int ttl);
 
@@ -303,7 +303,7 @@ public interface ClusterMemberGroup {
          *
          * @param clusterMemberInstanceClassName Class name from which instances of cluster members
          *                                       are created.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setClusterMemberInstanceClassName(String clusterMemberInstanceClassName);
 
@@ -315,7 +315,7 @@ public interface ClusterMemberGroup {
          *
          * @param clusterMemberInstanceClassName Class name from which instances of cluster members
          *                                       are created.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setCustomConfiguredClusterMemberInstanceClassName(String clusterMemberInstanceClassName);
 
@@ -326,7 +326,7 @@ public interface ClusterMemberGroup {
          *
          * @param jarsToExcludeFromClassPath Jars to be excluded, in the form of
          *                                   name-of-the-jar-to-exclude.jar
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setJarsToExcludeFromClassPath(String... jarsToExcludeFromClassPath);
 
@@ -337,7 +337,7 @@ public interface ClusterMemberGroup {
          * on the machine can be tried.
          *
          * @param wkaAddress Well-known address, e.g. localhost or xxx.xxx.xxx.xxx IP address.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setWkaAddress(String wkaAddress);
 
@@ -348,7 +348,7 @@ public interface ClusterMemberGroup {
          * cluster members will simply join the same cluster.
          *
          * @param wkaPort Well-known port, e.g. 12345.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setWkaPort(int wkaPort);
 
@@ -366,7 +366,7 @@ public interface ClusterMemberGroup {
          * client should connect to the Extend proxy server.
          *
          * @param extendPort Extend port, e.g. 23451.
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setExtendPort(int extendPort);
 
@@ -387,7 +387,7 @@ public interface ClusterMemberGroup {
          *                   exposed on this cluster member group builder interface, minus the
          *                   'set' - so for example to set the WKA port, the entry in the properties
          *                   file would look like WkaPort=345612
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setBuilderProperties(Properties properties);
 
@@ -401,7 +401,7 @@ public interface ClusterMemberGroup {
          *         exposed on this cluster member group builder interface, minus the
          *         'set' - so for example to set the WKA port, the entry in the properties
          *         file would look like WkaPort=345612
-         * @return cluster member group builder.
+         * @return builder.
          */
         Builder setBuilderProperties(String commaDelimitedPropertiesFilenames);
 
@@ -409,7 +409,7 @@ public interface ClusterMemberGroup {
          * Sets the number of threads to handle starting up the members within a cluster member group.
          *
          * @param numberOfThreadsInStartUpPool Number of threads available to start-up members.
-         * @return cluster member group.
+         * @return builder.
          */
         Builder setNumberOfThreadsInStartUpPool(int numberOfThreadsInStartUpPool);
 
@@ -417,7 +417,7 @@ public interface ClusterMemberGroup {
          * Suggested sleep duration for 3.5.x.
          *
          * @param sleepAfterStopDuration Sleep duration.
-         * @return suggested sleep duration.
+         * @return builder.
          */
         Builder setSuggestedSleepAfterStopDuration35x(int sleepAfterStopDuration);
 
@@ -425,7 +425,7 @@ public interface ClusterMemberGroup {
          * Suggested sleep duration for 3.6.x.
          *
          * @param sleepAfterStopDuration Sleep duration.
-         * @return suggested sleep duration.
+         * @return builder.
          */
         Builder setSuggestedSleepAfterStopDuration36x(int sleepAfterStopDuration);
 
@@ -433,8 +433,18 @@ public interface ClusterMemberGroup {
          * Default suggested sleep duration.
          *
          * @param sleepAfterStopDuration Sleep duration.
-         * @return suggested sleep duration.
+         * @return builder.
          */
         Builder setSuggestedSleepAfterStopDurationDefault(int sleepAfterStopDuration);
+
+        /**
+         * Sets the duration that Coherence will wait before starting a new cluster, this
+         * setting must be used in conjunction with the littlegrid-fast-start-coherence-override.xml
+         * which defines the appropriate system property to control the join timeout.
+         *
+         * @param joinTimeoutMilliseconds  Join timeout milliseconds.
+         * @return builder.
+         */
+        Builder setFastStartJoinTimeoutMilliseconds(int joinTimeoutMilliseconds);
     }
 }

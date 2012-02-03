@@ -42,10 +42,12 @@ public class SimpleApp {
 
         try {
             memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setStorageEnabledCount(2).build();
+                    .setStorageEnabledCount(2)
+                    .build();
 
-            NamedCache cache = CacheFactory.getCache("test");
+            final NamedCache cache = CacheFactory.getCache("test");
             cache.put(key, "hello");
+
             System.out.println(cache.get(key));
         } finally {
             ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);

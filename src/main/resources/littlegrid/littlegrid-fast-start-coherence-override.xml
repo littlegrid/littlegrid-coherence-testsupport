@@ -1,0 +1,15 @@
+<?xml version='1.0'?>
+
+<!--
+This operational configuration override file is set up for use with Coherence in
+a development mode with LittleGrid and attempts to reduce the wait duration prior
+to establishing a cluster.
+-->
+
+<coherence>
+    <cluster-config>
+        <multicast-listener>
+            <join-timeout-milliseconds system-property="littlegrid.join.timeout.milliseconds">3000</join-timeout-milliseconds>
+        </multicast-listener>
+    </cluster-config>
+</coherence>
