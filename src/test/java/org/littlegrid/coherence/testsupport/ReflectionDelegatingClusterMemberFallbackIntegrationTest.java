@@ -32,6 +32,7 @@
 package org.littlegrid.coherence.testsupport;
 
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,9 +50,10 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.doesMemberExist;
 
 /**
- * Reflection delegating cluster member tests.
+ * Reflection delegating cluster member fallback tests, to ensure fallback functionality
+ * works as expected.
  */
-public class ReflectionDelegatingClusterMemberIntegrationTest
+public class ReflectionDelegatingClusterMemberFallbackIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     private static final int NUMBER_OF_MEMBERS = SMALL_TEST_CLUSTER_SIZE;
@@ -69,8 +71,11 @@ public class ReflectionDelegatingClusterMemberIntegrationTest
                 .setClusterMemberInstanceClassName(ReflectionDelegatingClusterMember.class.getName())
                 .build();
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), EXPECTED_CLUSTER_SIZE);
-        assertThat(doesMemberExist(CacheFactory.ensureCluster(), MEMBER_ID), is(true));
+        
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, EXPECTED_CLUSTER_SIZE);
+        assertThat(doesMemberExist(cluster, MEMBER_ID), is(true));
 
         member = memberGroup.getClusterMember(MEMBER_ID);
 
@@ -83,14 +88,14 @@ public class ReflectionDelegatingClusterMemberIntegrationTest
     }
 
     @Test
-    public void shutdown() {
+    public void fallbackShutdown() {
         member.shutdown();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), EXPECTED_CLUSTER_SIZE - 1);
     }
 
     @Test
-    public void stop()
+    public void fallbackStop()
             throws Exception {
 
         member.stop();
@@ -100,12 +105,19 @@ public class ReflectionDelegatingClusterMemberIntegrationTest
     }
 
     @Test
-    public void localMemberId() {
+    public void fallbackLocalMemberId() {
         assertThat(member.getLocalMemberId(), is(MEMBER_ID));
     }
 
     @Test
-    public void containingClassLoader() {
+    public void fallbackContainingClassLoader() {
         assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
+    }
+
+    /**
+     * Delegate that doesn't bother to implement any methods that the reflection
+     * delegating can call and thus the fallback method will always need to be called.
+     */
+    public static class NoMethodToCallDelegate {
     }
 }

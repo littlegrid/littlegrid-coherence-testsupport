@@ -48,7 +48,7 @@ import static java.lang.String.format;
  */
 public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     private static final String REFLECTION_DELEGATING_PROPERTIES_FILENAME =
-            "littlegrid-reflectiondelegating-clustermember.properties";
+            "littlegrid-reflection-delegating.properties";
 
     private static final String DELEGATE_CLASS_NAME_KEY = "DelegateClassName";
     private static final String START_METHOD_NAME_KEY = "StartMethodName";
@@ -61,20 +61,20 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(ReflectionDelegatingClusterMember.class.getName());
 
-    private String delegateClassName;
+    private Object delegateInstance;
     private String startMethodName;
     private String shutdownMethodName;
     private String stopMethodName;
     private String getLocalMemberIdMethodName;
     private String getActualContainingClassLoaderMethodName;
-    private Object clusterMemberInstance;
 
 
     /**
      * Constructor.
      */
     public ReflectionDelegatingClusterMember() {
-        this(PropertiesUtils.loadProperties(REFLECTION_DELEGATING_PROPERTIES_FILENAME));
+        this(PropertiesUtils.loadProperties(REFLECTION_DELEGATING_PROPERTIES_FILENAME
+                + ", littlegrid/" + REFLECTION_DELEGATING_PROPERTIES_FILENAME));
     }
 
     /**
@@ -83,7 +83,7 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
      * @param properties Properties containing the mapping to the class and methods to be invoked.
      */
     public ReflectionDelegatingClusterMember(final Properties properties) {
-        delegateClassName = properties.getProperty(DELEGATE_CLASS_NAME_KEY);
+        final String delegateClassName = properties.getProperty(DELEGATE_CLASS_NAME_KEY);
         startMethodName = properties.getProperty(START_METHOD_NAME_KEY);
         shutdownMethodName = properties.getProperty(SHUTDOWN_METHOD_NAME_KEY);
         stopMethodName = properties.getProperty(STOP_METHOD_NAME_KEY);
@@ -96,16 +96,16 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
 
             final Constructor constructor = clusterMemberClass.getConstructor();
 
-            clusterMemberInstance = constructor.newInstance();
+            delegateInstance = constructor.newInstance();
         } catch (Exception e) {
-            LOGGER.warn(format("Cannot create instance of '%s', will use default behaviour", delegateClassName));
+            throw new IllegalStateException(format("Cannot create instance of '%s", delegateClassName));
         }
     }
 
     @Override
     public void start() {
         try {
-            ClassHelper.invoke(clusterMemberInstance, startMethodName, new Object[]{});
+            ClassHelper.invoke(delegateInstance, startMethodName, new Object[]{});
         } catch (Exception e) {
             super.start();
         }
@@ -114,7 +114,7 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     @Override
     public void shutdown() {
         try {
-            ClassHelper.invoke(clusterMemberInstance, shutdownMethodName, new Object[]{});
+            ClassHelper.invoke(delegateInstance, shutdownMethodName, new Object[]{});
         } catch (Exception e) {
             super.shutdown();
         }
@@ -123,7 +123,7 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     @Override
     public void stop() {
         try {
-            ClassHelper.invoke(clusterMemberInstance, stopMethodName, new Object[]{});
+            ClassHelper.invoke(delegateInstance, stopMethodName, new Object[]{});
         } catch (Exception e) {
             super.stop();
         }
@@ -132,7 +132,7 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     @Override
     public int getLocalMemberId() {
         try {
-            return (Integer) ClassHelper.invoke(clusterMemberInstance, getLocalMemberIdMethodName, new Object[]{});
+            return (Integer) ClassHelper.invoke(delegateInstance, getLocalMemberIdMethodName, new Object[]{});
         } catch (Exception e) {
             return super.getLocalMemberId();
         }
@@ -141,11 +141,15 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     @Override
     public ClassLoader getActualContainingClassLoader() {
         try {
-            return (ClassLoader) ClassHelper.invoke(clusterMemberInstance, getActualContainingClassLoaderMethodName,
+            return (ClassLoader) ClassHelper.invoke(delegateInstance, getActualContainingClassLoaderMethodName,
                     new Object[]{});
 
         } catch (Exception e) {
             return super.getActualContainingClassLoader();
         }
+    }
+
+    public Object getDelegateInstance() {
+        return delegateInstance;
     }
 }
