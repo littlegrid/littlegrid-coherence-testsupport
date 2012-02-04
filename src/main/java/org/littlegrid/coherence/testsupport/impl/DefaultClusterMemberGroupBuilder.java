@@ -38,6 +38,7 @@ import org.littlegrid.utils.PropertiesUtils;
 import org.littlegrid.utils.SystemUtils;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,7 +62,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME = "littlegrid.builder.override";
     private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
 
-    private static final String BUILDER_INCIDENT_REPORTER_INSTANCE_CLASS_NAME_KEY = "IncidentReporterInstanceClassName";
+    private static final String BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY =
+            "ExceptionReporterInstanceClassName";
 
     private static final String BUILDER_CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
@@ -184,6 +186,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup build() {
+        final ClusterMemberGroup.ExceptionReporter exceptionReporter = createExceptionReporter();
+
         //TODO: littlegrid#6 Tidy this up
         // on exception output: class path, tangosol system properties, all system properties and message
         // to suggest checking for another running cluster
@@ -193,11 +197,17 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
 
+        // Default to a storage-enabled if nothing else specified
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0
                 && extendProxyCount == 0 && customConfiguredCount == 0) {
 
             storageEnabledCount = 1;
         }
+
+        LOGGER.info(format(
+                "*** Starting - Storage-enabled: %s, Extend proxy: %s, Storage-enabled Extend proxy: %s, " +
+                        "Custom configured: %s ***",
+                storageEnabledCount, extendProxyCount, storageEnabledExtendProxyCount, customConfiguredCount));
 
         final int numberOfThreadsInStartUpPool = getBuilderSettingAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
 
@@ -209,14 +219,27 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
 
-        buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
-        buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
-                numberOfThreadsInStartUpPool);
+        Properties systemPropertiesToUse = null;
 
-        buildExtendProxyMembers(extendProxyCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
-        buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
-                numberOfThreadsInStartUpPool);
+        try {
+            systemPropertiesToUse = getSystemPropertiesForStorageEnabled();
+            buildStorageEnabledMembers(storageEnabledCount, systemPropertiesToUse, containerGroup, classPathUrls,
+                    numberOfThreadsInStartUpPool);
 
+            systemPropertiesToUse = getSystemPropertiesForCustomConfigured();
+            buildCustomConfiguredMembers(customConfiguredCount, systemPropertiesToUse, containerGroup, classPathUrls,
+                    numberOfThreadsInStartUpPool);
+
+            //TODO: Sort out how to pass proxy address
+            buildExtendProxyMembers(extendProxyCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
+
+            buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
+                    numberOfThreadsInStartUpPool);
+        } catch (Exception e) {
+            exceptionReporter.report(classPathUrls, systemPropertiesToUse);
+
+            throw new IllegalStateException(e);
+        }
 
         // Clear and now prepare system properties based upon the anticipated client type.
         if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
@@ -231,7 +254,32 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return containerGroup;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setExceptionReporterInstanceClassName(String exceptionReportInstanceClassName) {
+        builderSettings.put(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
+
+        return this;
+    }
+
+    private ClusterMemberGroup.ExceptionReporter createExceptionReporter() {
+        final String exceptionReporterClassName =
+                getBuilderSettingAsString(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
+
+        try {
+            final Class exceptionReporterClass = this.getClass().getClassLoader().loadClass(exceptionReporterClassName);
+            final Constructor constructor = exceptionReporterClass.getConstructor();
+
+            return (ClusterMemberGroup.ExceptionReporter) constructor.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(format("Cannot create instance of '%s", exceptionReporterClassName));
+        }
+    }
+
     private void buildCustomConfiguredMembers(final int customConfiguredCount,
+                                              final Properties systemProperties,
                                               final DefaultClusterMemberGroup containerGroup,
                                               final URL[] classPathUrls,
                                               final int numberOfThreadsInStartUpPool) {
@@ -241,7 +289,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (customConfiguredCount > 0) {
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(customConfiguredCount,
-                    getSystemPropertiesForCustomConfigured(), classPathUrls,
+                    systemProperties, classPathUrls,
                     customConfiguredClusterMemberInstanceClassName,
                     numberOfThreadsInStartUpPool)
                     .startAll();
@@ -299,6 +347,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void buildStorageEnabledMembers(final int storageEnabledCount,
+                                            final Properties systemProperties,
                                             final DefaultClusterMemberGroup containerGroup,
                                             final URL[] classPathUrls,
                                             final int numberOfThreadsInStartUpPool) {
@@ -308,7 +357,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (storageEnabledCount > 0) {
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
-                    getSystemPropertiesForStorageEnabled(), classPathUrls, clusterMemberInstanceClassName,
+                    systemProperties, classPathUrls, clusterMemberInstanceClassName,
                     numberOfThreadsInStartUpPool)
                     .startAll();
 

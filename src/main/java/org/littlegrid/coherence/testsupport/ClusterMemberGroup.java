@@ -32,7 +32,6 @@
 package org.littlegrid.coherence.testsupport;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -136,6 +135,14 @@ public interface ClusterMemberGroup {
          * @return running cluster member group.
          */
         ClusterMemberGroup build();
+
+        /**
+         * Sets the exception report instance class name.
+         *
+         * @param exceptionReportInstanceClassName  Exception report instance name.
+         * @return builder.
+         */
+        Builder setExceptionReporterInstanceClassName(String exceptionReportInstanceClassName);
 
         /**
          * Sets the cache configuration to be used for the cluster member groups, this is used

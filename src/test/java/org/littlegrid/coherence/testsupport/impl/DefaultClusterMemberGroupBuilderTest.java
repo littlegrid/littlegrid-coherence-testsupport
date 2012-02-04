@@ -50,7 +50,9 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 27;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 28;
+
+    private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
 
     private static final String CUSTOM_CONFIGURED_MEMBER_COUNT_KEY = "CustomConfiguredCount";
     private static final String STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
@@ -59,7 +61,8 @@ public class DefaultClusterMemberGroupBuilderTest {
 
     private static final String NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
-    private static final String CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
+    private static final String CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
+            "CustomConfiguredClusterMemberInstanceClassName";
 
     private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
     private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
@@ -117,6 +120,8 @@ public class DefaultClusterMemberGroupBuilderTest {
 //        setJarsToExcludeFromClassPath
 //        setBuilderProperties
 
+        final String expectedExceptionReportInstanceClassName = "com.g.h.i.ExceptionReporter";
+
         final int expectedCustomConfiguredMemberCount = 10;
         final int expectedStorageEnabledCount = 11;
         final int expectedExtendProxyCount = 12;
@@ -132,6 +137,8 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
 
+        builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
+        
         builder.setCustomConfiguredCount(expectedCustomConfiguredMemberCount);
         builder.setStorageEnabledCount(expectedStorageEnabledCount);
         builder.setExtendProxyCount(expectedExtendProxyCount);
@@ -151,7 +158,7 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE));
 
-
+        assertThat(builderSettings.get(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY), is(expectedExceptionReportInstanceClassName));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_COUNT_KEY), is(Integer.toString(expectedCustomConfiguredMemberCount)));
         assertThat(builderSettings.get(STORAGE_ENABLED_COUNT_KEY), is(Integer.toString(expectedStorageEnabledCount)));
         assertThat(builderSettings.get(EXTEND_PROXY_COUNT_KEY), is(Integer.toString(expectedExtendProxyCount)));
@@ -159,6 +166,7 @@ public class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.get(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY), is(Integer.toString(expectedNumberOfThreads)));
         assertThat(builderSettings.get(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY), is(expectedInstanceClassName));
+        assertThat(builderSettings.get(CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY), is(expectedCustomConfiguredInstanceClassName));
 
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_35X_KEY), is(Integer.toString(expectedSleepDuration35x)));
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_36X_KEY), is(Integer.toString(expectedSleepDuration36x)));

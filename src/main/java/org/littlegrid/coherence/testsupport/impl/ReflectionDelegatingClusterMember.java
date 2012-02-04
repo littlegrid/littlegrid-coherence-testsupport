@@ -94,7 +94,6 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
 
         try {
             final Class clusterMemberClass = this.getClass().getClassLoader().loadClass(delegateClassName);
-
             final Constructor constructor = clusterMemberClass.getConstructor();
 
             delegateInstance = constructor.newInstance();

@@ -243,7 +243,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private void outputStartAllMessages() {
         final int oneMB = 1024 * 1024;
 
-        LOGGER.info(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
+        LOGGER.debug(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         LOGGER.debug(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
