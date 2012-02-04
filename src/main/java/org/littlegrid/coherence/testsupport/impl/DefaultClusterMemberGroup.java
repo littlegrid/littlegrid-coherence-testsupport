@@ -32,7 +32,6 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.net.CacheFactory;
-import org.littlegrid.coherence.testsupport.ClusterMember;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 import org.littlegrid.utils.LoggerPlaceHolder;
 import org.littlegrid.utils.SystemUtils;

@@ -41,9 +41,14 @@ import static java.lang.String.format;
 
 /**
  * Reflection based cluster member, provides a declarative mechanism to delegate
- * to a class that acts as a cluster member.  In the event of that class not
+ * to a class that acts as a cluster member - in the event of the delegate class not
  * implementing all the methods of {@link org.littlegrid.coherence.testsupport.ClusterMember}
  * then this class will simply handle them with default cluster member behaviour.
+ * <p />
+ * The configuration of delegate class and the method mapping should be defined in
+ * a properties file called <code>littlegrid-reflection-delegating.properties</code> and located in
+ * the root of the JAR or within a directory within the JAR called <code>littlegrid</code>, for
+ * example <code>littlegrid/littlegrid-reflection-delegating.properties</code>
  */
 public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     private static final String REFLECTION_DELEGATING_PROPERTIES_FILENAME =

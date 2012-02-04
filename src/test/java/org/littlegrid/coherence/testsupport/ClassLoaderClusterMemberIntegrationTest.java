@@ -55,7 +55,7 @@ public class ClassLoaderClusterMemberIntegrationTest {
         assertThat(memberIds.length, is(numberOfMembers));
 
         for (final int memberId : memberIds) {
-            final ClusterMember member = memberGroup.getClusterMember(memberId);
+            final ClusterMemberGroup.ClusterMember member = memberGroup.getClusterMember(memberId);
 
             assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
             assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));

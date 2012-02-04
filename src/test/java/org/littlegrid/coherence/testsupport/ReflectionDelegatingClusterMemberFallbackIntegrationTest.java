@@ -61,7 +61,7 @@ public class ReflectionDelegatingClusterMemberFallbackIntegrationTest
     private static final int MEMBER_ID = 2;
 
     private ClusterMemberGroup memberGroup;
-    private ClusterMember member;
+    private ClusterMemberGroup.ClusterMember member;
 
 
     @Before
@@ -71,7 +71,7 @@ public class ReflectionDelegatingClusterMemberFallbackIntegrationTest
                 .setClusterMemberInstanceClassName(ReflectionDelegatingClusterMember.class.getName())
                 .build();
 
-        
+
         final Cluster cluster = CacheFactory.ensureCluster();
 
         assertThatClusterIsExpectedSize(cluster, EXPECTED_CLUSTER_SIZE);

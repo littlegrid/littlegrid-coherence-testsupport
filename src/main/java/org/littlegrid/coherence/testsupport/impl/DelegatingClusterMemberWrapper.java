@@ -32,7 +32,7 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.util.ClassHelper;
-import org.littlegrid.coherence.testsupport.ClusterMember;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 import org.littlegrid.utils.ChildFirstUrlClassLoader;
 import org.littlegrid.utils.LoggerPlaceHolder;
 
@@ -41,11 +41,12 @@ import java.lang.reflect.Constructor;
 import static java.lang.String.format;
 
 /**
- * Delegating cluster member wrapper, loads a class that implements {@link ClusterMember}
+ * Delegating cluster member wrapper, loads a class that implements {@link
+ * org.littlegrid.coherence.testsupport.ClusterMemberGroup.ClusterMember}
  * into a separate class loader and then delegates requests (start, stop, shutdown etc.) to
  * the instance of the wrapped class.
  */
-class DelegatingClusterMemberWrapper implements ClusterMember {
+class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember {
     private static final LoggerPlaceHolder LOGGER =
             new LoggerPlaceHolder(DelegatingClusterMemberWrapper.class.getName());
 

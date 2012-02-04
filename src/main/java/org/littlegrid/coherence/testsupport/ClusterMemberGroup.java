@@ -31,6 +31,7 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
@@ -91,6 +92,38 @@ public interface ClusterMemberGroup {
      * @return seconds to sleep.
      */
     int getSuggestedSleepAfterStopDuration();
+
+    /**
+     * Cluster member interface - implementations of this class need to provide basic functionality,
+     * so they may be controlled by the {@link ClusterMemberGroup}
+     * implementations - typically the default implementation of this class should suffice for most
+     * uses.
+     */
+    public interface ClusterMember {
+        /**
+         * Shutdown the member.
+         */
+        void shutdown();
+
+        /**
+         * Stops the member.
+         */
+        void stop();
+
+        /**
+         * Gets this local member Id.
+         *
+         * @return member id.
+         */
+        int getLocalMemberId();
+
+        /**
+         * Returns the class loader that the cluster member has been loaded into.
+         *
+         * @return class loader.
+         */
+        ClassLoader getActualContainingClassLoader();
+    }
 
     /**
      * Builder interface for cluster member group.
@@ -450,6 +483,7 @@ public interface ClusterMemberGroup {
     }
 
     interface ExceptionReporter {
-        public void report(List<String> incidentDetails);
+        void report(URL[] classPathUrlsInUse,
+                    Properties systemPropertiesDefinedForUse);
     }
 }
