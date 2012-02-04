@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Jonathan Hall.
+ * Copyright (c) 2010-2012 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,14 +48,15 @@ public final class BeanUtils {
     }
 
     /**
-     * Invokes setter methods to set state on bean using properties as the method name and value to set.
+     * Invokes setter methods to set state on bean using properties with the key being the method
+     * name (without set) and the value to being what it should be set to.
      *
      * @param bean       Bean on which to invoke methods.
      * @param properties Properties, keys are used for method names, whilst values are used to set state.
      * @return number of methods invoked.
      */
-    public static int processProperties(final Object bean,
-                                        final Properties properties) {
+    public static int multiSetter(final Object bean,
+                                  final Properties properties) {
 
         int propertiesSetCounter = 0;
 

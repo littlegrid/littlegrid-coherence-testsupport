@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Jonathan Hall.
+ * Copyright (c) 2010-2012 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 
 package org.littlegrid.coherence.testsupport;
 
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -442,9 +443,13 @@ public interface ClusterMemberGroup {
          * setting must be used in conjunction with the littlegrid-fast-start-coherence-override.xml
          * which defines the appropriate system property to control the join timeout.
          *
-         * @param joinTimeoutMilliseconds  Join timeout milliseconds.
+         * @param joinTimeoutMilliseconds Join timeout milliseconds.
          * @return builder.
          */
         Builder setFastStartJoinTimeoutMilliseconds(int joinTimeoutMilliseconds);
+    }
+
+    interface ExceptionReporter {
+        public void report(List<String> incidentDetails);
     }
 }

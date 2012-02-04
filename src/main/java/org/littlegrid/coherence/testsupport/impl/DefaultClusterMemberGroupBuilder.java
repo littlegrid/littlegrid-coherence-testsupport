@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Jonathan Hall.
+ * Copyright (c) 2010-2012 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME = "littlegrid.builder.override";
     private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
+
+    private static final String BUILDER_INCIDENT_REPORTER_INSTANCE_CLASS_NAME_KEY = "IncidentReporterInstanceClassName";
 
     private static final String BUILDER_CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
@@ -152,7 +154,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             propertiesFilenames = BUILDER_DEFAULT_PROPERTIES_FILENAME + ", " + overridePropertiesFilename;
         }
 
-        BeanUtils.processProperties(this, PropertiesUtils.loadProperties(propertiesFilenames));
+        BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(propertiesFilenames));
     }
 
     private void loadBuilderMappingSettings() {
@@ -604,7 +606,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setBuilderProperties(final Properties properties) {
-        BeanUtils.processProperties(this, properties);
+        BeanUtils.multiSetter(this, properties);
 
         return this;
     }

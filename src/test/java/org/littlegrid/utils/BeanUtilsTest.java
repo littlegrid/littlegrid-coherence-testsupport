@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Jonathan Hall.
+ * Copyright (c) 2010-2012 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@
 package org.littlegrid.utils;
 
 import org.junit.Test;
-import org.littlegrid.utils.BeanUtils;
 
 import java.util.Properties;
 
@@ -55,7 +54,7 @@ public class BeanUtilsTest {
         Properties properties = new Properties();
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.processProperties(person, properties);
+        int propertiesSetCount = BeanUtils.multiSetter(person, properties);
 
         assertThat(propertiesSetCount, is(0));
         assertThat(person.getName(), nullValue());
@@ -69,7 +68,7 @@ public class BeanUtilsTest {
 
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.processProperties(person, properties);
+        int propertiesSetCount = BeanUtils.multiSetter(person, properties);
 
         assertThat(propertiesSetCount, is(1));
         assertThat(person.getName(), is(EXPECTED_NAME));
@@ -83,7 +82,7 @@ public class BeanUtilsTest {
 
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.processProperties(person, properties);
+        int propertiesSetCount = BeanUtils.multiSetter(person, properties);
 
         assertThat(propertiesSetCount, is(1));
         assertThat(person.getAge(), is(EXPECTED_AGE));
@@ -97,7 +96,7 @@ public class BeanUtilsTest {
 
         Person person = new Person();
 
-        int propertiesSetCount = BeanUtils.processProperties(person, properties);
+        int propertiesSetCount = BeanUtils.multiSetter(person, properties);
 
         assertThat(propertiesSetCount, is(2));
         assertThat(person.getName(), is(EXPECTED_NAME));
@@ -109,7 +108,7 @@ public class BeanUtilsTest {
         Properties properties = new Properties();
         properties.setProperty("NonExistentProperty", "DoesNotMatterPropertyDoesNotExist");
 
-        BeanUtils.processProperties(new Person(), properties);
+        BeanUtils.multiSetter(new Person(), properties);
     }
 
 
