@@ -33,7 +33,6 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import org.junit.Test;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.utils.SystemUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -95,13 +94,21 @@ public class DefaultClusterMemberGroupTest {
         new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 0);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void startAllWhenClassDoesNotExist()
+            throws MalformedURLException {
+
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1, getPopulatedProperties(),
+                getPopulatedUrls(), "SomeClass", 1);
+
+        memberGroup.startAll();
+    }
+
     @Test
     public void shutdownAllRestoreOfSystemProperties()
             throws MalformedURLException {
 
         final String key = "this-is-a-key-of-a-new-property";
-
-        Properties propertiesBefore = SystemUtils.snapshotSystemProperties();
 
         final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1,
                 getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 1);
@@ -120,7 +127,7 @@ public class DefaultClusterMemberGroupTest {
         final int expectedDuration35x = 18;
         final int expectedDuration36x = 17;
         final int expectedDurationDefault = 15;
-        
+
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(expectedDuration35x,
                 expectedDuration36x, expectedDurationDefault);
 
@@ -128,7 +135,7 @@ public class DefaultClusterMemberGroupTest {
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.6f), is(expectedDuration36x));
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.7f), is(expectedDurationDefault));
     }
-    
+
     private static Properties getPopulatedProperties() {
         Properties properties = new Properties();
         properties.setProperty("key", "value");

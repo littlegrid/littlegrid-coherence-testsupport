@@ -36,7 +36,7 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.util.ClassHelper;
 import org.junit.After;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.littlegrid.coherence.testsupport.impl.DefaultClusterMember;
 
@@ -62,6 +62,11 @@ public class ExampleClusterMemberGroupIntegrationTest {
     private static final String VALUE = "value";
 
     private ClusterMemberGroup memberGroup;
+
+    @Before
+    public void beforeTest() {
+        System.clearProperty("littlegrid.builder.override");
+    }
 
     @After
     public void afterTest() {
@@ -175,9 +180,13 @@ public class ExampleClusterMemberGroupIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void exampleOfDifferentOverrideFileSpecified() {
+        System.setProperty("littlegrid.builder.override", "example-littlegrid-builder-override.properties");
 
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .build();
+
+        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
     }
 
     @Test

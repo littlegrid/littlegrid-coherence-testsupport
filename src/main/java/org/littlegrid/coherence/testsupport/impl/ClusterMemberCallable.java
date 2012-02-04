@@ -53,11 +53,11 @@ class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> 
                                  final URL[] classPathUrls) {
 
         if (clusterMemberInstanceClassName == null) {
-            throw new IllegalStateException("Cluster member class name cannot be null");
+            throw new IllegalArgumentException("Cluster member class name cannot be null");
         }
 
         if (classPathUrls == null) {
-            throw new IllegalStateException("Class path URLs cannot be null");
+            throw new IllegalArgumentException("Class path URLs cannot be null");
         }
 
         this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
@@ -83,8 +83,6 @@ class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> 
             memberWrapper.start();
 
             return memberWrapper;
-        } catch (Throwable throwable) {
-            throw new Exception(throwable);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }

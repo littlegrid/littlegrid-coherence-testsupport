@@ -41,8 +41,10 @@ public final class PropertiesUtils {
     public static Properties loadProperties(final String... propertiesFilenames) {
         final Properties properties = new Properties();
 
-        for (final String propertiesFilename : propertiesFilenames) {
-            final URL url = Resources.findFileOrResource(propertiesFilename.trim(),
+        for (String propertiesFilename : propertiesFilenames) {
+            propertiesFilename = propertiesFilename.trim();
+
+            final URL url = Resources.findFileOrResource(propertiesFilename,
                     PropertiesUtils.class.getClass().getClassLoader());
 
             if (url == null) {

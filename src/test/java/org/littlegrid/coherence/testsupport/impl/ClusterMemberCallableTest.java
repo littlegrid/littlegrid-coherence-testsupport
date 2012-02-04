@@ -29,44 +29,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.utils;
+package org.littlegrid.coherence.testsupport.impl;
+
+import org.junit.Test;
 
 import java.net.URL;
-import java.net.URLClassLoader;
 
 /**
- * Child-first URL class-loader, changes the normal class-loading order by attempting
- * to load the class locally from the child before delegating to the parent.
+ * Cluster member callable tests.
  */
-public class ChildFirstUrlClassLoader extends URLClassLoader {
-    /**
-     * Constructor.
-     *
-     * @param urls URLs from which to try and load classes.
-     */
-    public ChildFirstUrlClassLoader(final URL[] urls) {
-        super(urls);
+public class ClusterMemberCallableTest {
+    private static final String NAME_OF_CLASS_THAT_DOES_NOT_EXIST = "com.a.b.c.ClusterMember";
+
+    @Test(expected = IllegalArgumentException.class)
+    public void constructWithNullClusterMemberInstanceClassName() {
+        new ClusterMemberCallable(null, null);
+
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<?> loadClass(final String name)
-            throws ClassNotFoundException {
+    @Test(expected = IllegalArgumentException.class)
+    public void constructWithNullClassPathUrls() {
+        new ClusterMemberCallable("com.a.b.c.ClusterMember", null);
+    }
 
-        Class loadedClass = findLoadedClass(name);
+    @Test(expected = IllegalStateException.class)
+    public void callWhenClassDoesNotExist()
+            throws Exception {
 
-        if (loadedClass == null) {
-            try {
-                // Hasn't already been loaded, so check if this child class-loader can load the class
-                loadedClass = findClass(name);
-            } catch (ClassNotFoundException e) {
-                // Child didn't have the class, delegate to parent class-loader
-                return super.loadClass(name);
-            }
-        }
-
-        return loadedClass;
+        ClusterMemberCallable callable = new ClusterMemberCallable(NAME_OF_CLASS_THAT_DOES_NOT_EXIST, new URL[]{});
+        callable.call();
     }
 }
