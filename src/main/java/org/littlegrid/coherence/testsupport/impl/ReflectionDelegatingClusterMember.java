@@ -102,6 +102,9 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void start() {
         try {
@@ -111,6 +114,9 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void shutdown() {
         try {
@@ -120,6 +126,9 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stop() {
         try {
@@ -129,6 +138,9 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLocalMemberId() {
         try {
@@ -138,6 +150,9 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClassLoader getActualContainingClassLoader() {
         try {

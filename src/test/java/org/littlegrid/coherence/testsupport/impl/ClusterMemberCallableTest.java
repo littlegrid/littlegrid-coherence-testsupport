@@ -38,7 +38,7 @@ import java.net.URL;
 /**
  * Cluster member callable tests.
  */
-public class ClusterMemberCallableTest {
+public final class ClusterMemberCallableTest {
     private static final String NAME_OF_CLASS_THAT_DOES_NOT_EXIST = "com.a.b.c.ClusterMember";
 
     @Test(expected = IllegalArgumentException.class)

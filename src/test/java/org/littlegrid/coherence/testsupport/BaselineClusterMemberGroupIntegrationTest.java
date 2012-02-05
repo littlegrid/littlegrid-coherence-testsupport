@@ -44,7 +44,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 /**
  * Cluster member group baseline tests.
  */
-public class BaselineClusterMemberGroupIntegrationTest
+public final class BaselineClusterMemberGroupIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     @Test

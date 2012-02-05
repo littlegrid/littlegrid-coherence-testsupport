@@ -36,7 +36,6 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.util.ClassHelper;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.littlegrid.coherence.testsupport.impl.DefaultClusterMember;
 
@@ -57,7 +56,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 /**
  * Cluster member group example tests to show how to use the API.
  */
-public class ExampleClusterMemberGroupIntegrationTest {
+public final class ExampleClusterMemberGroupIntegrationTest {
     private static final String KEY = "key";
     private static final String VALUE = "value";
 

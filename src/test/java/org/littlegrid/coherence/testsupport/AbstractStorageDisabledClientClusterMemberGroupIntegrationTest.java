@@ -32,8 +32,6 @@
 package org.littlegrid.coherence.testsupport;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.Cluster;
-import com.tangosol.net.Member;
 import org.junit.After;
 
 import static org.hamcrest.CoreMatchers.is;

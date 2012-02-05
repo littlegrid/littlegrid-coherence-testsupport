@@ -32,14 +32,11 @@
 package org.littlegrid.coherence.testsupport;
 
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Default exception report integration tests.
  */
-//@Ignore
 public class DefaultBuildExceptionReporterIntegrationTest {
     private ClusterMemberGroup memberGroup;
 

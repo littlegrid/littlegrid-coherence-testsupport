@@ -42,7 +42,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 /**
  * Cluster member group WKA tests.
  */
-public class WkaClusterMemberGroupIntegrationTest
+public final class WkaClusterMemberGroupIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     private static final LoggerPlaceHolder LOGGER =

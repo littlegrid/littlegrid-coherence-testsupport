@@ -42,7 +42,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Bean utilities test.
  */
-public class BeanUtilsTest {
+public final class BeanUtilsTest {
     private static final String NAME_PROPERTY = "Name";
     private static final String AGE_PROPERTY = "Age";
     private static final String EXPECTED_NAME = "Fred Bloggs";
@@ -112,7 +112,7 @@ public class BeanUtilsTest {
     }
 
 
-    public static class Person {
+    public static final class Person {
         private String name;
         private int age;
 

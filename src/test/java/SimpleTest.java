@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Simple test example.
  */
-public class SimpleTest {
+public final class SimpleTest {
     private static ClusterMemberGroup memberGroup;
 
     @BeforeClass

@@ -74,26 +74,56 @@ public class ClusterMemberGroupBuildException extends RuntimeException {
         this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
     }
 
+    /**
+     * Returns system properties before start was invoked.
+     *
+     * @return properties.
+     */
     public Properties getSystemPropertiesBeforeStartInvoked() {
         return systemPropertiesBeforeStartInvoked;
     }
 
+    /**
+     * Returns system properties that were applied.
+     *
+     * @return properties
+     */
     public Properties getSystemPropertiesToBeApplied() {
         return systemPropertiesToBeApplied;
     }
 
+    /**
+     * Returns number of member for this particular group.
+     *
+     * @return number of members.
+     */
     public int getNumberOfMembers() {
         return numberOfMembers;
     }
 
+    /**
+     * Returns class path URLs in use for loading classes.
+     *
+     * @return class path.
+     */
     public URL[] getClassPathUrls() {
         return classPathUrls;
     }
 
+    /**
+     * Returns cluster member instance class name.
+     *
+     * @return class name.
+     */
     public String getClusterMemberInstanceClassName() {
         return clusterMemberInstanceClassName;
     }
 
+    /**
+     * Returns number of threads in start-up pool.
+     *
+     * @return number of threads.
+     */
     public int getNumberOfThreadsInStartUpPool() {
         return numberOfThreadsInStartUpPool;
     }

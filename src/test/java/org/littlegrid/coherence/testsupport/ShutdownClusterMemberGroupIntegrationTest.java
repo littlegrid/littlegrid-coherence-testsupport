@@ -45,7 +45,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 /**
  * Cluster member group shutdown tests.
  */
-public class ShutdownClusterMemberGroupIntegrationTest
+public final class ShutdownClusterMemberGroupIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     private ClusterMemberGroup memberGroup;

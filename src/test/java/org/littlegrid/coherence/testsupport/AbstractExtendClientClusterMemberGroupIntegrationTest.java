@@ -42,19 +42,19 @@ import java.io.IOException;
  * Abstract base class for cluster member group tests.
  */
 public abstract class AbstractExtendClientClusterMemberGroupIntegrationTest {
-    public static class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
+    public static final class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
         @Override
         public void run() {
             setResult(getService().getCluster().getMemberSet().size());
         }
 
         @Override
-        public void readExternal(PofReader reader)
+        public void readExternal(final PofReader reader)
                 throws IOException {
         }
 
         @Override
-        public void writeExternal(PofWriter writer)
+        public void writeExternal(final PofWriter writer)
                 throws IOException {
         }
     }

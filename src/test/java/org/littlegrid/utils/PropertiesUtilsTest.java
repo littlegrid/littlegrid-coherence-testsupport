@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Properties utilities tests.
  */
-public class PropertiesUtilsTest {
+public final class PropertiesUtilsTest {
 
     public static final int EXPECTED_SIZE_OF_TWO_PROPERTIES_FILE_COMBINED = 7;
     public static final int EXPECTED_SIZE_OF_SINGLE_PROPERTIES_FILE = 6;

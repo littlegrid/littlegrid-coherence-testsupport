@@ -42,7 +42,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Cluster member class loader tests.
  */
-public class ClassLoaderClusterMemberIntegrationTest {
+public final class ClassLoaderClusterMemberIntegrationTest {
     @Test
     public void getContainingClassLoader() {
         final int numberOfMembers = 3;

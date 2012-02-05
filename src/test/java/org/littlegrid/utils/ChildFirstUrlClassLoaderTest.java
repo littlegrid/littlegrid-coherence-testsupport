@@ -32,7 +32,6 @@
 package org.littlegrid.utils;
 
 import org.junit.Test;
-import org.littlegrid.utils.ChildFirstUrlClassLoader;
 
 import java.io.File;
 import java.net.URL;
@@ -44,9 +43,8 @@ import static org.junit.Assert.assertThat;
 /**
  * Child first URL class loader tests.
  */
-public class ChildFirstUrlClassLoaderTest {
-    private static final String CLASS_TO_TRY_AND_LOAD =
-            "org.littlegrid.utils.ChildFirstUrlClassLoaderTest$Dummy";
+public final class ChildFirstUrlClassLoaderTest {
+    private static final String CLASS_TO_TRY_AND_LOAD = "org.littlegrid.utils.ChildFirstUrlClassLoaderTest$Dummy";
 
     @Test
     public void loadClassFromChildClassLoader()

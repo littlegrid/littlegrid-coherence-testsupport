@@ -48,7 +48,7 @@ import static org.junit.Assert.assertThat;
  * Direct (i.e. not going through ClusterMemberGroupUtils) default local process cluster member
  * group tests.
  */
-public class DefaultClusterMemberGroupTest {
+public final class DefaultClusterMemberGroupTest {
     @Test(expected = IllegalArgumentException.class)
     public void constructWithInvalidNumberOfMembers() {
         new DefaultClusterMemberGroup(0, null, null, null, 0);

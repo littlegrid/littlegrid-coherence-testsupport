@@ -55,7 +55,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 /**
  * Cluster member group Extend tests.
  */
-public class ExtendProxyClusterMemberGroupIntegrationTest
+public final class ExtendProxyClusterMemberGroupIntegrationTest
         extends AbstractExtendClientClusterMemberGroupIntegrationTest {
 
     private ClusterMemberGroup memberGroup;

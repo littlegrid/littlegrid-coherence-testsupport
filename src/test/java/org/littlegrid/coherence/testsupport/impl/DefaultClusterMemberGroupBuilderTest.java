@@ -49,7 +49,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Default cluster member group builder tests.
  */
-public class DefaultClusterMemberGroupBuilderTest {
+public final class DefaultClusterMemberGroupBuilderTest {
     private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 28;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";

@@ -53,7 +53,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
  * Reflection delegating cluster member fallback tests, to ensure fallback functionality
  * works as expected.
  */
-public class ReflectionDelegatingClusterMemberFallbackIntegrationTest
+public final class ReflectionDelegatingClusterMemberFallbackIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     private static final int NUMBER_OF_MEMBERS = SMALL_TEST_CLUSTER_SIZE;

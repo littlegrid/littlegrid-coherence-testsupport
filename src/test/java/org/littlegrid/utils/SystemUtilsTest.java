@@ -46,7 +46,7 @@ import static org.junit.Assert.assertThat;
 /**
  * System utils tests.
  */
-public class SystemUtilsTest {
+public final class SystemUtilsTest {
     private static final String KNOWN_PREFIX = "prefix.used.for.testing.";
     private static final String KEY1_WITH_KNOWN_PREFIX = KNOWN_PREFIX + "key1";
     private static final String KNOWN_VALUE_1 = "value1";

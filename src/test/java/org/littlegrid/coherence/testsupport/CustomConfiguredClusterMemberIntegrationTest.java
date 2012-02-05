@@ -16,7 +16,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 /**
  * Custom configured member tests.
  */
-public class CustomConfiguredClusterMemberIntegrationTest
+public final class CustomConfiguredClusterMemberIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     private ClusterMemberGroup memberGroup;
