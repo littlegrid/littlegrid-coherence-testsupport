@@ -45,15 +45,20 @@ import static org.junit.Assert.assertThat;
 public class ReflectionDelegatingClusterMemberTest {
     @Test(expected = IllegalStateException.class)
     public void noClassName() {
-        final ReflectionDelegatingClusterMember delegatingClusterMember =
-                new ReflectionDelegatingClusterMember(new Properties());
-
+        new ReflectionDelegatingClusterMember()
+                .setDelegateInstanceClassName("")
+                .start();
     }
 
     @Test
     public void operateDelegate() {
-        final ReflectionDelegatingClusterMember delegatingClusterMember =
-                new ReflectionDelegatingClusterMember(getProperties());
+        final ReflectionDelegatingClusterMember delegatingClusterMember = new ReflectionDelegatingClusterMember()
+                .setDelegateInstanceClassName("org.littlegrid.coherence.testsupport.impl.ReflectionDelegatingClusterMemberTest$MockDelegateClusterMember")
+                .setStartMethodName("myStart")
+                .setShutdownMethodName("myShutdown")
+                .setStopMethodName("myStop")
+                .setGetLocalMemberIdMethodName("myGetLocalMemberId")
+                .setGetActualContainingClassLoaderMethodName("myGetActualContainingClassLoader");
 
         delegatingClusterMember.start();
         delegatingClusterMember.shutdown();
@@ -62,20 +67,6 @@ public class ReflectionDelegatingClusterMemberTest {
         delegatingClusterMember.getActualContainingClassLoader();
 
         assertThat(delegatingClusterMember.getDelegateInstance().toString(), is("15"));
-    }
-
-    private Properties getProperties() {
-        final Properties properties = new Properties();
-        properties.setProperty("DelegateClassName",
-                "org.littlegrid.coherence.testsupport.impl.ReflectionDelegatingClusterMemberTest$MockDelegateClusterMember");
-
-        properties.setProperty("StartMethodName", "myStart");
-        properties.setProperty("ShutdownMethodName", "myShutdown");
-        properties.setProperty("StopMethodName", "myStop");
-        properties.setProperty("GetLocalMemberIdMethodName", "myGetLocalMemberId");
-        properties.setProperty("GetActualContainingClassLoaderMethodName", "myGetActualContainingClassLoader");
-
-        return properties;
     }
 
     /**

@@ -88,12 +88,6 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         }
     }
 
-    private void outputException(final PrintStream out,
-                                 final Throwable cause) {
-
-        out.println("Full exception...........: " + cause);
-    }
-
     private void outputHeading(final PrintStream out) {
         out.println("******************************************************");
         out.println("Exception occurred, trouble-shooting information below");
@@ -180,5 +174,12 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
                                        final int numberOfMembers) {
 
         out.println("Number of members........: " + numberOfMembers);
+    }
+
+    private void outputException(final PrintStream out,
+                                 final Throwable cause) {
+
+        out.println("Full exception...........: detailed below");
+        cause.printStackTrace(out);
     }
 }

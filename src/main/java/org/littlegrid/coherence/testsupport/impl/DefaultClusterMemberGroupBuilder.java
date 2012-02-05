@@ -130,7 +130,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        loadAndProcessBuilderSettings();
+        loadAndInitialise();
         loadBuilderMappingSettings();
     }
 
@@ -143,7 +143,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return builderSettings;
     }
 
-    private void loadAndProcessBuilderSettings() {
+    private void loadAndInitialise() {
         final String overridePropertiesFilename =
                 System.getProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, BUILDER_OVERRIDE_PROPERTIES_FILENAME
                         + ", littlegrid/" + BUILDER_OVERRIDE_PROPERTIES_FILENAME);
