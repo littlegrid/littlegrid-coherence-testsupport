@@ -37,7 +37,7 @@ import java.util.Properties;
 /**
  * Cluster member group exception.
  */
-public class ClusterMemberGroupStartUpException extends RuntimeException {
+public class ClusterMemberGroupBuildException extends RuntimeException {
     private Properties systemPropertiesBeforeStartInvoked;
     private Properties systemPropertiesToBeApplied;
     private int numberOfMembers;
@@ -56,13 +56,13 @@ public class ClusterMemberGroupStartUpException extends RuntimeException {
      * @param clusterMemberInstanceClassName Cluster member instance class name.
      * @param numberOfThreadsInStartUpPool   Number of threads in start-up pool.
      */
-    public ClusterMemberGroupStartUpException(final Throwable cause,
-                                              final Properties systemPropertiesBeforeStart,
-                                              final Properties systemPropertiesToBeApplied,
-                                              final int numberOfMembers,
-                                              final URL[] classPathUrls,
-                                              final String clusterMemberInstanceClassName,
-                                              final int numberOfThreadsInStartUpPool) {
+    public ClusterMemberGroupBuildException(final Throwable cause,
+                                            final Properties systemPropertiesBeforeStart,
+                                            final Properties systemPropertiesToBeApplied,
+                                            final int numberOfMembers,
+                                            final URL[] classPathUrls,
+                                            final String clusterMemberInstanceClassName,
+                                            final int numberOfThreadsInStartUpPool) {
         super(cause);
 
         this.systemPropertiesBeforeStartInvoked = systemPropertiesBeforeStart;

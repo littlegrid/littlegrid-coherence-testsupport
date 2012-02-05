@@ -489,7 +489,7 @@ public interface ClusterMemberGroup {
         Builder setFastStartJoinTimeoutMilliseconds(int joinTimeoutMilliseconds);
     }
 
-    interface ExceptionReporter {
+    interface BuildExceptionReporter {
         void report(Throwable throwable);
     }
 }

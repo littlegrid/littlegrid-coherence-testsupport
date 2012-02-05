@@ -29,49 +29,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport.impl;
+package org.littlegrid.coherence.testsupport;
 
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupStartUpException;
-
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
- * Default exception reporter implementation
+ * Default exception report integration tests.
  */
-public class DefaultExceptionReporter implements ClusterMemberGroup.ExceptionReporter {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void report(final Throwable throwable) {
-        final PrintStream out = System.out;
-        
-        if (throwable instanceof ClusterMemberGroupStartUpException) {
-            final ClusterMemberGroupStartUpException startUpException = (ClusterMemberGroupStartUpException) throwable;
+//@Ignore
+public class DefaultBuildExceptionReporterIntegrationTest {
+    private ClusterMemberGroup memberGroup;
 
-            System.out.println("Oh dear - " + Arrays.toString(startUpException.getClassPathUrls()) +
-                    startUpException.getSystemPropertiesBeforeStartInvoked());
+    @After
+    public void afterTest() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
 
-        } else {
-            outputHeading(out);
-            outputJavaHome(out);
-            outputClassPath(out);
-        }
-    }
-    
-    private void outputHeading(final PrintStream out) {
-        out.println("Exception occurred, details to help trouble-shooting below");
-        out.println("==========================================================");
-    }
-    
-    private void outputJavaHome(final PrintStream out)  {
-        out.println("Java home.: " + System.getProperty("java.home"));
-    }
-    
-    private void outputClassPath(final PrintStream out) {
-        out.println("Class path: " + System.getProperty("java.class.path"));
+    @Test(expected = IllegalStateException.class)
+    public void unknownClusterMemberInstanceClassName() {
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
+                .build();
     }
 }

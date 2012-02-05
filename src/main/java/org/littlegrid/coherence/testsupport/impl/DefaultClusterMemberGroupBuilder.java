@@ -190,7 +190,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
-        final ClusterMemberGroup.ExceptionReporter exceptionReporter = createExceptionReporter();
+        final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
         // Default to a storage-enabled if nothing else specified
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0
@@ -255,7 +255,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
-    private ClusterMemberGroup.ExceptionReporter createExceptionReporter() {
+    private ClusterMemberGroup.BuildExceptionReporter createExceptionReporter() {
         final String exceptionReporterClassName =
                 getBuilderSettingAsString(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
 
@@ -263,7 +263,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             final Class exceptionReporterClass = this.getClass().getClassLoader().loadClass(exceptionReporterClassName);
             final Constructor constructor = exceptionReporterClass.getConstructor();
 
-            return (ClusterMemberGroup.ExceptionReporter) constructor.newInstance();
+            return (ClusterMemberGroup.BuildExceptionReporter) constructor.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(format("Cannot create instance of '%s", exceptionReporterClassName));
         }

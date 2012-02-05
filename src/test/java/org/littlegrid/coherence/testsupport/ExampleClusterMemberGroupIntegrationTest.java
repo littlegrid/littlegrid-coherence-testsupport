@@ -63,14 +63,11 @@ public class ExampleClusterMemberGroupIntegrationTest {
 
     private ClusterMemberGroup memberGroup;
 
-    @Before
-    public void beforeTest() {
-        System.clearProperty("littlegrid.builder.override");
-    }
-
     @After
     public void afterTest() {
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+
+        System.clearProperty("littlegrid.builder.override");
     }
 
     @Test

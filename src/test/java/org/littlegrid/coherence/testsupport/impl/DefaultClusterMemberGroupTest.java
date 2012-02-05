@@ -33,7 +33,7 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import org.junit.Test;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupStartUpException;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupBuildException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -95,7 +95,7 @@ public class DefaultClusterMemberGroupTest {
         new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 0);
     }
 
-    @Test(expected = ClusterMemberGroupStartUpException.class)
+    @Test(expected = ClusterMemberGroupBuildException.class)
     public void startAllWhenClassDoesNotExist()
             throws MalformedURLException {
 

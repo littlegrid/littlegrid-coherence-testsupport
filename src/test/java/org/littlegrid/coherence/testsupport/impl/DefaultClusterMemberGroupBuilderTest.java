@@ -120,7 +120,7 @@ public class DefaultClusterMemberGroupBuilderTest {
 //        setJarsToExcludeFromClassPath
 //        setBuilderProperties
 
-        final String expectedExceptionReportInstanceClassName = "com.g.h.i.ExceptionReporter";
+        final String expectedExceptionReportInstanceClassName = "com.g.h.i.BuildExceptionReporter";
 
         final int expectedCustomConfiguredMemberCount = 10;
         final int expectedStorageEnabledCount = 11;

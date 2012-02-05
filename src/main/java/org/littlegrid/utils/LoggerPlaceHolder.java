@@ -84,39 +84,6 @@ public final class LoggerPlaceHolder {
      * @param message Message.
      */
     public void error(final Object message) {
-        final StringBuilder sb = getMessageAndAdditionalInformationToLog(message);
-
-        logger.severe(sb.toString());
-    }
-
-    private StringBuilder getMessageAndAdditionalInformationToLog(final Object message) {
-        final StringBuilder sb = new StringBuilder(message.toString());
-
-        sb.append(getAdditionalInformationToLog());
-
-        return sb;
-    }
-
-    private String getAdditionalInformationToLog() {
-        final int oneMB = 1024 * 1024;
-
-        final StringBuilder sb = new StringBuilder(".  Additional info: ");
-
-        try {
-            final InetAddress inetAddress = InetAddress.getLocalHost();
-
-            sb.append(inetAddress.getHostName());
-            sb.append(" (");
-            sb.append(inetAddress.getHostAddress());
-            sb.append(")");
-        } catch (UnknownHostException e) {
-            sb.append("Unable to determine hostname/IP address");
-        }
-
-        sb.append(".  Free memory: ");
-        sb.append(Runtime.getRuntime().freeMemory() / oneMB);
-        sb.append("MB");
-
-        return sb.toString();
+        logger.severe(message.toString());
     }
 }
