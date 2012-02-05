@@ -31,7 +31,6 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -139,7 +138,8 @@ public interface ClusterMemberGroup {
         /**
          * Sets the exception report instance class name.
          *
-         * @param exceptionReportInstanceClassName  Exception report instance name.
+         * @param exceptionReportInstanceClassName
+         *         Exception report instance name.
          * @return builder.
          */
         Builder setExceptionReporterInstanceClassName(String exceptionReportInstanceClassName);
@@ -489,7 +489,16 @@ public interface ClusterMemberGroup {
         Builder setFastStartJoinTimeoutMilliseconds(int joinTimeoutMilliseconds);
     }
 
+    /**
+     * Build exception reporter, reports useful exception information in a form to help with
+     * trouble-shooting.
+     */
     interface BuildExceptionReporter {
+        /**
+         * Report on the exception.
+         *
+         * @param throwable Throwable.
+         */
         void report(Throwable throwable);
     }
 }

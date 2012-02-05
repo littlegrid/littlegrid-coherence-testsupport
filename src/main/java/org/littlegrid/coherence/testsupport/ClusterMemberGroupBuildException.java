@@ -63,6 +63,7 @@ public class ClusterMemberGroupBuildException extends RuntimeException {
                                             final URL[] classPathUrls,
                                             final String clusterMemberInstanceClassName,
                                             final int numberOfThreadsInStartUpPool) {
+
         super(cause);
 
         this.systemPropertiesBeforeStartInvoked = systemPropertiesBeforeStart;

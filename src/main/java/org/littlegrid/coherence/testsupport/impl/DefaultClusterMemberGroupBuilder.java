@@ -200,8 +200,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         LOGGER.info(format(
-                "*** Starting - Storage-enabled: %s, Extend proxy: %s, Storage-enabled Extend proxy: %s, " +
-                        "Custom configured: %s ***",
+                "*** Starting - Storage-enabled: %s, Extend proxy: %s, Storage-enabled Extend proxy: %s, "
+                        + "Custom configured: %s ***",
                 storageEnabledCount, extendProxyCount, storageEnabledExtendProxyCount, customConfiguredCount));
 
         final int numberOfThreadsInStartUpPool = getBuilderSettingAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
@@ -249,7 +249,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExceptionReporterInstanceClassName(String exceptionReportInstanceClassName) {
+    public ClusterMemberGroup.Builder setExceptionReporterInstanceClassName(
+            final String exceptionReportInstanceClassName) {
+
         builderSettings.put(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
 
         return this;

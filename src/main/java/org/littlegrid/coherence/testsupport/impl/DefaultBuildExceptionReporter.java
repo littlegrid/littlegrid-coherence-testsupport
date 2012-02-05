@@ -39,6 +39,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -46,7 +47,10 @@ import java.util.TreeMap;
 import static java.lang.String.format;
 
 /**
- * Default exception reporter implementation
+ * Default exception reporter implementation that outputs useful information for
+ * diagnosing the possible cause of a build exception - if the exception is a
+ * form of @ClusterMemberGroupBuildException then additional information can also
+ * be output.
  */
 public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildExceptionReporter {
     /**
@@ -57,25 +61,22 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         final PrintStream out = System.out;
 
         if (throwable instanceof ClusterMemberGroupBuildException) {
-            /**
-             *        private Properties systemPropertiesBeforeStartInvoked;
-             private Properties systemPropertiesToBeApplied;
-             private int numberOfMembers;
-             private URL[] classPathUrls;
-             private String clusterMemberInstanceClassName;
-             private int numberOfThreadsInStartUpPool;
-
-             */
             final ClusterMemberGroupBuildException buildException = (ClusterMemberGroupBuildException) throwable;
 
             outputHeading(out);
             outputJavaHome(out);
-            outputCurrentSystemProperties(out);
-            outputSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
+            outputClassPath(out);
             outputClassPathInUse(out, buildException.getClassPathUrls());
+            outputCurrentSystemProperties(out);
+            outputSystemPropertiesBefore(out, buildException.getSystemPropertiesBeforeStartInvoked());
+            outputSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
+            outputNumberOfMembers(out, buildException.getNumberOfMembers());
+            outputClusterMemberInstanceClassName(out, buildException.getClusterMemberInstanceClassName());
+            outputNumberOfThreadThreadsInStartUpPool(out, buildException.getNumberOfThreadsInStartUpPool());
             outputMemory(out);
             outputNetwork(out);
             outputOrderSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
+            outputException(out, throwable.getCause());
         } else {
             outputHeading(out);
             outputJavaHome(out);
@@ -83,12 +84,20 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
             outputCurrentSystemProperties(out);
             outputMemory(out);
             outputNetwork(out);
+            outputException(out, throwable);
         }
     }
 
+    private void outputException(final PrintStream out,
+                                 final Throwable cause) {
+
+        out.println("Full exception...........: " + cause);
+    }
+
     private void outputHeading(final PrintStream out) {
+        out.println("******************************************************");
         out.println("Exception occurred, trouble-shooting information below");
-        out.println("======================================================");
+        out.println("Current time.............: " + new Date());
     }
 
     private void outputJavaHome(final PrintStream out) {
@@ -103,6 +112,12 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
                                       final URL[] classPathUrls) {
 
         out.println("Class path in use........: " + Arrays.toString(classPathUrls));
+    }
+
+    private void outputSystemPropertiesBefore(final PrintStream out,
+                                              final Properties systemPropertiesBeforeStartInvoked) {
+
+        out.println("System properties before.: " + systemPropertiesBeforeStartInvoked);
     }
 
     private void outputSystemPropertiesApplied(final PrintStream out,
@@ -144,8 +159,26 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
             out.println(format("    key=%s, value=%s", key, value));
         }
     }
-    
+
     private void outputCurrentSystemProperties(final PrintStream out) {
         out.println("Current system properties: " + System.getProperties());
+    }
+
+    private void outputNumberOfThreadThreadsInStartUpPool(final PrintStream out,
+                                                          final int numberOfThreadsInStartUpPool) {
+
+        out.println("Number of thread in pool.: " + numberOfThreadsInStartUpPool);
+    }
+
+    private void outputClusterMemberInstanceClassName(final PrintStream out,
+                                                      final String clusterMemberInstanceClassName) {
+
+        out.println("Cluster member class name: " + clusterMemberInstanceClassName);
+    }
+
+    private void outputNumberOfMembers(final PrintStream out,
+                                       final int numberOfMembers) {
+
+        out.println("Number of members........: " + numberOfMembers);
     }
 }
