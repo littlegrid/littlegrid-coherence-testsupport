@@ -85,7 +85,12 @@ public interface ClusterMemberGroup {
 
     /**
      * Returns the suggested seconds to sleep after performing a member stop, the sleep
-     * time is dependent upon the version of Coherence.
+     * time is dependent upon the version of Coherence - this is typically used in-conjunction
+     * stop and TimeUnit.SECONDS.  An example of usage might be:
+     * <code>
+     * memberGroup.stop(2);
+     * TimeUnit.SECONDS.sleep(memberGroup.getSuggestedSleepAfterStopDuration());
+     *</code>
      *
      * @return seconds to sleep.
      */
@@ -257,6 +262,14 @@ public interface ClusterMemberGroup {
         Builder setExtendProxyCount(int numberOfMembers);
 
         /**
+         * Sets the number of JMX monitor members the cluster member group should contain.
+         *
+         * @param numberOfMembers Number of members.
+         * @return builder.
+         */
+        Builder setJmxMonitorCount(int numberOfMembers);
+
+        /**
          * Sets the log destination where the cluster members should output to.
          *
          * @param logDestination Log destination (standard Coherence log - stdout, log4j, java).
@@ -311,6 +324,14 @@ public interface ClusterMemberGroup {
          * @return builder.
          */
         Builder setExtendProxyRoleName(final String roleName);
+
+        /**
+         * Sets the JMX monitor member's role name.
+         *
+         * @param roleName Role name.
+         * @return builder.
+         */
+        Builder setJmxMonitorRoleName(final String roleName);
 
         /**
          * Sets the storage disabled member's role name.

@@ -172,8 +172,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @return member group.
      */
     public ClusterMemberGroup startAll() {
-        //TODO: littlegrid#10 Provide option to not stagger the start-up, e.g. for an additional member group to be
-        // started to join an established cluster.
         if (startInvoked) {
             return this;
         }

@@ -50,14 +50,15 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 28;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 30;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
 
     private static final String CUSTOM_CONFIGURED_MEMBER_COUNT_KEY = "CustomConfiguredCount";
     private static final String STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
-    private static final String EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
     private static final String STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
+    private static final String EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
+    private static final String JMX_MONITOR_COUNT_KEY = "JmxMonitorCount";
 
     private static final String NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
@@ -75,9 +76,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String CLUSTER_NAME_KEY = "ClusterName";
     private static final String CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY = "CustomConfiguredRoleName";
     private static final String STORAGE_ENABLED_ROLE_NAME_KEY = "StorageEnabledRoleName";
-    private static final String STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
     private static final String STORAGE_ENABLED_PROXY_ROLE_NAME_KEY = "StorageEnabledExtendProxyRoleName";
     private static final String EXTEND_PROXY_ROLE_NAME_KEY = "ExtendProxyRoleName";
+    private static final String JMX_MONITOR_ROLE_NAME_KEY = "JmxMonitorRoleName";
+    private static final String STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
     private static final String EXTEND_CLIENT_ROLE_NAME_KEY = "ExtendClientRoleName";
 
     private static final String WKA_PORT_KEY = "WkaPort";
@@ -97,8 +99,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     private static final String FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
-
     private Properties systemPropertiesBeforeTest;
+
 
     @Before
     public void beforeTest() {
@@ -124,10 +126,11 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final int expectedCustomConfiguredMemberCount = 10;
         final int expectedStorageEnabledCount = 11;
-        final int expectedExtendProxyCount = 12;
-        final int expectedStorageEnabledProxyCount = 13;
+        final int expectedStorageEnabledProxyCount = 12;
+        final int expectedExtendProxyCount = 13;
+        final int expectedJmxMonitorCount = 14;
 
-        final int expectedNumberOfThreads = 14;
+        final int expectedNumberOfThreads = 18;
         final String expectedInstanceClassName = "com.a.b.c.ClusterMember";
         final String expectedCustomConfiguredInstanceClassName = "com.d.e.f.ClusterMember";
 
@@ -141,8 +144,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         
         builder.setCustomConfiguredCount(expectedCustomConfiguredMemberCount);
         builder.setStorageEnabledCount(expectedStorageEnabledCount);
-        builder.setExtendProxyCount(expectedExtendProxyCount);
         builder.setStorageEnabledExtendProxyCount(expectedStorageEnabledProxyCount);
+        builder.setExtendProxyCount(expectedExtendProxyCount);
+        builder.setJmxMonitorCount(expectedJmxMonitorCount);
 
         builder.setNumberOfThreadsInStartUpPool(expectedNumberOfThreads);
         builder.setClusterMemberInstanceClassName(expectedInstanceClassName);
@@ -154,15 +158,16 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Map<String, String> builderSettings = defaultBuilder.getBuilderSettings();
+        final Map<String, String> builderSettings = defaultBuilder.getBuilderKeysAndValues();
 
         assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE));
 
         assertThat(builderSettings.get(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY), is(expectedExceptionReportInstanceClassName));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_COUNT_KEY), is(Integer.toString(expectedCustomConfiguredMemberCount)));
         assertThat(builderSettings.get(STORAGE_ENABLED_COUNT_KEY), is(Integer.toString(expectedStorageEnabledCount)));
-        assertThat(builderSettings.get(EXTEND_PROXY_COUNT_KEY), is(Integer.toString(expectedExtendProxyCount)));
         assertThat(builderSettings.get(STORAGE_ENABLED_PROXY_COUNT_KEY), is(Integer.toString(expectedStorageEnabledProxyCount)));
+        assertThat(builderSettings.get(EXTEND_PROXY_COUNT_KEY), is(Integer.toString(expectedExtendProxyCount)));
+        assertThat(builderSettings.get(JMX_MONITOR_COUNT_KEY), is(Integer.toString(expectedJmxMonitorCount)));
 
         assertThat(builderSettings.get(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY), is(Integer.toString(expectedNumberOfThreads)));
         assertThat(builderSettings.get(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY), is(expectedInstanceClassName));
@@ -187,9 +192,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedClusterName = "cluster-name";
         final String expectedCustomConfiguredRoleName = "custom-configurable-member";
         final String expectedStorageEnabledRoleName = "storage-enabled";
-        final String expectedStorageDisabledClientRoleName = "storage-disabled-client";
-        final String expectedExtendProxyRoleName = "extend-proxy";
         final String expectedStorageEnabledProxyRoleName = "storage-enabled-proxy";
+        final String expectedExtendProxyRoleName = "extend-proxy";
+        final String expectedJmxRoleRoleName = "jmx-monitor";
+        final String expectedStorageDisabledClientRoleName = "storage-disabled-client";
         final String expectedExtendClientRoleName = "extend-client";
 
         final String expectedWkaAddress = "234.234.234.0";
@@ -211,9 +217,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setClusterName(expectedClusterName);
         builder.setCustomConfiguredRoleName(expectedCustomConfiguredRoleName);
         builder.setStorageEnabledRoleName(expectedStorageEnabledRoleName);
-        builder.setStorageDisabledClientRoleName(expectedStorageDisabledClientRoleName);
-        builder.setExtendProxyRoleName(expectedExtendProxyRoleName);
         builder.setStorageEnabledExtendProxyRoleName(expectedStorageEnabledProxyRoleName);
+        builder.setExtendProxyRoleName(expectedExtendProxyRoleName);
+        builder.setJmxMonitorRoleName(expectedJmxRoleRoleName);
+        builder.setStorageDisabledClientRoleName(expectedStorageDisabledClientRoleName);
         builder.setExtendClientRoleName(expectedExtendClientRoleName);
 
         builder.setWkaAddress(expectedWkaAddress);
@@ -228,7 +235,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Map<String, String> builderSettings = defaultBuilder.getBuilderSettings();
+        final Map<String, String> builderSettings = defaultBuilder.getBuilderKeysAndValues();
 
         assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE));
 
@@ -240,9 +247,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(CLUSTER_NAME_KEY), is(expectedClusterName));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY), is(expectedCustomConfiguredRoleName));
         assertThat(builderSettings.get(STORAGE_ENABLED_ROLE_NAME_KEY), is(expectedStorageEnabledRoleName));
-        assertThat(builderSettings.get(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY), is(expectedStorageDisabledClientRoleName));
-        assertThat(builderSettings.get(EXTEND_PROXY_ROLE_NAME_KEY), is(expectedExtendProxyRoleName));
         assertThat(builderSettings.get(STORAGE_ENABLED_PROXY_ROLE_NAME_KEY), is(expectedStorageEnabledProxyRoleName));
+        assertThat(builderSettings.get(EXTEND_PROXY_ROLE_NAME_KEY), is(expectedExtendProxyRoleName));
+        assertThat(builderSettings.get(JMX_MONITOR_ROLE_NAME_KEY), is(expectedJmxRoleRoleName));
+        assertThat(builderSettings.get(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY), is(expectedStorageDisabledClientRoleName));
         assertThat(builderSettings.get(EXTEND_CLIENT_ROLE_NAME_KEY), is(expectedExtendClientRoleName));
 
         assertThat(builderSettings.get(WKA_ADDRESS_KEY), is(expectedWkaAddress));
