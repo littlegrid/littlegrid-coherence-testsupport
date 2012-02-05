@@ -4,17 +4,21 @@ import com.tangosol.net.CacheFactory;
 import org.junit.After;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
- * Custom configured member tests.
+ * JMX monitor member tests.
  */
 public final class JmxMonitorClusterMemberIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     private ClusterMemberGroup memberGroup;
+
 
     @After
     public void afterTest() {

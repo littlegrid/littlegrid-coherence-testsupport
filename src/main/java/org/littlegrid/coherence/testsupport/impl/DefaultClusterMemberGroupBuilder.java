@@ -109,6 +109,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_LOG_DESTINATION_KEY = "LogDestination";
     private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
 
+    private static final String BUILDER_COHERENCE_MANAGEMENT = "CoherenceManagement";
+    private static final String BUILDER_COHERENCE_MANAGEMENT_REMOTE = "CoherenceManagementRemote";
+    private static final String BUILDER_MANAGEMENT_JMX_REMOTE = "ManagementJmxRemote";
+
     private static final String BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
     private static final LoggerPlaceHolder LOGGER =
@@ -117,23 +121,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
 
     private Properties additionalSystemProperties = new Properties();
-    private Properties builderKeysToSystemPropertiesMapping = new Properties();
+    private Properties builderKeyToSystemPropertyNameMapping = new Properties();
 
     private String[] jarsToExcludeFromClassPath;
     private URL[] classPathUrls;
 
 
-    //TODO: littlegrid#5 Think about JMX
-//            properties.addSystemProperty(COHERENCE_MANAGEMENT_KEY, "all");
-//            properties.addSystemProperty(JMX_MANAGEMENT_REMOTE_KEY, "true");
-//            properties.addSystemProperty(JMX_JMXREMOTE_KEY, "");
-
     /**
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        loadAndInitialise();
-        loadBuilderKeysToSystemPropertiesMapping();
+        loadAndSetBuilderKeysAndValues();
+        loadBuilderKeyToSystemPropertyNameMapping();
     }
 
     /**
@@ -145,7 +144,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return builderKeysAndValues;
     }
 
-    private void loadAndInitialise() {
+    private void loadAndSetBuilderKeysAndValues() {
         final String overridePropertiesFilename =
                 System.getProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, BUILDER_OVERRIDE_PROPERTIES_FILENAME
                         + ", littlegrid/" + BUILDER_OVERRIDE_PROPERTIES_FILENAME);
@@ -161,8 +160,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(propertiesFilenames));
     }
 
-    private void loadBuilderKeysToSystemPropertiesMapping() {
-        builderKeysToSystemPropertiesMapping =
+    private void loadBuilderKeyToSystemPropertyNameMapping() {
+        builderKeyToSystemPropertyNameMapping =
                 PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
     }
 
@@ -240,15 +239,20 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             throw new IllegalStateException(throwable);
         }
 
+        final Properties clientSystemProperties;
+
         // Clear and now prepare system properties based upon the anticipated client type.
         if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
-            SystemUtils.applyToSystemProperties(getSystemPropertiesForExtendProxyClient());
+            clientSystemProperties = getSystemPropertiesForExtendProxyClient();
+
+            SystemUtils.applyToSystemProperties(clientSystemProperties);
         } else {
-            SystemUtils.applyToSystemProperties(getSystemPropertiesForStorageDisabledClient());
+            clientSystemProperties = getSystemPropertiesForStorageDisabledClient();
+
+            SystemUtils.applyToSystemProperties(clientSystemProperties);
         }
 
-        LOGGER.info(format("Coherence system properties for client: %s",
-                SystemUtils.getSystemPropertiesWithPrefix("tangosol.coherence.")));
+        LOGGER.info(format("Coherence system properties for client: %s", clientSystemProperties));
 
         return containerGroup;
     }
@@ -403,22 +407,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExtendProxySpecificCacheConfiguration(final String cacheConfiguration) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup.Builder setStorageEnabledSpecificCacheConfiguration(final String cacheConfiguration) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ClusterMemberGroup.Builder setClientCacheConfiguration(final String cacheConfiguration) {
         builderKeysAndValues.put(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
@@ -438,10 +426,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     /**
      * {@inheritDoc}
      */
+/*
     @Override
     public ClusterMemberGroup.Builder setClientOverrideConfiguration(final String overrideConfiguration) {
         throw new UnsupportedOperationException();
     }
+*/
 
     /**
      * {@inheritDoc}
@@ -760,6 +750,30 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     /**
      * {@inheritDoc}
      */
+/*
+    @Override
+    public ClusterMemberGroup.Builder setCoherenceManagement(final String management) {
+        builderKeysAndValues.put(BUILDER_COHERENCE_MANAGEMENT, management);
+
+        return this;
+    }
+*/
+
+    /**
+     * {@inheritDoc}
+     */
+/*
+    @Override
+    public ClusterMemberGroup.Builder setManagementJmxRemote(final String jmxRemote) {
+        builderKeysAndValues.put(BUILDER_MANAGEMENT_JMX_REMOTE, jmxRemote);
+
+        return this;
+    }
+*/
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final int joinTimeoutMilliseconds) {
         builderKeysAndValues.put(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS, Integer.toString(joinTimeoutMilliseconds));
@@ -812,7 +826,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
@@ -834,12 +848,23 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_JMX_MONITOR_ROLE_NAME_KEY);
+
+        setPropertyWhenValid(properties,
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_COHERENCE_MANAGEMENT), "all");
+
+        setPropertyWhenValid(properties,
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_COHERENCE_MANAGEMENT_REMOTE),
+                Boolean.TRUE.toString());
+
+        setPropertyWhenValid(properties,
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_MANAGEMENT_JMX_REMOTE),
+                Boolean.TRUE.toString());
 
         properties.putAll(additionalSystemProperties);
 
@@ -856,7 +881,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
@@ -879,7 +904,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
@@ -887,11 +912,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_EXTEND_PROXY_ROLE_NAME_KEY);
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_EXTEND_PORT_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_PORT_KEY),
                 Integer.toString(extendPort));
 
         properties.putAll(additionalSystemProperties);
@@ -913,17 +938,17 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_STORAGE_ENABLED_PROXY_ROLE_NAME_KEY);
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_EXTEND_PORT_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_PORT_KEY),
                 Integer.toString(extendPort));
 
         properties.putAll(additionalSystemProperties);
@@ -949,13 +974,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY);
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
 
         properties.putAll(additionalSystemProperties);
@@ -966,20 +991,20 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private Properties getSystemPropertiesForTcmpClusterMember() {
         final Properties properties = new Properties();
 
-        setPropertyWhenValid(properties, builderKeysToSystemPropertiesMapping.getProperty(BUILDER_TCMP_ENABLED_KEY),
+        setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_TCMP_ENABLED_KEY),
                 Boolean.TRUE.toString());
 
         setPropertyWhenValid(properties, BUILDER_WKA_ADDRESS_KEY);
 
-        setPropertyWhenValid(properties, builderKeysToSystemPropertiesMapping.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
+        setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_LOCAL_ADDRESS_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
 
-        setPropertyWhenValid(properties, builderKeysToSystemPropertiesMapping.getProperty(BUILDER_EXTEND_ADDRESS_KEY),
+        setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_ADDRESS_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
 
         setPropertyWhenValid(properties, BUILDER_WKA_PORT_KEY);
 
-        setPropertyWhenValid(properties, builderKeysToSystemPropertiesMapping.getProperty(BUILDER_LOCAL_PORT_KEY),
+        setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_LOCAL_PORT_KEY),
                 getBuilderSettingAsString(BUILDER_WKA_PORT_KEY));
 
         setPropertyWhenValid(properties, BUILDER_TTL_KEY);
@@ -1011,15 +1036,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         setPropertyWhenValid(properties,
-                builderKeysToSystemPropertiesMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
-        setPropertyWhenValid(properties, builderKeysToSystemPropertiesMapping.getProperty(BUILDER_TCMP_ENABLED_KEY),
+        setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_TCMP_ENABLED_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY);
 
-        setPropertyWhenValid(properties, builderKeysToSystemPropertiesMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
+        setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
 
         setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
@@ -1035,7 +1060,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private void setPropertyWhenValid(final Properties properties,
                                       final String builderSettingKey) {
 
-        final String systemPropertyName = builderKeysToSystemPropertiesMapping.getProperty(builderSettingKey);
+        final String systemPropertyName = builderKeyToSystemPropertyNameMapping.getProperty(builderSettingKey);
 
         if (systemPropertyName == null) {
             throw new IllegalStateException(format(

@@ -54,9 +54,14 @@ public interface ClusterMemberGroup {
     ClusterMemberGroup shutdownAll();
 
     /**
-     * Stops specific cluster members.
+     * Stops specific cluster members - this is typically used in-conjunction
+     * getSuggestedSleepAfterStopDuration and TimeUnit.SECONDS.  An example of usage might be:
+     * <code>
+     * memberGroup.stop(2);
+     * TimeUnit.SECONDS.sleep(memberGroup.getSuggestedSleepAfterStopDuration());
+     * </code>
      *
-     * @param memberIds Ids of cluster member(s) to stop.
+     * @param memberIds Ids of cluster member(s) to stop,
      * @return member group.
      */
     ClusterMemberGroup stopMember(int... memberIds);
@@ -90,7 +95,7 @@ public interface ClusterMemberGroup {
      * <code>
      * memberGroup.stop(2);
      * TimeUnit.SECONDS.sleep(memberGroup.getSuggestedSleepAfterStopDuration());
-     *</code>
+     * </code>
      *
      * @return seconds to sleep.
      */
@@ -162,24 +167,6 @@ public interface ClusterMemberGroup {
         Builder setCacheConfiguration(String cacheConfiguration);
 
         /**
-         * Sets the cache configuration file to be used specifically for the storage enabled
-         * members of the group.
-         *
-         * @param cacheConfiguration Cache configuration.
-         * @return builder.
-         */
-        Builder setStorageEnabledSpecificCacheConfiguration(String cacheConfiguration);
-
-        /**
-         * Sets the cache configuration file to be used specifically for the Extend proxy
-         * members of the group.
-         *
-         * @param cacheConfiguration Cache configuration.
-         * @return builder.
-         */
-        Builder setExtendProxySpecificCacheConfiguration(String cacheConfiguration);
-
-        /**
          * Sets the Coherence override file to be used for the cluster member groups, this is
          * used for configurations where all TCMP members (storage enabled, Extend proxy and
          * storage disabled) use the same configuration.
@@ -205,7 +192,7 @@ public interface ClusterMemberGroup {
          * @param overrideConfiguration Override configuration.
          * @return builder.
          */
-        Builder setClientOverrideConfiguration(String overrideConfiguration);
+//        Builder setClientOverrideConfiguration(String overrideConfiguration);
 
         /**
          * Used to set any remaining system properties that are required, for instance if the
@@ -498,6 +485,17 @@ public interface ClusterMemberGroup {
          * @return builder.
          */
         Builder setSuggestedSleepAfterStopDurationDefault(int sleepAfterStopDuration);
+
+        /**
+         * Set Coherence management, values
+         * @param management
+         * @return
+         */
+/*
+        Builder setCoherenceManagement(String management);
+        
+        Builder setManagementJmxRemote(String jmxRemote);
+*/
 
         /**
          * Sets the duration that Coherence will wait before starting a new cluster, this
