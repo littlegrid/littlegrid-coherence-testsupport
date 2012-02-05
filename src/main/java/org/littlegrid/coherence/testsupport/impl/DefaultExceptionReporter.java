@@ -32,9 +32,11 @@
 package org.littlegrid.coherence.testsupport.impl;
 
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupStartUpException;
 
-import java.net.URL;
-import java.util.Properties;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
 
 /**
  * Default exception reporter implementation
@@ -44,9 +46,32 @@ public class DefaultExceptionReporter implements ClusterMemberGroup.ExceptionRep
      * {@inheritDoc}
      */
     @Override
-    public void report(final URL[] classPathUrlsInUse,
-                       final Properties systemPropertiesDefinedForUse) {
+    public void report(final Throwable throwable) {
+        final PrintStream out = System.out;
+        
+        if (throwable instanceof ClusterMemberGroupStartUpException) {
+            final ClusterMemberGroupStartUpException startUpException = (ClusterMemberGroupStartUpException) throwable;
 
-        System.out.println("Oh dear - " + classPathUrlsInUse + systemPropertiesDefinedForUse);
+            System.out.println("Oh dear - " + Arrays.toString(startUpException.getClassPathUrls()) +
+                    startUpException.getSystemPropertiesBeforeStartInvoked());
+
+        } else {
+            outputHeading(out);
+            outputJavaHome(out);
+            outputClassPath(out);
+        }
+    }
+    
+    private void outputHeading(final PrintStream out) {
+        out.println("Exception occurred, details to help trouble-shooting below");
+        out.println("==========================================================");
+    }
+    
+    private void outputJavaHome(final PrintStream out)  {
+        out.println("Java home.: " + System.getProperty("java.home"));
+    }
+    
+    private void outputClassPath(final PrintStream out) {
+        out.println("Class path: " + System.getProperty("java.class.path"));
     }
 }

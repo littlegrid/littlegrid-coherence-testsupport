@@ -43,19 +43,19 @@ import org.junit.Test;
 public class DefaultExceptionReporterIntegrationTest {
     private ClusterMemberGroup memberGroup;
 
-//    @Before
-//    public void beforeTest() {
-//        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-//                .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
-//                .build();
-//    }
-//
-//    @After
-//    public void afterTest() {
-//        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-//    }
+    @Before
+    public void beforeTest() {
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
+                .build();
+    }
 
-    @Test //(expected = Exception.class)
+    @After
+    public void afterTest() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    @Test
     public void whatever() {
     }
 }

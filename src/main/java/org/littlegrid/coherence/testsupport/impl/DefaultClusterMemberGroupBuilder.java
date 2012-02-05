@@ -186,16 +186,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup build() {
-        final ClusterMemberGroup.ExceptionReporter exceptionReporter = createExceptionReporter();
-
-        //TODO: littlegrid#6 Tidy this up
-        // on exception output: class path, tangosol system properties, all system properties and message
-        // to suggest checking for another running cluster
-
         int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
         int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
+        final ClusterMemberGroup.ExceptionReporter exceptionReporter = createExceptionReporter();
 
         // Default to a storage-enabled if nothing else specified
         if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0
@@ -219,15 +214,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
 
-        Properties systemPropertiesToUse = null;
-
         try {
-            systemPropertiesToUse = getSystemPropertiesForStorageEnabled();
-            buildStorageEnabledMembers(storageEnabledCount, systemPropertiesToUse, containerGroup, classPathUrls,
+            buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
-            systemPropertiesToUse = getSystemPropertiesForCustomConfigured();
-            buildCustomConfiguredMembers(customConfiguredCount, systemPropertiesToUse, containerGroup, classPathUrls,
+            buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
             //TODO: Sort out how to pass proxy address
@@ -235,10 +226,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
-        } catch (Exception e) {
-            exceptionReporter.report(classPathUrls, systemPropertiesToUse);
+        } catch (Throwable throwable) {
+            exceptionReporter.report(throwable);
 
-            throw new IllegalStateException(e);
+            throw new IllegalStateException(throwable);
         }
 
         // Clear and now prepare system properties based upon the anticipated client type.
@@ -279,7 +270,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void buildCustomConfiguredMembers(final int customConfiguredCount,
-                                              final Properties systemProperties,
                                               final DefaultClusterMemberGroup containerGroup,
                                               final URL[] classPathUrls,
                                               final int numberOfThreadsInStartUpPool) {
@@ -289,7 +279,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (customConfiguredCount > 0) {
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(customConfiguredCount,
-                    systemProperties, classPathUrls,
+                    getSystemPropertiesForCustomConfigured(), classPathUrls,
                     customConfiguredClusterMemberInstanceClassName,
                     numberOfThreadsInStartUpPool)
                     .startAll();
@@ -347,7 +337,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void buildStorageEnabledMembers(final int storageEnabledCount,
-                                            final Properties systemProperties,
                                             final DefaultClusterMemberGroup containerGroup,
                                             final URL[] classPathUrls,
                                             final int numberOfThreadsInStartUpPool) {
@@ -357,7 +346,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (storageEnabledCount > 0) {
             final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
-                    systemProperties, classPathUrls, clusterMemberInstanceClassName,
+                    getSystemPropertiesForStorageEnabled(), classPathUrls, clusterMemberInstanceClassName,
                     numberOfThreadsInStartUpPool)
                     .startAll();
 

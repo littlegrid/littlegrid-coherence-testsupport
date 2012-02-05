@@ -33,6 +33,7 @@ package org.littlegrid.coherence.testsupport.impl;
 
 import com.tangosol.net.CacheFactory;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupStartUpException;
 import org.littlegrid.utils.LoggerPlaceHolder;
 import org.littlegrid.utils.SystemUtils;
 
@@ -216,7 +217,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             System.setProperties(systemPropertiesBeforeStartInvoked);
             LOGGER.error(message);
-            throw new IllegalStateException(message, e);
+            throw new ClusterMemberGroupStartUpException(e, systemPropertiesBeforeStartInvoked,
+                    systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
+                    clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);
         }
 
         return this;

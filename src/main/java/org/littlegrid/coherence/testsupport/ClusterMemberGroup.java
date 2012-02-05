@@ -490,7 +490,6 @@ public interface ClusterMemberGroup {
     }
 
     interface ExceptionReporter {
-        void report(URL[] classPathUrlsInUse,
-                    Properties systemPropertiesDefinedForUse);
+        void report(Throwable throwable);
     }
 }
