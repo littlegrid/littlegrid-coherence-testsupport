@@ -198,7 +198,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             futureForSeniorMember.get();
 
-            LOGGER.info("First cluster member up, starting any remaining members to join established cluster");
+            LOGGER.debug("First cluster member up, starting any remaining members to join established cluster");
             final List<Future<DelegatingClusterMemberWrapper>> futuresForOtherMembers =
                     executorService.invokeAll(tasks);
 
@@ -207,38 +207,23 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             executorService.shutdown();
 
-            LOGGER.info(format("Group of cluster member(s) started, member Ids: %s", getMemberIdsAsString()));
+            LOGGER.debug(format("This group of cluster member(s) started, member Ids: %s",
+                    Arrays.toString(getStartedMemberIds())));
         } catch (Exception e) {
             LOGGER.error(format(
                     "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
                     systemPropertiesToBeApplied));
 
-            System.setProperties(systemPropertiesBeforeStartInvoked);
+//            System.setProperties(systemPropertiesBeforeStartInvoked);
 
             throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
                     systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
                     clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);
+        } finally {
+            System.setProperties(systemPropertiesBeforeStartInvoked);
         }
 
         return this;
-    }
-
-    private StringBuilder getMemberIdsAsString() {
-        final StringBuilder sb = new StringBuilder();
-
-        boolean subsequentIterationOfLoop = false;
-
-        for (final int memberId : getStartedMemberIds()) {
-            if (subsequentIterationOfLoop) {
-                sb.append(", ");
-            }
-
-            sb.append(memberId);
-
-            subsequentIterationOfLoop = true;
-        }
-
-        return sb;
     }
 
     private void outputStartAllMessages() {

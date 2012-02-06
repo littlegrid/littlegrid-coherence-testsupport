@@ -42,6 +42,7 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,6 +225,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
 
         try {
+            //TODO: tidy this up, all very similar
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
@@ -236,6 +238,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
+
+            LOGGER.info(format("Group of cluster member(s) started, member Ids: %s",
+                    Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable);
 
@@ -244,18 +249,25 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final Properties clientSystemProperties;
 
+        final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
+
         // Clear and now prepare system properties based upon the anticipated client type.
-        if (storageEnabledExtendProxyCount > 0 || extendProxyCount > 0) {
+        if ((storageEnabledExtendProxyCount > 0 || extendProxyCount > 0)
+                && (clientCacheConfiguration != null && !clientCacheConfiguration.trim().isEmpty())) {
+            LOGGER.info("Assuming Extend client and preparing system properties appropriately");
+
             clientSystemProperties = getSystemPropertiesForExtendProxyClient();
 
             SystemUtils.applyToSystemProperties(clientSystemProperties);
         } else {
+            LOGGER.info("Assuming storage-disabled client and preparing system properties appropriately");
+
             clientSystemProperties = getSystemPropertiesForStorageDisabledClient();
 
             SystemUtils.applyToSystemProperties(clientSystemProperties);
         }
 
-        LOGGER.info(format("Coherence system properties for client: %s", clientSystemProperties));
+        LOGGER.info(format("System properties set for client: %s", clientSystemProperties));
 
         return containerGroup;
     }
@@ -971,11 +983,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
-        if (clientCacheConfiguration == null) {
+        if (clientCacheConfiguration == null || clientCacheConfiguration.trim().isEmpty()) {
             setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         } else {
             setPropertyWhenValid(properties, BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
         }
+
+        setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
 
         setPropertyWhenValid(properties,
                 builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),

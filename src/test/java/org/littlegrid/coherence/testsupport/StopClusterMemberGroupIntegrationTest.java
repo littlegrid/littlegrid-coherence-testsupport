@@ -121,8 +121,6 @@ public class StopClusterMemberGroupIntegrationTest
                 .setExtendProxyCount(numberOfExtendProxyMembers)
                 .build();
 
-        System.setProperty("tangosol.coherence.tcmp.enabled", "true");
-
         final Cluster cluster = CacheFactory.ensureCluster();
 
         assertThatClusterIsExpectedSize(cluster, expectedClusterSizeBeforeStop);
@@ -133,8 +131,6 @@ public class StopClusterMemberGroupIntegrationTest
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
         assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterStop);
-
-        memberGroup.shutdownAll();
     }
 
     @Test(expected = UnsupportedOperationException.class)
