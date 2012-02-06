@@ -75,7 +75,8 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
             outputNumberOfThreadThreadsInStartUpPool(out, buildException.getNumberOfThreadsInStartUpPool());
             outputMemory(out);
             outputNetwork(out);
-            outputOrderSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
+            outputSortedSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
+            outputSortedCurrentSystemProperties(out);
             outputException(out, throwable.getCause());
         } else {
             outputHeading(out);
@@ -85,6 +86,18 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
             outputMemory(out);
             outputNetwork(out);
             outputException(out, throwable);
+        }
+    }
+
+    private void outputSortedCurrentSystemProperties(final PrintStream out) {
+        out.println("System properties current: all current system properties - sorted to help identification");
+
+        Map<String, String> map = new TreeMap(System.getProperties());
+
+        for (final String key : map.keySet()) {
+            String value = map.get(key);
+
+            out.println(format("    key=%s, value=%s", key, value));
         }
     }
 
@@ -140,8 +153,8 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         }
     }
 
-    private void outputOrderSystemPropertiesApplied(final PrintStream out,
-                                                    final Properties systemPropertiesToBeApplied) {
+    private void outputSortedSystemPropertiesApplied(final PrintStream out,
+                                                     final Properties systemPropertiesToBeApplied) {
 
         out.println("System properties applied: sorted to help identification");
 

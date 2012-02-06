@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Properties;
 
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
@@ -27,7 +28,7 @@ public final class JmxMonitorClusterMemberIntegrationTest
 
     @Test
     public void jmxMonitorClusterMember() {
-        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()

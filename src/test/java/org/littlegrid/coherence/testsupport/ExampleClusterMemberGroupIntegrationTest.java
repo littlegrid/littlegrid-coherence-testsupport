@@ -71,7 +71,8 @@ public final class ExampleClusterMemberGroupIntegrationTest {
 
     @Test
     public void exampleOfSimplestUse() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().build();
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .build();
 
         performSimplePutSizeGet(KNOWN_TEST_CACHE);
     }
@@ -222,6 +223,15 @@ public final class ExampleClusterMemberGroupIntegrationTest {
                 .build();
 
         assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
+    }
+
+    @Test
+    public void clusterWithVarietyOfMembers() {
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(2)
+                .setExtendProxyCount(1)
+                .setJmxMonitorCount(1)
+                .build();
     }
 
     private void performSimplePutSizeGet(final String cacheName) {

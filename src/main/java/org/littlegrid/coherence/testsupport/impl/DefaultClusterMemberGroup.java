@@ -209,12 +209,12 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             LOGGER.info(format("Group of cluster member(s) started, member Ids: %s", getMemberIdsAsString()));
         } catch (Exception e) {
-            final String message = format(
+            LOGGER.error(format(
                     "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
-                    systemPropertiesToBeApplied);
+                    systemPropertiesToBeApplied));
 
             System.setProperties(systemPropertiesBeforeStartInvoked);
-            LOGGER.error(message);
+
             throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
                     systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
                     clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);

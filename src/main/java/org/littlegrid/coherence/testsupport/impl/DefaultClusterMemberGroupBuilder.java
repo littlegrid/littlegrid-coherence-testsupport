@@ -113,6 +113,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_COHERENCE_MANAGEMENT_REMOTE = "CoherenceManagementRemote";
     private static final String BUILDER_MANAGEMENT_JMX_REMOTE = "ManagementJmxRemote";
 
+    private static final String COHERENCE_MANAGEMENT_NONE = "none";
+    private static final String COHERENCE_MANAGEMENT_ALL = "all";
+
     private static final String BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
     private static final LoggerPlaceHolder LOGGER =
@@ -227,12 +230,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
+            buildJmxMonitorMembers(jmxMonitorCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
+
             buildExtendProxyMembers(extendProxyCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
 
             buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
-
-            buildJmxMonitorMembers(jmxMonitorCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable);
 
@@ -856,7 +859,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_JMX_MONITOR_ROLE_NAME_KEY);
 
         setPropertyWhenValid(properties,
-                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_COHERENCE_MANAGEMENT), "all");
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_COHERENCE_MANAGEMENT),
+                COHERENCE_MANAGEMENT_ALL);
 
         setPropertyWhenValid(properties,
                 builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_COHERENCE_MANAGEMENT_REMOTE),
@@ -1013,6 +1017,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         setPropertyWhenValid(properties, BUILDER_LOG_DESTINATION_KEY);
         setPropertyWhenValid(properties, BUILDER_LOG_LEVEL_KEY);
 
+        setPropertyWhenValid(properties,
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_COHERENCE_MANAGEMENT),
+                COHERENCE_MANAGEMENT_NONE);
+
+        setPropertyWhenValid(properties,
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_COHERENCE_MANAGEMENT_REMOTE),
+                Boolean.TRUE.toString());
+
+        setPropertyWhenValid(properties,
+                builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_MANAGEMENT_JMX_REMOTE),
+                Boolean.FALSE.toString());
+
         setPropertyWhenValid(properties, BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS);
 
         return properties;
@@ -1046,6 +1062,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_ENABLED_KEY),
                 Boolean.FALSE.toString());
+
+        setPropertyWhenValid(properties, builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_EXTEND_ADDRESS_KEY),
+                getBuilderSettingAsString(BUILDER_WKA_ADDRESS_KEY));
 
         setPropertyWhenValid(properties, BUILDER_EXTEND_PORT_KEY);
 
