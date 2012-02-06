@@ -765,30 +765,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     /**
      * {@inheritDoc}
      */
-/*
-    @Override
-    public ClusterMemberGroup.Builder setCoherenceManagement(final String management) {
-        builderKeysAndValues.put(BUILDER_COHERENCE_MANAGEMENT, management);
-
-        return this;
-    }
-*/
-
-    /**
-     * {@inheritDoc}
-     */
-/*
-    @Override
-    public ClusterMemberGroup.Builder setManagementJmxRemote(final String jmxRemote) {
-        builderKeysAndValues.put(BUILDER_MANAGEMENT_JMX_REMOTE, jmxRemote);
-
-        return this;
-    }
-*/
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final int joinTimeoutMilliseconds) {
         builderKeysAndValues.put(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS, Integer.toString(joinTimeoutMilliseconds));

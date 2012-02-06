@@ -141,7 +141,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
 
         builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
-        
+
         builder.setCustomConfiguredCount(expectedCustomConfiguredMemberCount);
         builder.setStorageEnabledCount(expectedStorageEnabledCount);
         builder.setStorageEnabledExtendProxyCount(expectedStorageEnabledProxyCount);

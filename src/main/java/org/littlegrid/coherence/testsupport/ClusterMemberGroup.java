@@ -487,17 +487,6 @@ public interface ClusterMemberGroup {
         Builder setSuggestedSleepAfterStopDurationDefault(int sleepAfterStopDuration);
 
         /**
-         * Set Coherence management, values
-         * @param management
-         * @return
-         */
-/*
-        Builder setCoherenceManagement(String management);
-        
-        Builder setManagementJmxRemote(String jmxRemote);
-*/
-
-        /**
          * Sets the duration that Coherence will wait before starting a new cluster, this
          * setting must be used in conjunction with the littlegrid-fast-start-coherence-override.xml
          * which defines the appropriate system property to control the join timeout.
