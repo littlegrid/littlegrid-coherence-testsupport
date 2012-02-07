@@ -85,7 +85,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                     .build();
 
-            final NamedCache cache = CacheFactory.getCache("unknown-cache-this-will-not-be-found-in-cache-configuration");
+            final NamedCache cache = CacheFactory.getCache("this-cache-will-not-be-found-in-cache-configuration");
             cache.put("key", "value");
         } finally {
             memberGroup.shutdownAll();

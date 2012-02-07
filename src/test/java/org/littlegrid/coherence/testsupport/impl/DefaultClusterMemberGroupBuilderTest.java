@@ -162,20 +162,34 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE));
 
-        assertThat(builderSettings.get(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY), is(expectedExceptionReportInstanceClassName));
-        assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_COUNT_KEY), is(Integer.toString(expectedCustomConfiguredMemberCount)));
+        assertThat(builderSettings.get(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY),
+                is(expectedExceptionReportInstanceClassName));
+
+        assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_COUNT_KEY),
+                is(Integer.toString(expectedCustomConfiguredMemberCount)));
+
         assertThat(builderSettings.get(STORAGE_ENABLED_COUNT_KEY), is(Integer.toString(expectedStorageEnabledCount)));
-        assertThat(builderSettings.get(STORAGE_ENABLED_PROXY_COUNT_KEY), is(Integer.toString(expectedStorageEnabledProxyCount)));
+        assertThat(builderSettings.get(STORAGE_ENABLED_PROXY_COUNT_KEY),
+                is(Integer.toString(expectedStorageEnabledProxyCount)));
+
         assertThat(builderSettings.get(EXTEND_PROXY_COUNT_KEY), is(Integer.toString(expectedExtendProxyCount)));
         assertThat(builderSettings.get(JMX_MONITOR_COUNT_KEY), is(Integer.toString(expectedJmxMonitorCount)));
 
-        assertThat(builderSettings.get(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY), is(Integer.toString(expectedNumberOfThreads)));
-        assertThat(builderSettings.get(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY), is(expectedInstanceClassName));
-        assertThat(builderSettings.get(CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY), is(expectedCustomConfiguredInstanceClassName));
+        assertThat(builderSettings.get(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY),
+                is(Integer.toString(expectedNumberOfThreads)));
 
-        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_35X_KEY), is(Integer.toString(expectedSleepDuration35x)));
-        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_36X_KEY), is(Integer.toString(expectedSleepDuration36x)));
-        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY), is(Integer.toString(expectedSleepDurationDefault)));
+        assertThat(builderSettings.get(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY), is(expectedInstanceClassName));
+        assertThat(builderSettings.get(CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY),
+                is(expectedCustomConfiguredInstanceClassName));
+
+        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_35X_KEY),
+                is(Integer.toString(expectedSleepDuration35x)));
+
+        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_36X_KEY),
+                is(Integer.toString(expectedSleepDuration36x)));
+
+        assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY),
+                is(Integer.toString(expectedSleepDurationDefault)));
     }
 
     @Test
@@ -250,7 +264,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(STORAGE_ENABLED_PROXY_ROLE_NAME_KEY), is(expectedStorageEnabledProxyRoleName));
         assertThat(builderSettings.get(EXTEND_PROXY_ROLE_NAME_KEY), is(expectedExtendProxyRoleName));
         assertThat(builderSettings.get(JMX_MONITOR_ROLE_NAME_KEY), is(expectedJmxRoleRoleName));
-        assertThat(builderSettings.get(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY), is(expectedStorageDisabledClientRoleName));
+        assertThat(builderSettings.get(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY),
+                is(expectedStorageDisabledClientRoleName));
+
         assertThat(builderSettings.get(EXTEND_CLIENT_ROLE_NAME_KEY), is(expectedExtendClientRoleName));
 
         assertThat(builderSettings.get(WKA_ADDRESS_KEY), is(expectedWkaAddress));
@@ -315,8 +331,11 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final boolean expectedTcmpEnabled = true;
         final boolean expectedDistributedLocalStorage = true;
 
-        assertThat(properties.getProperty("tangosol.coherence.tcmp.enabled"), is(Boolean.toString(expectedTcmpEnabled)));
-        assertThat(properties.getProperty("tangosol.coherence.distributed.localstorage"), is(Boolean.toString(expectedDistributedLocalStorage)));
+        assertThat(properties.getProperty("tangosol.coherence.tcmp.enabled"),
+                is(Boolean.toString(expectedTcmpEnabled)));
+
+        assertThat(properties.getProperty("tangosol.coherence.distributed.localstorage"),
+                is(Boolean.toString(expectedDistributedLocalStorage)));
 
         assertThat(properties.getProperty("tangosol.coherence.wka"), is(expectedWkaAddress));
         assertThat(properties.getProperty("tangosol.coherence.localhost"), is(expectedLocalAddress));

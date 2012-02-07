@@ -58,7 +58,8 @@ public final class ChildFirstUrlClassLoaderTest {
         Dummy dummy = new Dummy();
 
         assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(), is(childFirstLoader));
-        assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(), not(dummy.getClass().getClassLoader()));
+        assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(),
+                not(dummy.getClass().getClassLoader()));
     }
 
     @Test
@@ -73,7 +74,8 @@ public final class ChildFirstUrlClassLoaderTest {
         Dummy dummy = new Dummy();
 
         assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(), not(childFirstLoader));
-        assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(), is(dummy.getClass().getClassLoader()));
+        assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(),
+                is(dummy.getClass().getClassLoader()));
     }
 
     /**

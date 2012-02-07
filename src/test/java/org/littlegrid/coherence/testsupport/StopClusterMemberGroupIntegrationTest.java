@@ -47,7 +47,7 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 /**
  * Cluster member group stop tests.
  */
-public class StopClusterMemberGroupIntegrationTest
+public final class StopClusterMemberGroupIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
     private ClusterMemberGroup memberGroup;

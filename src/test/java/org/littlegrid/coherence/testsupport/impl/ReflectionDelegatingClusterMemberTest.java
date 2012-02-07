@@ -40,7 +40,7 @@ import static org.junit.Assert.assertThat;
  * Reflection delegating cluster member test to ensure all methods of delegate are
  * called as expected.
  */
-public class ReflectionDelegatingClusterMemberTest {
+public final class ReflectionDelegatingClusterMemberTest {
     @Test(expected = IllegalStateException.class)
     public void noClassName() {
         new ReflectionDelegatingClusterMember()

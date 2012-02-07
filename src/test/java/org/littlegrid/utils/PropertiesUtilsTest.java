@@ -1,7 +1,6 @@
 package org.littlegrid.utils;
 
 import org.junit.Test;
-import org.littlegrid.utils.PropertiesUtils;
 
 import java.util.Properties;
 

@@ -757,7 +757,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
-        builderKeysAndValues.put(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY, Integer.toString(sleepAfterStopDuration));
+        builderKeysAndValues.put(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY,
+                Integer.toString(sleepAfterStopDuration));
 
         return this;
     }
@@ -767,7 +768,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final int joinTimeoutMilliseconds) {
-        builderKeysAndValues.put(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS, Integer.toString(joinTimeoutMilliseconds));
+        builderKeysAndValues.put(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS,
+                Integer.toString(joinTimeoutMilliseconds));
 
         return this;
     }

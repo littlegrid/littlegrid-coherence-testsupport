@@ -52,7 +52,9 @@ public final class ClusterMemberGroupTestSupport {
     public static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupTestSupport.class.getName());
 
     public static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE = "coherence/littlegrid-test-cache-config.xml";
-    public static final String EXTEND_CLIENT_CACHE_CONFIG_FILE = "coherence/littlegrid-test-extend-client-cache-config.xml";
+    public static final String EXTEND_CLIENT_CACHE_CONFIG_FILE =
+            "coherence/littlegrid-test-extend-client-cache-config.xml";
+
     public static final String KNOWN_TEST_CACHE = "known-cache";
     public static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
     public static final String INVOCATION_SERVICE_NAME = "InvocationService";

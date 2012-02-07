@@ -37,7 +37,7 @@ import org.junit.Test;
 /**
  * Default exception report integration tests.
  */
-public class DefaultBuildExceptionReporterIntegrationTest {
+public final class DefaultBuildExceptionReporterIntegrationTest {
     private ClusterMemberGroup memberGroup;
 
     @After
