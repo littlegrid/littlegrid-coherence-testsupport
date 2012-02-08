@@ -33,8 +33,10 @@ package org.littlegrid.coherence.testsupport;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.junit.After;
 import org.junit.Test;
 
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
@@ -42,10 +44,19 @@ import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
- * Cluster member group baseline tests.
+ * Cluster member group baseline tests, a set of simple tests to quickly check the basic
+ * behaviour.
  */
 public final class BaselineClusterMemberGroupIntegrationTest
         extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+
+    private ClusterMemberGroup memberGroup;
+
+
+    @After
+    public void afterTest() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
 
     @Test
     public void startAndShutdownSingleMemberGroup() {
@@ -66,30 +77,22 @@ public final class BaselineClusterMemberGroupIntegrationTest
 
     @Test
     public void simpleMemberGroupWithCacheConfigurationAndKnownCache() {
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
         cache.put("key", "value");
-
-        memberGroup.shutdownAll();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void simpleMemberGroupWithCacheConfigurationAndUnknownCache() {
-        ClusterMemberGroup memberGroup = null;
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .build();
 
-        try {
-            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                    .build();
-
-            final NamedCache cache = CacheFactory.getCache("this-cache-will-not-be-found-in-cache-configuration");
-            cache.put("key", "value");
-        } finally {
-            memberGroup.shutdownAll();
-        }
+        final NamedCache cache = CacheFactory.getCache("this-cache-will-not-be-found-in-cache-configuration");
+        cache.put("key", "value");
     }
 
     @Test
@@ -97,7 +100,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
@@ -114,7 +117,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
@@ -126,8 +129,6 @@ public final class BaselineClusterMemberGroupIntegrationTest
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-
-        memberGroup.shutdownAll();
     }
 
     @Test
@@ -136,12 +137,10 @@ public final class BaselineClusterMemberGroupIntegrationTest
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
         final String jarToExclude = "junit-4.8.2.jar";
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setJarsToExcludeFromClassPath(jarToExclude)
                 .build();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
-
-        memberGroup.shutdownAll();
     }
 }

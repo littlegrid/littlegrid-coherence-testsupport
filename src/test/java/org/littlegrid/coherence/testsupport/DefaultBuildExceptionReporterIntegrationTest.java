@@ -31,22 +31,17 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import org.junit.After;
 import org.junit.Test;
 
 /**
  * Default exception report integration tests.
  */
-public final class DefaultBuildExceptionReporterIntegrationTest {
-    private ClusterMemberGroup memberGroup;
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
+public final class DefaultBuildExceptionReporterIntegrationTest
+        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
 
     @Test(expected = IllegalStateException.class)
     public void unknownClusterMemberInstanceClassName() {
+        // Use an unknown class to cause an exception
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
                 .build();

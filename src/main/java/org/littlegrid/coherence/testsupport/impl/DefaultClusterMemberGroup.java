@@ -372,7 +372,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public ClusterMemberGroup shutdownAll() {
-        LOGGER.info("Resetting system properties to before member group started");
+        LOGGER.info("Restoring system properties back to their original state before member group started");
 
         System.setProperties(systemPropertiesBeforeStartInvoked);
 

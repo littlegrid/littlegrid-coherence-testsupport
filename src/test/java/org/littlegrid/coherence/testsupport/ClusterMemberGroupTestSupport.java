@@ -43,12 +43,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Class containing constants for cluster member group tests.
+ * Class containing constants and utility methods for cluster member group tests.
  */
 public final class ClusterMemberGroupTestSupport {
-    private ClusterMemberGroupTestSupport() {
-    }
-
     public static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupTestSupport.class.getName());
 
     public static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE = "coherence/littlegrid-test-cache-config.xml";
@@ -59,10 +56,18 @@ public final class ClusterMemberGroupTestSupport {
     public static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
     public static final String INVOCATION_SERVICE_NAME = "InvocationService";
 
+    public static final int CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP = 1;
     public static final int SINGLE_TEST_CLUSTER_SIZE = 1;
     public static final int SMALL_TEST_CLUSTER_SIZE = 2;
     public static final int MEDIUM_TEST_CLUSTER_SIZE = 3;
     public static final int LARGE_TEST_CLUSTER_SIZE = 6;
+
+
+    /**
+     * Private constructor to prevent creation.
+     */
+    private ClusterMemberGroupTestSupport() {
+    }
 
     public static void sleepForSeconds(final int seconds) {
         LOGGER.info(format(

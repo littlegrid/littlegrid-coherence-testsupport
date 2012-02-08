@@ -34,6 +34,7 @@ package org.littlegrid.coherence.testsupport;
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
 
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.sleepForSeconds;

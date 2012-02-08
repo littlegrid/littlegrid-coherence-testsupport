@@ -31,22 +31,36 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import com.tangosol.net.CacheFactory;
-import org.junit.After;
+import org.junit.Test;
+import org.littlegrid.utils.ChildFirstUrlClassLoader;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
 /**
- * Abstract base class for cluster member group tests.
+ * Cluster member class loader tests.
  */
-public abstract class AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
-    @After
-    public void afterTest() {
-        assertThat("Only storage disabled client is expected to be running after the cluster member tests have run",
-                CacheFactory.ensureCluster().getMemberSet().size(), is(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
+public final class ContainingClassLoaderClusterMemberIntegrationTest
+        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
 
-        CacheFactory.shutdown();
+    @Test
+    public void getContainingClassLoader() {
+        final int numberOfMembers = 3;
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        final int[] memberIds = memberGroup.getStartedMemberIds();
+
+        assertThat(memberIds.length, is(numberOfMembers));
+
+        for (final int memberId : memberIds) {
+            final ClusterMemberGroup.ClusterMember member = memberGroup.getClusterMember(memberId);
+
+            assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
+            assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));
+        }
     }
 }

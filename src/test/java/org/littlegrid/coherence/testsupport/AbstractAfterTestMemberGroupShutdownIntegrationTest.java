@@ -31,36 +31,18 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import org.junit.Test;
-import org.littlegrid.utils.ChildFirstUrlClassLoader;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import org.junit.After;
 
 /**
- * Cluster member class loader tests.
+ * Abstract base class which provides a cluster member group instance variable and
+ * also performs a cluster member group utils shutdown after *each* test.
  */
-public final class ClassLoaderClusterMemberIntegrationTest {
-    @Test
-    public void getContainingClassLoader() {
-        final int numberOfMembers = 3;
-        ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(numberOfMembers)
-                .build();
+public class AbstractAfterTestMemberGroupShutdownIntegrationTest {
+    protected ClusterMemberGroup memberGroup;
 
-        final int[] memberIds = memberGroup.getStartedMemberIds();
 
-        assertThat(memberIds.length, is(numberOfMembers));
-
-        for (final int memberId : memberIds) {
-            final ClusterMemberGroup.ClusterMember member = memberGroup.getClusterMember(memberId);
-
-            assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
-            assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));
-        }
-
-        memberGroup.shutdownAll();
+    @After
+    public void afterTest() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 }

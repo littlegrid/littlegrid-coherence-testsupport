@@ -46,6 +46,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
@@ -66,7 +67,8 @@ public final class ExampleClusterMemberGroupIntegrationTest {
     public void afterTest() {
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
 
-        System.clearProperty("littlegrid.builder.override");
+//TODO: Check if this is really still required!!
+//        System.clearProperty("littlegrid.builder.override");
     }
 
     @Test
@@ -178,12 +180,29 @@ public final class ExampleClusterMemberGroupIntegrationTest {
 
     @Test
     public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty("littlegrid.builder.override", "example-littlegrid-builder-override.properties");
+        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .build();
+        ClusterMemberGroup alternativeMemberGroup = null;
 
-        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+        try {
+            // An alternative member group is used for this test because the system property is
+            // being set - the behaviour of a shutdown is to reset the system properties back to
+            // their original state - however, the override system property has been set before
+            // the member group has started and so, the override system property also gets
+            // reset back to its previous state in the after test, which leaves it set for the
+            // subsequent tests.  By using a separate member group for this particular test
+            // we can control the clearing of the system property.
+            alternativeMemberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .build();
+
+            assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(alternativeMemberGroup);
+        } finally {
+            // Ensure that the system property is always reset to avoid leaving it set and causing
+            // problems with other tests that don't want to use the override example file.
+            System.clearProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME);
+        }
     }
 
     @Test
