@@ -29,39 +29,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
+package org.littlegrid.features;
 
-import static org.junit.Assert.assertEquals;
+import com.tangosol.net.CacheFactory;
 
 /**
- * Simple test example.
+ * A pretend server class, used to demonstrate how getting a handle to the 'containing class loader'
+ * allows classes to be loaded, objects created and methods invoked that are accessible only to
+ * the particular cluster member.
  */
-public final class SimpleTest {
-    private static ClusterMemberGroup memberGroup;
-
-    @BeforeClass
-    public static void beforeTests() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(2)
-                .build();
+public class PretendServer {
+    public void start() {
+        System.out.println("Started server in member: " + getCoherenceRunningContext());
     }
 
-    @AfterClass
-    public static void afterTests() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    public void shutdown() {
+        System.out.println("Stopped server in member: " + getCoherenceRunningContext());
     }
 
-    @Test
-    public void simpleExample() {
-        final NamedCache cache = CacheFactory.getCache("test");
-        cache.put("key", "hello");
-
-        assertEquals(1, cache.size());
+    private String getCoherenceRunningContext() {
+        return CacheFactory.getCluster().getLocalMember().getId() + ", class loader: "
+                + this.getClass().getClassLoader();
     }
 }

@@ -29,10 +29,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid.cluster_member_group.wka_autonomous_clusters;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 import org.littlegrid.utils.LoggerPlaceHolder;
 
 import static java.lang.String.format;

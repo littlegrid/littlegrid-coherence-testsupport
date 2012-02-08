@@ -29,28 +29,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+package org.littlegrid.features.default_build_reporter;
+
+import org.junit.Test;
+import org.littlegrid.coherence.testsupport.AbstractAfterTestMemberGroupShutdownIntegrationTest;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
-public class SimpleApp {
-    public static void main(String[] args) {
-        final String key = "123";
+/**
+ * Default exception report integration tests.
+ */
+public final class DefaultBuildExceptionReporterIntegrationTest
+        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
 
-        ClusterMemberGroup memberGroup = null;
-
-        try {
-            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setStorageEnabledCount(2)
-                    .build();
-
-            final NamedCache cache = CacheFactory.getCache("test");
-            cache.put(key, "hello");
-
-            System.out.println(cache.get(key));
-        } finally {
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-        }
+    @Test(expected = IllegalStateException.class)
+    public void unknownClusterMemberInstanceClassName() {
+        // Use an unknown class to cause an exception
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
+                .build();
     }
 }

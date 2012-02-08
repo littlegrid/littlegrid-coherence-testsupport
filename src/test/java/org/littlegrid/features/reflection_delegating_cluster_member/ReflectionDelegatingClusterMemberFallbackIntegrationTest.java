@@ -29,13 +29,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid.features.reflection_delegating_cluster_member;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 import org.littlegrid.coherence.testsupport.impl.ReflectionDelegatingClusterMember;
 import org.littlegrid.utils.ChildFirstUrlClassLoader;
 

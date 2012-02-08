@@ -29,22 +29,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid.features.builder_system_property_override;
 
-import org.junit.After;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import com.tangosol.net.CacheFactory;
+import org.junit.Test;
+import org.littlegrid.coherence.testsupport.AbstractAfterTestMemberGroupShutdownIntegrationTest;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
+
 /**
- * Abstract base class which provides a cluster member group instance variable and
- * also performs a cluster member group utils shutdown after *each* test.
+ * Builder system property override tests that use the littlegrid.builder.override system
+ * property to specify an alternative properties file through a system property.
  */
-public class AbstractAfterTestMemberGroupShutdownIntegrationTest {
-    protected ClusterMemberGroup memberGroup;
+public class BuilderSystemPropertyOverrideTest extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
+    @Test
+    public void exampleOfDifferentOverrideFileSpecified() {
+        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
 
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .build();
 
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+
     }
 }

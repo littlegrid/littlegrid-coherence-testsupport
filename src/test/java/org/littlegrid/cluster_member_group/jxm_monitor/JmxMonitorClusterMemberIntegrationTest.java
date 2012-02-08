@@ -1,8 +1,11 @@
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid.cluster_member_group.jxm_monitor;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.After;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;

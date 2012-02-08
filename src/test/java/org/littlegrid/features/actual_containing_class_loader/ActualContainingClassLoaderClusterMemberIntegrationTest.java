@@ -29,25 +29,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid.features.actual_containing_class_loader;
 
+import com.tangosol.util.ClassHelper;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.AbstractAfterTestMemberGroupShutdownIntegrationTest;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 import org.littlegrid.utils.ChildFirstUrlClassLoader;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 
 /**
- * Cluster member class loader tests.
+ * Cluster member actual containing class loader tests.
  */
-public final class ContainingClassLoaderClusterMemberIntegrationTest
+public final class ActualContainingClassLoaderClusterMemberIntegrationTest
         extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
 
     @Test
-    public void getContainingClassLoader() {
-        final int numberOfMembers = 3;
+    public void getActualContainingClassLoader() {
+        final int numberOfMembers = 2;
+
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
@@ -57,10 +63,39 @@ public final class ContainingClassLoaderClusterMemberIntegrationTest
         assertThat(memberIds.length, is(numberOfMembers));
 
         for (final int memberId : memberIds) {
+            // This cluster member will be a wrapper around another class which is held in a
+            // child-first class loader.
             final ClusterMemberGroup.ClusterMember member = memberGroup.getClusterMember(memberId);
 
             assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
+
+            // Check the the class loader that is containing the actual wrapped cluster member isn't the same
+            // as the one that is wrapping the wrapped cluster member.
             assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));
         }
+    }
+
+    @Test
+    public void usingActualContainingClassLoaderToControlObject()
+            throws Exception {
+
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int memberIdToRunPretendServerIn = 2;
+
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setCustomConfiguredCount(numberOfMembers)
+                .build();
+
+        assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
+
+        final ClassLoader containingClassLoader =
+                memberGroup.getClusterMember(memberIdToRunPretendServerIn).getActualContainingClassLoader();
+
+        final Class classWithinClusterMember = containingClassLoader.loadClass(
+                "org.littlegrid.features.PretendServer");
+
+        final Object pretendServer = classWithinClusterMember.newInstance();
+        ClassHelper.invoke(pretendServer, "start", new Object[]{});
+        ClassHelper.invoke(pretendServer, "shutdown", new Object[]{});
     }
 }

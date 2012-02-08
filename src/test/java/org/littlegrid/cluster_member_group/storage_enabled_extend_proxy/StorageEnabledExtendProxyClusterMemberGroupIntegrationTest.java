@@ -29,13 +29,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid.cluster_member_group.storage_enabled_extend_proxy;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.AbstractExtendClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
 import java.util.ArrayList;
 import java.util.List;

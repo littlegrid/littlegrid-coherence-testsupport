@@ -29,22 +29,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid._101;
 
-import org.junit.After;
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
+import org.junit.Test;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
 import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
-/**
- * Abstract base class which provides a cluster member group instance variable and
- * also performs a cluster member group utils shutdown after *each* test.
- */
-public class AbstractAfterTestMemberGroupShutdownIntegrationTest {
-    protected ClusterMemberGroup memberGroup;
+public class SimpleApp {
+    public static void main(String[] args) {
+        final String key = "123";
 
+        ClusterMemberGroup memberGroup = null;
 
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        try {
+            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                    .setStorageEnabledCount(2)
+                    .build();
+
+            final NamedCache cache = CacheFactory.getCache("test");
+            cache.put(key, "hello");
+
+            System.out.println(cache.get(key));
+        } finally {
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        }
+    }
+    
+    @Test
+    public void runSimpleApp() {
+        main(new String[]{});
     }
 }

@@ -29,43 +29,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.coherence.testsupport;
+package org.littlegrid._101;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import com.tangosol.net.RequestPolicyException;
-import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
+import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Custom configured member tests.
+ * Simple test example.
  */
-public final class CustomConfiguredClusterMemberIntegrationTest
-        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
+public final class SimpleTest {
+    private static ClusterMemberGroup memberGroup;
 
-    @Test(expected = RequestPolicyException.class)
-    public void storageDisabledClusterMember() {
-        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-
+    @BeforeClass
+    public static void beforeTests() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setCustomConfiguredCount(numberOfMembers)
+                .setStorageEnabledCount(2)
                 .build();
+    }
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+    @AfterClass
+    public static void afterTests() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
-        cache.put("key", "value");
+    @Test
+    public void simpleExample() {
+        final NamedCache cache = CacheFactory.getCache("test");
+        cache.put("key", "hello");
 
-        assertThat(cache.size(), is(1));
+        assertEquals(1, cache.size());
     }
 }

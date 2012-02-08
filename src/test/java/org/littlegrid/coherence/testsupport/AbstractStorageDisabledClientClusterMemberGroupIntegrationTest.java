@@ -32,6 +32,7 @@
 package org.littlegrid.coherence.testsupport;
 
 import com.tangosol.net.CacheFactory;
+import org.hamcrest.CoreMatchers;
 import org.junit.After;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -45,7 +46,7 @@ public abstract class AbstractStorageDisabledClientClusterMemberGroupIntegration
     @After
     public void afterTest() {
         assertThat("Only storage disabled client is expected to be running after the cluster member tests have run",
-                CacheFactory.ensureCluster().getMemberSet().size(), is(CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
+                CacheFactory.ensureCluster().getMemberSet().size(), CoreMatchers.is(ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
 
         CacheFactory.shutdown();
     }

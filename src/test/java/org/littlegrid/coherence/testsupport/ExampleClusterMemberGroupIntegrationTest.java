@@ -31,45 +31,31 @@
 
 package org.littlegrid.coherence.testsupport;
 
-import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import com.tangosol.util.ClassHelper;
-import org.junit.After;
 import org.junit.Test;
+import org.littlegrid.features.PretendServer;
 import org.littlegrid.coherence.testsupport.impl.DefaultClusterMember;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 
 /**
- * Cluster member group example tests to show how to use the API.
+ * Cluster member group example tests to show how to use the basic API.
  */
-public final class ExampleClusterMemberGroupIntegrationTest {
+public final class ExampleClusterMemberGroupIntegrationTest
+        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
+
     private static final String KEY = "key";
     private static final String VALUE = "value";
-
-    private ClusterMemberGroup memberGroup;
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-
-//TODO: Check if this is really still required!!
-//        System.clearProperty("littlegrid.builder.override");
-    }
 
     @Test
     public void exampleOfSimplestUse() {
@@ -82,7 +68,8 @@ public final class ExampleClusterMemberGroupIntegrationTest {
     @Test
     public void exampleOfStorageEnabledMembersWithCacheConfiguration() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(2).setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setStorageEnabledCount(2)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
 
         performSimplePutSizeGet(KNOWN_TEST_CACHE);
@@ -100,31 +87,13 @@ public final class ExampleClusterMemberGroupIntegrationTest {
     }
 
     @Test
-    public void exampleOfOneExtendProxyAndNoStorageEnabledMembers() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setExtendProxyCount(1)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
-
-        try {
-            performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
-
-            fail("Exception was expected as there are no storage-enabled members");
-        } catch (PortableException e) {
-            // Coherence 3.6.x and above
-        } catch (RuntimeException e) {
-            // Coherence 3.5.x etc.
-        }
-    }
-
-    @Test
     public void exampleOfExtendProxyWithSeparateStorageEnabledMembers() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setExtendProxyCount(1)
                 .setStorageEnabledCount(2)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .build();
 
         performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
     }
@@ -148,9 +117,7 @@ public final class ExampleClusterMemberGroupIntegrationTest {
     }
 
     @Test
-    public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember()
-            throws IOException {
-
+    public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember() {
         ClusterMemberGroup memberGroup1 = null;
         ClusterMemberGroup memberGroup2 = null;
 
@@ -165,6 +132,7 @@ public final class ExampleClusterMemberGroupIntegrationTest {
 
             performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
         } finally {
+            // Ensure they get shutdown
             ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
         }
     }
@@ -176,57 +144,6 @@ public final class ExampleClusterMemberGroupIntegrationTest {
                 .build();
 
         assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
-    }
-
-    @Test
-    public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
-
-        ClusterMemberGroup alternativeMemberGroup = null;
-
-        try {
-            // An alternative member group is used for this test because the system property is
-            // being set - the behaviour of a shutdown is to reset the system properties back to
-            // their original state - however, the override system property has been set before
-            // the member group has started and so, the override system property also gets
-            // reset back to its previous state in the after test, which leaves it set for the
-            // subsequent tests.  By using a separate member group for this particular test
-            // we can control the clearing of the system property.
-            alternativeMemberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .build();
-
-            assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
-
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(alternativeMemberGroup);
-        } finally {
-            // Ensure that the system property is always reset to avoid leaving it set and causing
-            // problems with other tests that don't want to use the override example file.
-            System.clearProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME);
-        }
-    }
-
-    @Test
-    public void exampleOfUsingContainingClassLoaderToControlObject()
-            throws Exception {
-
-        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
-        final int memberIdToRunPretendServerIn = 2;
-
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setCustomConfiguredCount(numberOfMembers)
-                .build();
-
-        assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
-
-        final ClassLoader containingClassLoader =
-                memberGroup.getClusterMember(memberIdToRunPretendServerIn).getActualContainingClassLoader();
-
-        final Class classWithinClusterMember = containingClassLoader.loadClass(
-                "org.littlegrid.coherence.testsupport.ExampleClusterMemberGroupIntegrationTest$PretendServer");
-
-        final Object pretendServer = classWithinClusterMember.newInstance();
-        ClassHelper.invoke(pretendServer, "start", new Object[]{});
-        ClassHelper.invoke(pretendServer, "shutdown", new Object[]{});
     }
 
     @Test
@@ -259,26 +176,6 @@ public final class ExampleClusterMemberGroupIntegrationTest {
 
         assertThat(cache.size(), is(1));
         assertThat((String) cache.get(KEY), is(VALUE));
-    }
-
-    /**
-     * A pretend server class, used to demonstrate how getting a handle to the 'containing class loader'
-     * allows classes to be loaded, objects created and methods invoked that are accessible only to
-     * the particular cluster member.
-     */
-    public static class PretendServer {
-        public void start() {
-            System.out.println("Started server in member: " + getCoherenceRunningContext());
-        }
-
-        public void shutdown() {
-            System.out.println("Stopped server in member: " + getCoherenceRunningContext());
-        }
-
-        private String getCoherenceRunningContext() {
-            return CacheFactory.getCluster().getLocalMember().getId() + ", class loader: "
-                    + this.getClass().getClassLoader();
-        }
     }
 
     public static class PretendServerClusterMember extends DefaultClusterMember {
