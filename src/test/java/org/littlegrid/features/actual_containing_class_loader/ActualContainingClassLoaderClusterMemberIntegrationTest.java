@@ -33,16 +33,16 @@ package org.littlegrid.features.actual_containing_class_loader;
 
 import com.tangosol.util.ClassHelper;
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.AbstractAfterTestMemberGroupShutdownIntegrationTest;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
-import org.littlegrid.utils.ChildFirstUrlClassLoader;
+import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.support.ChildFirstUrlClassLoader;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 
 /**
  * Cluster member actual containing class loader tests.

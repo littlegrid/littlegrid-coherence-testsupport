@@ -29,30 +29,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.builder_system_property_override;
+package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
- * Builder system property override tests that use the littlegrid.builder.override system
- * property to specify an alternative properties file through a system property.
+ * Large cluster member group tests.
  */
-public class BuilderSystemPropertyOverrideTest extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
-    @Test
-    public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
+public class LargeClusterMemberGroupIntegrationTest
+        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+    @Test
+    public void startAndStopThenShutdownLargeMemberGroup() {
+        final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setStorageEnabledCount(numberOfMembers)
                 .build();
 
-        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 
+        memberGroup.stopAll();
+
+        /*
+            Wait longer because all of them are being stopped.
+         */
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
+        memberGroup.shutdownAll();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 }

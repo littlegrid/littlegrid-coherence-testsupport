@@ -33,15 +33,15 @@ package org.littlegrid.cluster_member_group.wka_autonomous_clusters;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
-import org.littlegrid.utils.LoggerPlaceHolder;
+import org.littlegrid.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.support.LoggerPlaceHolder;
 
 import static java.lang.String.format;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Cluster member group WKA tests.

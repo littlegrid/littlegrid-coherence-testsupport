@@ -36,11 +36,11 @@ import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
-import org.littlegrid.coherence.testsupport.impl.ReflectionDelegatingClusterMember;
-import org.littlegrid.utils.ChildFirstUrlClassLoader;
+import org.littlegrid.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.impl.ReflectionDelegatingClusterMember;
+import org.littlegrid.support.ChildFirstUrlClassLoader;
 
 import java.util.concurrent.TimeUnit;
 
@@ -48,10 +48,10 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.doesMemberExist;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 
 /**
  * Reflection delegating cluster member fallback tests, to ensure fallback functionality

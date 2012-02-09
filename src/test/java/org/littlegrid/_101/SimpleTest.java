@@ -36,8 +36,8 @@ import com.tangosol.net.NamedCache;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.junit.Assert.assertEquals;
 

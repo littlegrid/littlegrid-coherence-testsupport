@@ -29,30 +29,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.builder_system_property_override;
+package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
-import org.junit.Test;
-import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
+import org.hamcrest.CoreMatchers;
+import org.junit.After;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
 
 /**
- * Builder system property override tests that use the littlegrid.builder.override system
- * property to specify an alternative properties file through a system property.
+ * Abstract base class for cluster member group tests.
  */
-public class BuilderSystemPropertyOverrideTest extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
-    @Test
-    public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
+public abstract class AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+    @After
+    public void afterTest() {
+        assertThat("Only storage disabled client is expected to be running after the cluster member tests have run",
+                CacheFactory.ensureCluster().getMemberSet().size(), CoreMatchers.is(ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .build();
-
-        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
-
+        CacheFactory.shutdown();
     }
 }

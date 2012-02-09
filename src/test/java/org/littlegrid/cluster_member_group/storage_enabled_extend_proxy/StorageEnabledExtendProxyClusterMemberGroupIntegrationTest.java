@@ -36,9 +36,9 @@ import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.AbstractExtendClientClusterMemberGroupIntegrationTest;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
+import org.littlegrid.AbstractExtendClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +46,11 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
-import static org.littlegrid.coherence.testsupport.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 
 /**
  * Cluster member group Extend tests.

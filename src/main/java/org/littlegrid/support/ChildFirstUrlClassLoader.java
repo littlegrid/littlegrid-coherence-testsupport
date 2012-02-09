@@ -29,30 +29,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.builder_system_property_override;
+package org.littlegrid.support;
 
-import com.tangosol.net.CacheFactory;
-import org.junit.Test;
-import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
- * Builder system property override tests that use the littlegrid.builder.override system
- * property to specify an alternative properties file through a system property.
+ * Child-first URL class-loader, changes the normal class-loading order by attempting
+ * to load the class locally from the child before delegating to the parent.
  */
-public class BuilderSystemPropertyOverrideTest extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
-    @Test
-    public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
+public class ChildFirstUrlClassLoader extends URLClassLoader {
+    /**
+     * Constructor.
+     *
+     * @param urls URLs from which to try and load classes.
+     */
+    public ChildFirstUrlClassLoader(final URL[] urls) {
+        super(urls);
+    }
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .build();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?> loadClass(final String name)
+            throws ClassNotFoundException {
 
-        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+        Class loadedClass = findLoadedClass(name);
 
+        if (loadedClass == null) {
+            try {
+                // Hasn't already been loaded, so check if this child class-loader can load the class
+                loadedClass = findClass(name);
+            } catch (ClassNotFoundException e) {
+                // Child didn't have the class, delegate to parent class-loader
+                return super.loadClass(name);
+            }
+        }
+
+        return loadedClass;
     }
 }

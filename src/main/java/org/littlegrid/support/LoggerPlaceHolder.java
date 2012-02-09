@@ -29,30 +29,59 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.builder_system_property_override;
+package org.littlegrid.support;
 
-import com.tangosol.net.CacheFactory;
-import org.junit.Test;
-import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
+import java.util.logging.Logger;
 
 /**
- * Builder system property override tests that use the littlegrid.builder.override system
- * property to specify an alternative properties file through a system property.
+ * Wrapper around a logger to provide consistent messages containing build information,
+ * in the event of more severe log levels, additional information is also output.
  */
-public class BuilderSystemPropertyOverrideTest extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
-    @Test
-    public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
+public final class LoggerPlaceHolder {
+    private final Logger logger;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .build();
+    /**
+     * Constructor.
+     *
+     * @param name Logger name.
+     */
+    public LoggerPlaceHolder(final String name) {
+        this.logger = Logger.getLogger(name);
+    }
 
-        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+    /**
+     * Output debug.
+     *
+     * @param message Message.
+     */
+    public void debug(final Object message) {
+        logger.fine(message.toString());
+    }
 
+    /**
+     * Output info.
+     *
+     * @param message Message.
+     */
+    public void info(final Object message) {
+        logger.info(message.toString());
+    }
+
+    /**
+     * Output warn.
+     *
+     * @param message Message.
+     */
+    public void warn(final Object message) {
+        logger.warning(message.toString());
+    }
+
+    /**
+     * Output error.
+     *
+     * @param message Message.
+     */
+    public void error(final Object message) {
+        logger.severe(message.toString());
     }
 }

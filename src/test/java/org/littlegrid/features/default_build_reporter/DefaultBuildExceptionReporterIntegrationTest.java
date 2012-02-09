@@ -32,8 +32,8 @@
 package org.littlegrid.features.default_build_reporter;
 
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.AbstractAfterTestMemberGroupShutdownIntegrationTest;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
+import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 /**
  * Default exception report integration tests.

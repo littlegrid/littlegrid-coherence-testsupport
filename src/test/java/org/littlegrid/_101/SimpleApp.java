@@ -34,8 +34,8 @@ package org.littlegrid._101;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroup;
-import org.littlegrid.coherence.testsupport.ClusterMemberGroupUtils;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 public class SimpleApp {
     public static void main(String[] args) {

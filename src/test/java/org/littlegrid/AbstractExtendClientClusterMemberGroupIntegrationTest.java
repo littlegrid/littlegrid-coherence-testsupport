@@ -29,30 +29,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.builder_system_property_override;
+package org.littlegrid;
 
-import com.tangosol.net.CacheFactory;
-import org.junit.Test;
-import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
+import com.tangosol.io.pof.PofReader;
+import com.tangosol.io.pof.PofWriter;
+import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.AbstractInvocable;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
+import java.io.IOException;
 
 /**
- * Builder system property override tests that use the littlegrid.builder.override system
- * property to specify an alternative properties file through a system property.
+ * Abstract base class for cluster member group tests.
  */
-public class BuilderSystemPropertyOverrideTest extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
-    @Test
-    public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
+public abstract class AbstractExtendClientClusterMemberGroupIntegrationTest {
+    public static final class ClusterSizeInvocable extends AbstractInvocable implements PortableObject {
+        @Override
+        public void run() {
+            setResult(getService().getCluster().getMemberSet().size());
+        }
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .build();
+        @Override
+        public void readExternal(final PofReader reader)
+                throws IOException {
+        }
 
-        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
-
+        @Override
+        public void writeExternal(final PofWriter writer)
+                throws IOException {
+        }
     }
 }
