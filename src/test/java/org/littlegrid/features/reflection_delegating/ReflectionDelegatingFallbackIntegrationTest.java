@@ -29,14 +29,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.reflection_delegating_cluster_member;
+package org.littlegrid.features.reflection_delegating;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.littlegrid.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.impl.ReflectionDelegatingClusterMember;
@@ -57,8 +57,8 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
  * Reflection delegating cluster member fallback tests, to ensure fallback functionality
  * works as expected.
  */
-public final class ReflectionDelegatingClusterMemberFallbackIntegrationTest
-        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+public final class ReflectionDelegatingFallbackIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     private static final int NUMBER_OF_MEMBERS = SMALL_TEST_CLUSTER_SIZE;
     private static final int EXPECTED_CLUSTER_SIZE = NUMBER_OF_MEMBERS + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;

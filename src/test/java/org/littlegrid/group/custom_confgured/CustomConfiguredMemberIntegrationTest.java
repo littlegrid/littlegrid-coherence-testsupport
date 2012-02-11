@@ -29,23 +29,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.default_build_reporter;
+package org.littlegrid.group.custom_confgured;
 
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
+import com.tangosol.net.RequestPolicyException;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-/**
- * Default exception report integration tests.
- */
-public final class DefaultBuildExceptionReporterIntegrationTest
-        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
-    @Test(expected = IllegalStateException.class)
-    public void unknownClusterMemberInstanceClassName() {
-        // Use an unknown class to cause an exception
+/**
+ * Custom configured member tests.
+ */
+public final class CustomConfiguredMemberIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
+
+    @Test(expected = RequestPolicyException.class)
+    public void storageDisabledClusterMember() {
+        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCustomConfiguredCount(numberOfMembers)
                 .build();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        cache.put("key", "value");
+
+        assertThat(cache.size(), is(1));
     }
 }

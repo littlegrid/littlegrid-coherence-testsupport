@@ -1,9 +1,9 @@
-package org.littlegrid.cluster_member_group.jxm_monitor;
+package org.littlegrid.group.jxm_monitor;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.After;
 import org.junit.Test;
-import org.littlegrid.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
@@ -15,8 +15,8 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * JMX monitor member tests.
  */
-public final class JmxMonitorClusterMemberIntegrationTest
-        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+public final class JmxMonitorMemberIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     private ClusterMemberGroup memberGroup;
 

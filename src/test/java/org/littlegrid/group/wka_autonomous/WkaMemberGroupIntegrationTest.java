@@ -29,11 +29,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.cluster_member_group.wka_autonomous_clusters;
+package org.littlegrid.group.wka_autonomous;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
-import org.littlegrid.AbstractStorageDisabledClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.LoggerPlaceHolder;
@@ -46,11 +46,11 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * Cluster member group WKA tests.
  */
-public final class WkaClusterMemberGroupIntegrationTest
-        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+public final class WkaMemberGroupIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     private static final LoggerPlaceHolder LOGGER =
-            new LoggerPlaceHolder(WkaClusterMemberGroupIntegrationTest.class.getName());
+            new LoggerPlaceHolder(WkaMemberGroupIntegrationTest.class.getName());
 
     @Test
     public void twoSmallMemberGroupsWithSameWka() {

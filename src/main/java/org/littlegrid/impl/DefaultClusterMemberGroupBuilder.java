@@ -208,7 +208,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         LOGGER.info(format(
-                "*** Starting - Storage-enabled: %s, Extend proxy: %s, Storage-enabled Extend proxy: %s, "
+                "*** LittleGrid starting - Storage-enabled: %s, Extend proxy: %s, Storage-enabled Extend proxy: %s, "
                         + "Custom configured: %s, JMX monitor: %s ***",
                 storageEnabledCount, extendProxyCount, storageEnabledExtendProxyCount, customConfiguredCount,
                 jmxMonitorCount));

@@ -52,7 +52,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
  * Cluster member group example tests to show how to use the basic API.
  */
 public final class ExampleClusterMemberGroupIntegrationTest
-        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     private static final String KEY = "key";
     private static final String VALUE = "value";

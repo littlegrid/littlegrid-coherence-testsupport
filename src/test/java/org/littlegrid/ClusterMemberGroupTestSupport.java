@@ -31,10 +31,19 @@
 
 package org.littlegrid;
 
+import com.tangosol.io.pof.PofReader;
+import com.tangosol.io.pof.PofWriter;
+import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.AbstractInvocable;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
+import com.tangosol.net.InvocationService;
 import com.tangosol.net.Member;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
@@ -99,5 +108,65 @@ public final class ClusterMemberGroupTestSupport {
                                                        final int expectedClusterSize) {
 
         assertThat(cluster.getMemberSet().size(), is(expectedClusterSize));
+    }
+
+    public static int getClusterSizeForExtendClientUsingInvocationService() {
+        final InvocationService invocationService =
+                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+
+        final Map result = invocationService.query(new ClusterSizeInvocable(), null);
+        assertThat(result.size(), is(1));
+
+        final List<Integer> list = new ArrayList<Integer>(result.values());
+        return list.get(0);
+    }
+
+
+    /**
+     * Simple invocable to return the cluster size - useful for Extend-based clients
+     * to check cluster size is as expected.
+     */
+    public static final class ClusterSizeInvocable extends AbstractInvocable
+            implements PortableObject {
+
+        @Override
+        public void run() {
+            setResult(getService().getCluster().getMemberSet().size());
+        }
+
+        @Override
+        public void readExternal(final PofReader reader)
+                throws IOException {
+        }
+
+        @Override
+        public void writeExternal(final PofWriter writer)
+                throws IOException {
+        }
+    }
+
+
+    /**
+     * Simple invocable to return the Extend proxy member Id that the Extend client is
+     * connected to - this is useful for instance in tests were that particular proxy
+     * server is required to be stopped to test failover.
+     */
+    public static final class GetExtendProxyMemberIdInvocable extends AbstractInvocable
+            implements PortableObject {
+
+        @Override
+        public void run() {
+            setResult(getService().getCluster().getLocalMember().getId());
+        }
+
+        @Override
+        public void readExternal(final PofReader reader)
+                throws IOException {
+        }
+
+        @Override
+        public void writeExternal(final PofWriter writer)
+                throws IOException {
+        }
     }
 }

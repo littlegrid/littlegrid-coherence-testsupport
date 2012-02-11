@@ -29,23 +29,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.features.system_property_override;
 
 import com.tangosol.net.CacheFactory;
-import org.hamcrest.CoreMatchers;
-import org.junit.After;
+import org.junit.Test;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupUtils;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
 
 /**
- * Abstract base class for cluster member group tests.
+ * Builder system property override tests that use the littlegrid.builder.override system
+ * property to specify an alternative properties file through a system property.
  */
-public abstract class AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
-    @After
-    public void afterTest() {
-        assertThat("Only storage disabled client is expected to be running after the cluster member tests have run",
-                CacheFactory.ensureCluster().getMemberSet().size(), CoreMatchers.is(ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
+public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    @Test
+    public void exampleOfDifferentOverrideFileSpecified() {
+        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
 
-        CacheFactory.shutdown();
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .build();
+
+        // This example configuration file has a default storage-enabled member count of 3
+        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+
     }
 }

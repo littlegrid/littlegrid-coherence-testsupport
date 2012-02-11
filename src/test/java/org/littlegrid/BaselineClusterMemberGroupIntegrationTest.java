@@ -41,7 +41,7 @@ import org.junit.Test;
  * behaviour.
  */
 public final class BaselineClusterMemberGroupIntegrationTest
-        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     private ClusterMemberGroup memberGroup;
 

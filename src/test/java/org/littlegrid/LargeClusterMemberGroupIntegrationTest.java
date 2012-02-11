@@ -43,7 +43,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
  * Large cluster member group tests.
  */
 public class LargeClusterMemberGroupIntegrationTest
-        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     @Test
     public void startAndStopThenShutdownLargeMemberGroup() {

@@ -29,11 +29,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.actual_containing_class_loader;
+package org.littlegrid.features.containing_class_loader;
 
 import com.tangosol.util.ClassHelper;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestMemberGroupShutdownIntegrationTest;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
@@ -47,8 +47,8 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_S
 /**
  * Cluster member actual containing class loader tests.
  */
-public final class ActualContainingClassLoaderClusterMemberIntegrationTest
-        extends AbstractAfterTestMemberGroupShutdownIntegrationTest {
+public final class ContainingClassLoaderIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     @Test
     public void getActualContainingClassLoader() {

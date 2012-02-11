@@ -47,7 +47,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
  * Cluster member group shutdown tests.
  */
 public final class ShutdownClusterMemberGroupIntegrationTest
-        extends AbstractStorageDisabledClientClusterMemberGroupIntegrationTest {
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     private ClusterMemberGroup memberGroup;
 

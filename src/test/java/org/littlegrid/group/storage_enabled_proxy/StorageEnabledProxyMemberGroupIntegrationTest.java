@@ -29,14 +29,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.cluster_member_group.storage_enabled_extend_proxy;
+package org.littlegrid.group.storage_enabled_proxy;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
-import org.littlegrid.AbstractExtendClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
@@ -46,6 +46,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroupTestSupport.ClusterSizeInvocable;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
@@ -55,8 +56,8 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
 /**
  * Cluster member group Extend tests.
  */
-public final class StorageEnabledExtendProxyClusterMemberGroupIntegrationTest
-        extends AbstractExtendClientClusterMemberGroupIntegrationTest {
+public final class StorageEnabledProxyMemberGroupIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
 
     private ClusterMemberGroup memberGroup;
 

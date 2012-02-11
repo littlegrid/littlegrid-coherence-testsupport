@@ -29,38 +29,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.cluster_member_group.extend_proxy;
+package org.littlegrid.group.extend_proxy;
 
 import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.Test;
-import org.littlegrid.AbstractExtendClientClusterMemberGroupIntegrationTest;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.getClusterSizeForExtendClientUsingInvocationService;
 
 /**
  * Cluster member group Extend tests.
  */
-public final class ExtendProxyClusterMemberGroupIntegrationTest
-        extends AbstractExtendClientClusterMemberGroupIntegrationTest {
-
+public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     private ClusterMemberGroup memberGroup;
 
     @After
@@ -135,14 +128,7 @@ public final class ExtendProxyClusterMemberGroupIntegrationTest
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .build();
 
-        final InvocationService invocationService =
-                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
-
-        final Map result = invocationService.query(new ClusterSizeInvocable(), null);
-        assertThat(result.size(), is(1));
-
-        final List<Integer> list = new ArrayList<Integer>(result.values());
-        final int clusterSize = list.get(0);
+        final int clusterSize = getClusterSizeForExtendClientUsingInvocationService();
         assertThat(clusterSize, is(numberOfExtendProxies));
     }
 
