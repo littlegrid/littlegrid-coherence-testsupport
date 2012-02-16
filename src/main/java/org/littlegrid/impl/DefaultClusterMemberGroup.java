@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -226,6 +227,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     private void outputStartAllMessages() {
         final int oneMB = 1024 * 1024;
 
@@ -233,7 +235,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         LOGGER.debug(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        LOGGER.info(format("System properties to be set.: %s", systemPropertiesToBeApplied));
+        LOGGER.info(format("System properties to be set.: %s", new TreeMap(systemPropertiesToBeApplied)));
         LOGGER.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,

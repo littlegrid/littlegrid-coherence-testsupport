@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import static java.lang.String.format;
 
@@ -190,6 +191,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public ClusterMemberGroup build() {
         int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
         int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
@@ -208,10 +210,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         LOGGER.info(format(
-                "*** LittleGrid starting - Storage-enabled: %s, Extend proxy: %s, Storage-enabled Extend proxy: %s, "
+                "*** LittleGrid about to start - Storage-enabled: %s, Extend proxy: %s, "
+                        + "Storage-enabled Extend proxy: %s, "
                         + "Custom configured: %s, JMX monitor: %s ***",
-                storageEnabledCount, extendProxyCount, storageEnabledExtendProxyCount, customConfiguredCount,
-                jmxMonitorCount));
+                storageEnabledCount, extendProxyCount,
+                storageEnabledExtendProxyCount, customConfiguredCount, jmxMonitorCount));
 
         final int numberOfThreadsInStartUpPool = getBuilderSettingAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
 
@@ -266,7 +269,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             SystemUtils.applyToSystemProperties(clientSystemProperties);
         }
 
-        LOGGER.info(format("System properties set for client: %s", clientSystemProperties));
+        LOGGER.info(format("System properties set for client: %s", new TreeMap(clientSystemProperties)));
 
         return containerGroup;
     }
