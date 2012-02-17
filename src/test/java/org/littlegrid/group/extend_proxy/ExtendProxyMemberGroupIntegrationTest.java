@@ -48,7 +48,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CAC
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.getClusterSizeForExtendClientUsingInvocationService;
+import static org.littlegrid.ClusterMemberGroupTestSupport.getClusterSizeThatExtendClientIsConnectedTo;
 
 /**
  * Cluster member group Extend tests.
@@ -128,7 +128,7 @@ public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTe
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .build();
 
-        final int clusterSize = getClusterSizeForExtendClientUsingInvocationService();
+        final int clusterSize = getClusterSizeThatExtendClientIsConnectedTo();
         assertThat(clusterSize, is(numberOfExtendProxies));
     }
 

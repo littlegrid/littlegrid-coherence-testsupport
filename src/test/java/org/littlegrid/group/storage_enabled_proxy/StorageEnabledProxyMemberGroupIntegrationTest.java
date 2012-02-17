@@ -46,7 +46,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.ClusterSizeInvocable;
+import static org.littlegrid.ClusterMemberGroupTestSupport.GetClusterSizeInvocable;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
@@ -92,7 +92,7 @@ public final class StorageEnabledProxyMemberGroupIntegrationTest
         final InvocationService invocationService =
                 (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
 
-        final Map result = invocationService.query(new ClusterSizeInvocable(), null);
+        final Map result = invocationService.query(new GetClusterSizeInvocable(), null);
         assertThat(result.size(), is(1));
 
         final List<Integer> list = new ArrayList<Integer>(result.values());

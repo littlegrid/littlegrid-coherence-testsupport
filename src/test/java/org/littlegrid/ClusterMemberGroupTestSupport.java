@@ -110,14 +110,28 @@ public final class ClusterMemberGroupTestSupport {
         assertThat(cluster.getMemberSet().size(), is(expectedClusterSize));
     }
 
-    public static int getClusterSizeForExtendClientUsingInvocationService() {
+    public static int getClusterSizeThatExtendClientIsConnectedTo() {
         final InvocationService invocationService =
                 (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
 
-        final Map result = invocationService.query(new ClusterSizeInvocable(), null);
+        final Map result = invocationService.query(new GetClusterSizeInvocable(), null);
         assertThat(result.size(), is(1));
 
         final List<Integer> list = new ArrayList<Integer>(result.values());
+
+        return list.get(0);
+    }
+
+
+    public static int getExtendProxyMemberIdThatClientIsConnectedTo() {
+        final InvocationService invocationService =
+                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+
+        final Map result = invocationService.query(new GetExtendProxyMemberIdInvocable(), null);
+        assertThat(result.size(), is(1));
+
+        final List<Integer> list = new ArrayList<Integer>(result.values());
+
         return list.get(0);
     }
 
@@ -126,7 +140,7 @@ public final class ClusterMemberGroupTestSupport {
      * Simple invocable to return the cluster size - useful for Extend-based clients
      * to check cluster size is as expected.
      */
-    public static final class ClusterSizeInvocable extends AbstractInvocable
+    public static final class GetClusterSizeInvocable extends AbstractInvocable
             implements PortableObject {
 
         @Override
