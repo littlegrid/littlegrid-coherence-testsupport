@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.littlegrid</groupId>
@@ -7,13 +8,34 @@
     <packaging>jar</packaging>
     <version>2.3-SNAPSHOT</version>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+      </parent>
+
     <name>${project.artifactId}</name>
+    <description>LittleGrid Coherence test-support framework</description>
+    <url>http://www.littlegrid.org</url>
+    <licenses>
+        <license>
+            <name>BSD-3</name>
+            <url>http://www.opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <scm>
         <connection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</connection>
         <developerConnection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</developerConnection>
         <url>git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</url>
     </scm>
+
+    <developers>
+        <developer>
+            <name>Jonathan Hall</name>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -23,33 +45,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- **************************************************************************************
-            USE ONE OF THE BELOW VERSIONS OF COHERENCE FOR WHICH TO BE USED FOR BUILD AND TEST
-        -->
-<!--
-                <dependency>
-                    <groupId>oracle</groupId>
-                    <artifactId>coherence</artifactId>
-                    <version>3.5.3b465</version>
-                    <scope>provided</scope>
-                </dependency>
--->
-<!--
-                <dependency>
-                    <groupId>oracle</groupId>
-                    <artifactId>coherence</artifactId>
-                    <version>3.6.1.0</version>
-                    <scope>provided</scope>
-                </dependency>
--->
-        <!--
-                <dependency>
-                    <groupId>com.oracle</groupId>
-                    <artifactId>coherence</artifactId>
-                    <version>3.7.0.0</version>
-                    <scope>provided</scope>
-                </dependency>
-        -->
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>coherence</artifactId>
@@ -59,86 +54,99 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven-install-plugin.version}</version>
-                </plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>${maven-install-plugin.version}</version>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>${maven-clean-plugin.version}</version>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <source>${java.target.version}</source>
-                        <target>${java.target.version}</target>
-                    </configuration>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${java.target.version}</source>
+                    <target>${java.target.version}</target>
+                </configuration>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>${maven-release-plugin.version}</version>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin.version}</version>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven-source-plugin.version}</version>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven-deploy-plugin.version}</version>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+            </plugin>
 
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${cobertura-maven-plugin.version}</version>
-                    <configuration>
-                        <instrumentation>
-                        </instrumentation>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>${cobertura-maven-plugin.version}</version>
+                <configuration>
+                    <instrumentation/>
+                    <check/>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <reporting>
@@ -151,19 +159,6 @@
         </plugins>
     </reporting>
 
-    <distributionManagement>
-        <repository>
-            <id>rainbow-release</id>
-            <name>rainbow-release</name>
-            <url>http://192.168.1.151:8081/nexus/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>rainbow-snapshot</id>
-            <name>rainbow-snapshot</name>
-            <url>http://192.168.1.151:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <profiles>
         <profile>
             <id>default</id>
@@ -175,6 +170,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
                         <configuration>
                             <!--
                                 Due to the classes being loaded into different class loaders and coupled with
@@ -183,9 +179,6 @@
                             -->
                             <forkMode>always</forkMode>
                             <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m</argLine>
-                            <systemPropertyVariables>
-                                <tangosol.coherence.wka.port>45123</tangosol.coherence.wka.port>
-                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
 
@@ -213,6 +206,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
                         <configuration>
                             <forkMode>always</forkMode>
                             <!--
@@ -221,6 +215,48 @@
                                 those from the default profile as sensible memory defaults.
                             -->
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <configuration>
+                            <!--
+                                Due to the classes being loaded into different class loaders and coupled with
+                                the fact that these tests are all about testing that behaviour, the forking and
+                                below argLine settings are used to avoid the perm-space from becoming full.
+                            -->
+                            <forkMode>always</forkMode>
+                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m</argLine>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -245,7 +281,9 @@
         <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
         <maven-deploy-plugin.version>2.5</maven-deploy-plugin.version>
         <cobertura-maven-plugin.version>2.5.1</cobertura-maven-plugin.version>
+        <maven-gpg-plugin.version>1.4</maven-gpg-plugin.version>
 
+        <!-- Configuration files -->
         <checkstyle-configuration-file>tweaked_sun_checks.xml</checkstyle-configuration-file>
     </properties>
 </project>
