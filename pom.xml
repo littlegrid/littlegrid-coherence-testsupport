@@ -7,11 +7,13 @@
     <packaging>jar</packaging>
     <version>2.4.5-SNAPSHOT</version>
 
+<!--
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
+-->
 
     <name>${project.artifactId}</name>
     <description>LittleGrid Coherence test-support framework</description>
