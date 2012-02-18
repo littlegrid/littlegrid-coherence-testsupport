@@ -33,8 +33,14 @@ package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import org.junit.After;
 import org.junit.Test;
+
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
  * Cluster member group baseline tests, a set of simple tests to quickly check the basic
@@ -43,45 +49,37 @@ import org.junit.Test;
 public final class BaselineClusterMemberGroupIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 
-    private ClusterMemberGroup memberGroup;
-
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
     @Test
     public void startAndShutdownSingleMemberGroup() {
-        final int numberOfMembers = ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 
         final NamedCache cache = CacheFactory.getCache("test");
         cache.put("key", "value");
 
         memberGroup.shutdownAll();
 
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
     public void simpleMemberGroupWithCacheConfigurationAndKnownCache() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setCacheConfiguration(ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
 
-        final NamedCache cache = CacheFactory.getCache(ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE);
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
         cache.put("key", "value");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void simpleMemberGroupWithCacheConfigurationAndUnknownCache() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setCacheConfiguration(ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
 
         final NamedCache cache = CacheFactory.getCache("this-cache-will-not-be-found-in-cache-configuration");
@@ -90,50 +88,37 @@ public final class BaselineClusterMemberGroupIntegrationTest
 
     @Test
     public void startAndShutdownInvokedTwice() {
-        final int numberOfMembers = ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 
         memberGroup.shutdownAll();
         memberGroup.shutdownAll();
 
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
     public void startAndStopInvokedTwice() {
-        final int numberOfMembers = ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 
         memberGroup.stopAll();
         memberGroup.stopAll();
 
-        ClusterMemberGroupTestSupport.sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-    }
-
-    @Test
-    public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
-        final int numberOfMembers = ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-        final String jarToExclude = "junit-4.8.2.jar";
-
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setJarsToExcludeFromClassPath(jarToExclude)
-                .build();
-
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 }

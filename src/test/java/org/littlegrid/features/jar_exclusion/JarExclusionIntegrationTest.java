@@ -29,36 +29,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid._101;
+package org.littlegrid.features.jar_exclusion;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
 import org.junit.Test;
-import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupTestSupport;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-public class SimpleApp {
-    public static void main(String[] args) {
-        final String key = "123";
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 
-        ClusterMemberGroup memberGroup = null;
-
-        try {
-            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setStorageEnabledCount(2)
-                    .build();
-
-            final NamedCache cache = CacheFactory.getCache("test");
-            cache.put(key, "hello");
-
-            System.out.println(cache.get(key));
-        } finally {
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-        }
-    }
-
+/**
+ * JAR exclusion integration tests.
+ */
+public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void runSimpleApp() {
-        main(new String[]{});
+    public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final String jarToExclude = "junit-4.8.2.jar";
+
+        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+                .setJarsToExcludeFromClassPath(jarToExclude)
+                .build();
+
+        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 }

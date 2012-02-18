@@ -147,21 +147,6 @@ public final class ExampleClusterMemberGroupIntegrationTest
     }
 
     @Test
-    public void exampleOfExtendingDefaultClusterMemberToUseLifeCycleMethods()
-            throws Exception {
-
-        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
-
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setCustomConfiguredCount(numberOfMembers)
-                .setCustomConfiguredClusterMemberInstanceClassName(
-                        "org.littlegrid.ExampleClusterMemberGroupIntegrationTest$PretendServerClusterMember")
-                .build();
-
-        assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
-    }
-
-    @Test
     public void clusterWithVarietyOfMembers() {
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setStorageEnabledCount(2)
@@ -176,45 +161,5 @@ public final class ExampleClusterMemberGroupIntegrationTest
 
         assertThat(cache.size(), is(1));
         assertThat((String) cache.get(KEY), is(VALUE));
-    }
-
-    public static class PretendServerClusterMember extends DefaultClusterMember {
-        private PretendServer server = new PretendServer();
-
-        @Override
-        public void doBeforeStart() {
-            /*
-                 At this point, Coherence hasn't been started in the other class loader - so functions
-                 such as getting the member Id won't work (because it isn't running).
-
-                 However, if you wanted to start out a JMS consumer or run a server then that is fine
-                 because it will be in a different class loader.
-             */
-
-            System.out.println("Performing do before start - class loader: " + this.getClass().getClassLoader());
-        }
-
-        @Override
-        public void doAfterStart() {
-            server.start();
-        }
-
-        @Override
-        public void doBeforeShutdown() {
-            server.shutdown();
-        }
-
-        @Override
-        public void doAfterShutdown() {
-            /*
-                 At this point, Coherence has been stopped - so functions such as getting the member Id
-                 won't work (because it isn't running).
-
-                 However, if you wanted to shutdown JMS consumer or shutdown a server then that is fine
-                 because it will be in a different class loader.
-             */
-
-            System.out.println("Performing do after shutdown - class loader: " + this.getClass().getClassLoader());
-        }
     }
 }

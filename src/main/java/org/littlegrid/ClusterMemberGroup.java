@@ -142,7 +142,7 @@ public interface ClusterMemberGroup {
          * override file by setting a system property with this name and the value being the
          * required override file to be use.
          */
-        static final String BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME = "littlegrid.builder.override";
+        final String BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME = "littlegrid.builder.override";
 
         /**
          * Builds and returns a <em>running cluster member group</em>, based upon the default
