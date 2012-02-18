@@ -2,6 +2,7 @@ package org.littlegrid.group.jxm_monitor;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -15,6 +16,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * JMX monitor member tests.
  */
+@Ignore
 public final class JmxMonitorMemberIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 

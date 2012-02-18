@@ -54,6 +54,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 /**
  * Tests to stop Extend proxies.
  */
+@Ignore
 public class StopExtendProxyIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void startAndStopExtendProxy() {

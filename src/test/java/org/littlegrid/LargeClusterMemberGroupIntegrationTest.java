@@ -32,6 +32,7 @@
 package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
@@ -42,6 +43,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 /**
  * Large cluster member group tests.
  */
+@Ignore
 public class LargeClusterMemberGroupIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 

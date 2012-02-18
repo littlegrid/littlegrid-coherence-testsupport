@@ -34,6 +34,7 @@ package org.littlegrid;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -46,6 +47,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 /**
  * Cluster member group shutdown tests.
  */
+@Ignore
 public final class ShutdownClusterMemberGroupIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 

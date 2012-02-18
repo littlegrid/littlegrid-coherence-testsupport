@@ -32,6 +32,7 @@
 package org.littlegrid.features.containing_class_loader;
 
 import com.tangosol.util.ClassHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -48,6 +49,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_S
 /**
  * Cluster member actual containing class loader tests.
  */
+@Ignore
 public final class ContainingClassLoaderIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 

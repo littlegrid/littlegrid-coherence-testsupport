@@ -33,6 +33,7 @@ package org.littlegrid._101;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -58,6 +59,7 @@ public class SimpleApp {
     }
 
     @Test
+    @Ignore
     public void runSimpleApp() {
         main(new String[]{});
     }

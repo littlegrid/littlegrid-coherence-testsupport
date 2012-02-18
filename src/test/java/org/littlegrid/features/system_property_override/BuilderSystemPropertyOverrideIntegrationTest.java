@@ -32,6 +32,7 @@
 package org.littlegrid.features.system_property_override;
 
 import com.tangosol.net.CacheFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -44,6 +45,7 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_
  * Builder system property override tests that use the littlegrid.builder.override system
  * property to specify an alternative properties file through a system property.
  */
+@Ignore
 public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void exampleOfDifferentOverrideFileSpecified() {

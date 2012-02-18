@@ -31,6 +31,7 @@
 
 package org.littlegrid.features.extending_default_member;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -44,6 +45,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_S
 /**
  * Extended default member integration tests.
  */
+@Ignore
 public class ExtendedDefaultMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void exampleOfExtendingDefaultClusterMemberToUseLifeCycleMethods()

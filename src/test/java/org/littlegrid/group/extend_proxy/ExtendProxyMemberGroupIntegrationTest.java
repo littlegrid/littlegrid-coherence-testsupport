@@ -35,6 +35,7 @@ import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -53,6 +54,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.getClusterSizeThatExt
 /**
  * Cluster member group Extend tests.
  */
+@Ignore
 public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     private ClusterMemberGroup memberGroup;
 

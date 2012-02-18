@@ -35,6 +35,7 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -57,6 +58,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
  * Reflection delegating cluster member fallback tests, to ensure fallback functionality
  * works as expected.
  */
+@Ignore
 public final class ReflectionDelegatingFallbackIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 

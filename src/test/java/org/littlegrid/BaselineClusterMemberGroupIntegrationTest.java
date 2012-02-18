@@ -33,6 +33,7 @@ package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
@@ -46,6 +47,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
  * Cluster member group baseline tests, a set of simple tests to quickly check the basic
  * behaviour.
  */
+@Ignore
 public final class BaselineClusterMemberGroupIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 

@@ -35,6 +35,7 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -44,6 +45,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Simple test example.
  */
+@Ignore
 public final class SimpleTest {
     private static ClusterMemberGroup memberGroup;
 

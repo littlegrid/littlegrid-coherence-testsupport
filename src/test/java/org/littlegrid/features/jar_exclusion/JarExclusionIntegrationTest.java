@@ -32,6 +32,7 @@
 package org.littlegrid.features.jar_exclusion;
 
 import com.tangosol.net.CacheFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupTestSupport;
@@ -43,6 +44,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_S
 /**
  * JAR exclusion integration tests.
  */
+@Ignore
 public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {

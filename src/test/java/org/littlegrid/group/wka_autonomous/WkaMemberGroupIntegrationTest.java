@@ -32,6 +32,7 @@
 package org.littlegrid.group.wka_autonomous;
 
 import com.tangosol.net.CacheFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -46,6 +47,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * Cluster member group WKA tests.
  */
+@Ignore
 public final class WkaMemberGroupIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 

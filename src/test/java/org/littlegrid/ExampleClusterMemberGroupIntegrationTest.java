@@ -33,6 +33,7 @@ package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.features.PretendServer;
 import org.littlegrid.impl.DefaultClusterMember;
@@ -51,6 +52,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
 /**
  * Cluster member group example tests to show how to use the basic API.
  */
+@Ignore
 public final class ExampleClusterMemberGroupIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 
