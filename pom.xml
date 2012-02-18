@@ -12,7 +12,7 @@
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>7</version>
-      </parent>
+    </parent>
 
     <name>${project.artifactId}</name>
     <description>LittleGrid Coherence test-support framework</description>
