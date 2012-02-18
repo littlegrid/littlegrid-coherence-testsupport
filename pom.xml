@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.littlegrid</groupId>
@@ -7,11 +8,13 @@
     <packaging>jar</packaging>
     <version>2.4.3-SNAPSHOT</version>
 
+<!--
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
+-->
 
     <name>${project.artifactId}</name>
     <description>LittleGrid Coherence test-support framework</description>
@@ -121,8 +124,8 @@
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>${cobertura-maven-plugin.version}</version>
                 <configuration>
-                    <instrumentation />
-                    <check />
+                    <instrumentation/>
+                    <check/>
                 </configuration>
                 <executions>
                     <execution>
@@ -230,22 +233,22 @@
                             <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m</argLine>
                         </configuration>
                     </plugin>
-<!--
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
--->
+                    <!--
+                                        <plugin>
+                                            <groupId>org.apache.maven.plugins</groupId>
+                                            <artifactId>maven-gpg-plugin</artifactId>
+                                            <version>${maven-gpg-plugin.version}</version>
+                                            <executions>
+                                                <execution>
+                                                    <id>sign-artifacts</id>
+                                                    <phase>verify</phase>
+                                                    <goals>
+                                                        <goal>sign</goal>
+                                                    </goals>
+                                                </execution>
+                                            </executions>
+                                        </plugin>
+                    -->
                 </plugins>
             </build>
         </profile>
@@ -263,6 +266,19 @@
             <url>http://192.168.1.151:8081/nexus/content/repositories/thirdparty</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <java.target.version>1.6</java.target.version>
