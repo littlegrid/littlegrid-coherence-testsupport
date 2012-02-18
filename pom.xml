@@ -7,13 +7,11 @@
     <packaging>jar</packaging>
     <version>2.4.4-SNAPSHOT</version>
 
-<!--
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
--->
 
     <name>${project.artifactId}</name>
     <description>LittleGrid Coherence test-support framework</description>
@@ -208,6 +206,7 @@
             </build>
         </profile>
 
+<!--
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -223,11 +222,11 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${maven-surefire-plugin.version}</version>
                         <configuration>
-                            <!--
+                            &lt;!&ndash;
                                 Due to the classes being loaded into different class loaders and coupled with
                                 the fact that these tests are all about testing that behaviour, the forking and
                                 below argLine settings are used to avoid the perm-space from becoming full.
-                            -->
+                            &ndash;&gt;
                             <forkMode>always</forkMode>
                             <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m</argLine>
                         </configuration>
@@ -249,6 +248,7 @@
                 </plugins>
             </build>
         </profile>
+-->
     </profiles>
 
     <!--
