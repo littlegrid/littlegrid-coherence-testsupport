@@ -5,7 +5,7 @@
     <groupId>org.littlegrid</groupId>
     <artifactId>littlegrid</artifactId>
     <packaging>jar</packaging>
-    <version>2.4.2-SNAPSHOT</version>
+    <version>2.4.2</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
