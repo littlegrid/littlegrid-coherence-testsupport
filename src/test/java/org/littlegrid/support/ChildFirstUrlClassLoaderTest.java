@@ -44,15 +44,13 @@ import static org.junit.Assert.assertThat;
  * Child first URL class loader tests.
  */
 public final class ChildFirstUrlClassLoaderTest {
-    private static final String CLASS_TO_TRY_AND_LOAD = "org.littlegrid.support.ChildFirstUrlClassLoaderTest$Dummy";
-
     @Test
     public void loadClassFromChildClassLoader()
             throws Throwable {
 
         URL url = new File("./target/test-classes").toURI().toURL();
         ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
-        Class clazz = childFirstLoader.loadClass(CLASS_TO_TRY_AND_LOAD);
+        Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
 
         Object objectFromClassLoadedByChildFirst = clazz.newInstance();
         Dummy dummy = new Dummy();
@@ -68,7 +66,7 @@ public final class ChildFirstUrlClassLoaderTest {
 
         URL url = new File("someMadeUpPathThatWillEnsureClassNotLoadedFromChildButDelegatedToParent").toURI().toURL();
         ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
-        Class clazz = childFirstLoader.loadClass(CLASS_TO_TRY_AND_LOAD);
+        Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
 
         Object objectFromClassLoadedByChildFirst = clazz.newInstance();
         Dummy dummy = new Dummy();

@@ -53,8 +53,7 @@ public class ExtendedDefaultMemberIntegrationTest extends AbstractAfterTestShutd
 
         memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
                 .setCustomConfiguredCount(numberOfMembers)
-                .setCustomConfiguredClusterMemberInstanceClassName(
-                        "org.littlegrid.ExampleClusterMemberGroupIntegrationTest$PretendServerClusterMember")
+                .setCustomConfiguredClusterMemberInstanceClassName(PretendServerClusterMember.class.getName())
                 .build();
 
         assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));

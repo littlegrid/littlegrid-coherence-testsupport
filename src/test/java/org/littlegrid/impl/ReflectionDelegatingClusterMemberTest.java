@@ -51,7 +51,7 @@ public final class ReflectionDelegatingClusterMemberTest {
     @Test
     public void operateDelegate() {
         final ReflectionDelegatingClusterMember delegatingClusterMember = new ReflectionDelegatingClusterMember()
-                .setDelegateInstanceClassName("org.littlegrid.impl.ReflectionDelegatingClusterMemberTest$MockDelegateClusterMember")
+                .setDelegateInstanceClassName(MockDelegateClusterMember.class.getName())
                 .setStartMethodName("myStart")
                 .setShutdownMethodName("myShutdown")
                 .setStopMethodName("myStop")

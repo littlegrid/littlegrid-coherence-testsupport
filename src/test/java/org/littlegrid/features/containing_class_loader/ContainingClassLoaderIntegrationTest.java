@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.features.PretendServer;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -91,8 +92,7 @@ public final class ContainingClassLoaderIntegrationTest
         final ClassLoader containingClassLoader =
                 memberGroup.getClusterMember(memberIdToRunPretendServerIn).getActualContainingClassLoader();
 
-        final Class classWithinClusterMember = containingClassLoader.loadClass(
-                "org.littlegrid.features.PretendServer");
+        final Class classWithinClusterMember = containingClassLoader.loadClass(PretendServer.class.getName());
 
         final Object pretendServer = classWithinClusterMember.newInstance();
         ClassHelper.invoke(pretendServer, "start", new Object[]{});
