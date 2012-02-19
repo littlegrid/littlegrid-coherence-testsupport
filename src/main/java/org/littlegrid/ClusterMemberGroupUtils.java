@@ -49,7 +49,7 @@ public final class ClusterMemberGroupUtils {
      *
      * @return builder.
      */
-    public static ClusterMemberGroup.Builder newClusterMemberGroupBuilder() {
+    public static ClusterMemberGroup.Builder newBuilder() {
         return new DefaultClusterMemberGroupBuilder();
     }
 
@@ -75,19 +75,6 @@ public final class ClusterMemberGroupUtils {
 
         if (exceptionOccurredDuringShutdown) {
             throw new IllegalStateException("Exception occurred shutting down group");
-        }
-    }
-
-    /**
-     * Shutdown cluster member groups followed by the cache factory.
-     *
-     * @param memberGroups Member groups.
-     */
-    public static void shutdownClusterMemberGroupsThenCacheFactory(final ClusterMemberGroup... memberGroups) {
-        try {
-            shutdownClusterMemberGroups(memberGroups);
-        } finally {
-            CacheFactory.shutdown();
         }
     }
 

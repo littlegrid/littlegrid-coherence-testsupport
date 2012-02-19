@@ -51,7 +51,7 @@ public final class SimpleTest {
 
     @BeforeClass
     public static void beforeTests() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
                 .build();
     }

@@ -44,7 +44,7 @@ public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTe
     @Test(expected = IllegalStateException.class)
     public void unknownClusterMemberInstanceClassName() {
         // Use an unknown class to cause an exception
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
                 .build();
     }

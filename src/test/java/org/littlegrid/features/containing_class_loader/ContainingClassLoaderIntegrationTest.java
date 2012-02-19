@@ -57,7 +57,7 @@ public final class ContainingClassLoaderIntegrationTest
     public void getActualContainingClassLoader() {
         final int numberOfMembers = 2;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
@@ -85,7 +85,7 @@ public final class ContainingClassLoaderIntegrationTest
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int memberIdToRunPretendServerIn = 2;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCustomConfiguredCount(numberOfMembers)
                 .build();
 

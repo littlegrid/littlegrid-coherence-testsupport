@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.littlegrid</groupId>
@@ -25,10 +27,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git
-        </connection>
-        <developerConnection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git
-        </developerConnection>
+        <connection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</connection>
+        <developerConnection>scm:git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</developerConnection>
         <url>git:https://littlegrid@bitbucket.org/littlegrid/littlegrid-coherence-testsupport.git</url>
     </scm>
 
@@ -181,19 +181,6 @@
             </build>
         </profile>
     </profiles>
-
-    <!--
-        Required because Coherence is a third-party JAR and license restrictions apply, if building
-        LittleGrid from the source code, then you'd need Coherence available in your own internal
-        Maven repository or installed into your local Maven repository.
-    -->
-    <repositories>
-        <repository>
-            <id>thirdparty</id>
-            <name>thirdparty</name>
-            <url>http://192.168.1.151:8081/nexus/content/repositories/thirdparty</url>
-        </repository>
-    </repositories>
 
     <properties>
         <java.target.version>1.6</java.target.version>

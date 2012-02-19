@@ -52,7 +52,7 @@ public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegr
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
         final String jarToExclude = "junit-4.8.2.jar";
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setJarsToExcludeFromClassPath(jarToExclude)
                 .build();
 

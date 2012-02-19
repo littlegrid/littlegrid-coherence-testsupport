@@ -66,7 +66,7 @@ public final class StopClusterMemberGroupIntegrationTest
         final int expectedClusterSizeAfterStop = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
         final int memberIdToStop = 3;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
@@ -91,7 +91,7 @@ public final class StopClusterMemberGroupIntegrationTest
         final int memberIdToStop = 12;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
 
         final Cluster cluster = CacheFactory.ensureCluster();
@@ -109,7 +109,7 @@ public final class StopClusterMemberGroupIntegrationTest
 
     @Test(expected = UnsupportedOperationException.class)
     public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(3)
                 .build()
                 .stopMember(1, 2);

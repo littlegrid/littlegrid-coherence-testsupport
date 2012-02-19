@@ -65,7 +65,7 @@ public class StopExtendProxyIntegrationTest extends AbstractAfterTestShutdownInt
 
         final int expectedClusterSizeAfterStop = expectedClusterSizeBeforeStop - 1;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(numberOfExtendProxyMembers)
                 .build();
 
@@ -93,7 +93,7 @@ public class StopExtendProxyIntegrationTest extends AbstractAfterTestShutdownInt
         additionalSystemProperties.setProperty("tangosol.coherence.extend.address.3", "127.0.0.1");
         additionalSystemProperties.setProperty("tangosol.coherence.extend.port.3", "20902");
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfStorageEnabledMembers)
                 .setExtendProxyCount(numberOfExtendProxyMembers)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)

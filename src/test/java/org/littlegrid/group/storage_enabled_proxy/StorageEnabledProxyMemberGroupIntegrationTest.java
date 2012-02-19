@@ -70,7 +70,7 @@ public final class StorageEnabledProxyMemberGroupIntegrationTest
 
     @Test
     public void singleStorageEnabledExtendProxy() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
@@ -86,7 +86,7 @@ public final class StorageEnabledProxyMemberGroupIntegrationTest
     public void multipleExtendProxiesInSameGroup() {
         final int numberOfStorageEnabledExtendProxies = MEDIUM_TEST_CLUSTER_SIZE;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(numberOfStorageEnabledExtendProxies)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .build();

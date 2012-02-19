@@ -63,11 +63,11 @@ public final class WkaMemberGroupIntegrationTest
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            memberGroup1 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers)
                     .build();
 
-            memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers)
                     .build();
 
@@ -86,14 +86,14 @@ public final class WkaMemberGroupIntegrationTest
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers);
             memberGroup1 = builder.build();
 
             final int differentPort = builder.getWkaPort() + 20;
             LOGGER.warn(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
 
-            memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers)
                     .setWkaPort(differentPort)
                     .build();

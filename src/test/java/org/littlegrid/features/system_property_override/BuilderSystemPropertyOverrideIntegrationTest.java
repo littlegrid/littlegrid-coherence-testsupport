@@ -51,7 +51,7 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
     public void exampleOfDifferentOverrideFileSpecified() {
         System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .build();
 
         // This example configuration file has a default storage-enabled member count of 3

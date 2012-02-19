@@ -138,7 +138,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final int expectedSleepDuration36x = 23;
         final int expectedSleepDurationDefault = 24;
 
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
+        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
 
@@ -222,7 +222,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final int expectedFastStartJoinTimeoutMilliseconds = 231;
 
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
+        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setCacheConfiguration(expectedCacheConfiguration);
         builder.setClientCacheConfiguration(expectedClientCacheConfiguration);
@@ -309,7 +309,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedLogDestination = "stdout";
         final int expectedLogLevel = 3;
 
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newClusterMemberGroupBuilder();
+        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
 

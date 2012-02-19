@@ -53,7 +53,7 @@ public class ExtendedDefaultMemberIntegrationTest extends AbstractAfterTestShutd
 
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCustomConfiguredCount(numberOfMembers)
                 .setCustomConfiguredClusterMemberInstanceClassName(PretendServerClusterMember.class.getName())
                 .build();

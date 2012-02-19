@@ -72,7 +72,7 @@ public final class ReflectionDelegatingFallbackIntegrationTest
 
     @Before
     public void beforeTest() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(NUMBER_OF_MEMBERS)
                 .setClusterMemberInstanceClassName(ReflectionDelegatingClusterMember.class.getName())
                 .build();

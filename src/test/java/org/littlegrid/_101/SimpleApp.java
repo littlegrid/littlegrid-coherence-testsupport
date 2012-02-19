@@ -45,7 +45,7 @@ public class SimpleApp {
         ClusterMemberGroup memberGroup = null;
 
         try {
-            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            memberGroup = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(2)
                     .build();
 

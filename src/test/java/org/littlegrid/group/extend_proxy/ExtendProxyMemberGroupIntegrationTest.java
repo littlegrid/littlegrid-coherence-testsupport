@@ -65,7 +65,7 @@ public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTe
 
     @Test
     public void noStorageEnabledMembersCannotStoreData() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(1)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
@@ -86,7 +86,7 @@ public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTe
 
     @Test
     public void extendProxyAndSeparateStorageEnabledMembersInSameGroup() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(1)
                 .setStorageEnabledCount(2)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
@@ -105,11 +105,11 @@ public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTe
         ClusterMemberGroup extendProxyGroup = null;
 
         try {
-            storageEnabledGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            storageEnabledGroup = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfCacheServers).
                             setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
 
-            extendProxyGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            extendProxyGroup = ClusterMemberGroupUtils.newBuilder()
                     .setExtendProxyCount(1)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                     .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
@@ -125,7 +125,7 @@ public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTe
     public void multipleExtendProxiesInSameGroup() {
         int numberOfExtendProxies = MEDIUM_TEST_CLUSTER_SIZE;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(numberOfExtendProxies)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .build();
@@ -136,7 +136,7 @@ public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTe
 
     @Test
     public void extendClientCacheConfigurationNotSpecified() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)
                 .build();
 

@@ -56,7 +56,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers).build();
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 
@@ -70,7 +70,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
 
     @Test
     public void simpleMemberGroupWithCacheConfigurationAndKnownCache() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
 
@@ -80,7 +80,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
 
     @Test(expected = IllegalArgumentException.class)
     public void simpleMemberGroupWithCacheConfigurationAndUnknownCache() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
 
@@ -93,7 +93,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
@@ -110,7 +110,7 @@ public final class BaselineClusterMemberGroupIntegrationTest
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 

@@ -35,8 +35,6 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.littlegrid.features.PretendServer;
-import org.littlegrid.impl.DefaultClusterMember;
 
 import java.util.Properties;
 
@@ -46,7 +44,6 @@ import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 
 /**
@@ -61,7 +58,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
 
     @Test
     public void exampleOfSimplestUse() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .build();
 
         performSimplePutSizeGet(KNOWN_TEST_CACHE);
@@ -69,7 +66,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
 
     @Test
     public void exampleOfStorageEnabledMembersWithCacheConfiguration() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
@@ -79,7 +76,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
 
     @Test
     public void exampleOfOneStorageEnabledExtendProxyMember() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setStorageEnabledExtendProxyCount(1)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
@@ -90,7 +87,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
 
     @Test
     public void exampleOfExtendProxyWithSeparateStorageEnabledMembers() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setExtendProxyCount(1)
                 .setStorageEnabledCount(2)
@@ -111,7 +108,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
         properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
         properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIG_FILE);
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setBuilderProperties(properties)
                 .build();
 
@@ -124,11 +121,11 @@ public final class ExampleClusterMemberGroupIntegrationTest
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            memberGroup1 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            memberGroup1 = ClusterMemberGroupUtils.newBuilder()
                     .setBuilderProperties("properties/memberGroup1.properties")
                     .build();
 
-            memberGroup2 = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setBuilderProperties("properties/memberGroup2.properties")
                     .build();
 
@@ -141,7 +138,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
 
     @Test
     public void exampleOfAdditionalSystemProperties() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setAdditionalSystemProperties("properties/additionalSystemProperties.properties")
                 .build();
 
@@ -150,7 +147,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
 
     @Test
     public void clusterWithVarietyOfMembers() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
                 .setExtendProxyCount(1)
                 .setJmxMonitorCount(1)

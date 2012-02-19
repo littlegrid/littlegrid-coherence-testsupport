@@ -52,7 +52,7 @@ public class LargeClusterMemberGroupIntegrationTest
         final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 

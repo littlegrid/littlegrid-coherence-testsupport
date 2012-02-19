@@ -65,7 +65,7 @@ public final class ShutdownClusterMemberGroupIntegrationTest
         final int expectedClusterSizeAfterShutdown = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
         final int memberIdToShutdown = 3;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
@@ -88,7 +88,7 @@ public final class ShutdownClusterMemberGroupIntegrationTest
         final int memberIdToShutdown = 12;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
@@ -106,7 +106,7 @@ public final class ShutdownClusterMemberGroupIntegrationTest
 
     @Test(expected = UnsupportedOperationException.class)
     public void attemptToShutdownMoreThanOneMemberWhichIsNotSupported() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(3)
                 .build()
                 .shutdownMember(1, 2);
