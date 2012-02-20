@@ -45,7 +45,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Simple test example.
  */
-@Ignore
 public final class SimpleTest {
     private static ClusterMemberGroup memberGroup;
 

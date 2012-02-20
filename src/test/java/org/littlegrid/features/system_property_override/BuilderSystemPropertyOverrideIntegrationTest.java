@@ -45,7 +45,6 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_
  * Builder system property override tests that use the littlegrid.builder.override system
  * property to specify an alternative properties file through a system property.
  */
-@Ignore
 public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void exampleOfDifferentOverrideFileSpecified() {
@@ -56,6 +55,5 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
 
         // This example configuration file has a default storage-enabled member count of 3
         assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
-
     }
 }

@@ -16,18 +16,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * JMX monitor member tests.
  */
-@Ignore
-public final class JmxMonitorMemberIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
-    private ClusterMemberGroup memberGroup;
-
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
+public final class JmxMonitorIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void jmxMonitorClusterMember() {
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;

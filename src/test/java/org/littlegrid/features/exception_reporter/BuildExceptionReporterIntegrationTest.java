@@ -39,7 +39,6 @@ import org.littlegrid.ClusterMemberGroupUtils;
 /**
  * Default exception report integration tests.
  */
-@Ignore
 public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test(expected = IllegalStateException.class)
     public void unknownClusterMemberInstanceClassName() {

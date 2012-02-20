@@ -59,7 +59,6 @@ public class SimpleApp {
     }
 
     @Test
-    @Ignore
     public void runSimpleApp() {
         main(new String[]{});
     }

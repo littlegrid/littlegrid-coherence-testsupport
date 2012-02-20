@@ -34,7 +34,6 @@ package org.littlegrid.group.custom_confgured;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.RequestPolicyException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -50,9 +49,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * Custom configured member tests.
  */
-@Ignore
-public final class CustomConfiguredMemberIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
+public final class CustomConfiguredMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
 
     @Test(expected = RequestPolicyException.class)
     public void storageDisabledClusterMember() {

@@ -29,46 +29,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.features.additional_system_properties;
 
-import com.tangosol.net.CacheFactory;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupUtils;
 
-import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
-import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
- * Large cluster member group tests.
+ * Additional system properties integration tests.
  */
-@Ignore
-public class LargeClusterMemberGroupIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
+public class AdditionalSystemPropertiesIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void startAndStopThenShutdownLargeMemberGroup() {
-        final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(numberOfMembers)
+    public void exampleOfAdditionalSystemProperties() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setAdditionalSystemProperties("properties/additionalSystemProperties.properties")
                 .build();
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
-
-        memberGroup.stopAll();
-
-        /*
-            Wait longer because all of them are being stopped.
-         */
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-
-        memberGroup.shutdownAll();
-
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+        assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
     }
 }

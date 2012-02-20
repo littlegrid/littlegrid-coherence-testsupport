@@ -49,20 +49,11 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
 /**
  * Cluster member group example tests to show how to use the basic API.
  */
-@Ignore
 public final class ExampleClusterMemberGroupIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 
     private static final String KEY = "key";
     private static final String VALUE = "value";
-
-    @Test
-    public void exampleOfSimplestUse() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .build();
-
-        performSimplePutSizeGet(KNOWN_TEST_CACHE);
-    }
 
     @Test
     public void exampleOfStorageEnabledMembersWithCacheConfiguration() {
@@ -134,15 +125,6 @@ public final class ExampleClusterMemberGroupIntegrationTest
             // Ensure they get shutdown
             ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
         }
-    }
-
-    @Test
-    public void exampleOfAdditionalSystemProperties() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setAdditionalSystemProperties("properties/additionalSystemProperties.properties")
-                .build();
-
-        assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
     }
 
     @Test

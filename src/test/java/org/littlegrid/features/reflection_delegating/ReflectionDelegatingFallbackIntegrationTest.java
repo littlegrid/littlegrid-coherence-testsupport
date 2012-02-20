@@ -35,7 +35,6 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -55,19 +54,15 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 
 /**
- * Reflection delegating cluster member fallback tests, to ensure fallback functionality
- * works as expected.
+ * Reflection delegating cluster memberWhoWillCauseFallbackToBeUsed fallback tests, to
+ * ensure fallback functionality works as expected.
  */
-@Ignore
-public final class ReflectionDelegatingFallbackIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
+public final class ReflectionDelegatingFallbackIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     private static final int NUMBER_OF_MEMBERS = SMALL_TEST_CLUSTER_SIZE;
     private static final int EXPECTED_CLUSTER_SIZE = NUMBER_OF_MEMBERS + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
     private static final int MEMBER_ID = 2;
 
-    private ClusterMemberGroup memberGroup;
-    private ClusterMemberGroup.ClusterMember member;
+    private ClusterMemberGroup.ClusterMember memberWhoWillCauseFallbackToBeUsed;
 
 
     @Before
@@ -77,25 +72,19 @@ public final class ReflectionDelegatingFallbackIntegrationTest
                 .setClusterMemberInstanceClassName(ReflectionDelegatingClusterMember.class.getName())
                 .build();
 
-
         final Cluster cluster = CacheFactory.ensureCluster();
 
         assertThatClusterIsExpectedSize(cluster, EXPECTED_CLUSTER_SIZE);
         assertThat(doesMemberExist(cluster, MEMBER_ID), is(true));
 
-        member = memberGroup.getClusterMember(MEMBER_ID);
+        memberWhoWillCauseFallbackToBeUsed = memberGroup.getClusterMember(MEMBER_ID);
 
-        assertThat(member, notNullValue());
-    }
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        assertThat(memberWhoWillCauseFallbackToBeUsed, notNullValue());
     }
 
     @Test
     public void fallbackShutdown() {
-        member.shutdown();
+        memberWhoWillCauseFallbackToBeUsed.shutdown();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), EXPECTED_CLUSTER_SIZE - 1);
     }
@@ -104,7 +93,7 @@ public final class ReflectionDelegatingFallbackIntegrationTest
     public void fallbackStop()
             throws Exception {
 
-        member.stop();
+        memberWhoWillCauseFallbackToBeUsed.stop();
 
         TimeUnit.SECONDS.sleep(memberGroup.getSuggestedSleepAfterStopDuration());
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), EXPECTED_CLUSTER_SIZE - 1);
@@ -112,12 +101,13 @@ public final class ReflectionDelegatingFallbackIntegrationTest
 
     @Test
     public void fallbackLocalMemberId() {
-        assertThat(member.getLocalMemberId(), is(MEMBER_ID));
+        assertThat(memberWhoWillCauseFallbackToBeUsed.getLocalMemberId(), is(MEMBER_ID));
     }
 
     @Test
     public void fallbackContainingClassLoader() {
-        assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
+        assertThat(memberWhoWillCauseFallbackToBeUsed.getActualContainingClassLoader(),
+                instanceOf(ChildFirstUrlClassLoader.class));
     }
 
     /**

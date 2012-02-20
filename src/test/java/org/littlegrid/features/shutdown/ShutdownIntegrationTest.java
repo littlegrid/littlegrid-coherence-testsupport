@@ -29,13 +29,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.features.shutdown;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -43,28 +45,17 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
-import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
- * Cluster member group stop tests.
+ * Cluster member group shutdown tests.
  */
-@Ignore
-public final class StopClusterMemberGroupIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
-    private ClusterMemberGroup memberGroup;
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
+public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void startAndStopSpecificMemberOfGroup() {
+    public void startAndShutdownSpecificMemberOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
-        final int expectedClusterSizeBeforeStop = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-        final int expectedClusterSizeAfterStop = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
-        final int memberIdToStop = 3;
+        final int expectedClusterSizeBeforeShutdown = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int expectedClusterSizeAfterShutdown = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
+        final int memberIdToShutdown = 3;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
@@ -72,35 +63,33 @@ public final class StopClusterMemberGroupIntegrationTest
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
-        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeBeforeStop);
-        assertThat(doesMemberExist(cluster, memberIdToStop), is(true));
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeBeforeShutdown);
+        assertThat(doesMemberExist(cluster, memberIdToShutdown), is(true));
 
-        memberGroup.stopMember(memberIdToStop);
+        memberGroup.shutdownMember(memberIdToShutdown);
 
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-
-        assertThat(doesMemberExist(cluster, memberIdToStop), is(false));
-        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterStop);
+        assertThat(doesMemberExist(cluster, memberIdToShutdown), is(false));
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterShutdown);
 
         memberGroup.shutdownAll();
     }
 
     @Test
-    public void startAndStopNonExistentMemberOfGroup() {
+    public void startAndShutdownNonExistentMemberOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
-        final int memberIdToStop = 12;
+        final int memberIdToShutdown = 12;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(numberOfMembers).build();
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
         assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
-        assertThat(doesMemberExist(cluster, memberIdToStop), is(false));
+        assertThat(doesMemberExist(cluster, memberIdToShutdown), is(false));
 
-        memberGroup.stopMember(memberIdToStop);
-
+        memberGroup.shutdownMember(memberIdToShutdown);
         // No need to wait - it never existed
         assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
 
@@ -108,10 +97,10 @@ public final class StopClusterMemberGroupIntegrationTest
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
+    public void attemptToShutdownMoreThanOneMemberWhichIsNotSupported() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(3)
                 .build()
-                .stopMember(1, 2);
+                .shutdownMember(1, 2);
     }
 }

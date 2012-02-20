@@ -35,7 +35,6 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -47,8 +46,8 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.GetClusterSizeInvocable;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.GetClusterSizeInvocable;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
@@ -57,17 +56,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
 /**
  * Cluster member group Extend tests.
  */
-@Ignore
-public final class StorageEnabledProxyMemberGroupIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
-    private ClusterMemberGroup memberGroup;
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
+public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void singleStorageEnabledExtendProxy() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()

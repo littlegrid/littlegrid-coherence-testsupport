@@ -29,13 +29,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.stop_extend_proxy;
+package org.littlegrid.features.stop;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupTestSupport;
 import org.littlegrid.ClusterMemberGroupUtils;
 
@@ -44,6 +44,7 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
@@ -52,10 +53,116 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
- * Tests to stop Extend proxies.
+ * Cluster member group stop tests, for stopping all the members, specific members and
+ * demonstrating failover for Extend clients when Extend proxy is stopped.
  */
-@Ignore
-public class StopExtendProxyIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    @Test
+    public void startAndStopInvokedTwice() {
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+
+        memberGroup.stopAll();
+        memberGroup.stopAll();
+
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+    }
+
+    @Test
+    public void startAndStopThenShutdownLargeMemberGroup() {
+        final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+
+        memberGroup.stopAll();
+
+        /*
+            Wait longer because all of them are being stopped.
+         */
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
+        memberGroup.shutdownAll();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+    }
+
+    @Test
+    public void startAndStopSpecificMemberOfGroup() {
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int expectedClusterSizeBeforeStop = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int expectedClusterSizeAfterStop = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
+        final int memberIdToStop = 3;
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeBeforeStop);
+        assertThat(doesMemberExist(cluster, memberIdToStop), is(true));
+
+        memberGroup.stopMember(memberIdToStop);
+
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
+        assertThat(doesMemberExist(cluster, memberIdToStop), is(false));
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterStop);
+
+        memberGroup.shutdownAll();
+    }
+
+    @Test
+    public void startAndStopNonExistentMemberOfGroup() {
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int memberIdToStop = 12;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers).build();
+
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
+        assertThat(doesMemberExist(cluster, memberIdToStop), is(false));
+
+        memberGroup.stopMember(memberIdToStop);
+
+        // No need to wait - it never existed
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
+
+        memberGroup.shutdownAll();
+    }
+
+/*
+    @Test(expected = UnsupportedOperationException.class)
+    public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
+        try {
+            memberGroup = ClusterMemberGroupUtils.newBuilder()
+                    .setStorageEnabledCount(3)
+                    .build()
+                    .stopMember(1, 2);
+        } finally {
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        }
+    }
+*/
+
     @Test
     public void startAndStopExtendProxy() {
         final int numberOfExtendProxyMembers = SINGLE_TEST_CLUSTER_SIZE;
@@ -82,7 +189,6 @@ public class StopExtendProxyIntegrationTest extends AbstractAfterTestShutdownInt
     }
 
     @Test
-    @Ignore
     public void startAndStopExtendProxyThatExtendClientIsConnectedTo() {
         final int numberOfExtendProxyMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int numberOfStorageEnabledMembers = SINGLE_TEST_CLUSTER_SIZE;

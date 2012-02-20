@@ -47,10 +47,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
  * Cluster member group baseline tests, a set of simple tests to quickly check the basic
  * behaviour.
  */
-@Ignore
-public final class BaselineClusterMemberGroupIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
+public final class BaselineClusterMemberGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void startAndShutdownSingleMemberGroup() {
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
@@ -101,25 +98,6 @@ public final class BaselineClusterMemberGroupIntegrationTest
 
         memberGroup.shutdownAll();
         memberGroup.shutdownAll();
-
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-    }
-
-    @Test
-    public void startAndStopInvokedTwice() {
-        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(numberOfMembers)
-                .build();
-
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
-
-        memberGroup.stopAll();
-        memberGroup.stopAll();
-
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }

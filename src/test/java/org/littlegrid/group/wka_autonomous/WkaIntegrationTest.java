@@ -32,9 +32,7 @@
 package org.littlegrid.group.wka_autonomous;
 
 import com.tangosol.net.CacheFactory;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.LoggerPlaceHolder;
@@ -47,35 +45,8 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * Cluster member group WKA tests.
  */
-@Ignore
-public final class WkaMemberGroupIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
-    private static final LoggerPlaceHolder LOGGER =
-            new LoggerPlaceHolder(WkaMemberGroupIntegrationTest.class.getName());
-
-    @Test
-    public void twoSmallMemberGroupsWithSameWka() {
-        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
-        int expectedClusterSize = (numberOfMembers * 2) + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-
-        ClusterMemberGroup memberGroup1 = null;
-        ClusterMemberGroup memberGroup2 = null;
-
-        try {
-            memberGroup1 = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(numberOfMembers)
-                    .build();
-
-            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(numberOfMembers)
-                    .build();
-
-            assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
-        } finally {
-            ClusterMemberGroupUtils.shutdownClusterMemberGroups(memberGroup1, memberGroup2);
-        }
-    }
+public final class WkaIntegrationTest {
+    private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(WkaIntegrationTest.class.getName());
 
     @Test
     public void twoSmallMemberGroupsWithDifferentWkas() {
@@ -100,7 +71,7 @@ public final class WkaMemberGroupIntegrationTest
 
             assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
         } finally {
-            ClusterMemberGroupUtils.shutdownClusterMemberGroups(memberGroup1, memberGroup2);
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
         }
     }
 }

@@ -32,19 +32,17 @@
 package org.littlegrid.features.jar_exclusion;
 
 import com.tangosol.net.CacheFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupTestSupport;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * JAR exclusion integration tests.
  */
-@Ignore
 public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
@@ -56,6 +54,6 @@ public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegr
                 .setJarsToExcludeFromClassPath(jarToExclude)
                 .build();
 
-        ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 }

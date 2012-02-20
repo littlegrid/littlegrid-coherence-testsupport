@@ -54,15 +54,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.getClusterSizeThatExt
 /**
  * Cluster member group Extend tests.
  */
-@Ignore
-public final class ExtendProxyMemberGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
-    private ClusterMemberGroup memberGroup;
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
+public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void noStorageEnabledMembersCannotStoreData() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()

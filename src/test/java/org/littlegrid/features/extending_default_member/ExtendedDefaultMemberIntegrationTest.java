@@ -45,7 +45,6 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_S
 /**
  * Extended default member integration tests.
  */
-@Ignore
 public class ExtendedDefaultMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void exampleOfExtendingDefaultClusterMemberToUseLifeCycleMethods()
