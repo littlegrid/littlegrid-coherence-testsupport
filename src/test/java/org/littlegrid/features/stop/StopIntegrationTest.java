@@ -149,19 +149,14 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         memberGroup.shutdownAll();
     }
 
-/*
     @Test(expected = UnsupportedOperationException.class)
     public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
-        try {
-            memberGroup = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(3)
-                    .build()
-                    .stopMember(1, 2);
-        } finally {
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-        }
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(3)
+                .build();
+
+        memberGroup.stopMember(1, 2);
     }
-*/
 
     @Test
     public void startAndStopExtendProxy() {
