@@ -66,14 +66,16 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
 
         memberGroup.stopAll();
         memberGroup.stopAll();
 
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+        assertThatClusterIsExpectedSize(cluster, CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test
@@ -85,7 +87,9 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
                 .setStorageEnabledCount(numberOfMembers)
                 .build();
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
 
         memberGroup.stopAll();
 
@@ -98,7 +102,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         memberGroup.shutdownAll();
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+        assertThatClusterIsExpectedSize(cluster, CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
     @Test

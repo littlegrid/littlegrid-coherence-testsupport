@@ -29,64 +29,63 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.group.storage_enabled_proxy;
+package org.littlegrid.features.setting_builder_properties;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.GetClusterSizeInvocable;
-import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 
 /**
- * Cluster member group Extend tests.
+ * Setting builder properties integration tests.
  */
-public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void singleStorageEnabledExtendProxy() {
+    public void exampleOfConfiguringExtendProxyWithSeparateStorageEnabledMembersThroughProperties() {
+        /*
+            These properties could be read from a file.
+         */
+        Properties properties = new Properties();
+        properties.setProperty("StorageEnabledCount", "2");
+        properties.setProperty("ExtendProxyCount", "1");
+        properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
+        properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIG_FILE);
+
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledExtendProxyCount(1)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setBuilderProperties(properties)
                 .build();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");
-
-        assertThat(cache.size(), is(1));
     }
 
     @Test
-    public void multipleExtendProxiesInSameGroup() {
-        final int numberOfStorageEnabledExtendProxies = MEDIUM_TEST_CLUSTER_SIZE;
+    public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember() {
+        ClusterMemberGroup memberGroup1 = null;
+        ClusterMemberGroup memberGroup2 = null;
 
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledExtendProxyCount(numberOfStorageEnabledExtendProxies)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
+        try {
+            memberGroup1 = ClusterMemberGroupUtils.newBuilder()
+                    .setBuilderProperties("properties/memberGroup1.properties")
+                    .build();
 
-        final InvocationService invocationService =
-                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
+                    .setBuilderProperties("properties/memberGroup2.properties")
+                    .build();
 
-        final Map result = invocationService.query(new GetClusterSizeInvocable(), null);
-        assertThat(result.size(), is(1));
-
-        final List<Integer> list = new ArrayList<Integer>(result.values());
-        final int clusterSize = list.get(0);
-
-        assertThat(clusterSize, is(numberOfStorageEnabledExtendProxies));
+            final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
+            cache.put("key", "value");
+        } finally {
+            // Ensure they get shutdown
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
+        }
     }
 }

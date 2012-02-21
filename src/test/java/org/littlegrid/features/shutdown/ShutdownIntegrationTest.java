@@ -33,7 +33,7 @@ package org.littlegrid.features.shutdown;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
-import org.junit.After;
+import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -43,6 +43,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 
@@ -50,6 +51,47 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
  * Cluster member group shutdown tests.
  */
 public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    @Test
+    public void startAndShutdownSingleMemberGroup() {
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
+
+        final NamedCache cache = CacheFactory.getCache("test");
+        cache.put("key", "value");
+
+        memberGroup.shutdownAll();
+
+        assertThatClusterIsExpectedSize(cluster, CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+    }
+
+
+    @Test
+    public void startAndShutdownInvokedTwice() {
+        final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .build();
+
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
+
+        memberGroup.shutdownAll();
+        memberGroup.shutdownAll();
+
+        assertThatClusterIsExpectedSize(cluster, CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+    }
+
     @Test
     public void startAndShutdownSpecificMemberOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;

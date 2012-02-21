@@ -53,7 +53,8 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .build();
 
-        // This example configuration file has a default storage-enabled member count of 3
+        // This example configuration file has a default storage-enabled member count of 3, so a cluster of
+        // 4 in total with this storage-disabled member.
         assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
     }
 }

@@ -29,17 +29,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.group.variety;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.Properties;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
@@ -47,16 +45,16 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 
 /**
- * Cluster member group example tests to show how to use the basic API.
+ * Variety of cluster member group tests, useful as a quick baseline check as a variety of
+ * members are used..
  */
-public final class ExampleClusterMemberGroupIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
+public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     private static final String KEY = "key";
     private static final String VALUE = "value";
 
+
     @Test
-    public void exampleOfStorageEnabledMembersWithCacheConfiguration() {
+    public void storageEnabledMembersWithCacheConfiguration() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
@@ -66,18 +64,7 @@ public final class ExampleClusterMemberGroupIntegrationTest
     }
 
     @Test
-    public void exampleOfOneStorageEnabledExtendProxyMember() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setStorageEnabledExtendProxyCount(1)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
-
-        performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
-    }
-
-    @Test
-    public void exampleOfExtendProxyWithSeparateStorageEnabledMembers() {
+    public void extendProxyWithSeparateStorageEnabledMembers() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setExtendProxyCount(1)
@@ -86,45 +73,6 @@ public final class ExampleClusterMemberGroupIntegrationTest
                 .build();
 
         performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
-    }
-
-    @Test
-    public void exampleOfConfiguringExtendProxyWithSeparateStorageEnabledMembersThroughProperties() {
-        /*
-            These properties could be read from a file.
-         */
-        Properties properties = new Properties();
-        properties.setProperty("StorageEnabledCount", "2");
-        properties.setProperty("ExtendProxyCount", "1");
-        properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
-        properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIG_FILE);
-
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setBuilderProperties(properties)
-                .build();
-
-        performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
-    }
-
-    @Test
-    public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember() {
-        ClusterMemberGroup memberGroup1 = null;
-        ClusterMemberGroup memberGroup2 = null;
-
-        try {
-            memberGroup1 = ClusterMemberGroupUtils.newBuilder()
-                    .setBuilderProperties("properties/memberGroup1.properties")
-                    .build();
-
-            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
-                    .setBuilderProperties("properties/memberGroup2.properties")
-                    .build();
-
-            performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
-        } finally {
-            // Ensure they get shutdown
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
-        }
     }
 
     @Test
