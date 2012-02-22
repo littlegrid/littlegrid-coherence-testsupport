@@ -501,7 +501,7 @@ public interface ClusterMemberGroup {
          * @param joinTimeoutMilliseconds Join timeout milliseconds.
          * @return builder.
          */
-        Builder setFastStartJoinTimeoutMilliseconds(int joinTimeoutMilliseconds);
+        Builder setFastStartJoinTimeoutMilliseconds(long joinTimeoutMilliseconds);
     }
 
     /**

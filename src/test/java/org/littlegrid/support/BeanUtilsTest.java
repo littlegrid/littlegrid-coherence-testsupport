@@ -45,8 +45,10 @@ import static org.junit.Assert.assertThat;
 public final class BeanUtilsTest {
     private static final String NAME_PROPERTY = "Name";
     private static final String AGE_PROPERTY = "Age";
+    private static final String BIRTH_DATE_MILLIS_PROPERTY = "BirthDateMillis";
     private static final String EXPECTED_NAME = "Fred Bloggs";
     private static final int EXPECTED_AGE = 30;
+    private static final long EXPECTED_BIRTH_DATE_MILLIS = 1234567890;
 
 
     @Test
@@ -59,6 +61,7 @@ public final class BeanUtilsTest {
         assertThat(propertiesSetCount, is(0));
         assertThat(person.getName(), nullValue());
         assertThat(person.getAge(), is(0));
+        assertThat(person.getBirthDateMillis(), is(0L));
     }
 
     @Test
@@ -73,10 +76,11 @@ public final class BeanUtilsTest {
         assertThat(propertiesSetCount, is(1));
         assertThat(person.getName(), is(EXPECTED_NAME));
         assertThat(person.getAge(), is(0));
+        assertThat(person.getBirthDateMillis(), is(0L));
     }
 
     @Test
-    public void setWhenValueIsNumber() {
+    public void setWhenValueIsInteger() {
         Properties properties = new Properties();
         properties.setProperty(AGE_PROPERTY, Integer.toString(EXPECTED_AGE));
 
@@ -86,6 +90,21 @@ public final class BeanUtilsTest {
 
         assertThat(propertiesSetCount, is(1));
         assertThat(person.getAge(), is(EXPECTED_AGE));
+        assertThat(person.getBirthDateMillis(), is(0L));
+    }
+
+    @Test
+    public void setWhenValueIsLong() {
+        Properties properties = new Properties();
+        properties.setProperty(BIRTH_DATE_MILLIS_PROPERTY, Long.toString(EXPECTED_BIRTH_DATE_MILLIS));
+
+        Person person = new Person();
+
+        int propertiesSetCount = BeanUtils.multiSetter(person, properties);
+
+        assertThat(propertiesSetCount, is(1));
+        assertThat(person.getAge(), is(0));
+        assertThat(person.getBirthDateMillis(), is(EXPECTED_BIRTH_DATE_MILLIS));
     }
 
     @Test
@@ -93,14 +112,16 @@ public final class BeanUtilsTest {
         Properties properties = new Properties();
         properties.setProperty(NAME_PROPERTY, EXPECTED_NAME);
         properties.setProperty(AGE_PROPERTY, Integer.toString(EXPECTED_AGE));
+        properties.setProperty(BIRTH_DATE_MILLIS_PROPERTY, Long.toString(EXPECTED_BIRTH_DATE_MILLIS));
 
         Person person = new Person();
 
         int propertiesSetCount = BeanUtils.multiSetter(person, properties);
 
-        assertThat(propertiesSetCount, is(2));
+        assertThat(propertiesSetCount, is(3));
         assertThat(person.getName(), is(EXPECTED_NAME));
         assertThat(person.getAge(), is(EXPECTED_AGE));
+        assertThat(person.getBirthDateMillis(), is(EXPECTED_BIRTH_DATE_MILLIS));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -115,6 +136,7 @@ public final class BeanUtilsTest {
     public static final class Person {
         private String name;
         private int age;
+        private long birthDateMillis;
 
         public String getName() {
             return name;
@@ -132,9 +154,17 @@ public final class BeanUtilsTest {
             this.age = age;
         }
 
+        public void setBirthDateMillis(final long birthDateMillis) {
+            this.birthDateMillis = birthDateMillis;
+        }
+
+        public long getBirthDateMillis() {
+            return birthDateMillis;
+        }
+
         /*
-            Required for older Coherence versions, such as 3.5.x
-         */
+           Required for older Coherence versions, such as 3.5.x
+        */
         public void setAge(final String age) {
             setAge(Integer.parseInt(age));
         }

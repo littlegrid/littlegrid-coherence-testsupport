@@ -72,8 +72,13 @@ public final class BeanUtils {
                     // Try invoking with an int as a parameter
                     ClassHelper.invoke(bean, methodName, new Object[]{Integer.parseInt(value)});
                 } catch (Exception e2) {
-                    throw new IllegalStateException(format(
-                            "Unable to invoke '%s' to set value to: '%s' due to: %s", methodName, value, e2));
+                    try {
+                        // Try invoking with a long as a parameter
+                        ClassHelper.invoke(bean, methodName, new Object[]{Long.parseLong(value)});
+                    } catch (Exception e3) {
+                        throw new IllegalStateException(format(
+                                "Unable to invoke '%s' to set value to: '%s' due to: %s", methodName, value, e));
+                    }
                 }
             }
 

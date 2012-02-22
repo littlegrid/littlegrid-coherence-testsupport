@@ -29,43 +29,50 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.group.custom_confgured;
+package org.littlegrid.features.fast_start_join_timeout;
 
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
-import com.tangosol.net.RequestPolicyException;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
- * Custom configured member tests.
+ * Fast-start join timeout integration tests.
  */
-public final class CustomConfiguredMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class FastStartIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    @Test
+    public void defaultDisabledSlowerThanIfTimeSpecified() {
+        final long timeWithDefault;
 
-    @Test(expected = RequestPolicyException.class)
-    public void storageDisabledClusterMember() {
-        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        try {
+            final long startTimeWithDefault = System.currentTimeMillis();
 
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setCustomConfiguredCount(numberOfMembers)
-                .build();
+            memberGroup = ClusterMemberGroupUtils.newBuilder()
+                    .build();
 
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+            timeWithDefault = System.currentTimeMillis() - startTimeWithDefault;
+        } finally {
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        }
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
-        cache.put("key", "value");
+        final long timeWithFastStart;
 
-        assertThat(cache.size(), is(1));
+        try {
+            final long startTimeWithFastStart = System.currentTimeMillis();
+
+            memberGroup = ClusterMemberGroupUtils.newBuilder()
+                    .setFastStartJoinTimeoutMilliseconds(TimeUnit.SECONDS.toMillis(2))
+                    .build();
+
+            timeWithFastStart = System.currentTimeMillis() - startTimeWithFastStart;
+        } finally {
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        }
+
+        assertThat(timeWithFastStart < timeWithDefault, is(true));
     }
 }

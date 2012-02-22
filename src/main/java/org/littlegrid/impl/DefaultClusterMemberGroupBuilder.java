@@ -66,6 +66,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY =
             "ExceptionReporterInstanceClassName";
 
+    private static final String FAST_START_OVERRIDE_CONFIGURATION_FILENAME =
+            "littlegrid/littlegrid-fast-start-coherence-override.xml";
+
     private static final String BUILDER_CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
     private static final String BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
@@ -171,6 +174,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private int getBuilderSettingAsInt(final String builderKey) {
         return Integer.parseInt(builderKeysAndValues.get(builderKey));
+    }
+
+    private long getBuilderSettingAsLong(final String builderKey) {
+        return Long.parseLong(builderKeysAndValues.get(builderKey));
     }
 
     private String getBuilderSettingAsString(final String builderKey) {
@@ -769,9 +776,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final int joinTimeoutMilliseconds) {
+    public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final long joinTimeoutMilliseconds) {
         builderKeysAndValues.put(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS,
-                Integer.toString(joinTimeoutMilliseconds));
+                Long.toString(joinTimeoutMilliseconds));
 
         return this;
     }
@@ -1023,7 +1030,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_MANAGEMENT_JMX_REMOTE),
                 Boolean.FALSE.toString());
 
-        setPropertyWhenValid(properties, BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS);
+        final long fastStartJoinTimeout = getBuilderSettingAsLong(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS);
+        final String overrideConfiguration = getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY);
+
+        if (fastStartJoinTimeout > 0 && (overrideConfiguration == null || overrideConfiguration.trim().isEmpty())) {
+            LOGGER.warn("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
+                    + "now be configured to be used - if a different override file should be used, then please "
+                    + "set fast-start join timeout to 0, this will disable the fast-start feature");
+
+            builderKeysAndValues.put(BUILDER_OVERRIDE_CONFIGURATION_KEY, FAST_START_OVERRIDE_CONFIGURATION_FILENAME);
+
+            setPropertyWhenValid(properties, BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS);
+        }
 
         return properties;
     }
