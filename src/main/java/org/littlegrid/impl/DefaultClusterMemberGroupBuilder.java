@@ -82,12 +82,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
     private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
-    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY
-            = "SuggestedSleepAfterStopDurationDefault";
+    private static final String BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY =
+            "SuggestedSleepAfterStopDurationDefault";
 
     private static final String BUILDER_CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String BUILDER_CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
     private static final String BUILDER_OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
+    private static final String BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY =
+            "CustomConfiguredCacheConfiguration";
 
     private static final String BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY = "DistributedLocalStorage";
     private static final String BUILDER_TCMP_ENABLED_KEY = "TcmpEnabled";
@@ -433,6 +435,16 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup.Builder setClientCacheConfiguration(final String cacheConfiguration) {
         builderKeysAndValues.put(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCustomConfiguredCacheConfiguration(String cacheConfiguration) {
+        builderKeysAndValues.put(BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -887,7 +899,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 builderKeyToSystemPropertyNameMapping.getProperty(BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY),
                 Boolean.FALSE.toString());
 
-        setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
+        final String customConfiguredCacheConfiguration =
+                getBuilderSettingAsString(BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY);
+
+        if (customConfiguredCacheConfiguration.isEmpty()) {
+            setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
+        } else {
+            setPropertyWhenValid(properties, BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY);
+        }
+
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
         setPropertyWhenValid(properties, BUILDER_CUSTOM_CONFIGURED_ROLE_NAME_KEY);
 

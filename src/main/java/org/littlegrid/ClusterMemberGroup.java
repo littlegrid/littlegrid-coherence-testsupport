@@ -165,8 +165,7 @@ public interface ClusterMemberGroup {
          * Sets the cache configuration to be used for the cluster member groups, this is used
          * for configurations where all TCMP members (storage enabled, Extend proxy and
          * storage disabled) use the same configuration then this will serve as the only cache
-         * configuration file needing to be used (note: specific cache configurations can set
-         * via other methods).
+         * configuration file needing to be used.
          *
          * @param cacheConfiguration Cache configuration.
          * @return builder.
@@ -200,6 +199,14 @@ public interface ClusterMemberGroup {
          * @return builder.
          */
 //        Builder setClientOverrideConfiguration(String overrideConfiguration);
+
+        /**
+         * Sets the cache configuration to be used for custom configured cluster member groups.
+         *
+         * @param cacheConfiguration
+         * @return builder.
+         */
+        Builder setCustomConfiguredCacheConfiguration(String cacheConfiguration);
 
         /**
          * Used to set any remaining system properties that are required, for instance if the

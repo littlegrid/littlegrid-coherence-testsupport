@@ -215,8 +215,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                     "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
                     systemPropertiesToBeApplied));
 
-//            System.setProperties(systemPropertiesBeforeStartInvoked);
-
             throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
                     systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
                     clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);

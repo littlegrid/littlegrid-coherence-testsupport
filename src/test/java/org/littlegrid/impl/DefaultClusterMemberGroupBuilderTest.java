@@ -50,7 +50,7 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 30;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 31;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
 
@@ -72,6 +72,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
     private static final String OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
+    private static final String CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY = "CustomConfiguredCacheConfiguration";
 
     private static final String CLUSTER_NAME_KEY = "ClusterName";
     private static final String CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY = "CustomConfiguredRoleName";
@@ -202,6 +203,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedCacheConfiguration = "cache-configuration.xml";
         final String expectedClientCacheConfiguration = "client-cache-configuration.xml";
         final String expectedOverrideConfiguration = "override-configuration.xml";
+        final String expectedCustomConfiguredCacheConfiguration = "custom-configured-cache-configuration.xml";
 
         final String expectedClusterName = "cluster-name";
         final String expectedCustomConfiguredRoleName = "custom-configurable-member";
@@ -227,6 +229,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setCacheConfiguration(expectedCacheConfiguration);
         builder.setClientCacheConfiguration(expectedClientCacheConfiguration);
         builder.setOverrideConfiguration(expectedOverrideConfiguration);
+        builder.setCustomConfiguredCacheConfiguration(expectedCustomConfiguredCacheConfiguration);
 
         builder.setClusterName(expectedClusterName);
         builder.setCustomConfiguredRoleName(expectedCustomConfiguredRoleName);
@@ -257,6 +260,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(CACHE_CONFIGURATION_KEY), is(expectedCacheConfiguration));
         assertThat(builderSettings.get(CLIENT_CACHE_CONFIGURATION_KEY), is(expectedClientCacheConfiguration));
         assertThat(builderSettings.get(OVERRIDE_CONFIGURATION_KEY), is(expectedOverrideConfiguration));
+        assertThat(builderSettings.get(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY), is(expectedCustomConfiguredCacheConfiguration));
 
         assertThat(builderSettings.get(CLUSTER_NAME_KEY), is(expectedClusterName));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY), is(expectedCustomConfiguredRoleName));

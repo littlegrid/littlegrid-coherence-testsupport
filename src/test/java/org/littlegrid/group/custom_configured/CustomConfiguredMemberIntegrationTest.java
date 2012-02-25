@@ -41,29 +41,29 @@ import org.littlegrid.ClusterMemberGroupUtils;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CUSTOM_CONFIGURED_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Custom configured member tests.
  */
 public final class CustomConfiguredMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
-
     @Test(expected = RequestPolicyException.class)
-    public void storageDisabledClusterMember() {
+    public void storageDisabledCustomConfiguredClusterMemberAttemptingToPutEntry() {
         final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCustomConfiguredCacheConfiguration(TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setCustomConfiguredCount(numberOfMembers)
+                .setClientCacheConfiguration(TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .build();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CUSTOM_CONFIGURED_CACHE);
         cache.put("key", "value");
 
         assertThat(cache.size(), is(1));
