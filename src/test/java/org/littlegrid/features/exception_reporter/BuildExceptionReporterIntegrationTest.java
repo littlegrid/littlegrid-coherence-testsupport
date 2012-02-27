@@ -31,7 +31,6 @@
 
 package org.littlegrid.features.exception_reporter;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -45,6 +44,7 @@ public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTe
         // Use an unknown class to cause an exception
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
+                .setStorageEnabledCount(1)
                 .build();
     }
 }

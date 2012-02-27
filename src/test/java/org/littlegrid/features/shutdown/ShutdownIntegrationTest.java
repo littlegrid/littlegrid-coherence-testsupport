@@ -46,7 +46,6 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_S
 import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
-import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
  * Cluster member group shutdown tests.

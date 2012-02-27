@@ -202,21 +202,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     @SuppressWarnings("unchecked")
     public ClusterMemberGroup build() {
-        int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
-        int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
+        final int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
+        final int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int jmxMonitorCount = getBuilderSettingAsInt(BUILDER_JMX_MONITOR_COUNT_KEY);
 
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
-
-        // Default to a storage-enabled if nothing else specified
-        if (storageEnabledCount == 0 && storageEnabledExtendProxyCount == 0
-                && extendProxyCount == 0 && customConfiguredCount == 0
-                && jmxMonitorCount == 0) {
-
-            storageEnabledCount = 1;
-        }
 
         LOGGER.info(format(
                 "*** LittleGrid about to start - Storage-enabled: %s, Extend proxy: %s, "

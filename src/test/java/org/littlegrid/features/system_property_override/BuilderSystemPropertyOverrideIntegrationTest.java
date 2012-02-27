@@ -32,7 +32,6 @@
 package org.littlegrid.features.system_property_override;
 
 import com.tangosol.net.CacheFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;

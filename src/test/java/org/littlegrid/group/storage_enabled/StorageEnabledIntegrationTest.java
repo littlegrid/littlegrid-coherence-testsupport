@@ -32,19 +32,13 @@
 package org.littlegrid.group.storage_enabled;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.Cluster;
 import com.tangosol.net.NamedCache;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
-import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
  * Storage-enabled member integration tests.
@@ -54,6 +48,7 @@ public final class StorageEnabledIntegrationTest extends AbstractAfterTestShutdo
     public void memberGroupWithCacheConfigurationAndKnownCache() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setStorageEnabledCount(1)
                 .build();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);

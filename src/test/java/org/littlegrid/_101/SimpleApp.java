@@ -33,7 +33,6 @@ package org.littlegrid._101;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;

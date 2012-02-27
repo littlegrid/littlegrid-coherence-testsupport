@@ -410,7 +410,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        for (final int memberId : memberIds)  {
+        for (final int memberId : memberIds) {
             LOGGER.info(format("About to stop cluster member with id '%d'", memberId));
 
             final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);

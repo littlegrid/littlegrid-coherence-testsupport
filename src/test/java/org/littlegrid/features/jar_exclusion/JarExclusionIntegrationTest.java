@@ -51,6 +51,7 @@ public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegr
         final String jarToExclude = "junit-4.8.2.jar";
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(1)
                 .setJarsToExcludeFromClassPath(jarToExclude)
                 .build();
 

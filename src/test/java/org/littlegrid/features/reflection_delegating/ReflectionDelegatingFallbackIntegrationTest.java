@@ -33,7 +33,6 @@ package org.littlegrid.features.reflection_delegating;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;

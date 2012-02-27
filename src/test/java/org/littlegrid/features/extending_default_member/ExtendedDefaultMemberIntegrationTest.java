@@ -31,7 +31,6 @@
 
 package org.littlegrid.features.extending_default_member;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
