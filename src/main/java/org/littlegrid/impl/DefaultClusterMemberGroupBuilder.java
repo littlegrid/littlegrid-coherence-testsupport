@@ -58,10 +58,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_DEFAULT_PROPERTIES_FILENAME =
             "littlegrid/littlegrid-builder-default.properties";
 
-    private static final String BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME =
+    private static final String BUILDER_SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME =
             "littlegrid/littlegrid-builder-system-property-mapping-default.properties";
-
-    private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
 
     private static final String BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY =
             "ExceptionReporterInstanceClassName";
@@ -154,9 +152,18 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void loadAndSetBuilderKeysAndValues() {
-        final String overridePropertiesFilename =
-                System.getProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, BUILDER_OVERRIDE_PROPERTIES_FILENAME
-                        + ", littlegrid/" + BUILDER_OVERRIDE_PROPERTIES_FILENAME);
+        final String alternativePropertiesFile = System.getProperty(BUILDER_OVERRIDE_KEY);
+        final String overridePropertiesFilename;
+
+        // Check if an alternative property file should be used or standard named override
+        if (alternativePropertiesFile != null && !alternativePropertiesFile.trim().isEmpty()) {
+            overridePropertiesFilename = alternativePropertiesFile;
+        } else {
+            overridePropertiesFilename =
+                    System.getProperty(BUILDER_OVERRIDE_KEY,
+                            BUILDER_OVERRIDE_PROPERTIES_FILENAME
+                                    + ", littlegrid/" + BUILDER_OVERRIDE_PROPERTIES_FILENAME);
+        }
 
         final String propertiesFilenames;
 
@@ -170,8 +177,29 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void loadBuilderKeyToSystemPropertyNameMapping() {
-        builderKeyToSystemPropertyNameMapping =
-                PropertiesUtils.loadProperties(BUILDER_DEFAULT_MAPPING_PROPERTIES_FILENAME);
+        final String alternativePropertiesFile = System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
+        final String overridePropertiesFilename;
+
+        // Check if an alternative property file should be used or standard named override
+        if (alternativePropertiesFile != null && !alternativePropertiesFile.trim().isEmpty()) {
+            overridePropertiesFilename = alternativePropertiesFile;
+        } else {
+            overridePropertiesFilename =
+                    System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
+                            BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME
+                                    + ", littlegrid/" + BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME);
+        }
+
+        final String propertiesFilenames;
+
+        if (overridePropertiesFilename.trim().isEmpty()) {
+            propertiesFilenames = BUILDER_SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME;
+        } else {
+            propertiesFilenames = BUILDER_SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME
+                    + ", " + overridePropertiesFilename;
+        }
+
+        builderKeyToSystemPropertyNameMapping = PropertiesUtils.loadProperties(propertiesFilenames);
     }
 
     private int getBuilderSettingAsInt(final String builderKey) {
@@ -200,13 +228,36 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public ClusterMemberGroup build() {
         final int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
         final int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int jmxMonitorCount = getBuilderSettingAsInt(BUILDER_JMX_MONITOR_COUNT_KEY);
+
+        final DefaultClusterMemberGroup containerGroup = buildClusterMembers(storageEnabledCount,
+                customConfiguredCount, storageEnabledExtendProxyCount, extendProxyCount, jmxMonitorCount);
+
+        buildClient(storageEnabledExtendProxyCount, extendProxyCount);
+
+        return containerGroup;
+    }
+
+    @Override
+    public ClusterMemberGroup configureForStorageDisabledClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ClusterMemberGroup configureForExtendClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    private DefaultClusterMemberGroup buildClusterMembers(final int storageEnabledCount,
+                                                          final int customConfiguredCount,
+                                                          final int storageEnabledExtendProxyCount,
+                                                          final int extendProxyCount,
+                                                          final int jmxMonitorCount) {
 
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
@@ -249,12 +300,30 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             throw new IllegalStateException(throwable);
         }
+        return containerGroup;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setExceptionReporterInstanceClassName(
+            final String exceptionReportInstanceClassName) {
+
+        builderKeysAndValues.put(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
+
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void buildClient(final int storageEnabledExtendProxyCount,
+                             final int extendProxyCount) {
 
         final Properties clientSystemProperties;
 
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
-        // Clear and now prepare system properties based upon the anticipated client type.
+        // Determine the anticipated client type
         if ((storageEnabledExtendProxyCount > 0 || extendProxyCount > 0)
                 && (clientCacheConfiguration != null && !clientCacheConfiguration.trim().isEmpty())) {
             LOGGER.info("Assuming Extend client and preparing system properties appropriately");
@@ -271,20 +340,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
 
         LOGGER.info(format("System properties set for client: %s", new TreeMap(clientSystemProperties)));
-
-        return containerGroup;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup.Builder setExceptionReporterInstanceClassName(
-            final String exceptionReportInstanceClassName) {
-
-        builderKeysAndValues.put(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
-
-        return this;
     }
 
     private ClusterMemberGroup.BuildExceptionReporter createExceptionReporter() {

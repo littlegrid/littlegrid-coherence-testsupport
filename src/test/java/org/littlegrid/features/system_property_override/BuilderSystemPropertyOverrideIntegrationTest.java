@@ -32,13 +32,17 @@
 package org.littlegrid.features.system_property_override;
 
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupTestSupport;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_KEY;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
  * Builder system property override tests that use the littlegrid.builder.override system
@@ -46,8 +50,9 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_SYSTEM_
  */
 public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void exampleOfDifferentOverrideFileSpecified() {
-        System.setProperty(BUILDER_OVERRIDE_SYSTEM_PROPERTY_NAME, "example-littlegrid-builder-override.properties");
+    public void alternativeOverrideFileSpecified() {
+        System.setProperty(BUILDER_OVERRIDE_KEY,
+                "directory-where-the-config-is-stored/example-littlegrid-builder-override.properties");
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .build();
@@ -55,5 +60,18 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
         // This example configuration file has a default storage-enabled member count of 3, so a cluster of
         // 4 in total with this storage-disabled member.
         assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+    }
+
+    @Test
+    public void alternativeSystemPropertyMappingOverrideFileSpecified() {
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
+                "directory-where-the-config-is-stored/example-littlegrid-builder-system-property-mapping-override.properties");
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(1)
+                .build();
+
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        cache.put("key", "value");
     }
 }
