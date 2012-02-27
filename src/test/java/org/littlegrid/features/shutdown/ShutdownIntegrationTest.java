@@ -46,6 +46,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_S
 import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
+import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
 
 /**
  * Cluster member group shutdown tests.
@@ -96,7 +97,7 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
     public void startAndShutdownSpecificMemberOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int expectedClusterSizeBeforeShutdown = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-        final int expectedClusterSizeAfterShutdown = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
+        final int expectedClusterSizeAfterShutdown = expectedClusterSizeBeforeShutdown - 1;
         final int memberIdToShutdown = 3;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
@@ -112,8 +113,6 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
 
         assertThat(doesMemberExist(cluster, memberIdToShutdown), is(false));
         assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterShutdown);
-
-        memberGroup.shutdownAll();
     }
 
     @Test
@@ -134,15 +133,21 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
         memberGroup.shutdownMember(memberIdToShutdown);
         // No need to wait - it never existed
         assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
-
-        memberGroup.shutdownAll();
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void attemptToShutdownMoreThanOneMemberWhichIsNotSupported() {
+    @Test
+    public void startAndShutdownSeveralMembersOfGroup() {
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int[] memberIdsToShutdown = {1, 2};
+        final int expectedClusterSizeBeforeShutdown = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int expectedClusterSizeAfterShutdown = expectedClusterSizeBeforeShutdown - memberIdsToShutdown.length;
+
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(3)
-                .build()
-                .shutdownMember(1, 2);
+                .setStorageEnabledCount(MEDIUM_TEST_CLUSTER_SIZE)
+                .build();
+
+        memberGroup.shutdownMember(1, 3);
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSizeAfterShutdown);
     }
 }

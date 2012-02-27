@@ -79,7 +79,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
     }
 
     @Test
-    public void startAndStopThenShutdownLargeMemberGroup() {
+    public void startAndStopLargeMemberGroup() {
         final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
@@ -100,8 +100,6 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
-        memberGroup.shutdownAll();
-
         assertThatClusterIsExpectedSize(cluster, CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
 
@@ -109,7 +107,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
     public void startAndStopSpecificMemberOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int expectedClusterSizeBeforeStop = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-        final int expectedClusterSizeAfterStop = (numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP) - 1;
+        final int expectedClusterSizeAfterStop = expectedClusterSizeBeforeStop - 1;
         final int memberIdToStop = 3;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
@@ -127,8 +125,6 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         assertThat(doesMemberExist(cluster, memberIdToStop), is(false));
         assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterStop);
-
-        memberGroup.shutdownAll();
     }
 
     @Test
@@ -149,17 +145,24 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         // No need to wait - it never existed
         assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
-
-        memberGroup.shutdownAll();
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void attemptToStopMoreThanOneMemberWhichIsNotSupported() {
+    @Test
+    public void startAndStopSeveralMembersOfGroup() {
+        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int[] memberIdsToStop = {1, 2};
+        final int expectedClusterSizeBeforeStop = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+        final int expectedClusterSizeAfterStop = expectedClusterSizeBeforeStop - memberIdsToStop.length;
+
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(3)
+                .setStorageEnabledCount(MEDIUM_TEST_CLUSTER_SIZE)
                 .build();
 
         memberGroup.stopMember(1, 2);
+
+        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSizeAfterStop);
     }
 
     @Test

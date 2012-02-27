@@ -240,14 +240,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
-            buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
-                    numberOfThreadsInStartUpPool);
-
             buildJmxMonitorMembers(jmxMonitorCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
 
             buildExtendProxyMembers(extendProxyCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
 
             buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
+                    numberOfThreadsInStartUpPool);
+
+            buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
             LOGGER.info(format("Group of cluster member(s) started, member Ids: %s",

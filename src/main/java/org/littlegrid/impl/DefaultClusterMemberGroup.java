@@ -251,12 +251,12 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
-                if (memberWrapper.getLocalMemberId() == memberId) {
+                if (memberWrapper.isFullyRunning() && memberWrapper.getLocalMemberId() == memberId) {
                     return memberWrapper;
                 }
             }
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Unable to get specified member due to " + e);
         }
 
         return null;
@@ -350,18 +350,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        if (memberIds.length > 1) {
-            throw new UnsupportedOperationException("Shutting down multiple members is not supported currently");
-        }
+        for (final int memberId : memberIds) {
+            LOGGER.info(format("About to shutdown cluster member '%d'", memberId));
 
-        final int memberId = memberIds[0];
+            final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
-        LOGGER.info(format("About to shutdown cluster member '%d'", memberId));
-
-        final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
-
-        if (memberWrapper != null) {
-            memberWrapper.shutdown();
+            if (memberWrapper != null) {
+                memberWrapper.shutdown();
+            }
         }
 
         return this;
@@ -414,18 +410,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        if (memberIds.length > 1) {
-            throw new UnsupportedOperationException("Stopping multiple members is not supported currently");
-        }
+        for (final int memberId : memberIds)  {
+            LOGGER.info(format("About to stop cluster member with id '%d'", memberId));
 
-        final int memberId = memberIds[0];
+            final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
-        LOGGER.info(format("About to stop cluster member with id '%d'", memberId));
-
-        final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
-
-        if (memberWrapper != null) {
-            memberWrapper.stop();
+            if (memberWrapper != null) {
+                memberWrapper.stop();
+            }
         }
 
         return this;
