@@ -42,6 +42,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
@@ -68,10 +69,12 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
                 "directory-where-the-config-is-stored/example-littlegrid-builder-system-property-mapping-override.properties");
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(1)
+                .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-different-system-property-names.xml")
+                .setClientCacheConfiguration("coherence/littlegrid-test-extend-client-cache-config-with-different-system-property-names.xml")
+                .setStorageEnabledExtendProxyCount(1)
                 .build();
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");
     }
 }
