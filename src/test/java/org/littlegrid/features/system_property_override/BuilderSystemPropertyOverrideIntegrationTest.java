@@ -56,7 +56,7 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
                 "directory-where-the-config-is-stored/example-littlegrid-builder-override.properties");
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         // This example configuration file has a default storage-enabled member count of 3, so a cluster of
         // 4 in total with this storage-disabled member.
@@ -72,7 +72,7 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
                 .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-different-system-property-names.xml")
                 .setClientCacheConfiguration("coherence/littlegrid-test-extend-client-cache-config-with-different-system-property-names.xml")
                 .setStorageEnabledExtendProxyCount(1)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");

@@ -59,7 +59,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
                 .setExtendProxyCount(1)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
 
@@ -81,7 +81,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
                 .setStorageEnabledCount(2)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("any key", "separate extend proxy and stored enabled members, so this will be cached");
@@ -96,13 +96,15 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
 
         try {
             storageEnabledGroup = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(numberOfCacheServers).
-                            setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE).build();
+                    .setStorageEnabledCount(numberOfCacheServers)
+                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                    .buildAndConfigureForNoClient();
 
             extendProxyGroup = ClusterMemberGroupUtils.newBuilder()
                     .setExtendProxyCount(1)
                     .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                    .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE).build();
+                    .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                    .buildAndConfigureForExtendClient();
 
             final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
             cache.put("any key", "storage enabled member(s) should be present, so this will be cached");
@@ -118,7 +120,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(numberOfExtendProxies)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final int clusterSize = getClusterSizeThatExtendClientIsConnectedTo();
         assertThat(clusterSize, is(numberOfExtendProxies));
@@ -128,7 +130,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
     public void extendClientCacheConfigurationNotSpecified() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         // This should work, only a log message is logged when no Extend client cache config is specified
     }

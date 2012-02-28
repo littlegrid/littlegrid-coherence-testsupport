@@ -22,7 +22,7 @@ public final class JmxMonitorIntegrationTest extends AbstractAfterTestShutdownIn
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setJmxMonitorCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }

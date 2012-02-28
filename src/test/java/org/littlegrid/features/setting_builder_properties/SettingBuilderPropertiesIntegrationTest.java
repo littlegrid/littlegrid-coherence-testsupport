@@ -61,7 +61,7 @@ public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestSh
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setBuilderProperties(properties)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");
@@ -75,11 +75,11 @@ public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestSh
         try {
             memberGroup1 = ClusterMemberGroupUtils.newBuilder()
                     .setBuilderProperties("properties/memberGroup1.properties")
-                    .build();
+                    .buildAndConfigureForNoClient();
 
             memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setBuilderProperties("properties/memberGroup2.properties")
-                    .build();
+                    .buildAndConfigureForExtendClient();
 
             final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
             cache.put("key", "value");

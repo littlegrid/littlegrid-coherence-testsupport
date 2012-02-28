@@ -169,11 +169,13 @@ public interface ClusterMemberGroup {
          *
          * @return running cluster member group.
          */
-        ClusterMemberGroup build();
+//        ClusterMemberGroup build();
 
-        ClusterMemberGroup configureForStorageDisabledClient();
+        ClusterMemberGroup buildAndConfigureForNoClient();
 
-        ClusterMemberGroup configureForExtendClient();
+        ClusterMemberGroup buildAndConfigureForStorageDisabledClient();
+
+        ClusterMemberGroup buildAndConfigureForExtendClient();
 
 
         /**

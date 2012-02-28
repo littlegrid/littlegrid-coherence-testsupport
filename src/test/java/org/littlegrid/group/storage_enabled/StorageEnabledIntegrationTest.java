@@ -49,7 +49,7 @@ public final class StorageEnabledIntegrationTest extends AbstractAfterTestShutdo
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setStorageEnabledCount(1)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
         cache.put("key", "value");
@@ -59,7 +59,7 @@ public final class StorageEnabledIntegrationTest extends AbstractAfterTestShutdo
     public void memberGroupWithCacheConfigurationAndUnknownCache() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         CacheFactory.getCache("this-cache-will-not-be-found-in-cache-configuration");
     }

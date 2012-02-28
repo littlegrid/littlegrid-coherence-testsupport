@@ -224,33 +224,46 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup build() {
+    private ClusterMemberGroup build() {
         final int storageEnabledCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_COUNT_KEY);
         final int customConfiguredCount = getBuilderSettingAsInt(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderSettingAsInt(BUILDER_STORAGE_ENABLED_PROXY_COUNT_KEY);
         final int extendProxyCount = getBuilderSettingAsInt(BUILDER_EXTEND_PROXY_COUNT_KEY);
         final int jmxMonitorCount = getBuilderSettingAsInt(BUILDER_JMX_MONITOR_COUNT_KEY);
 
-        final DefaultClusterMemberGroup containerGroup = buildClusterMembers(storageEnabledCount,
+        return buildClusterMembers(storageEnabledCount,
                 customConfiguredCount, storageEnabledExtendProxyCount, extendProxyCount, jmxMonitorCount);
-
-        buildClient(storageEnabledExtendProxyCount, extendProxyCount);
-
-        return containerGroup;
     }
 
     @Override
-    public ClusterMemberGroup configureForStorageDisabledClient() {
-        throw new UnsupportedOperationException();
+    public ClusterMemberGroup buildAndConfigureForNoClient() {
+        return build();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ClusterMemberGroup configureForExtendClient() {
-        throw new UnsupportedOperationException();
+    public ClusterMemberGroup buildAndConfigureForStorageDisabledClient() {
+        final ClusterMemberGroup memberGroup = build();
+        final Properties clientSystemProperties = getSystemPropertiesForStorageDisabledClient();
+
+        SystemUtils.applyToSystemProperties(getSystemPropertiesForStorageDisabledClient());
+
+        LOGGER.info(format("System properties set for client: %s", new TreeMap(clientSystemProperties)));
+
+        return memberGroup;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public ClusterMemberGroup buildAndConfigureForExtendClient() {
+        final ClusterMemberGroup memberGroup = build();
+        final Properties clientSystemProperties = getSystemPropertiesForExtendProxyClient();
+
+        SystemUtils.applyToSystemProperties(clientSystemProperties);
+
+        LOGGER.info(format("System properties set for client: %s", new TreeMap(clientSystemProperties)));
+
+        return memberGroup;
     }
 
     private DefaultClusterMemberGroup buildClusterMembers(final int storageEnabledCount,
@@ -316,32 +329,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     @SuppressWarnings("unchecked")
-    private void buildClient(final int storageEnabledExtendProxyCount,
-                             final int extendProxyCount) {
-
-        final Properties clientSystemProperties;
-
-        final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
-
-        // Determine the anticipated client type
-        if ((storageEnabledExtendProxyCount > 0 || extendProxyCount > 0)
-                && (clientCacheConfiguration != null && !clientCacheConfiguration.trim().isEmpty())) {
-            LOGGER.info("Assuming Extend client and preparing system properties appropriately");
-
-            clientSystemProperties = getSystemPropertiesForExtendProxyClient();
-
-            SystemUtils.applyToSystemProperties(clientSystemProperties);
-        } else {
-            LOGGER.info("Assuming storage-disabled client and preparing system properties appropriately");
-
-            clientSystemProperties = getSystemPropertiesForStorageDisabledClient();
-
-            SystemUtils.applyToSystemProperties(clientSystemProperties);
-        }
-
-        LOGGER.info(format("System properties set for client: %s", new TreeMap(clientSystemProperties)));
-    }
-
     private ClusterMemberGroup.BuildExceptionReporter createExceptionReporter() {
         final String exceptionReporterClassName =
                 getBuilderSettingAsString(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);

@@ -69,7 +69,7 @@ public final class ReflectionDelegatingFallbackIntegrationTest extends AbstractA
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(NUMBER_OF_MEMBERS)
                 .setClusterMemberInstanceClassName(ReflectionDelegatingClusterMember.class.getName())
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 

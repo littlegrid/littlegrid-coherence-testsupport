@@ -55,7 +55,7 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final int[] memberIds = memberGroup.getStartedMemberIds();
 
@@ -83,7 +83,7 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCustomConfiguredCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
 

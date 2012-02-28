@@ -53,7 +53,7 @@ public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegr
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(1)
                 .setJarsToExcludeFromClassPath(jarToExclude)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }

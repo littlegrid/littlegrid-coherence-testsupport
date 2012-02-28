@@ -59,7 +59,7 @@ public final class CustomConfiguredMemberIntegrationTest extends AbstractAfterTe
                 .setCustomConfiguredCacheConfiguration(TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setCustomConfiguredCount(numberOfMembers)
                 .setClientCacheConfiguration(TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
 

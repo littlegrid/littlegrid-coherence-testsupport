@@ -46,7 +46,7 @@ public class SimpleApp {
         try {
             memberGroup = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(2)
-                    .build();
+                    .buildAndConfigureForStorageDisabledClient();
 
             final NamedCache cache = CacheFactory.getCache("test");
             cache.put(key, "hello");

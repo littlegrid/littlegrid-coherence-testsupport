@@ -61,7 +61,7 @@ public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfter
                 .setStorageEnabledExtendProxyCount(1)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");
@@ -76,7 +76,7 @@ public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfter
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(numberOfStorageEnabledExtendProxies)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final InvocationService invocationService =
                 (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);

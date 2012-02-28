@@ -45,6 +45,6 @@ public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTe
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
                 .setStorageEnabledCount(1)
-                .build();
+                .buildAndConfigureForNoClient();
     }
 }

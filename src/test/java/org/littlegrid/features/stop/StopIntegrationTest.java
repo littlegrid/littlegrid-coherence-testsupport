@@ -64,7 +64,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -85,7 +85,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -112,7 +112,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -134,7 +134,8 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(numberOfMembers).build();
+                .setStorageEnabledCount(numberOfMembers)
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -156,7 +157,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(MEDIUM_TEST_CLUSTER_SIZE)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         memberGroup.stopMember(1, 2);
 
@@ -176,7 +177,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(numberOfExtendProxyMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -208,7 +209,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
                 .setClientCacheConfiguration(
                         "coherence/littlegrid-test-extend-client-cache-config-with-multiple-remote-addresses.xml")
                 .setAdditionalSystemProperties(additionalSystemProperties)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         final int memberIdToStop = ClusterMemberGroupTestSupport.getExtendProxyMemberIdThatClientIsConnectedTo();
 

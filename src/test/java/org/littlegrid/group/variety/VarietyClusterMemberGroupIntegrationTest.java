@@ -58,7 +58,7 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         performSimplePutSizeGet(KNOWN_TEST_CACHE);
     }
@@ -70,7 +70,7 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
                 .setExtendProxyCount(1)
                 .setStorageEnabledCount(2)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
-                .build();
+                .buildAndConfigureForExtendClient();
 
         performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
     }
@@ -81,7 +81,7 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
                 .setStorageEnabledCount(2)
                 .setExtendProxyCount(1)
                 .setJmxMonitorCount(1)
-                .build();
+                .buildAndConfigureForNoClient();
     }
 
     private void performSimplePutSizeGet(final String cacheName) {

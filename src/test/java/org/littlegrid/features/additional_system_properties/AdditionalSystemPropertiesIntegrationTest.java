@@ -45,8 +45,9 @@ public class AdditionalSystemPropertiesIntegrationTest extends AbstractAfterTest
     @Test
     public void exampleOfAdditionalSystemProperties() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(1)
                 .setAdditionalSystemProperties("properties/additionalSystemProperties.properties")
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
     }

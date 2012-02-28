@@ -54,7 +54,7 @@ public class ExtendedDefaultMemberIntegrationTest extends AbstractAfterTestShutd
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCustomConfiguredCount(numberOfMembers)
                 .setCustomConfiguredClusterMemberInstanceClassName(PretendServerClusterMember.class.getName())
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
     }

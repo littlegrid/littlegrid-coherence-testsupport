@@ -58,7 +58,7 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
 
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -80,7 +80,7 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -101,7 +101,7 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -122,7 +122,7 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -143,7 +143,7 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(MEDIUM_TEST_CLUSTER_SIZE)
-                .build();
+                .buildAndConfigureForStorageDisabledClient();
 
         memberGroup.shutdownMember(1, 3);
 
