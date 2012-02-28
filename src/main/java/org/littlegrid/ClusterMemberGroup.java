@@ -165,18 +165,33 @@ public interface ClusterMemberGroup {
 
         /**
          * Builds and returns a <em>running cluster member group</em>, based upon the default
-         * values and any values that have been overridden or explicitly set.
+         * values and any values that have been overridden or explicitly set - with this
+         * build method <em>no system properties are set</em> for the client, if the client wants
+         * to connect, then it will need to control its own setting of the system properties.
          *
          * @return running cluster member group.
          */
-//        ClusterMemberGroup build();
-
         ClusterMemberGroup buildAndConfigureForNoClient();
 
+        /**
+         * Builds and returns a <em>running cluster member group</em>, based upon the default
+         * values and any values that have been overridden or explicitly set - with this
+         * build method, <em>system properties are then set</em> with the assumption that a storage-disabled
+         * client wants to connect to the newly started cluster group.
+         *
+         * @return running cluster member group.
+         */
         ClusterMemberGroup buildAndConfigureForStorageDisabledClient();
 
+        /**
+         * Builds and returns a <em>running cluster member group</em>, based upon the default
+         * values and any values that have been overridden or explicitly set - with this
+         * build method, <em>system properties are then set</em> with the assumption that an Extend
+         * client wants to connect to the newly started cluster group.
+         *
+         * @return running cluster member group.
+         */
         ClusterMemberGroup buildAndConfigureForExtendClient();
-
 
         /**
          * Sets the exception report instance class name.
@@ -245,14 +260,15 @@ public interface ClusterMemberGroup {
         Builder setAdditionalSystemProperties(Properties properties);
 
         /**
-         * Used to set any remaining system properties that are required, for instance if the
-         * standard Coherence names for system properties aren't being used - i.e. a different
-         * named property is used for enabling distributed local storage.
+         * Used to set any remaining system properties that are required - multiple properties files are
+         * supported by passing as a comma separated string.
          *
-         * @param propertiesFilenames Properties to be turned into system properties.
+         * @param commaDelimitedPropertiesFilenames
+         *         String of properties filenames, multiple property
+         *         files are supported.
          * @return builder.
          */
-        Builder setAdditionalSystemProperties(String propertiesFilenames);
+        Builder setAdditionalSystemProperties(String commaDelimitedPropertiesFilenames);
 
         /**
          * Sets the number of storage enabled members (i.e. 'cache servers') the cluster member

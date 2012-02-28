@@ -35,7 +35,6 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupTestSupport;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -43,7 +42,6 @@ import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
  * Builder system property override tests that use the littlegrid.builder.override system

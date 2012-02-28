@@ -517,8 +517,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setAdditionalSystemProperties(final String propertiesFilenames) {
-        setAdditionalSystemProperties(PropertiesUtils.loadProperties(propertiesFilenames));
+    public ClusterMemberGroup.Builder setAdditionalSystemProperties(final String commaDelimitedPropertiesFilenames) {
+        setAdditionalSystemProperties(PropertiesUtils.loadProperties(commaDelimitedPropertiesFilenames));
 
         return this;
     }

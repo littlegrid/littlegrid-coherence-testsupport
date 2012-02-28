@@ -36,23 +36,22 @@ Examples of use
 <ul>
     <li>Within a standard Java application main(String[] args):
         <pre>
-public class SimpleApp {
-    public static void main(String[] args) {
-        final String key = "123";
+public static void main(String[] args) {
+    final String key = "123";
 
-        ClusterMemberGroup memberGroup = null;
+    ClusterMemberGroup memberGroup = null;
 
-        try {
-            memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                    .setStorageEnabledCount(2).build();
+    try {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(2)
+                .buildAndConfigureForStorageDisabledClient();
 
-            final NamedCache cache = CacheFactory.getCache("test");
+        final NamedCache cache = CacheFactory.getCache("test");
+        cache.put(key, "hello");
 
-            cache.put(key, "hello");
-            System.out.println(cache.get(key));
-        } finally {
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-        }
+        System.out.println(cache.get(key));
+    } finally {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 }
         </pre>
@@ -65,8 +64,9 @@ public class SimpleTest {
 
     &#64;BeforeClass
     public static void beforeTests() {
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder()
-                .setStorageEnabledCount(2).build();
+            memberGroup = ClusterMemberGroupUtils.newBuilder()
+                    .setStorageEnabledCount(2)
+                    .buildAndConfigureForStorageDisabledClient();
     }
 
     &#64;AfterClass
@@ -88,25 +88,16 @@ public class SimpleTest {
         of using the fluent API:
         <pre>
     ...
-    &#64;Test
-    public void exampleOfConfiguringExtendProxyWithSeparateStorageEnabledMembersThroughProperties() {
-        /*
-            This properties could be read from a file.
-         */
-        Properties properties = new Properties();
-        properties.setProperty("StorageEnabledCount", "2");
-        properties.setProperty("ExtendProxyCount", "1");
-        properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
-        properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIG_FILE);
+&#64;Test
+public void clusterWithVarietyOfMembers() {
+    memberGroup = ClusterMemberGroupUtils.newBuilder()
+            .setStorageEnabledCount(2)
+            .setExtendProxyCount(1)
+            .setJmxMonitorCount(1)
+            .buildAndConfigureForExtendClient();
 
-        memberGroup = ClusterMemberGroupUtils.newClusterMemberGroupBuilder().setBuilderProperties(properties).build();
-
-        NamedCache cache = CacheFactory.getCache("known-extend-cache");
-        cache.put("key", "value");
-
-        assertThat(cache.size(), is(1));
-        assertThat((String) cache.get("key"), is("value"));
-    }
+    // Perform test
+}
         </pre>
     </li>
 </ul>
