@@ -142,25 +142,24 @@ public interface ClusterMemberGroup {
          * override file by setting a system property with this name and the value being the
          * required override file to be use.
          */
-        final String BUILDER_OVERRIDE_KEY = "littlegrid.builder.override";
+        String BUILDER_OVERRIDE_KEY = "littlegrid.builder.override";
 
         /**
          * Constant defining the default name of the override properties filename.
          */
-        final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
+        String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
 
         /**
          * Constant defining the name of the system property that can be used to supply a different
          * mapping override file by setting a system property with this name and the value being the
          * required override file to be use.
          */
-        final String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY =
-                "littlegrid.builder.system.property.mapping.override";
+        String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY = "littlegrid.builder.system.property.mapping.override";
 
         /**
          * Constant defining the default name of the mapping override properties filename.
          */
-        final String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME =
+        String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME =
                 "littlegrid-builder-system-property-mapping-override.properties";
 
         /**

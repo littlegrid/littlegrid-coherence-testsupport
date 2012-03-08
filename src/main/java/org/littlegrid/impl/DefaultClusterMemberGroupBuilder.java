@@ -190,7 +190,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
     }
 
-    private static boolean stringHasValue(String stringToCheckForValue) {
+    private static boolean stringHasValue(final String stringToCheckForValue) {
         return stringToCheckForValue != null && !stringToCheckForValue.trim().isEmpty();
     }
 
@@ -469,7 +469,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCustomConfiguredCacheConfiguration(String cacheConfiguration) {
+    public ClusterMemberGroup.Builder setCustomConfiguredCacheConfiguration(final String cacheConfiguration) {
         builderKeysAndValues.put(BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;

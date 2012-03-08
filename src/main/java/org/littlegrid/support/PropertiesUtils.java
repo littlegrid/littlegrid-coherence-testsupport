@@ -26,11 +26,12 @@ public final class PropertiesUtils {
     /**
      * Loads properties using the specified (potentially comma delimited) filenames.
      *
+     * @param loadedPropertyFileLogLevel Log level at which properties files loaded should be output.
      * @param commaDelimitedPropertiesFilenames
      *         Comma delimited properties filenames.
      * @return properties.
      */
-    public static Properties loadProperties(Level loadedPropertyFileLogLevel,
+    public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
                                             final String commaDelimitedPropertiesFilenames) {
 
         return loadProperties(loadedPropertyFileLogLevel, commaDelimitedPropertiesFilenames.split(DELIMITER));
@@ -43,7 +44,7 @@ public final class PropertiesUtils {
      * @param propertiesFilenames        Properties filenames.
      * @return properties.
      */
-    public static Properties loadProperties(Level loadedPropertyFileLogLevel,
+    public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
                                             final String... propertiesFilenames) {
         final Properties properties = new Properties();
 
