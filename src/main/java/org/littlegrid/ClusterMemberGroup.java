@@ -145,7 +145,7 @@ public interface ClusterMemberGroup {
         final String BUILDER_OVERRIDE_KEY = "littlegrid.builder.override";
 
         /**
-         * Constant defining the name of the override properties filename.
+         * Constant defining the default name of the override properties filename.
          */
         final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
 
@@ -158,7 +158,7 @@ public interface ClusterMemberGroup {
                 "littlegrid.builder.system.property.mapping.override";
 
         /**
-         * Constant defining the name of the mapping override properties filename.
+         * Constant defining the default name of the mapping override properties filename.
          */
         final String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME =
                 "littlegrid-builder-system-property-mapping-override.properties";

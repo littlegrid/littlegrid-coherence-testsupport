@@ -33,7 +33,6 @@ package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.support.BeanUtils;
-import org.littlegrid.support.LoggerPlaceHolder;
 import org.littlegrid.support.PropertiesUtils;
 import org.littlegrid.support.SystemUtils;
 
@@ -48,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -66,6 +67,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String FAST_START_OVERRIDE_CONFIGURATION_FILENAME =
             "littlegrid/littlegrid-fast-start-coherence-override.xml";
+
+    private static final String LITTLEGRID_DIRECTORY_SLASH = "littlegrid/";
 
     private static final String BUILDER_CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
@@ -122,8 +125,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
-    private static final LoggerPlaceHolder LOGGER =
-            new LoggerPlaceHolder(DefaultClusterMemberGroupBuilder.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
 
     private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
 
@@ -152,54 +154,44 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void loadAndSetBuilderKeysAndValues() {
-        final String alternativePropertiesFile = System.getProperty(BUILDER_OVERRIDE_KEY);
-        final String overridePropertiesFilename;
+        BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.FINE, BUILDER_DEFAULT_PROPERTIES_FILENAME));
+
+        final String alternativePropertiesFilename = System.getProperty(BUILDER_OVERRIDE_KEY);
 
         // Check if an alternative property file should be used or standard named override
-        if (alternativePropertiesFile != null && !alternativePropertiesFile.trim().isEmpty()) {
-            overridePropertiesFilename = alternativePropertiesFile;
+        if (stringHasValue(alternativePropertiesFilename)) {
+            BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFilename));
         } else {
-            overridePropertiesFilename =
-                    System.getProperty(BUILDER_OVERRIDE_KEY,
-                            BUILDER_OVERRIDE_PROPERTIES_FILENAME
-                                    + ", littlegrid/" + BUILDER_OVERRIDE_PROPERTIES_FILENAME);
+            BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO,
+                    BUILDER_OVERRIDE_PROPERTIES_FILENAME));
+
+            BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO,
+                    LITTLEGRID_DIRECTORY_SLASH + BUILDER_OVERRIDE_PROPERTIES_FILENAME));
         }
-
-        final String propertiesFilenames;
-
-        if (overridePropertiesFilename.trim().isEmpty()) {
-            propertiesFilenames = BUILDER_DEFAULT_PROPERTIES_FILENAME;
-        } else {
-            propertiesFilenames = BUILDER_DEFAULT_PROPERTIES_FILENAME + ", " + overridePropertiesFilename;
-        }
-
-        BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(propertiesFilenames));
     }
 
     private void loadBuilderKeyToSystemPropertyNameMapping() {
+        builderKeyToSystemPropertyNameMapping =
+                PropertiesUtils.loadProperties(Level.FINE, BUILDER_SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME);
+
         final String alternativePropertiesFile = System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
-        final String overridePropertiesFilename;
 
         // Check if an alternative property file should be used or standard named override
-        if (alternativePropertiesFile != null && !alternativePropertiesFile.trim().isEmpty()) {
-            overridePropertiesFilename = alternativePropertiesFile;
+        if (stringHasValue(alternativePropertiesFile)) {
+            builderKeyToSystemPropertyNameMapping.putAll(
+                    PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFile));
         } else {
-            overridePropertiesFilename =
-                    System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
-                            BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME
-                                    + ", littlegrid/" + BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME);
+            builderKeyToSystemPropertyNameMapping.putAll(PropertiesUtils.loadProperties(Level.INFO,
+                            BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
+
+            builderKeyToSystemPropertyNameMapping.putAll(
+                    PropertiesUtils.loadProperties(Level.INFO,
+                            LITTLEGRID_DIRECTORY_SLASH + BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
         }
+    }
 
-        final String propertiesFilenames;
-
-        if (overridePropertiesFilename.trim().isEmpty()) {
-            propertiesFilenames = BUILDER_SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME;
-        } else {
-            propertiesFilenames = BUILDER_SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME
-                    + ", " + overridePropertiesFilename;
-        }
-
-        builderKeyToSystemPropertyNameMapping = PropertiesUtils.loadProperties(propertiesFilenames);
+    private static boolean stringHasValue(String stringToCheckForValue) {
+        return stringToCheckForValue != null && !stringToCheckForValue.trim().isEmpty();
     }
 
     private int getBuilderSettingAsInt(final String builderKey) {
@@ -284,7 +276,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final int numberOfThreadsInStartUpPool = getBuilderSettingAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
 
         if (classPathUrls == null) {
-            LOGGER.debug("Cluster member group config class path URLs null, setting to current (minus Java home)");
+            LOGGER.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
 
             this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
         }
@@ -518,7 +510,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setAdditionalSystemProperties(final String commaDelimitedPropertiesFilenames) {
-        setAdditionalSystemProperties(PropertiesUtils.loadProperties(commaDelimitedPropertiesFilenames));
+        setAdditionalSystemProperties(PropertiesUtils.loadProperties(Level.INFO, commaDelimitedPropertiesFilenames));
 
         return this;
     }
@@ -761,7 +753,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setBuilderProperties(final String commaDelimitedPropertiesFilenames) {
-        setBuilderProperties(PropertiesUtils.loadProperties(commaDelimitedPropertiesFilenames));
+        setBuilderProperties(PropertiesUtils.loadProperties(Level.INFO, commaDelimitedPropertiesFilenames));
 
         return this;
     }
@@ -844,7 +836,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 if (jarsToExcludeFromClassPath != null) {
                     for (final String jarToExclude : jarsToExcludeFromClassPath) {
                         if (partOfClassPath.endsWith(jarToExclude)) {
-                            LOGGER.debug(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
+                            LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
 
                             includeInClassPath = false;
                         }
@@ -1024,10 +1016,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
-        if (clientCacheConfiguration == null || clientCacheConfiguration.trim().isEmpty()) {
-            setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
-        } else {
+        if (stringHasValue(clientCacheConfiguration)) {
             setPropertyWhenValid(properties, BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
+        } else {
+            setPropertyWhenValid(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         }
 
         setPropertyWhenValid(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
@@ -1088,7 +1080,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final String overrideConfiguration = getBuilderSettingAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY);
 
         if (fastStartJoinTimeout > 0 && (overrideConfiguration == null || overrideConfiguration.trim().isEmpty())) {
-            LOGGER.warn("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
+            LOGGER.warning("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
                     + "now be configured to be used - if a different override file should be used, then please "
                     + "set fast-start join timeout to 0, this will disable the fast-start feature");
 
@@ -1112,7 +1104,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final String clientCacheConfiguration = getBuilderSettingAsString(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
 
         if (clientCacheConfiguration == null) {
-            LOGGER.warn("No client cache configuration has been specified for Extend clients");
+            LOGGER.warning("No client cache configuration has been specified for Extend clients");
         } else {
             setPropertyWhenValid(properties, BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
         }

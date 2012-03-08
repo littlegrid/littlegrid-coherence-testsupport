@@ -33,6 +33,7 @@ package org.littlegrid.features.stop;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
+import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -44,6 +45,7 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
@@ -65,6 +67,9 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .buildAndConfigureForStorageDisabledClient();
+
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        cache.put("key", "value");
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
@@ -150,13 +155,13 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
     @Test
     public void startAndStopSeveralMembersOfGroup() {
-        final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
+        final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
         final int[] memberIdsToStop = {1, 2};
         final int expectedClusterSizeBeforeStop = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
         final int expectedClusterSizeAfterStop = expectedClusterSizeBeforeStop - memberIdsToStop.length;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(MEDIUM_TEST_CLUSTER_SIZE)
+                .setStorageEnabledCount(numberOfMembers)
                 .buildAndConfigureForStorageDisabledClient();
 
         memberGroup.stopMember(1, 2);

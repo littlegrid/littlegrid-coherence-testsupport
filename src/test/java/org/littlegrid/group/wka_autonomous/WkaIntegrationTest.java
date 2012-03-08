@@ -35,7 +35,8 @@ import com.tangosol.net.CacheFactory;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
-import org.littlegrid.support.LoggerPlaceHolder;
+
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
@@ -46,7 +47,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
  * Cluster member group WKA tests.
  */
 public final class WkaIntegrationTest {
-    private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(WkaIntegrationTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WkaIntegrationTest.class.getName());
 
     @Test
     public void twoSmallMemberGroupsWithDifferentWkas() {
@@ -62,7 +63,7 @@ public final class WkaIntegrationTest {
             memberGroup1 = builder.buildAndConfigureForStorageDisabledClient();
 
             final int differentPort = builder.getWkaPort() + 20;
-            LOGGER.warn(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
+            LOGGER.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
 
             memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers)

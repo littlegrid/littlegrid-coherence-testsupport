@@ -36,6 +36,7 @@ import org.littlegrid.support.PropertiesUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import static java.lang.String.format;
 
@@ -79,8 +80,9 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     }
 
     private void loadAndInitialise() {
-        final Properties properties = PropertiesUtils.loadProperties(REFLECTION_DELEGATING_PROPERTIES_FILENAME
-                + ", littlegrid/" + REFLECTION_DELEGATING_PROPERTIES_FILENAME);
+        final Properties properties = PropertiesUtils.loadProperties(Level.INFO,
+                REFLECTION_DELEGATING_PROPERTIES_FILENAME
+                        + ", littlegrid/" + REFLECTION_DELEGATING_PROPERTIES_FILENAME);
 
         delegateInstanceClassName = properties.getProperty(DELEGATE_INSTANCE_CLASS_NAME);
         startMethodName = properties.getProperty(START_METHOD_NAME_KEY);

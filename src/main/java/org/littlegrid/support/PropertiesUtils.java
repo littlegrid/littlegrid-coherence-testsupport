@@ -4,6 +4,8 @@ import com.tangosol.util.Resources;
 
 import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -11,7 +13,7 @@ import static java.lang.String.format;
  * Properties utilities class, containing useful convenience methods for working with properties.
  */
 public final class PropertiesUtils {
-    private static final LoggerPlaceHolder LOGGER = new LoggerPlaceHolder(PropertiesUtils.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PropertiesUtils.class.getName());
 
     private static final String DELIMITER = ",";
 
@@ -28,17 +30,21 @@ public final class PropertiesUtils {
      *         Comma delimited properties filenames.
      * @return properties.
      */
-    public static Properties loadProperties(final String commaDelimitedPropertiesFilenames) {
-        return loadProperties(commaDelimitedPropertiesFilenames.split(DELIMITER));
+    public static Properties loadProperties(Level loadedPropertyFileLogLevel,
+                                            final String commaDelimitedPropertiesFilenames) {
+
+        return loadProperties(loadedPropertyFileLogLevel, commaDelimitedPropertiesFilenames.split(DELIMITER));
     }
 
     /**
      * Loads properties using the specified array of string properties filenames.
      *
-     * @param propertiesFilenames Properties filenames.
+     * @param loadedPropertyFileLogLevel Log level at which properties files loaded should be output.
+     * @param propertiesFilenames        Properties filenames.
      * @return properties.
      */
-    public static Properties loadProperties(final String... propertiesFilenames) {
+    public static Properties loadProperties(Level loadedPropertyFileLogLevel,
+                                            final String... propertiesFilenames) {
         final Properties properties = new Properties();
 
         for (String propertiesFilename : propertiesFilenames) {
@@ -57,8 +63,9 @@ public final class PropertiesUtils {
                 final Properties currentProperties = new Properties();
                 currentProperties.load(url.openStream());
 
-                LOGGER.info(format("File '%s' found and '%s' properties loaded", propertiesFilename,
-                        currentProperties.size()));
+                LOGGER.log(loadedPropertyFileLogLevel,
+                        format("File '%s' found and '%s' properties loaded", propertiesFilename,
+                                currentProperties.size()));
 
                 properties.putAll(currentProperties);
             } catch (Exception e) {

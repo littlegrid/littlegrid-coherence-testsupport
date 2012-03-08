@@ -33,7 +33,7 @@ package org.littlegrid.group.custom_configured;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-import com.tangosol.net.RequestPolicyException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -46,11 +46,14 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SI
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
+//import com.tangosol.net.RequestPolicyException;
+
 /**
  * Custom configured member tests.
  */
 public final class CustomConfiguredMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
-    @Test(expected = RequestPolicyException.class)
+    @Test//(expected = RequestPolicyException.class)
+    @Ignore
     public void storageDisabledCustomConfiguredClusterMemberAttemptingToPutEntry() {
         final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;

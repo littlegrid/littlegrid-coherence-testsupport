@@ -34,9 +34,9 @@ package org.littlegrid.impl;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
-import org.littlegrid.support.LoggerPlaceHolder;
 
 import java.lang.reflect.Constructor;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -47,8 +47,7 @@ import static java.lang.String.format;
  * the instance of the wrapped class.
  */
 class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember {
-    private static final LoggerPlaceHolder LOGGER =
-            new LoggerPlaceHolder(DelegatingClusterMemberWrapper.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DelegatingClusterMemberWrapper.class.getName());
 
     private final Object clusterMemberInstance;
     private boolean fullyRunning = false;
@@ -63,7 +62,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
     public DelegatingClusterMemberWrapper(final String clusterMemberInstanceClassName,
                                           final ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
-            LOGGER.debug(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
+            LOGGER.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
 
             final Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
             final Constructor constructor = clusterMemberClass.getConstructor();
@@ -80,7 +79,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
      * Start the cluster member - this has reduced scope to prevent normal framework users from calling it.
      */
     void start() {
-        LOGGER.debug("About to start this cluster member");
+        LOGGER.fine("About to start this cluster member");
 
         invokeMethod(clusterMemberInstance, "start");
     }
@@ -92,7 +91,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
     public void shutdown() {
         fullyRunning = false;
 
-        LOGGER.debug("Shutting down this cluster member");
+        LOGGER.fine("Shutting down this cluster member");
 
         invokeMethod(clusterMemberInstance, "shutdown");
     }
@@ -104,7 +103,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
     public void stop() {
         fullyRunning = false;
 
-        LOGGER.debug("Stopping this cluster member");
+        LOGGER.fine("Stopping this cluster member");
 
         invokeMethod(clusterMemberInstance, "stop");
     }
