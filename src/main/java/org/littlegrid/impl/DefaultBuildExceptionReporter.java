@@ -53,11 +53,16 @@ import static java.lang.String.format;
  * be output.
  */
 public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildExceptionReporter {
+    private static final String SECTION_DIVIDER = "----------";
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void report(final Throwable throwable) {
+    public void report(final Throwable throwable,
+                       final Map<String, String> builderKeysAndValues,
+                       final Properties builderKeyToSystemPropertyNameMapping) {
+
         final PrintStream out = System.out;
 
         if (throwable instanceof ClusterMemberGroupBuildException) {
@@ -70,13 +75,15 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
             outputCurrentSystemProperties(out);
             outputSystemPropertiesBefore(out, buildException.getSystemPropertiesBeforeStartInvoked());
             outputSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
+            outputSortedSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
             outputNumberOfMembers(out, buildException.getNumberOfMembers());
             outputClusterMemberInstanceClassName(out, buildException.getClusterMemberInstanceClassName());
             outputNumberOfThreadThreadsInStartUpPool(out, buildException.getNumberOfThreadsInStartUpPool());
             outputMemory(out);
             outputNetwork(out);
-            outputSortedSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
             outputSortedCurrentSystemProperties(out);
+            outputBuilderKeysAndValues(out, builderKeysAndValues);
+            outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMapping);
             outputException(out, throwable.getCause());
         } else {
             outputHeading(out);
@@ -89,7 +96,42 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         }
     }
 
+    private void outputBuilderKeysAndValues(final PrintStream out,
+                                            final Map<String, String> builderKeysAndValues) {
+
+        out.println(SECTION_DIVIDER);
+        out.println("Builder keys and values - sorted to help identification");
+
+        Map<String,
+
+                String> map = new TreeMap<String, String>(builderKeysAndValues);
+
+        for (final String key : map.keySet()) {
+            String value = map.get(key);
+
+            out.println(format("    key=%s, value=%s", key, value));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void outputBuilderKeyToSystemPropertyNameMapping(final PrintStream out,
+                                                             final Properties builderKeyToSystemPropertyNameMapping) {
+
+        out.println(SECTION_DIVIDER);
+        out.println("Builder key to system property name mapping - sorted to help identification");
+
+        Map<String, String> map = new TreeMap(builderKeyToSystemPropertyNameMapping);
+
+        for (final String key : map.keySet()) {
+            String value = map.get(key);
+
+            out.println(format("    key=%s, value=%s", key, value));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     private void outputSortedCurrentSystemProperties(final PrintStream out) {
+        out.println(SECTION_DIVIDER);
         out.println("System properties current: all current system properties - sorted to help identification");
 
         Map<String, String> map = new TreeMap(System.getProperties());
@@ -108,34 +150,40 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
     }
 
     private void outputJavaHome(final PrintStream out) {
+        out.println(SECTION_DIVIDER);
         out.println("Java home................: " + System.getProperty("java.home"));
     }
 
     private void outputClassPath(final PrintStream out) {
+        out.println(SECTION_DIVIDER);
         out.println("Class path...............: " + System.getProperty("java.class.path"));
     }
 
     private void outputClassPathInUse(final PrintStream out,
                                       final URL[] classPathUrls) {
 
+        out.println(SECTION_DIVIDER);
         out.println("Class path in use........: " + Arrays.toString(classPathUrls));
     }
 
     private void outputSystemPropertiesBefore(final PrintStream out,
                                               final Properties systemPropertiesBeforeStartInvoked) {
 
+        out.println(SECTION_DIVIDER);
         out.println("System properties before.: " + systemPropertiesBeforeStartInvoked);
     }
 
     private void outputSystemPropertiesApplied(final PrintStream out,
                                                final Properties systemPropertiesToBeApplied) {
 
+        out.println(SECTION_DIVIDER);
         out.println("System properties applied: " + systemPropertiesToBeApplied);
     }
 
     private void outputMemory(final PrintStream out) {
         final int oneMB = 1024 * 1024;
 
+        out.println(SECTION_DIVIDER);
         out.println(format("Memory...................: max memory: %sMB, current: %sMB, free memory: %sMB",
                 Runtime.getRuntime().maxMemory() / oneMB,
                 Runtime.getRuntime().totalMemory() / oneMB,
@@ -143,6 +191,8 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
     }
 
     private void outputNetwork(final PrintStream out) {
+        out.println(SECTION_DIVIDER);
+
         try {
             final InetAddress inetAddress = InetAddress.getLocalHost();
 
@@ -153,9 +203,11 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void outputSortedSystemPropertiesApplied(final PrintStream out,
                                                      final Properties systemPropertiesToBeApplied) {
 
+        out.println(SECTION_DIVIDER);
         out.println("System properties applied: sorted to help identification");
 
         Map<String, String> map = new TreeMap(systemPropertiesToBeApplied);
@@ -168,30 +220,35 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
     }
 
     private void outputCurrentSystemProperties(final PrintStream out) {
+        out.println(SECTION_DIVIDER);
         out.println("Current system properties: " + System.getProperties());
     }
 
     private void outputNumberOfThreadThreadsInStartUpPool(final PrintStream out,
                                                           final int numberOfThreadsInStartUpPool) {
 
+        out.println(SECTION_DIVIDER);
         out.println("Number of thread in pool.: " + numberOfThreadsInStartUpPool);
     }
 
     private void outputClusterMemberInstanceClassName(final PrintStream out,
                                                       final String clusterMemberInstanceClassName) {
 
+        out.println(SECTION_DIVIDER);
         out.println("Cluster member class name: " + clusterMemberInstanceClassName);
     }
 
     private void outputNumberOfMembers(final PrintStream out,
                                        final int numberOfMembers) {
 
+        out.println(SECTION_DIVIDER);
         out.println("Number of members........: " + numberOfMembers);
     }
 
     private void outputException(final PrintStream out,
                                  final Throwable cause) {
 
+        out.println(SECTION_DIVIDER);
         out.println("Full exception...........: detailed below");
         cause.printStackTrace(out);
     }

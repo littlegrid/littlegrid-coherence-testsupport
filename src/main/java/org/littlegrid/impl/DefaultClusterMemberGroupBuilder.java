@@ -140,6 +140,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
+//        LOGGER.info("LittleGrid");
+
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
     }
@@ -182,7 +184,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                     PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFile));
         } else {
             builderKeyToSystemPropertyNameMapping.putAll(PropertiesUtils.loadProperties(Level.INFO,
-                            BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
+                    BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
 
             builderKeyToSystemPropertyNameMapping.putAll(
                     PropertiesUtils.loadProperties(Level.INFO,
@@ -301,7 +303,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             LOGGER.info(format("Group of cluster member(s) started, member Ids: %s",
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (Throwable throwable) {
-            exceptionReporter.report(throwable);
+            exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
 
             throw new IllegalStateException(throwable);
         }

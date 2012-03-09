@@ -31,6 +31,7 @@
 
 package org.littlegrid;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -243,7 +244,7 @@ public interface ClusterMemberGroup {
         /**
          * Sets the cache configuration to be used for custom configured cluster member groups.
          *
-         * @param cacheConfiguration
+         * @param cacheConfiguration Custom configured cache configuration.
          * @return builder.
          */
         Builder setCustomConfiguredCacheConfiguration(String cacheConfiguration);
@@ -560,8 +561,13 @@ public interface ClusterMemberGroup {
         /**
          * Report on the exception.
          *
-         * @param throwable Throwable.
+         * @param throwable            Throwable.
+         * @param builderKeysAndValues Builder keys and values.
+         * @param builderKeyToSystemPropertyNameMapping
+         *                             Builder key to system property name mapping.
          */
-        void report(Throwable throwable);
+        void report(Throwable throwable,
+                    Map<String, String> builderKeysAndValues,
+                    Properties builderKeyToSystemPropertyNameMapping);
     }
 }
