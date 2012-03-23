@@ -88,4 +88,9 @@ public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestSh
             ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
         }
     }
+
+    @Test
+    public void multipleBuilderPropertiesFiles() {
+
+    }
 }

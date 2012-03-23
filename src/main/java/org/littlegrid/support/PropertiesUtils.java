@@ -46,6 +46,7 @@ public final class PropertiesUtils {
      */
     public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
                                             final String... propertiesFilenames) {
+
         final Properties properties = new Properties();
 
         for (String propertiesFilename : propertiesFilenames) {

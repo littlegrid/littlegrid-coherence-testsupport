@@ -170,6 +170,7 @@ public interface ClusterMemberGroup {
          * to connect, then it will need to control its own setting of the system properties.
          *
          * @return running cluster member group.
+         * @since 2.5.1 replaces build().
          */
         ClusterMemberGroup buildAndConfigureForNoClient();
 
@@ -180,6 +181,7 @@ public interface ClusterMemberGroup {
          * client wants to connect to the newly started cluster group.
          *
          * @return running cluster member group.
+         * @since 2.5.1 replaces build().
          */
         ClusterMemberGroup buildAndConfigureForStorageDisabledClient();
 
@@ -190,6 +192,7 @@ public interface ClusterMemberGroup {
          * client wants to connect to the newly started cluster group.
          *
          * @return running cluster member group.
+         * @since 2.5.1 replaces build().
          */
         ClusterMemberGroup buildAndConfigureForExtendClient();
 
@@ -509,6 +512,21 @@ public interface ClusterMemberGroup {
          * @return builder.
          */
         Builder setBuilderProperties(String commaDelimitedPropertiesFilenames);
+
+        /**
+         * Sets the builder properties to be used, these will override any defaults - using
+         * properties is useful if the configuration is required to be externalised, rather than
+         * the builder being controlled through code.
+         *
+         * @param propertiesFilenames
+         *         Filenames of properties containing overrides, the keys should match the methods
+         *         exposed on this cluster member group builder interface, minus the
+         *         'set' - so for example to set the WKA port, the entry in the properties
+         *         file would look like WkaPort=345612
+         * @return builder.
+         * @since 2.5.2
+         */
+        Builder setBuilderProperties(String... propertiesFilenames);
 
         /**
          * Sets the number of threads to handle starting up the members within a cluster member group.
