@@ -42,6 +42,7 @@ import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Builder system property override tests that use the littlegrid.builder.override system
@@ -58,18 +59,32 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
 
         // This example configuration file has a default storage-enabled member count of 3, so a cluster of
         // 4 in total with this storage-disabled member.
-        assertThat(CacheFactory.ensureCluster().getMemberSet().size(), is(4));
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), 4);
+    }
+
+    @Test
+    public void alternativeOverrideSpecifyingBuilderPropertiesFileSpecified() {
+        System.setProperty(BUILDER_OVERRIDE_KEY,
+                "directory-where-the-config-is-stored/example-with-builder-properties-littlegrid-builder-override.properties");
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .buildAndConfigureForStorageDisabledClient();
+
+        // This example configuration file has a default storage-enabled member count of 3, so a cluster of
+        // 4 in total with this storage-disabled member.
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), 4);
     }
 
     @Test
     public void alternativeSystemPropertyMappingOverrideFileSpecified() {
+        System.clearProperty(BUILDER_OVERRIDE_KEY);
         System.setProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
                 "directory-where-the-config-is-stored/example-littlegrid-builder-system-property-mapping-override.properties");
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledExtendProxyCount(1)
                 .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-different-system-property-names.xml")
                 .setClientCacheConfiguration("coherence/littlegrid-test-extend-client-cache-config-with-different-system-property-names.xml")
-                .setStorageEnabledExtendProxyCount(1)
                 .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);

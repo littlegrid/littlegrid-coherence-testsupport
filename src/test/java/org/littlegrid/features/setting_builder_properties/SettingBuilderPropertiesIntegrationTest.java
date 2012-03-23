@@ -32,65 +32,62 @@
 package org.littlegrid.features.setting_builder_properties;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.util.Properties;
 
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Setting builder properties integration tests.
  */
 public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void exampleOfConfiguringExtendProxyWithSeparateStorageEnabledMembersThroughProperties() {
-        /*
-            These properties could be read from a file.
-         */
+    public void memberGroupConfiguredThroughPropertiesObject() {
+        final int storageEnabledCount = 2;
+        final int extendProxyCount = 1;
+        final int expectedClusterSize = storageEnabledCount + extendProxyCount
+                + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
         Properties properties = new Properties();
-        properties.setProperty("StorageEnabledCount", "2");
-        properties.setProperty("ExtendProxyCount", "1");
+        properties.setProperty("StorageEnabledCount", Integer.toString(storageEnabledCount));
+        properties.setProperty("ExtendProxyCount", Integer.toString(extendProxyCount));
         properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
         properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIG_FILE);
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setBuilderProperties(properties)
-                .buildAndConfigureForExtendClient();
+                .buildAndConfigureForStorageDisabledClient();
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
-        cache.put("key", "value");
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 
     @Test
-    public void exampleOfTwoAutonomousClustersEachWithOneStorageEnabledExtendProxyMember() {
-        ClusterMemberGroup memberGroup1 = null;
-        ClusterMemberGroup memberGroup2 = null;
+    public void memberGroupConfiguredThroughStringPropertiesFilename() {
+        final int expectedClusterSize = 3 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        try {
-            memberGroup1 = ClusterMemberGroupUtils.newBuilder()
-                    .setBuilderProperties("properties/memberGroup1.properties")
-                    .buildAndConfigureForNoClient();
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setBuilderProperties("properties/memberGroup1.properties")
+                .buildAndConfigureForStorageDisabledClient();
 
-            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
-                    .setBuilderProperties("properties/memberGroup2.properties")
-                    .buildAndConfigureForExtendClient();
 
-            final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
-            cache.put("key", "value");
-        } finally {
-            // Ensure they get shutdown
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
-        }
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 
     @Test
-    public void multipleBuilderPropertiesFiles() {
+    public void memberGroupConfiguredThroughMultipleStringPropertiesFilenames() {
+        final int expectedClusterSize = 2
+                + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setBuilderProperties("properties/memberGroup1.properties", "properties/memberGroup2.properties")
+                .buildAndConfigureForStorageDisabledClient();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 }

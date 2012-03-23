@@ -760,9 +760,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setBuilderProperties(final String... propertiesFilenames) {
-        throw new UnsupportedOperationException();
+        setBuilderProperties(PropertiesUtils.loadProperties(Level.INFO, propertiesFilenames));
+
+        return this;
     }
 
     /**
