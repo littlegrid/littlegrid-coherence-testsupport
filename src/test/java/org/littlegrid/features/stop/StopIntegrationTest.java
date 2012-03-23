@@ -88,7 +88,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         final int numberOfMembers = LARGE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
                 .buildAndConfigureForStorageDisabledClient();
 
