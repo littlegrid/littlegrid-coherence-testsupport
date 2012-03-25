@@ -46,7 +46,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_S
  */
 public class ExtendedDefaultMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void exampleOfExtendingDefaultClusterMemberToUseLifeCycleMethods()
+    public void exampleOfExtendingDefaultClusterMemberToUseCallbackMethods()
             throws Exception {
 
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;

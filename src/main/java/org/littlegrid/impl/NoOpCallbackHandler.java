@@ -31,34 +31,17 @@
 
 package org.littlegrid.impl;
 
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.DefaultCacheServer;
 import org.littlegrid.ClusterMemberGroup;
 
 /**
- * Default cluster member (which may be extended if specialised behaviour is required,
- * such as before start-up etc.), it performs the necessary cluster member actions - this
- * implementation simply delegates to a Default cache server where possible.
+ * No-operation implementation of callback handler.
  */
-public class DefaultClusterMember implements ClusterMemberGroup.ClusterMember,
-        ClusterMemberGroup.CallbackHandler {
-
+public class NoOpCallbackHandler implements ClusterMemberGroup.CallbackHandler {
     /**
      * {@inheritDoc}
      */
     @Override
     public void doBeforeStart() {
-    }
-
-    /**
-     * Start the cluster member, the start method is purposely not on cluster member interface to
-     * prevent normal framework users from calling it from their test code - thus generally
-     * avoiding things like multiple invocations of start.
-     */
-    public void start() {
-        doBeforeStart();
-        DefaultCacheServer.start();
-        doAfterStart();
     }
 
     /**
@@ -79,40 +62,6 @@ public class DefaultClusterMember implements ClusterMemberGroup.ClusterMember,
      * {@inheritDoc}
      */
     @Override
-    public void shutdown() {
-        doBeforeShutdown();
-        DefaultCacheServer.shutdown();
-        doAfterShutdown();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void doAfterShutdown() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void stop() {
-        CacheFactory.getCluster().stop();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getLocalMemberId() {
-        return CacheFactory.getCluster().getLocalMember().getId();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClassLoader getActualContainingClassLoader() {
-        return this.getClass().getClassLoader();
     }
 }

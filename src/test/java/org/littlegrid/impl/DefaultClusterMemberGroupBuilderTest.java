@@ -50,9 +50,10 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 31;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 32;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
+    private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
 
     private static final String CUSTOM_CONFIGURED_MEMBER_COUNT_KEY = "CustomConfiguredCount";
     private static final String STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
@@ -124,6 +125,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 //        setBuilderProperties
 
         final String expectedExceptionReportInstanceClassName = "com.g.h.i.BuildExceptionReporter";
+        final String expectedCallbackHandlerInstanceClassName = "com.g.h.i.CallbackHandler";
 
         final int expectedCustomConfiguredMemberCount = 10;
         final int expectedStorageEnabledCount = 11;
@@ -142,6 +144,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
+        builder.setCallbackHandlerInstanceClassName(expectedCallbackHandlerInstanceClassName);
 
         builder.setCustomConfiguredCount(expectedCustomConfiguredMemberCount);
         builder.setStorageEnabledCount(expectedStorageEnabledCount);
@@ -165,6 +168,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.get(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY),
                 is(expectedExceptionReportInstanceClassName));
+
+        assertThat(builderSettings.get(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY),
+                is(expectedCallbackHandlerInstanceClassName));
 
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_COUNT_KEY),
                 is(Integer.toString(expectedCustomConfiguredMemberCount)));

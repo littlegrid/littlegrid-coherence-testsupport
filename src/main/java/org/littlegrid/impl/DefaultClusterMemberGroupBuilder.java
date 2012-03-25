@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,13 +63,21 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME =
             "littlegrid/littlegrid-builder-system-property-mapping-default.properties";
 
-    private static final String BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY =
-            "ExceptionReporterInstanceClassName";
+    private static final String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
+
+    private static final String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME =
+            "littlegrid-builder-system-property-mapping-override.properties";
 
     private static final String FAST_START_OVERRIDE_CONFIGURATION_FILENAME =
             "littlegrid/littlegrid-fast-start-coherence-override.xml";
 
     private static final String LITTLEGRID_DIRECTORY_SLASH = "littlegrid/";
+
+    private static final String BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY =
+            "ExceptionReporterInstanceClassName";
+
+    private static final String BUILDER_CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY =
+            "CallbackHandlerInstanceClassName";
 
     private static final String BUILDER_CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String BUILDER_STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
@@ -283,7 +292,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
         }
 
-        final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithSleepDurations();
+        final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
 
         try {
             //TODO: tidy this up, all very similar
@@ -299,6 +308,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
+
+            containerGroup.startAll();
 
             LOGGER.info(format("Group of cluster member(s) started, member Ids: %s",
                     Arrays.toString(containerGroup.getStartedMemberIds())));
@@ -324,16 +335,29 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     @SuppressWarnings("unchecked")
     private ClusterMemberGroup.BuildExceptionReporter createExceptionReporter() {
-        final String exceptionReporterClassName =
-                getBuilderValueAsString(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
+        final String className = getBuilderValueAsString(BUILDER_EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
 
         try {
-            final Class exceptionReporterClass = this.getClass().getClassLoader().loadClass(exceptionReporterClassName);
-            final Constructor constructor = exceptionReporterClass.getConstructor();
+            final Class clazz = this.getClass().getClassLoader().loadClass(className);
+            final Constructor constructor = clazz.getConstructor();
 
             return (ClusterMemberGroup.BuildExceptionReporter) constructor.newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException(format("Cannot create instance of '%s", exceptionReporterClassName));
+            throw new IllegalStateException(format("Cannot create instance of '%s", className));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private ClusterMemberGroup.CallbackHandler createCallbackHandler() {
+        final String className = getBuilderValueAsString(BUILDER_CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY);
+
+        try {
+            final Class clazz = this.getClass().getClassLoader().loadClass(className);
+            final Constructor constructor = clazz.getConstructor();
+
+            return (ClusterMemberGroup.CallbackHandler) constructor.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(format("Cannot create instance of '%s", className));
         }
     }
 
@@ -346,13 +370,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 getBuilderValueAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (jmxMonitorCount > 0) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(jmxMonitorCount,
-                    getSystemPropertiesForJmxMonitor(), classPathUrls,
-                    clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
+            final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
+                    DefaultClusterMemberGroup.start(
+                            jmxMonitorCount,
+                            getSystemPropertiesForJmxMonitor(),
+                            classPathUrls,
+                            clusterMemberInstanceClassName,
+                            numberOfThreadsInStartUpPool);
 
-            containerGroup.merge(memberGroup);
+            containerGroup.merge(memberFutures);
         }
     }
 
@@ -365,13 +391,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 getBuilderValueAsString(BUILDER_CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (customConfiguredCount > 0) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(customConfiguredCount,
-                    getSystemPropertiesForCustomConfigured(), classPathUrls,
-                    customConfiguredClusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
+            final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
+                    DefaultClusterMemberGroup.start(
+                            customConfiguredCount,
+                            getSystemPropertiesForCustomConfigured(),
+                            classPathUrls,
+                            customConfiguredClusterMemberInstanceClassName,
+                            numberOfThreadsInStartUpPool);
 
-            containerGroup.merge(memberGroup);
+            containerGroup.merge(memberFutures);
         }
     }
 
@@ -388,12 +416,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             final int extendStartingPort = getBuilderValueAsInt(BUILDER_EXTEND_PORT_KEY);
 
             for (int i = 0; i < storageEnabledExtendProxyCount; i++) {
-                final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(singleMember,
-                        getSystemPropertiesForStorageEnabledExtendProxy(extendStartingPort + i),
-                        classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
-                        .startAll();
+                final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
+                        DefaultClusterMemberGroup.start(
+                                singleMember,
+                                getSystemPropertiesForStorageEnabledExtendProxy(extendStartingPort + i),
+                                classPathUrls,
+                                clusterMemberInstanceClassName,
+                                numberOfThreadsInStartUpPool);
 
-                containerGroup.merge(memberGroup);
+                containerGroup.merge(memberFutures);
             }
         }
     }
@@ -411,12 +442,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             final int extendStartingPort = getBuilderValueAsInt(BUILDER_EXTEND_PORT_KEY);
 
             for (int i = 0; i < extendProxyCount; i++) {
-                final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(singleMember,
-                        getSystemPropertiesForExtendProxy(extendStartingPort + i),
-                        classPathUrls, clusterMemberInstanceClassName, numberOfThreadsInStartUpPool)
-                        .startAll();
+                final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
+                        DefaultClusterMemberGroup.start(
+                                singleMember,
+                                getSystemPropertiesForExtendProxy(extendStartingPort + i),
+                                classPathUrls,
+                                clusterMemberInstanceClassName,
+                                numberOfThreadsInStartUpPool);
 
-                containerGroup.merge(memberGroup);
+                containerGroup.merge(memberFutures);
             }
         }
     }
@@ -430,21 +464,24 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 getBuilderValueAsString(BUILDER_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (storageEnabledCount > 0) {
-            final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(storageEnabledCount,
-                    getSystemPropertiesForStorageEnabled(), classPathUrls, clusterMemberInstanceClassName,
-                    numberOfThreadsInStartUpPool)
-                    .startAll();
+            final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
+                    DefaultClusterMemberGroup.start(
+                            storageEnabledCount,
+                            getSystemPropertiesForStorageEnabled(),
+                            classPathUrls,
+                            clusterMemberInstanceClassName,
+                            numberOfThreadsInStartUpPool);
 
-            containerGroup.merge(memberGroup);
+            containerGroup.merge(memberFutures);
         }
     }
 
-    private DefaultClusterMemberGroup createDefaultClusterMemberGroupWithSleepDurations() {
+    private DefaultClusterMemberGroup createDefaultClusterMemberGroupWithCallbackAndSleepDurations() {
         final int duration35x = getBuilderValueAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_35X_KEY);
         final int duration36x = getBuilderValueAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_36X_KEY);
         final int durationDefault = getBuilderValueAsInt(BUILDER_SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
 
-        return new DefaultClusterMemberGroup(duration35x, duration36x, durationDefault);
+        return new DefaultClusterMemberGroup(createCallbackHandler(), duration35x, duration36x, durationDefault);
     }
 
     /**
@@ -829,6 +866,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final long joinTimeoutMilliseconds) {
         builderKeysAndValues.put(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS,
                 Long.toString(joinTimeoutMilliseconds));
+
+        return this;
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setCallbackHandlerInstanceClassName(
+            final String callbackHandlerInstanceClassName) {
+
+        builderKeysAndValues.put(BUILDER_CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY, callbackHandlerInstanceClassName);
 
         return this;
     }

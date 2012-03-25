@@ -59,6 +59,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
             new ArrayList<Future<DelegatingClusterMemberWrapper>>();
 
+    private CallbackHandler callbackHandler;
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
     private Properties systemPropertiesToBeApplied;
@@ -74,19 +75,24 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     /**
      * Constructor with reduced scope.
      *
+     * @param callbackHandler              Life-cycle handler.
      * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
      * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
      * @param sleepAfterStopDurationDefault Default sleep duration.
      */
-    DefaultClusterMemberGroup(final int sleepAfterStopDuration35x,
+    DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
+                              final int sleepAfterStopDuration35x,
                               final int sleepAfterStopDuration36x,
                               final int sleepAfterStopDurationDefault) {
 
+        this.callbackHandler = callbackHandler;
         this.sleepAfterStopDuration35x = sleepAfterStopDuration35x;
         this.sleepAfterStopDuration36x = sleepAfterStopDuration36x;
         this.sleepAfterStopDurationDefault = sleepAfterStopDurationDefault;
 
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
+
+        callbackHandler.doBeforeStart();
     }
 
     /**
@@ -98,6 +104,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param clusterMemberInstanceClassName Class name of cluster member instance.
      * @param numberOfThreadsInStartUpPool   Number of threads in start-up pool.
      */
+    @Deprecated
     public DefaultClusterMemberGroup(final int numberOfMembers,
                                      final Properties systemPropertiesToBeApplied,
                                      final URL[] classPathUrls,
@@ -148,10 +155,13 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     int merge(final ClusterMemberGroup memberGroup) {
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
 
-        memberFutures.addAll(defaultClusterMemberGroup.getMemberFutures());
-        startInvoked = true;
+        numberOfMembers = merge(defaultClusterMemberGroup.getMemberFutures());
 
-        numberOfMembers = memberFutures.size();
+        return memberFutures.size();
+    }
+
+    int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
+        memberFutures.addAll(memberFuturesToAdd);
 
         return memberFutures.size();
     }
@@ -176,9 +186,72 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        SystemUtils.applyToSystemProperties(systemPropertiesToBeApplied);
         startInvoked = true;
-        outputStartAllMessages();
+
+        callbackHandler.doAfterStart();
+//        throw new UnsupportedOperationException();
+//        startInvoked = true;
+//        SystemUtils.applyToSystemProperties(systemPropertiesToBeApplied);
+//        outputStartAllMessages();
+//
+//        try {
+//            final List<Callable<DelegatingClusterMemberWrapper>> tasks =
+//                    new ArrayList<Callable<DelegatingClusterMemberWrapper>>(numberOfMembers);
+//
+//            for (int i = 0; i < numberOfMembers; i++) {
+//                tasks.add(new ClusterMemberCallable(clusterMemberInstanceClassName, classPathUrls));
+//            }
+//
+//            final Callable<DelegatingClusterMemberWrapper> taskForSeniorMember = tasks.remove(0);
+//
+//            final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
+//
+//            LOGGER.fine("About to establish a cluster using a single member initially");
+//            final Future<DelegatingClusterMemberWrapper> futureForSeniorMember =
+//                    executorService.submit(taskForSeniorMember);
+//
+//            futureForSeniorMember.get();
+//
+//            LOGGER.fine("First cluster member up, starting any remaining members to join established cluster");
+//            final List<Future<DelegatingClusterMemberWrapper>> futuresForOtherMembers =
+//                    executorService.invokeAll(tasks);
+//
+//            memberFutures.add(futureForSeniorMember);
+//            memberFutures.addAll(futuresForOtherMembers);
+//
+//            executorService.shutdown();
+//
+//            LOGGER.fine(format("This group of cluster member(s) started, member Ids: %s",
+//                    Arrays.toString(getStartedMemberIds())));
+//        } catch (Exception e) {
+//            LOGGER.severe(format(
+//                    "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
+//                    systemPropertiesToBeApplied));
+//
+//            throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
+//                    systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
+//                    clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);
+//        } finally {
+//            System.setProperties(systemPropertiesBeforeStartInvoked);
+//        }
+//
+        return this;
+    }
+
+    static List<Future<DelegatingClusterMemberWrapper>> start(final int numberOfMembers,
+                                                              final Properties systemPropertiesToBeApplied,
+                                                              final URL[] classPathUrls,
+                                                              final String clusterMemberInstanceClassName,
+                                                              final int numberOfThreadsInStartUpPool) {
+
+        final Properties systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
+
+        final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
+                new ArrayList<Future<DelegatingClusterMemberWrapper>>();
+
+        SystemUtils.applyToSystemProperties(systemPropertiesToBeApplied);
+        outputStartAllMessages(numberOfMembers, systemPropertiesToBeApplied, classPathUrls,
+                numberOfThreadsInStartUpPool);
 
         try {
             final List<Callable<DelegatingClusterMemberWrapper>> tasks =
@@ -208,7 +281,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             executorService.shutdown();
 
             LOGGER.fine(format("This group of cluster member(s) started, member Ids: %s",
-                    Arrays.toString(getStartedMemberIds())));
+                    Arrays.toString(getStartedMemberIds(memberFutures))));
         } catch (Exception e) {
             LOGGER.severe(format(
                     "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
@@ -221,11 +294,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             System.setProperties(systemPropertiesBeforeStartInvoked);
         }
 
-        return this;
+        return memberFutures;
     }
 
     @SuppressWarnings("unchecked")
-    private void outputStartAllMessages() {
+    private static void outputStartAllMessages(final int numberOfMembers,
+                                               final Properties systemPropertiesToBeApplied,
+                                               final URL[] classPathUrls,
+                                               final int numberOfThreadsInStartUpPool) {
         final int oneMB = 1024 * 1024;
 
         LOGGER.fine(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
@@ -266,6 +342,29 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public int[] getStartedMemberIds() {
+        try {
+            final List<Integer> memberIds = new ArrayList<Integer>();
+
+            for (int i = 0; i < memberFutures.size(); i++) {
+                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
+
+                final DelegatingClusterMemberWrapper memberWrapper = task.get();
+                memberIds.add(memberWrapper.getLocalMemberId());
+            }
+
+            int[] memberIdsArray = new int[memberIds.size()];
+
+            for (int i = 0; i < memberIds.size(); i++) {
+                memberIdsArray[i] = memberIds.get(i);
+            }
+
+            return memberIdsArray;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {
         try {
             final List<Integer> memberIds = new ArrayList<Integer>();
 

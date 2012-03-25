@@ -40,7 +40,8 @@ import java.util.Properties;
  */
 public interface ClusterMemberGroup {
     /**
-     * Shuts down specific cluster members in the group.
+     * Shuts down specific cluster members in the group, the members shutdown politely and notify
+     * the other members as they leave..
      *
      * @param memberIds Ids of cluster member(s) to shutdown.
      * @return member group.
@@ -48,15 +49,17 @@ public interface ClusterMemberGroup {
     ClusterMemberGroup shutdownMember(int... memberIds);
 
     /**
-     * Shuts down all the cluster members in the group.
+     * Shuts down all the cluster members in the group, the members shutdown politely and notify
+     * the other members as each one leaves.
      *
      * @return member group.
      */
     ClusterMemberGroup shutdownAll();
 
     /**
-     * Stops specific cluster members - this is typically used in-conjunction
-     * getSuggestedSleepAfterStopDuration and TimeUnit.SECONDS.  An example of usage might be:
+     * Stops specific cluster members immediately - this is typically used in-conjunction
+     * getSuggestedSleepAfterStopDuration and TimeUnit.SECONDS, the members leave without notifying
+     * other members.  An example of usage might be:
      * <code>
      * memberGroup.stop(2);
      * TimeUnit.SECONDS.sleep(memberGroup.getSuggestedSleepAfterStopDuration());
@@ -68,7 +71,8 @@ public interface ClusterMemberGroup {
     ClusterMemberGroup stopMember(int... memberIds);
 
     /**
-     * Stops all the cluster members in the group.
+     * Stops all the cluster members in the group immediately, the members leave without notifying
+     * the other members.
      *
      * @return member group.
      */
@@ -110,12 +114,12 @@ public interface ClusterMemberGroup {
      */
     public interface ClusterMember {
         /**
-         * Shutdown the member.
+         * Shutdown the member, it leaves the cluster politely and notifies other members.
          */
         void shutdown();
 
         /**
-         * Stops the member.
+         * Stops the member immediately, it leaves the cluster without notifying other members.
          */
         void stop();
 
@@ -146,22 +150,11 @@ public interface ClusterMemberGroup {
         String BUILDER_OVERRIDE_KEY = "littlegrid.builder.override";
 
         /**
-         * Constant defining the default name of the override properties filename.
-         */
-        String BUILDER_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
-
-        /**
          * Constant defining the name of the system property that can be used to supply a different
          * mapping override file by setting a system property with this name and the value being the
          * required override file to be use.
          */
         String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY = "littlegrid.builder.system.property.mapping.override";
-
-        /**
-         * Constant defining the default name of the mapping override properties filename.
-         */
-        String BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME =
-                "littlegrid-builder-system-property-mapping-override.properties";
 
         /**
          * Builds and returns a <em>running cluster member group</em>, based upon the default
@@ -518,13 +511,12 @@ public interface ClusterMemberGroup {
          * properties is useful if the configuration is required to be externalised, rather than
          * the builder being controlled through code.
          *
-         * @param propertiesFilenames
-         *         Filenames of properties containing overrides, the keys should match the methods
-         *         exposed on this cluster member group builder interface, minus the
-         *         'set' - so for example to set the WKA port, the entry in the properties
-         *         file would look like WkaPort=345612
+         * @param propertiesFilenames Filenames of properties containing overrides, the keys should match the methods
+         *                            exposed on this cluster member group builder interface, minus the
+         *                            'set' - so for example to set the WKA port, the entry in the properties
+         *                            file would look like WkaPort=345612
          * @return builder.
-         * @since 2.5.2
+         * @since 2.6
          */
         Builder setBuilderProperties(String... propertiesFilenames);
 
@@ -569,6 +561,17 @@ public interface ClusterMemberGroup {
          * @return builder.
          */
         Builder setFastStartJoinTimeoutMilliseconds(long joinTimeoutMilliseconds);
+
+        /**
+         * Sets a callback handler instance, examples of use could be to add indexes after
+         * the cluster member group is started.
+         *
+         * @param callbackHandlerInstanceClassName
+         *         Callback handler instance class name.
+         * @return builder.
+         * @since 2.6
+         */
+        Builder setCallbackHandlerInstanceClassName(String callbackHandlerInstanceClassName);
     }
 
     /**
@@ -587,5 +590,30 @@ public interface ClusterMemberGroup {
         void report(Throwable throwable,
                     Map<String, String> builderKeysAndValues,
                     Properties builderKeyToSystemPropertyNameMapping);
+    }
+
+    /**
+     * Callback handler interface.
+     */
+    interface CallbackHandler {
+        /**
+         * Performs any necessary setup before cluster member is started.
+         */
+        void doBeforeStart();
+
+        /**
+         * Performs any necessary actions after the cluster member has been started.
+         */
+        void doAfterStart();
+
+        /**
+         * Performs any necessary actions before the cluster member is shutdown.
+         */
+        void doBeforeShutdown();
+
+        /**
+         * Performs any necessary actions after the cluster member has been shutdown.
+         */
+        void doAfterShutdown();
     }
 }
