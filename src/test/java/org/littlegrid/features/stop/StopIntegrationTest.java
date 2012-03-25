@@ -36,7 +36,6 @@ import com.tangosol.net.Cluster;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupTestSupport;
 import org.littlegrid.ClusterMemberGroupUtils;
 

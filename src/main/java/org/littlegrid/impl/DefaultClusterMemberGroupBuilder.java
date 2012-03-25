@@ -371,7 +371,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (jmxMonitorCount > 0) {
             final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
-                    DefaultClusterMemberGroup.start(
+                    DefaultClusterMemberGroup.startClusterMembers(
                             jmxMonitorCount,
                             getSystemPropertiesForJmxMonitor(),
                             classPathUrls,
@@ -392,7 +392,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (customConfiguredCount > 0) {
             final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
-                    DefaultClusterMemberGroup.start(
+                    DefaultClusterMemberGroup.startClusterMembers(
                             customConfiguredCount,
                             getSystemPropertiesForCustomConfigured(),
                             classPathUrls,
@@ -417,7 +417,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             for (int i = 0; i < storageEnabledExtendProxyCount; i++) {
                 final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
-                        DefaultClusterMemberGroup.start(
+                        DefaultClusterMemberGroup.startClusterMembers(
                                 singleMember,
                                 getSystemPropertiesForStorageEnabledExtendProxy(extendStartingPort + i),
                                 classPathUrls,
@@ -443,7 +443,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             for (int i = 0; i < extendProxyCount; i++) {
                 final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
-                        DefaultClusterMemberGroup.start(
+                        DefaultClusterMemberGroup.startClusterMembers(
                                 singleMember,
                                 getSystemPropertiesForExtendProxy(extendStartingPort + i),
                                 classPathUrls,
@@ -465,7 +465,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         if (storageEnabledCount > 0) {
             final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
-                    DefaultClusterMemberGroup.start(
+                    DefaultClusterMemberGroup.startClusterMembers(
                             storageEnabledCount,
                             getSystemPropertiesForStorageEnabled(),
                             classPathUrls,

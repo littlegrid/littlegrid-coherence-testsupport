@@ -62,11 +62,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private CallbackHandler callbackHandler;
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
-    private Properties systemPropertiesToBeApplied;
-    private int numberOfMembers;
-    private URL[] classPathUrls;
-    private String clusterMemberInstanceClassName;
-    private int numberOfThreadsInStartUpPool;
     private int sleepAfterStopDuration35x;
     private int sleepAfterStopDuration36x;
     private int sleepAfterStopDurationDefault;
@@ -75,7 +70,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     /**
      * Constructor with reduced scope.
      *
-     * @param callbackHandler              Life-cycle handler.
+     * @param callbackHandler               Callback handler.
      * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
      * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
      * @param sleepAfterStopDurationDefault Default sleep duration.
@@ -84,6 +79,10 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                               final int sleepAfterStopDuration35x,
                               final int sleepAfterStopDuration36x,
                               final int sleepAfterStopDurationDefault) {
+
+        if (callbackHandler == null) {
+            throw new IllegalArgumentException("Callback handler cannot be null");
+        }
 
         this.callbackHandler = callbackHandler;
         this.sleepAfterStopDuration35x = sleepAfterStopDuration35x;
@@ -96,57 +95,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     }
 
     /**
-     * Constructor.
-     *
-     * @param numberOfMembers                Number of members.
-     * @param systemPropertiesToBeApplied    System properties to be applied.
-     * @param classPathUrls                  Class path.
-     * @param clusterMemberInstanceClassName Class name of cluster member instance.
-     * @param numberOfThreadsInStartUpPool   Number of threads in start-up pool.
-     */
-    @Deprecated
-    public DefaultClusterMemberGroup(final int numberOfMembers,
-                                     final Properties systemPropertiesToBeApplied,
-                                     final URL[] classPathUrls,
-                                     final String clusterMemberInstanceClassName,
-                                     final int numberOfThreadsInStartUpPool) {
-
-        if (numberOfMembers < 1) {
-            throw new IllegalArgumentException("Number of members must be 1 or more");
-        }
-
-        if (systemPropertiesToBeApplied == null || systemPropertiesToBeApplied.size() == 0) {
-            throw new IllegalArgumentException("No system properties specified, cannot setup cluster");
-        }
-
-        if (classPathUrls == null || classPathUrls.length == 0) {
-            throw new IllegalArgumentException("No class path URLs specified - will not be able to necessary classes");
-        }
-
-        if (clusterMemberInstanceClassName == null || clusterMemberInstanceClassName.trim().length() == 0) {
-            throw new IllegalArgumentException("No cluster member instance class name, cannot setup cluster");
-        }
-
-        if (numberOfThreadsInStartUpPool < 1) {
-            throw new IllegalArgumentException("Invalid number of threads specified for start-up pool, cannot start");
-        }
-
-        this.numberOfMembers = numberOfMembers;
-        this.classPathUrls = classPathUrls;
-        this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
-
-        if (numberOfThreadsInStartUpPool > numberOfMembers) {
-            this.numberOfThreadsInStartUpPool = numberOfMembers;
-        } else {
-            this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
-        }
-
-        this.systemPropertiesToBeApplied = systemPropertiesToBeApplied;
-
-        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
-    }
-
-    /**
      * Reduced scope method to merge in a cluster member group with this cluster member group.
      *
      * @param memberGroup Cluster member group to be merged.
@@ -155,7 +103,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     int merge(final ClusterMemberGroup memberGroup) {
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
 
-        numberOfMembers = merge(defaultClusterMemberGroup.getMemberFutures());
+        merge(defaultClusterMemberGroup.getMemberFutures());
 
         return memberFutures.size();
     }
@@ -189,60 +137,36 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         startInvoked = true;
 
         callbackHandler.doAfterStart();
-//        throw new UnsupportedOperationException();
-//        startInvoked = true;
-//        SystemUtils.applyToSystemProperties(systemPropertiesToBeApplied);
-//        outputStartAllMessages();
-//
-//        try {
-//            final List<Callable<DelegatingClusterMemberWrapper>> tasks =
-//                    new ArrayList<Callable<DelegatingClusterMemberWrapper>>(numberOfMembers);
-//
-//            for (int i = 0; i < numberOfMembers; i++) {
-//                tasks.add(new ClusterMemberCallable(clusterMemberInstanceClassName, classPathUrls));
-//            }
-//
-//            final Callable<DelegatingClusterMemberWrapper> taskForSeniorMember = tasks.remove(0);
-//
-//            final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
-//
-//            LOGGER.fine("About to establish a cluster using a single member initially");
-//            final Future<DelegatingClusterMemberWrapper> futureForSeniorMember =
-//                    executorService.submit(taskForSeniorMember);
-//
-//            futureForSeniorMember.get();
-//
-//            LOGGER.fine("First cluster member up, starting any remaining members to join established cluster");
-//            final List<Future<DelegatingClusterMemberWrapper>> futuresForOtherMembers =
-//                    executorService.invokeAll(tasks);
-//
-//            memberFutures.add(futureForSeniorMember);
-//            memberFutures.addAll(futuresForOtherMembers);
-//
-//            executorService.shutdown();
-//
-//            LOGGER.fine(format("This group of cluster member(s) started, member Ids: %s",
-//                    Arrays.toString(getStartedMemberIds())));
-//        } catch (Exception e) {
-//            LOGGER.severe(format(
-//                    "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
-//                    systemPropertiesToBeApplied));
-//
-//            throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
-//                    systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
-//                    clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);
-//        } finally {
-//            System.setProperties(systemPropertiesBeforeStartInvoked);
-//        }
-//
+
         return this;
     }
 
-    static List<Future<DelegatingClusterMemberWrapper>> start(final int numberOfMembers,
-                                                              final Properties systemPropertiesToBeApplied,
-                                                              final URL[] classPathUrls,
-                                                              final String clusterMemberInstanceClassName,
-                                                              final int numberOfThreadsInStartUpPool) {
+    static List<Future<DelegatingClusterMemberWrapper>> startClusterMembers(
+            final int numberOfMembers,
+            final Properties systemPropertiesToBeApplied,
+            final URL[] classPathUrls,
+            final String clusterMemberInstanceClassName,
+            final int numberOfThreadsInStartUpPool) {
+
+        if (numberOfMembers < 1) {
+            throw new IllegalArgumentException("Number of members must be 1 or more");
+        }
+
+        if (systemPropertiesToBeApplied == null || systemPropertiesToBeApplied.size() == 0) {
+            throw new IllegalArgumentException("No system properties specified, cannot setup cluster");
+        }
+
+        if (classPathUrls == null || classPathUrls.length == 0) {
+            throw new IllegalArgumentException("No class path URLs specified - will not be able to necessary classes");
+        }
+
+        if (clusterMemberInstanceClassName == null || clusterMemberInstanceClassName.trim().length() == 0) {
+            throw new IllegalArgumentException("No cluster member instance class name, cannot setup cluster");
+        }
+
+        if (numberOfThreadsInStartUpPool < 1) {
+            throw new IllegalArgumentException("Invalid number of threads specified for start-up pool, cannot start");
+        }
 
         final Properties systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
 
@@ -476,7 +400,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        LOGGER.info(format("Shutting down '%d' cluster member(s) in group", numberOfMembers));
+        callbackHandler.doBeforeShutdown();
+
+        LOGGER.info(format("Shutting down '%d' cluster member(s) in group", memberFutures.size()));
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
@@ -493,6 +419,8 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+
+        callbackHandler.doAfterShutdown();
 
         return this;
     }
@@ -532,7 +460,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        LOGGER.info(format("Stopping '%d' cluster member(s) in this group", numberOfMembers));
+        LOGGER.info(format("Stopping '%d' cluster member(s) in this group", memberFutures.size()));
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {

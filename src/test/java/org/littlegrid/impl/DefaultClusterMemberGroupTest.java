@@ -46,83 +46,86 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
- * Direct (i.e. not going through ClusterMemberGroupUtils) default local process cluster member
- * group tests.
+ * Direct starting of cluster members.
  */
-@Ignore
 public final class DefaultClusterMemberGroupTest {
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithInvalidNumberOfMembers() {
-        new DefaultClusterMemberGroup(0, null, null, null, 0);
+    public void startWithInvalidNumberOfMembers() {
+        DefaultClusterMemberGroup.startClusterMembers(0, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithNullSystemProperties() {
-        new DefaultClusterMemberGroup(1, null, null, null, 0);
+    public void startWithNullSystemProperties() {
+        DefaultClusterMemberGroup.startClusterMembers(1, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithNoSystemProperties() {
-        new DefaultClusterMemberGroup(1, new Properties(), null, null, 0);
+    public void startWithNoSystemProperties() {
+        DefaultClusterMemberGroup.startClusterMembers(1, new Properties(), null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithNullClassPath() {
-        new DefaultClusterMemberGroup(1, getPopulatedProperties(), null, null, 0);
+    public void startWithNullClassPath() {
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithNoClassPath() {
-        new DefaultClusterMemberGroup(1, getPopulatedProperties(), new URL[]{}, null, 0);
+    public void startWithNoClassPath() {
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), new URL[]{}, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithNullInstanceClassName()
+    public void startWithNullInstanceClassName()
             throws MalformedURLException {
 
-        new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), getPopulatedUrls(), null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithEmptyInstanceClassName()
+    public void startWithEmptyInstanceClassName()
             throws MalformedURLException {
 
-        new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), " ", 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), getPopulatedUrls(), " ", 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithInvalidNumberOfThreads()
+    public void startWithInvalidNumberOfThreads()
             throws MalformedURLException {
 
-        new DefaultClusterMemberGroup(1, getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 0);
     }
 
     @Test(expected = ClusterMemberGroupBuildException.class)
-    public void startAllWhenClassDoesNotExist()
+    public void startWhenClassDoesNotExist()
             throws MalformedURLException {
 
-        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1, getPopulatedProperties(),
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(),
                 getPopulatedUrls(), "SomeClass", 1);
-
-        memberGroup.startAll();
     }
 
     @Test
+    @Ignore
     public void shutdownAllRestoreOfSystemProperties()
             throws MalformedURLException {
 
-        final String key = "this-is-a-key-of-a-new-property";
+        throw new UnsupportedOperationException();
+//        final String key = "this-is-a-key-of-a-new-property";
+//
+//        final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1,
+//                getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 1);
+//
+//        System.setProperty(key, "Adding a new system property");
+//
+//        assertThat(System.getProperty(key), notNullValue());
+//
+//        memberGroup.shutdownAll();
+//
+//        assertThat(System.getProperty(key), nullValue());
+    }
 
-        final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1,
-                getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 1);
-
-        System.setProperty(key, "Adding a new system property");
-
-        assertThat(System.getProperty(key), notNullValue());
-
-        memberGroup.shutdownAll();
-
-        assertThat(System.getProperty(key), nullValue());
+    @Test(expected = IllegalArgumentException.class)
+    public void constructWithNoCallbackHandler() {
+        new DefaultClusterMemberGroup(null, 0, 0, 0);
     }
 
     @Test
@@ -131,15 +134,12 @@ public final class DefaultClusterMemberGroupTest {
         final int expectedDuration36x = 17;
         final int expectedDurationDefault = 15;
 
-        throw new UnsupportedOperationException();
-/*
-        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(expectedDuration35x,
-                expectedDuration36x, expectedDurationDefault);
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(new NoOpCallbackHandler(),
+                expectedDuration35x, expectedDuration36x, expectedDurationDefault);
 
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.5f), is(expectedDuration35x));
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.6f), is(expectedDuration36x));
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.7f), is(expectedDurationDefault));
-*/
     }
 
     private static Properties getPopulatedProperties() {
