@@ -238,33 +238,57 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 customConfiguredCount, storageEnabledExtendProxyCount, extendProxyCount, jmxMonitorCount);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup buildAndConfigureForNoClient() {
         return build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureForStorageDisabledClient() {
         final ClusterMemberGroup memberGroup = build();
-        final Properties clientSystemProperties = getSystemPropertiesForStorageDisabledClient();
+        final Properties systemProperties = getSystemPropertiesForStorageDisabledClient();
 
-        SystemUtils.applyToSystemProperties(getSystemPropertiesForStorageDisabledClient());
+        SystemUtils.applyToSystemProperties(systemProperties);
 
-        LOGGER.info(format("System properties set for client: %s", new TreeMap(clientSystemProperties)));
+        LOGGER.info(format("System properties set for client: %s", new TreeMap(systemProperties)));
 
         return memberGroup;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureForExtendClient() {
         final ClusterMemberGroup memberGroup = build();
-        final Properties clientSystemProperties = getSystemPropertiesForExtendProxyClient();
+        final Properties systemProperties = getSystemPropertiesForExtendProxyClient();
 
-        SystemUtils.applyToSystemProperties(clientSystemProperties);
+        SystemUtils.applyToSystemProperties(systemProperties);
 
-        LOGGER.info(format("System properties set for client: %s", new TreeMap(clientSystemProperties)));
+        LOGGER.info(format("System properties set for client: %s", new TreeMap(systemProperties)));
+
+        return memberGroup;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup buildAndConfigureForStorageEnabledMember() {
+        final ClusterMemberGroup memberGroup = build();
+        final Properties systemProperties = getSystemPropertiesForStorageEnabled();
+
+        SystemUtils.applyToSystemProperties(systemProperties);
+
+        LOGGER.info(format("System properties set for member: %s", new TreeMap(systemProperties)));
 
         return memberGroup;
     }
@@ -564,6 +588,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setCustomConfiguredCount(final int numberOfMembers) {
         builderKeysAndValues.put(BUILDER_CUSTOM_CONFIGURED_COUNT_KEY, Integer.toString(numberOfMembers));
@@ -631,6 +658,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setCustomConfiguredRoleName(final String roleName) {
         builderKeysAndValues.put(BUILDER_CUSTOM_CONFIGURED_ROLE_NAME_KEY, roleName);
@@ -870,6 +900,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterMemberGroup.Builder setCallbackHandlerInstanceClassName(
             final String callbackHandlerInstanceClassName) {

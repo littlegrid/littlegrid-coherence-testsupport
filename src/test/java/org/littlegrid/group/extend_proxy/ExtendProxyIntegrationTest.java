@@ -33,6 +33,7 @@ package org.littlegrid.group.extend_proxy;
 
 import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
@@ -43,11 +44,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.getClusterSizeThatExtendClientIsConnectedTo;
+import static org.littlegrid.support.ExtendUtils.getClusterSizeThatExtendClientIsConnectedTo;
 
 /**
  * Cluster member group Extend tests.
@@ -122,7 +124,10 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .buildAndConfigureForExtendClient();
 
-        final int clusterSize = getClusterSizeThatExtendClientIsConnectedTo();
+        final InvocationService invocationService =
+                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+
+        final int clusterSize = getClusterSizeThatExtendClientIsConnectedTo(invocationService);
         assertThat(clusterSize, is(numberOfExtendProxies));
     }
 

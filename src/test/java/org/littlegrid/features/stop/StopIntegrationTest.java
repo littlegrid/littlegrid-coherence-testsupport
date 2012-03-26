@@ -33,10 +33,10 @@ package org.littlegrid.features.stop;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
+import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupTestSupport;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.util.Properties;
@@ -44,6 +44,7 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
@@ -52,6 +53,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
+import static org.littlegrid.support.ExtendUtils.getExtendProxyMemberIdThatClientIsConnectedTo;
 
 /**
  * Cluster member group stop tests, for stopping all the members, specific members and
@@ -215,13 +217,16 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
                 .setAdditionalSystemProperties(additionalSystemProperties)
                 .buildAndConfigureForExtendClient();
 
-        final int memberIdToStop = ClusterMemberGroupTestSupport.getExtendProxyMemberIdThatClientIsConnectedTo();
+        final InvocationService invocationService =
+                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+
+        final int memberIdToStop = getExtendProxyMemberIdThatClientIsConnectedTo(invocationService);
 
         memberGroup.stopMember(memberIdToStop);
 
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
-        final int memberNowConnectedTo = ClusterMemberGroupTestSupport.getExtendProxyMemberIdThatClientIsConnectedTo();
+        final int memberNowConnectedTo = getExtendProxyMemberIdThatClientIsConnectedTo(invocationService);
 
         assertThat(memberNowConnectedTo != memberIdToStop, is(true));
     }

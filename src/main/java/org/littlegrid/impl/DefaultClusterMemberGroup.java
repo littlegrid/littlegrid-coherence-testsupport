@@ -68,17 +68,17 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
 
     /**
-     * Constructor with reduced scope.
+     * Constructor.
      *
      * @param callbackHandler               Callback handler.
      * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
      * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
      * @param sleepAfterStopDurationDefault Default sleep duration.
      */
-    DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
-                              final int sleepAfterStopDuration35x,
-                              final int sleepAfterStopDuration36x,
-                              final int sleepAfterStopDurationDefault) {
+    public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
+                                     final int sleepAfterStopDuration35x,
+                                     final int sleepAfterStopDuration36x,
+                                     final int sleepAfterStopDurationDefault) {
 
         if (callbackHandler == null) {
             throw new IllegalArgumentException("Callback handler cannot be null");

@@ -37,15 +37,11 @@ import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.littlegrid.support.ExtendUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.GetClusterSizeInvocable;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
@@ -81,11 +77,7 @@ public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfter
         final InvocationService invocationService =
                 (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
 
-        final Map result = invocationService.query(new GetClusterSizeInvocable(), null);
-        assertThat(result.size(), is(1));
-
-        final List<Integer> list = new ArrayList<Integer>(result.values());
-        final int clusterSize = list.get(0);
+        final int clusterSize = ExtendUtils.getClusterSizeThatExtendClientIsConnectedTo(invocationService);
 
         assertThat(clusterSize, is(numberOfStorageEnabledExtendProxies));
     }

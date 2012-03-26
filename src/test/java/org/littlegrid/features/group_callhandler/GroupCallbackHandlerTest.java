@@ -44,7 +44,7 @@ import static org.junit.Assert.assertThat;
  */
 public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void whatever() {
+    public void callbackHandlerAllCalled() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(1)
                 .setCallbackHandlerInstanceClassName(NumberAddCallbackHandler.class.getName())

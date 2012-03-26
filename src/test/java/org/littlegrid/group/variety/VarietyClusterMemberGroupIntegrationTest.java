@@ -77,11 +77,18 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
 
     @Test
     public void clusterWithVarietyOfMembers() {
+        final int storageEnabledCount = 2;
+        final int extendProxyCount = 1;
+        final int jmxMonitorCount = 1;
+        final int expectedNumberOfMembers = storageEnabledCount + extendProxyCount + jmxMonitorCount;
+
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(2)
-                .setExtendProxyCount(1)
-                .setJmxMonitorCount(1)
+                .setStorageEnabledCount(storageEnabledCount)
+                .setExtendProxyCount(extendProxyCount)
+                .setJmxMonitorCount(jmxMonitorCount)
                 .buildAndConfigureForNoClient();
+
+        assertThat(memberGroup.getStartedMemberIds().length, is(expectedNumberOfMembers));
     }
 
     private void performSimplePutSizeGet(final String cacheName) {

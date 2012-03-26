@@ -190,6 +190,17 @@ public interface ClusterMemberGroup {
         ClusterMemberGroup buildAndConfigureForExtendClient();
 
         /**
+         * Builds and returns a <em>running cluster member group</em>, based upon the default
+         * values and any values that have been overridden or explicitly set - with this
+         * build method, <em>system properties are then set</em> with the assumption that a storage-enabled
+         * member wants to connect to the newly started cluster group.
+         *
+         * @return running cluster member group.
+         * @since 2.6
+         */
+        ClusterMemberGroup buildAndConfigureForStorageEnabledMember();
+
+        /**
          * Sets the exception report instance class name.
          *
          * @param exceptionReportInstanceClassName
@@ -593,7 +604,9 @@ public interface ClusterMemberGroup {
     }
 
     /**
-     * Callback handler interface.
+     * Callback handler interface, enabling callbacks to be registered for certain lifecycle events.
+     *
+     * @since 2.6
      */
     interface CallbackHandler {
         /**

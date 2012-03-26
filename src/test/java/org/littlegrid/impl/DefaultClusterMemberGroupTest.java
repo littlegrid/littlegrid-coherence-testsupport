@@ -31,10 +31,10 @@
 
 package org.littlegrid.impl;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -104,23 +104,21 @@ public final class DefaultClusterMemberGroupTest {
     }
 
     @Test
-    @Ignore
     public void shutdownAllRestoreOfSystemProperties()
             throws MalformedURLException {
 
-        throw new UnsupportedOperationException();
-//        final String key = "this-is-a-key-of-a-new-property";
-//
-//        final ClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(1,
-//                getPopulatedProperties(), getPopulatedUrls(), "SomeClass", 1);
-//
-//        System.setProperty(key, "Adding a new system property");
-//
-//        assertThat(System.getProperty(key), notNullValue());
-//
-//        memberGroup.shutdownAll();
-//
-//        assertThat(System.getProperty(key), nullValue());
+        final String key = "this-is-a-key-of-a-new-property";
+
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .buildAndConfigureForNoClient();
+
+        System.setProperty(key, "Adding a new system property");
+
+        assertThat(System.getProperty(key), notNullValue());
+
+        memberGroup.shutdownAll();
+
+        assertThat(System.getProperty(key), nullValue());
     }
 
     @Test(expected = IllegalArgumentException.class)
