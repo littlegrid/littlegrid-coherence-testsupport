@@ -31,22 +31,26 @@
 
 package org.littlegrid.features.group_callhandler;
 
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
+import com.tangosol.util.extractor.ReflectionExtractor;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.impl.DefaultCallbackHandler;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
  * Cluster member group callback handler test.
  */
 public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void callbackHandlerAllCalled() {
+    public void buildForStorageDisabledClientCallbackHandlerAllCalled() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(1)
                 .setCallbackHandlerInstanceClassName(NumberAddCallbackHandler.class.getName())
                 .buildAndConfigureForStorageDisabledClient();
 
@@ -55,8 +59,76 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
         assertThat(NumberAddCallbackHandler.getCounter(), is(16));
     }
 
+    @Test
+    public void buildForExtendClientCallbackHandlerAllCalled() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setCallbackHandlerInstanceClassName(NumberAddCallbackHandler.class.getName())
+                .buildAndConfigureForExtendClient();
+
+        memberGroup.shutdownAll();
+
+        assertThat(NumberAddCallbackHandler.getCounter(), is(16));
+    }
+
+    @Test
+    public void buildForStorageEnabledMemberCallbackHandlerAllCalled() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setCallbackHandlerInstanceClassName(NumberAddCallbackHandler.class.getName())
+                .buildAndConfigureForStorageEnabledMember();
+
+        memberGroup.shutdownAll();
+
+        assertThat(NumberAddCallbackHandler.getCounter(), is(16));
+    }
+
+    @Test
+    public void buildForNoClientCallbackHandlerAllCalled() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setCallbackHandlerInstanceClassName(NumberAddCallbackHandler.class.getName())
+                .buildAndConfigureForNoClient();
+
+        memberGroup.shutdownAll();
+
+        assertThat(NumberAddCallbackHandler.getCounter(), is(16));
+    }
+
+    @Test
+    public void callbackHandlerAddIndexes() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(1)
+                .setCallbackHandlerInstanceClassName(PopulateCacheAndAddIndexesCallbackHandler.class.getName())
+                .buildAndConfigureForStorageDisabledClient();
+
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+
+        assertThat(cache.size(), is(1));
+        
+        memberGroup.shutdownAll();
+    }
+
+    public static class PopulateCacheAndAddIndexesCallbackHandler extends DefaultCallbackHandler {
+        @Override
+        public void doAfterStart() {
+            // Ensure that this member is storage disabled and thus should be joining the cluster already
+            // established with a storage-enabled member.
+            System.setProperty("tangosol.coherence.distributed.localstorage", "false");
+
+            final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+
+            cache.put("key", "value");
+
+            cache.addIndex(new ReflectionExtractor("toString"), false, null);
+        }
+    }
+
     public static class NumberAddCallbackHandler implements ClusterMemberGroup.CallbackHandler {
         private static int counter;
+
+        public NumberAddCallbackHandler() {
+            // Reset each time created - especially important as the counter is static to
+            // enable it to be 'got at' for testing.
+            counter = 0;
+        }
 
         @Override
         public void doBeforeStart() {

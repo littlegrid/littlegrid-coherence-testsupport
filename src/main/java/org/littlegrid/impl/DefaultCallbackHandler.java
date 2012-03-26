@@ -34,9 +34,11 @@ package org.littlegrid.impl;
 import org.littlegrid.ClusterMemberGroup;
 
 /**
- * No-operation implementation of callback handler.
+ * Default implementation of callback handler.
+ *
+ * @since 2.6.1
  */
-public class NoOpCallbackHandler implements ClusterMemberGroup.CallbackHandler {
+public class DefaultCallbackHandler implements ClusterMemberGroup.CallbackHandler {
     /**
      * {@inheritDoc}
      */

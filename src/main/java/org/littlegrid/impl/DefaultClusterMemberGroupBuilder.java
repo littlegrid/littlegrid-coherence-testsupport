@@ -243,7 +243,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup buildAndConfigureForNoClient() {
-        return build();
+        final ClusterMemberGroup memberGroup = build();
+
+        ((DefaultClusterMemberGroup) memberGroup).startAll();
+
+        return memberGroup;
     }
 
     /**
@@ -258,6 +262,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         SystemUtils.applyToSystemProperties(systemProperties);
 
         LOGGER.info(format("System properties set for client: %s", new TreeMap(systemProperties)));
+
+        ((DefaultClusterMemberGroup) memberGroup).startAll();
 
         return memberGroup;
     }
@@ -275,6 +281,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         LOGGER.info(format("System properties set for client: %s", new TreeMap(systemProperties)));
 
+        ((DefaultClusterMemberGroup) memberGroup).startAll();
+
         return memberGroup;
     }
 
@@ -289,6 +297,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         SystemUtils.applyToSystemProperties(systemProperties);
 
         LOGGER.info(format("System properties set for member: %s", new TreeMap(systemProperties)));
+
+        ((DefaultClusterMemberGroup) memberGroup).startAll();
 
         return memberGroup;
     }
@@ -332,8 +342,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
-
-            containerGroup.startAll();
 
             LOGGER.info(format("Group of cluster member(s) started, member Ids: %s",
                     Arrays.toString(containerGroup.getStartedMemberIds())));

@@ -55,17 +55,31 @@ public final class ExtendUtils {
     private ExtendUtils() {
     }
 
+    /**
+     * Gets the size of a cluster for an Extend client via the invocation service.
+     *
+     * @param invocationService Invocation service.
+     * @return cluster size.
+     */
+    @SuppressWarnings("unchecked")
     public static int getClusterSizeThatExtendClientIsConnectedTo(final InvocationService invocationService) {
-        final Map result = invocationService.query(new ExtendUtils.GetClusterSizeInvocable(), null);
+        final Map result = invocationService.query(new GetClusterSizeInvocable(), null);
 
         final List<Integer> list = new ArrayList<Integer>(result.values());
 
         return list.get(0);
     }
 
-
+    /**
+     * Gets the member id via the invocation service of the Extend proxy server that the
+     * Extend client is connected to.
+     *
+     * @param invocationService Invocation service.
+     * @return member id.
+     */
+    @SuppressWarnings("unchecked")
     public static int getExtendProxyMemberIdThatClientIsConnectedTo(final InvocationService invocationService) {
-        final Map result = invocationService.query(new ExtendUtils.GetExtendProxyMemberIdInvocable(), null);
+        final Map result = invocationService.query(new GetExtendProxyMemberIdInvocable(), null);
 
         final List<Integer> list = new ArrayList<Integer>(result.values());
 
@@ -79,16 +93,25 @@ public final class ExtendUtils {
     public static final class GetClusterSizeInvocable extends AbstractInvocable
             implements PortableObject {
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void run() {
             setResult(getService().getCluster().getMemberSet().size());
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void readExternal(final PofReader reader)
                 throws IOException {
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void writeExternal(final PofWriter writer)
                 throws IOException {
@@ -103,16 +126,25 @@ public final class ExtendUtils {
     public static final class GetExtendProxyMemberIdInvocable extends AbstractInvocable
             implements PortableObject {
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void run() {
             setResult(getService().getCluster().getLocalMember().getId());
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void readExternal(final PofReader reader)
                 throws IOException {
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void writeExternal(final PofWriter writer)
                 throws IOException {
