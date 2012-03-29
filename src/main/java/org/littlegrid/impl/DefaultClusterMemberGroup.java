@@ -94,14 +94,16 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         callbackHandler.doBeforeStart();
     }
 
+
     /**
-     * Reduced scope method to merge in a cluster member group with this cluster member group.
-     *
-     * @param memberGroup Cluster member group to be merged.
-     * @return new size of combined member group.
+     * {@inheritDoc}
      */
-    int merge(final ClusterMemberGroup memberGroup) {
-        final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
+    @Override
+    public int merge(final ClusterMemberGroup otherMemberGroup) {
+        final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) otherMemberGroup;
+
+        LOGGER.info(format("About to merge - current members started: '%s', members started to merge in: '%s'",
+                this.getMemberFutures().size(), defaultClusterMemberGroup.getMemberFutures().size()));
 
         merge(defaultClusterMemberGroup.getMemberFutures());
 

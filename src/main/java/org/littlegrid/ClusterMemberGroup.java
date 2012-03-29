@@ -107,6 +107,15 @@ public interface ClusterMemberGroup {
     int getSuggestedSleepAfterStopDuration();
 
     /**
+     * Merge in a cluster member group with this cluster member group.
+     *
+     * @param memberGroup Cluster member group to be merged.
+     * @return new size of combined member group.
+     */
+    int merge(final ClusterMemberGroup memberGroup);
+
+
+    /**
      * Cluster member interface - implementations of this class need to provide basic functionality,
      * so they may be controlled by the {@link ClusterMemberGroup}
      * implementations - typically the default implementation of this class should suffice for most

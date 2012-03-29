@@ -29,15 +29,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid._101;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-public class SimpleApp {
+public class SimpleLittleGridExample {
     public static void main(String[] args) {
         final String key = "123";
 
@@ -49,7 +47,7 @@ public class SimpleApp {
                     .buildAndConfigureForStorageDisabledClient();
 
             final NamedCache cache = CacheFactory.getCache("test");
-            cache.put(key, "hello");
+            cache.put(key, "Hello World");
 
             System.out.println(cache.get(key));
         } finally {

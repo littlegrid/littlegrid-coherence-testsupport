@@ -100,11 +100,12 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         memberGroup.stopAll();
 
         /*
-            Wait longer because all of them are being stopped.
+            Wait longer because all of them are being stopped - otherwise the client won't have
+            recognised they have gone, essentially it needs a little time to figure it out.
          */
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        for (int i = 0; i < 4; i++) {
+            sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        }
 
         assertThatClusterIsExpectedSize(cluster, CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
@@ -229,5 +230,24 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         final int memberNowConnectedTo = getExtendProxyMemberIdThatClientIsConnectedTo(invocationService);
 
         assertThat(memberNowConnectedTo != memberIdToStop, is(true));
+    }
+
+    @Test
+    public void startAndStopVeryLargeMemberGroup() {
+        final int numberOfMembers = 2 * LARGE_TEST_CLUSTER_SIZE;
+        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers)
+                .buildAndConfigureForStorageDisabledClient();
+
+        final Cluster cluster = CacheFactory.ensureCluster();
+
+        assertThatClusterIsExpectedSize(cluster, expectedClusterSize);
+
+        // Shutdown this member before we stop all the members to avoid this member becoming confused.
+        CacheFactory.shutdown();
+
+        memberGroup.stopAll();
     }
 }

@@ -29,8 +29,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid._101;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.AfterClass;
@@ -44,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Simple test example.
  */
-public final class SimpleTest {
+public final class SimpleLittleGridIntegrationTest {
     private static ClusterMemberGroup memberGroup;
 
     @BeforeClass
@@ -62,7 +60,7 @@ public final class SimpleTest {
     @Test
     public void simpleExample() {
         final NamedCache cache = CacheFactory.getCache("test");
-        cache.put("key", "hello");
+        cache.put("key", "Hello World");
 
         assertEquals(1, cache.size());
     }

@@ -140,6 +140,15 @@ public final class DefaultClusterMemberGroupTest {
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.7f), is(expectedDurationDefault));
     }
 
+    @Test
+    public void startAll() {
+        final DefaultClusterMemberGroup memberGroup =
+                new DefaultClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0);
+
+        memberGroup.startAll();
+        memberGroup.startAll();
+    }
+
     private static Properties getPopulatedProperties() {
         Properties properties = new Properties();
         properties.setProperty("key", "value");
