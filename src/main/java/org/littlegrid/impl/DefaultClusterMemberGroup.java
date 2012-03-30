@@ -39,8 +39,10 @@ import org.littlegrid.support.SystemUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -206,12 +208,12 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             executorService.shutdown();
 
+            ensureMemberIdsAreUnique(getStartedMemberIds(memberFutures));
+
             LOGGER.fine(format("This group of cluster member(s) started, member Ids: %s",
                     Arrays.toString(getStartedMemberIds(memberFutures))));
         } catch (Exception e) {
-            LOGGER.severe(format(
-                    "Failed to start cluster member group - check Coherence system applied for misconfiguration: %s",
-                    systemPropertiesToBeApplied));
+            LOGGER.severe("Failed to start cluster member group - please check the exception report to aid diagnosis");
 
             throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
                     systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
@@ -221,6 +223,20 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         return memberFutures;
+    }
+
+    static void ensureMemberIdsAreUnique(final int[] memberIds) {
+        Set<Integer> memberIdSet = new HashSet<Integer>(memberIds.length);
+
+        for (int memberId : memberIds) {
+            memberIdSet.add(memberId);
+        }
+
+        if (memberIdSet.size() != memberIds.length) {
+            throw new IllegalStateException(format("The were '%s' member ids %s - however only these were "
+                    + "unique member ids %s.  Ensure that the Coherence JAR is on your test class path",
+                    memberIds.length, Arrays.toString(memberIds), memberIdSet));
+        }
     }
 
     @SuppressWarnings("unchecked")

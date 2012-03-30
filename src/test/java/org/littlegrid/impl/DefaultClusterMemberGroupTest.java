@@ -141,12 +141,34 @@ public final class DefaultClusterMemberGroupTest {
     }
 
     @Test
-    public void startAll() {
-        final DefaultClusterMemberGroup memberGroup =
-                new DefaultClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0);
+    public void startAllInvokedTwiceOnlyPerformsDoAfterOnce() {
+        final DoAfterCounterCallbackHandler handler = new DoAfterCounterCallbackHandler();
+
+        assertThat(handler.getDoAfterCounter(), is(0));
+
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(handler, 0, 0, 0);
 
         memberGroup.startAll();
+
+        assertThat(handler.getDoAfterCounter(), is(1));
+
         memberGroup.startAll();
+
+        assertThat(handler.getDoAfterCounter(), is(1));
+    }
+
+    @Test
+    public void ensureMemberIdsAreUniqueWhenTheyAreUnique() {
+        final int[] memberIds = {1, 2, 3};
+
+        DefaultClusterMemberGroup.ensureMemberIdsAreUnique(memberIds);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void ensureMemberIdsAreUniqueWhenTheyAreDuplicates() {
+        final int[] memberIds = {1, 1, 1};
+
+        DefaultClusterMemberGroup.ensureMemberIdsAreUnique(memberIds);
     }
 
     private static Properties getPopulatedProperties() {
@@ -160,5 +182,18 @@ public final class DefaultClusterMemberGroupTest {
             throws MalformedURLException {
 
         return new URL[]{new URL("file://url")};
+    }
+
+    public static class DoAfterCounterCallbackHandler extends DefaultCallbackHandler {
+        private int doAfterCounter = 0;
+
+        @Override
+        public void doAfterStart() {
+            doAfterCounter++;
+        }
+
+        public int getDoAfterCounter() {
+            return doAfterCounter;
+        }
     }
 }
