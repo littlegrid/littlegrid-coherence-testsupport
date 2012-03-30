@@ -12,7 +12,7 @@
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
  *
- * Neither the name of the LittleGrid nor the names of its contributors may
+ * Neither the name of the littlegrid nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
  *
@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Simple test example.
  */
-public final class SimpleLittleGridIntegrationTest {
+public final class SimpleLittlegridIntegrationTest {
     private static ClusterMemberGroup memberGroup;
 
     @BeforeClass

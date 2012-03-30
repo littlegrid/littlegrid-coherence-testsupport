@@ -2,7 +2,7 @@
 
 <!--
 This operational configuration override file is set up for use with Coherence in
-a development mode with LittleGrid and attempts to reduce the wait duration prior
+a development mode with littlegrid and attempts to reduce the wait duration prior
 to establishing a cluster.
 -->
 

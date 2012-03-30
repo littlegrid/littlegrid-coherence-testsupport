@@ -14,7 +14,7 @@
     </parent>
 
     <name>${project.artifactId}</name>
-    <description>LittleGrid Coherence test-support framework</description>
+    <description>littlegrid Coherence test-support framework</description>
     <url>http://www.littlegrid.org</url>
     <licenses>
         <license>

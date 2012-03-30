@@ -12,7 +12,7 @@
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
  *
- * Neither the name of the LittleGrid nor the names of its contributors may
+ * Neither the name of the littlegrid nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
  *
@@ -39,6 +39,7 @@ import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.SystemUtils;
 
+import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
@@ -300,6 +301,13 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(TCMP_ENABLED_KEY), nullValue());
         assertThat(builderSettings.get(EXTEND_ENABLED_KEY), nullValue());
     }
+
+//    @Test
+//    public void excludedJar() {
+//        final URL[] whatever = DefaultClusterMemberGroup.getC
+//
+//    }
+
 
     @Test
     @Ignore

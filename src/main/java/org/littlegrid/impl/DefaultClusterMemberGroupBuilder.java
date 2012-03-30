@@ -12,7 +12,7 @@
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
  *
- * Neither the name of the LittleGrid nor the names of its contributors may
+ * Neither the name of the littlegrid nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
  *
@@ -149,7 +149,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-//        LOGGER.info("LittleGrid");
+//        LOGGER.info("littlegrid");
 
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
@@ -312,7 +312,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
         LOGGER.info(format(
-                "*** LittleGrid about to start - Storage-enabled: %s, Extend proxy: %s, "
+                "*** littlegrid about to start - Storage-enabled: %s, Extend proxy: %s, "
                         + "Storage-enabled Extend proxy: %s, "
                         + "Custom configured: %s, JMX monitor: %s ***",
                 storageEnabledCount, extendProxyCount,
@@ -920,7 +920,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         return this;
     }
 
-    private static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
+    static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
         //TODO: littlegrid#7 Pull this out and add support for wildcards, e.g. *jmx*
         final String pathSeparator = System.getProperty("path.separator");
         final String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);

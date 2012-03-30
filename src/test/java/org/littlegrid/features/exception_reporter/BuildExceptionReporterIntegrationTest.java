@@ -12,7 +12,7 @@
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
  *
- * Neither the name of the LittleGrid nor the names of its contributors may
+ * Neither the name of the littlegrid nor the names of its contributors may
  * be used to endorse or promote products derived from this software without
  * specific prior written permission.
  *
@@ -31,6 +31,7 @@
 
 package org.littlegrid.features.exception_reporter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -49,10 +50,14 @@ public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTe
     }
 
     @Test (expected = IllegalStateException.class)
+    @Ignore
     public void excludeCoherenceJar() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
                 .setJarsToExcludeFromClassPath("coherence-3.7.1.0.jar")
                 .buildAndConfigureForNoClient();
+
+        System.out.println(System.getProperty("java.class.path"));
+        
     }
 }
