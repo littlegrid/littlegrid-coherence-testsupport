@@ -47,6 +47,7 @@ public final class PropertiesUtils {
     public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
                                             final String... propertiesFilenames) {
 
+        final StringBuilder sb = new StringBuilder();
         final Properties properties = new Properties();
 
         for (String propertiesFilename : propertiesFilenames) {
@@ -56,7 +57,9 @@ public final class PropertiesUtils {
                     PropertiesUtils.class.getClass().getClassLoader());
 
             if (url == null) {
-                LOGGER.info(format("File '%s' not found - no properties loaded", propertiesFilename));
+                sb.append(" '");
+                sb.append(propertiesFilename);
+                sb.append("'");
 
                 continue;
             }
@@ -74,6 +77,10 @@ public final class PropertiesUtils {
                 throw new IllegalArgumentException(format(
                         "Cannot load properties file: '%s' due to: %s", propertiesFilename, e));
             }
+        }
+
+        if (sb.length() > 0) {
+            LOGGER.info("Properties file(s) not found, no properties loaded:" + sb);
         }
 
         return properties;

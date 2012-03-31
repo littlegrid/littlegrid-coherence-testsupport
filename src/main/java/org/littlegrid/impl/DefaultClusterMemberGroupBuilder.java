@@ -174,9 +174,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFilename));
         } else {
             BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO,
-                    BUILDER_OVERRIDE_PROPERTIES_FILENAME));
-
-            BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO,
+                    BUILDER_OVERRIDE_PROPERTIES_FILENAME,
                     LITTLEGRID_DIRECTORY_SLASH + BUILDER_OVERRIDE_PROPERTIES_FILENAME));
         }
     }
@@ -193,11 +191,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                     PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFile));
         } else {
             builderKeyToSystemPropertyNameMapping.putAll(PropertiesUtils.loadProperties(Level.INFO,
-                    BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
-
-            builderKeyToSystemPropertyNameMapping.putAll(
-                    PropertiesUtils.loadProperties(Level.INFO,
-                            LITTLEGRID_DIRECTORY_SLASH + BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
+                    BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME,
+                    LITTLEGRID_DIRECTORY_SLASH + BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
         }
     }
 
