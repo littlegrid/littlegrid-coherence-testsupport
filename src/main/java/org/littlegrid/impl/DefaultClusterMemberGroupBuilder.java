@@ -52,6 +52,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.Info.NAME;
+import static org.littlegrid.Info.VERSION_NUMBER;
 
 /**
  * Default cluster member group builder implementation.
@@ -149,8 +151,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-//        LOGGER.info("littlegrid");
-
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
     }
@@ -307,9 +307,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
         LOGGER.info(format(
-                "*** littlegrid about to start - Storage-enabled: %s, Extend proxy: %s, "
+                ">>> %s %s starting - Storage-enabled: %s, Extend proxy: %s, "
                         + "Storage-enabled Extend proxy: %s, "
-                        + "Custom configured: %s, JMX monitor: %s ***",
+                        + "Custom configured: %s, JMX monitor: %s",
+                NAME, VERSION_NUMBER,
                 storageEnabledCount, extendProxyCount,
                 storageEnabledExtendProxyCount, customConfiguredCount, jmxMonitorCount));
 
