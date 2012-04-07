@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.Info;
 import org.littlegrid.support.BeanUtils;
 import org.littlegrid.support.PropertiesUtils;
 import org.littlegrid.support.SystemUtils;
@@ -52,8 +53,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.Info.NAME;
-import static org.littlegrid.Info.VERSION_NUMBER;
 
 /**
  * Default cluster member group builder implementation.
@@ -307,10 +306,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
         LOGGER.info(format(
-                ">>> %s %s starting - Storage-enabled: %s, Extend proxy: %s, "
+                "___ %s %s starting - Storage-enabled: %s, Extend proxy: %s, "
                         + "Storage-enabled Extend proxy: %s, "
-                        + "Custom configured: %s, JMX monitor: %s",
-                NAME, VERSION_NUMBER,
+                        + "Custom configured: %s, JMX monitor: %s ___",
+                Info.getName(), Info.getVersionNumber(),
                 storageEnabledCount, extendProxyCount,
                 storageEnabledExtendProxyCount, customConfiguredCount, jmxMonitorCount));
 
@@ -339,7 +338,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
-            LOGGER.info(format("Group of cluster member(s) started, member Ids: %s",
+            LOGGER.info(format("___ group of cluster member(s) started, member Ids: %s ___",
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);

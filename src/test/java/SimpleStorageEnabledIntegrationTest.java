@@ -31,32 +31,37 @@
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-public class SimpleLittlegridExample {
-    public static void main(String[] args) {
-        final String key = "123";
+import static org.junit.Assert.assertEquals;
 
-        ClusterMemberGroup memberGroup = null;
+/**
+ * Simple test example.
+ */
+public final class SimpleStorageEnabledIntegrationTest {
+    private static ClusterMemberGroup memberGroup;
 
-        try {
-            memberGroup = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(2)
-                    .buildAndConfigureForStorageDisabledClient();
+    @BeforeClass
+    public static void beforeTests() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(2)
+                .buildAndConfigureForStorageDisabledClient();
+    }
 
-            final NamedCache cache = CacheFactory.getCache("test");
-            cache.put(key, "Hello World");
-
-            System.out.println(cache.get(key));
-        } finally {
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-        }
+    @AfterClass
+    public static void afterTests() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 
     @Test
-    public void runSimpleApp() {
-        main(new String[]{});
+    public void simpleExample() {
+        final NamedCache cache = CacheFactory.getCache("test");
+        cache.put("key", "Hello World");
+
+        assertEquals(1, cache.size());
     }
 }

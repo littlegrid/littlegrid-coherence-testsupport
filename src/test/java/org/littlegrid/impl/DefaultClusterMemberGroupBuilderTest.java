@@ -302,12 +302,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(EXTEND_ENABLED_KEY), nullValue());
     }
 
-//    @Test
-//    public void excludedJar() {
-//        final URL[] whatever = DefaultClusterMemberGroup.getC
-//
-//    }
-
 
     @Test
     @Ignore

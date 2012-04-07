@@ -28,77 +28,7 @@ This framework has the following motivations:
     </li>
     <li>
         To enable you to control the cluster member group construction through code using a fluent
-        builder API or through simple key/values in a properties object.
-    </li>
-</ul>
-<p/>
-Examples of use
-<ul>
-    <li>Within a standard Java application main(String[] args):
-        <pre>
-public static void main(String[] args) {
-    final String key = "123";
-
-    ClusterMemberGroup memberGroup = null;
-
-    try {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(2)
-                .buildAndConfigureForStorageDisabledClient();
-
-        final NamedCache cache = CacheFactory.getCache("test");
-        cache.put(key, "hello");
-
-        System.out.println(cache.get(key));
-    } finally {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-}
-        </pre>
-
-    </li>
-    <li>Within a testing framework, such as JUnit:
-        <pre>
-public class SimplelittlegridIntegrationTest {
-    private static ClusterMemberGroup memberGroup;
-
-    &#64;BeforeClass
-    public static void beforeTests() {
-            memberGroup = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(2)
-                    .buildAndConfigureForStorageDisabledClient();
-    }
-
-    &#64;AfterClass
-    public static void afterTests() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
-    &#64;Test
-    public void simpleExample() {
-        NamedCache cache = CacheFactory.getCache("test");
-        cache.put("key", "hello");
-
-        assertEquals(1, cache.size());
-    }
-}
-        </pre>
-    </li>
-    <li>A JUnit test with an Extend proxy and two storage members configured through a properties object instead
-        of using the fluent API:
-        <pre>
-    ...
-&#64;Test
-public void clusterWithVarietyOfMembers() {
-    memberGroup = ClusterMemberGroupUtils.newBuilder()
-            .setStorageEnabledCount(2)
-            .setExtendProxyCount(1)
-            .setJmxMonitorCount(1)
-            .buildAndConfigureForExtendClient();
-
-    // Perform test
-}
-        </pre>
+        builder API or through simple key/values in a properties object or properties files.
     </li>
 </ul>
 </body>

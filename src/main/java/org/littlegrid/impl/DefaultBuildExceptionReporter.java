@@ -33,6 +33,7 @@ package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
+import org.littlegrid.Info;
 
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -45,9 +46,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 import static java.lang.String.format;
-import static org.littlegrid.Info.BUILD_DATE;
-import static org.littlegrid.Info.NAME;
-import static org.littlegrid.Info.VERSION_NUMBER;
 
 /**
  * Default exception reporter implementation that outputs useful information for
@@ -149,9 +147,9 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
     private void outputHeading(final PrintStream out) {
         out.println("******************************************************");
         out.println("Exception occurred, trouble-shooting information below");
-        out.println("Name.....................: " + NAME);
-        out.println("Version number...........: " + VERSION_NUMBER);
-        out.println("Build date...............: " + BUILD_DATE);
+        out.println("Name.....................: " + Info.getName());
+        out.println("Version number...........: " + Info.getVersionNumber());
+        out.println("Build date...............: " + Info.getBuildDate());
         out.println("Current time.............: " + new Date());
     }
 

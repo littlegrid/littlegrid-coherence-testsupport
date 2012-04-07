@@ -62,12 +62,12 @@ public final class WkaIntegrationTest {
                     .setStorageEnabledCount(numberOfMembers);
             memberGroup1 = builder.buildAndConfigureForStorageDisabledClient();
 
-            final int differentPort = builder.getWkaPort() + 20;
-            LOGGER.warning(format("A different WKA port of '%s' has been configured for a WKA test", differentPort));
+            final int member2WkaPort = builder.getWkaPort() + 1000;
+            LOGGER.warning(format("A different WKA port of '%s' has been configured for a WKA test", member2WkaPort));
 
             memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers)
-                    .setWkaPort(differentPort)
+                    .setWkaPort(member2WkaPort)
                     .buildAndConfigureForStorageDisabledClient();
 
             assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);

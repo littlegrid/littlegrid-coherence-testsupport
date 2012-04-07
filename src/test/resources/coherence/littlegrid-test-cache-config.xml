@@ -48,7 +48,6 @@
         </invocation-scheme>
 
         <proxy-scheme>
-            <!--<scheme-name>simple-extend-proxy-scheme</scheme-name>-->
             <scheme-name>extend-tcp</scheme-name>
             <service-name>ExtendProxyServerService</service-name>
 
