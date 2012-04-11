@@ -433,7 +433,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             memberFutures.clear();
 
-            LOGGER.info("Group of cluster member(s) shutdown");
+            LOGGER.info("___ Group of cluster member(s) shutdown ___");
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

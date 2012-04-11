@@ -31,6 +31,7 @@
 
 package org.littlegrid.support;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -82,16 +83,54 @@ public final class SystemUtils {
      * @return properties.
      */
     public static Properties getSystemPropertiesWithPrefix(final String prefix) {
-        final Properties prefixedProperties = new Properties();
+        return getPropertiesWithPrefix(System.getProperties(), prefix, false);
+    }
 
-        for (final String key : System.getProperties().stringPropertyNames()) {
+    /**
+     * Get the properties which start with the specified prefix.
+     *
+     * @param propertiesToCheck Properties.
+     * @param prefix            Prefix.
+     * @param removePrefix      If true, then properties returned have the prefix removed.
+     * @return properties Properties.
+     * @since 2.7
+     */
+    public static Properties getPropertiesWithPrefix(final Properties propertiesToCheck,
+                                                     final String prefix,
+                                                     final boolean removePrefix) {
+
+        final Properties properties = new Properties();
+
+        for (final String key : propertiesToCheck.stringPropertyNames()) {
             if (key.contains(prefix)) {
-                final String value = System.getProperty(key);
+                String keyToUse = key;
 
-                prefixedProperties.setProperty(key, value);
+                if (removePrefix) {
+                    keyToUse = key.replaceAll(prefix, "");
+                }
+
+                final String value = propertiesToCheck.getProperty(key);
+
+                properties.setProperty(keyToUse, value);
             }
         }
 
-        return prefixedProperties;
+        return properties;
+    }
+
+    /**
+     * Get the environment variables as properties.
+     *
+     * @return properties.
+     * @since 2.7
+     */
+    public static Properties getEnvironmentVariables() {
+        final Properties environmentVariables = new Properties();
+
+        for (final Map.Entry<String, String> entry : System.getenv().entrySet()) {
+            environmentVariables.setProperty(entry.getKey(), entry.getValue());
+        }
+
+        return environmentVariables;
     }
 }

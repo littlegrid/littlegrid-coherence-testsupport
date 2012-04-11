@@ -43,7 +43,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 /**
- * System support tests.
+ * System utilities tests.
  */
 public final class SystemUtilsTest {
     private static final String KNOWN_PREFIX = "prefix.used.for.testing.";
@@ -107,6 +107,60 @@ public final class SystemUtilsTest {
 
         assertThat(System.getProperties().containsKey(key), is(true));
         assertThat(System.getProperty(key), is(KNOWN_VALUE_1));
+    }
+
+    @Test
+    public void getPrefixedProperties() {
+        final String key = KEY1_WITH_KNOWN_PREFIX;
+        final String value = KNOWN_VALUE_1;
+
+        final Properties properties = new Properties();
+
+        for (int i = 0; i < 5; i++) {
+            properties.setProperty("key-" + i, "non-prefixed property");
+        }
+
+        properties.setProperty(key, value);
+
+        final Properties prefixedProperties = SystemUtils.getPropertiesWithPrefix(properties, KNOWN_PREFIX, false);
+
+        assertThat(prefixedProperties.size(), is(1));
+        assertThat(prefixedProperties.getProperty(key), is(value));
+    }
+
+    @Test
+    public void getPrefixedPropertiesWithPrefixRemoved() {
+        final String keyWithPrefix = KEY1_WITH_KNOWN_PREFIX;
+        final String keyWithoutPrefix = keyWithPrefix.replaceAll(KNOWN_PREFIX, "");
+        final String value = KNOWN_VALUE_1;
+
+        final Properties properties = new Properties();
+
+        for (int i = 0; i < 5; i++) {
+            properties.setProperty("key-" + i, "non-prefixed property");
+        }
+
+        properties.setProperty(keyWithPrefix, value);
+
+        final Properties prefixedProperties = SystemUtils.getPropertiesWithPrefix(properties, KNOWN_PREFIX, true);
+
+        assertThat(prefixedProperties.size(), is(1));
+        assertThat(prefixedProperties.getProperty(keyWithoutPrefix), is(value));
+    }
+
+    @Test
+    public void getPrefixedPropertiesWhenPropertiesIsEmpty() {
+        final Properties prefixedProperties =
+                SystemUtils.getPropertiesWithPrefix(new Properties(), KNOWN_PREFIX, false);
+
+        assertThat(prefixedProperties.size(), is(0));
+    }
+
+    @Test
+    public void getEnvironmentVariables() {
+        final Properties environmentVariables = SystemUtils.getEnvironmentVariables();
+
+        assertThat(environmentVariables.size() > 0, is(true));
     }
 
     @SuppressWarnings("unchecked")

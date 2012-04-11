@@ -41,13 +41,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -168,7 +162,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final String alternativePropertiesFilename = System.getProperty(BUILDER_OVERRIDE_KEY);
 
-        // Check if an alternative property file should be used or standard named override
+        // Check if an alternative properties file should be used, otherwise use standard named override file
         if (stringHasValue(alternativePropertiesFilename)) {
             BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFilename));
         } else {
@@ -176,6 +170,23 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                     BUILDER_OVERRIDE_PROPERTIES_FILENAME,
                     LITTLEGRID_DIRECTORY_SLASH + BUILDER_OVERRIDE_PROPERTIES_FILENAME));
         }
+
+        final String prefix = BUILDER_OVERRIDE_KEY + ".";
+        final Properties environmentVariablesBuilderOverrides = SystemUtils.getPropertiesWithPrefix(
+                SystemUtils.getEnvironmentVariables(), prefix, true);
+
+        LOGGER.info(format("Prefixed '%s' environment variables found '%s'", BUILDER_OVERRIDE_KEY,
+                environmentVariablesBuilderOverrides.size()));
+
+        BeanUtils.multiSetter(this, environmentVariablesBuilderOverrides);
+
+        final Properties systemPropertiesBuilderOverrides =
+                SystemUtils.getPropertiesWithPrefix(System.getProperties(), prefix, true);
+
+        LOGGER.info(format("Prefixed '%s' system properties found '%s'", BUILDER_OVERRIDE_KEY,
+                systemPropertiesBuilderOverrides.size()));
+
+        BeanUtils.multiSetter(this, systemPropertiesBuilderOverrides);
     }
 
     private void loadBuilderKeyToSystemPropertyNameMapping() {
@@ -184,7 +195,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
         final String alternativePropertiesFile = System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
 
-        // Check if an alternative property file should be used or standard named override
+        // Check if an alternative property file should be used, otherwise use standard named override file
         if (stringHasValue(alternativePropertiesFile)) {
             builderKeyToSystemPropertyNameMapping.putAll(
                     PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFile));
@@ -338,13 +349,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
-            LOGGER.info(format("___ group of cluster member(s) started, member Ids: %s ___",
+            LOGGER.info(format("___ Group of cluster member(s) started, member Ids: %s ___",
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
 
             throw new IllegalStateException(throwable);
         }
+
         return containerGroup;
     }
 

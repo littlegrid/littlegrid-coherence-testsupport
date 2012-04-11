@@ -37,7 +37,7 @@ import java.util.Properties;
 /**
  * Class path utilities class.
  */
-public class ClassPathUtils {
+public final class ClassPathUtils {
     /**
      * Private constructor to prevent creation.
      */

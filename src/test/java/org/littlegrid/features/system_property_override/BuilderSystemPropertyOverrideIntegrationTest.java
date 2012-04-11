@@ -33,12 +33,18 @@ package org.littlegrid.features.system_property_override;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.support.SystemUtils;
+
+import java.util.Properties;
 
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
@@ -47,6 +53,16 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
  * property to specify an alternative properties file through a system property.
  */
 public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+
+    public static final String BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT = BUILDER_OVERRIDE_KEY + ".StorageEnabledCount";
+
+    @Before
+    public void beforeTest() {
+        System.clearProperty(BUILDER_OVERRIDE_KEY);
+        System.clearProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
+        System.clearProperty(BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT);
+    }
+
     @Test
     public void alternativeOverrideFileSpecified() {
         System.setProperty(BUILDER_OVERRIDE_KEY,
@@ -75,7 +91,6 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
 
     @Test
     public void alternativeSystemPropertyMappingOverrideFileSpecified() {
-        System.clearProperty(BUILDER_OVERRIDE_KEY);
         System.setProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
                 "directory-where-config-stored/example-littlegrid-builder-system-property-mapping-override.properties");
 
@@ -87,5 +102,18 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");
+    }
+
+    @Test
+    public void systemPropertyOverrideStorageEnabled() {
+        final int numberOfStorageEnabled = 2;
+        final int expectedClusterSize = numberOfStorageEnabled + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        System.setProperty(BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT, Integer.toString(numberOfStorageEnabled));
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .buildAndConfigureForStorageDisabledClient();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 }
