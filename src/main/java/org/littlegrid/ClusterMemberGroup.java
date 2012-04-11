@@ -463,6 +463,14 @@ public interface ClusterMemberGroup {
         Builder setWkaAddress(String wkaAddress);
 
         /**
+         * Returns the well-known address, this is useful for working out what the default value is.
+         *
+         * @return WKA address.
+         * @since 2.7
+         */
+        String getWkaAddress();
+
+        /**
          * Sets the well-known address port which is to be used, typically the default value will
          * suffice, but when the need to run with two separate autonomous clusters is required,
          * then this value will need to be changed for one of the clusters - otherwise all the

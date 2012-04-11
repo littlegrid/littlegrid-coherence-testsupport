@@ -50,7 +50,7 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
     @Test
     public void alternativeOverrideFileSpecified() {
         System.setProperty(BUILDER_OVERRIDE_KEY,
-                "directory-where-the-config-is-stored/example-littlegrid-builder-override.properties");
+                "directory-where-config-stored/example-littlegrid-builder-override.properties");
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .buildAndConfigureForStorageDisabledClient();
@@ -63,7 +63,7 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
     @Test
     public void alternativeOverrideSpecifyingBuilderPropertiesFileSpecified() {
         System.setProperty(BUILDER_OVERRIDE_KEY,
-                "directory-where-the-config-is-stored/example-with-builder-properties-littlegrid-builder-override.properties");
+                "directory-where-config-stored/example-with-builder-properties-littlegrid-builder-override.properties");
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .buildAndConfigureForStorageDisabledClient();
@@ -77,7 +77,7 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
     public void alternativeSystemPropertyMappingOverrideFileSpecified() {
         System.clearProperty(BUILDER_OVERRIDE_KEY);
         System.setProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
-                "directory-where-the-config-is-stored/example-littlegrid-builder-system-property-mapping-override.properties");
+                "directory-where-config-stored/example-littlegrid-builder-system-property-mapping-override.properties");
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)

@@ -37,6 +37,7 @@ import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.util.Properties;
@@ -203,19 +204,22 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         final int numberOfExtendProxyMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int numberOfStorageEnabledMembers = SINGLE_TEST_CLUSTER_SIZE;
 
-        final Properties additionalSystemProperties = new Properties();
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.address.2", "127.0.0.1");
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.port.2", "20901");
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.address.3", "127.0.0.1");
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.port.3", "20902");
+        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
+        final Properties additionalSystemProperties = new Properties();
+        additionalSystemProperties.setProperty("tangosol.coherence.extend.address.2", builder.getWkaAddress());
+        additionalSystemProperties.setProperty("tangosol.coherence.extend.port.2", Integer.toString(builder.getExtendPort() + 1));
+        additionalSystemProperties.setProperty("tangosol.coherence.extend.address.3", builder.getWkaAddress());
+        additionalSystemProperties.setProperty("tangosol.coherence.extend.port.3", Integer.toString(builder.getExtendPort() + 1));
+
+        memberGroup = builder
                 .setStorageEnabledCount(numberOfStorageEnabledMembers)
                 .setExtendProxyCount(numberOfExtendProxyMembers)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setClientCacheConfiguration(
                         "coherence/littlegrid-test-extend-client-cache-config-with-multiple-remote-addresses.xml")
                 .setAdditionalSystemProperties(additionalSystemProperties)
+                .setLogLevel(6)
                 .buildAndConfigureForExtendClient();
 
         final InvocationService invocationService =

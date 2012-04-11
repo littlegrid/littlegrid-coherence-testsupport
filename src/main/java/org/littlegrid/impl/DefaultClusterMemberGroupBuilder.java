@@ -778,6 +778,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
+    public String getWkaAddress() {
+        return getBuilderValueAsString(BUILDER_WKA_ADDRESS_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ClusterMemberGroup.Builder setWkaPort(final int wkaPort) {
         builderKeysAndValues.put(BUILDER_WKA_PORT_KEY, Integer.toString(wkaPort));
 
