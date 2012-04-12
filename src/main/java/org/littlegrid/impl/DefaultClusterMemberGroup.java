@@ -233,7 +233,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         if (memberIdSet.size() != memberIds.length) {
-            throw new IllegalStateException(format("The were '%s' member ids %s - however only these were "
+            throw new IllegalStateException(format("There were '%s' member ids %s - however only these were "
                     + "unique member ids %s.  Ensure that the Coherence JAR is on your test class path",
                     memberIds.length, Arrays.toString(memberIds), memberIdSet));
         }

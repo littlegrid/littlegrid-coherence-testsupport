@@ -31,6 +31,7 @@
 
 package org.littlegrid.support;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -50,11 +51,15 @@ public class ClassPathUtilsTest {
     private static final String PATH_SEPARATOR_VALUE = ":";
 
     private static final String JAVA_HOME_KEY = "java.home";
-    private static final String JAVA_HOME_VALUE = "/path/java/lib/tools.jar" + PATH_SEPARATOR_VALUE;
+    private static final String JAVA_HOME_VALUE = "/path/java/1.6/jre";
+
+    private static final String COHERENCE_JAR = "/path/coherence.jar";
+    private static final String OTHER_JAR = "/path/other.jar";
 
     private static final String JAVA_CLASS_PATH_KEY = "java.class.path";
-    private static final String JAVA_CLASS_PATH_VALUE = "/path/coherence.jar" + PATH_SEPARATOR_VALUE + "/path/other.jar";
-    private static final String JAVA_CLASS_PATH_WITH_JAVA_HOME_VALUE = JAVA_HOME_VALUE + JAVA_CLASS_PATH_VALUE;
+    private static final String JAVA_CLASS_PATH_VALUE = JAVA_HOME_VALUE + "/lib/deploy.jar" + PATH_SEPARATOR_VALUE
+            + JAVA_HOME_VALUE + "/rt.jar" +PATH_SEPARATOR_VALUE
+            + COHERENCE_JAR + PATH_SEPARATOR_VALUE + OTHER_JAR;
 
     private static final String SUREFIRE_TEST_CLASS_PATH_KEY = "surefire.test.class.path";
     private static final String SUREFIRE_TEST_CLASS_PATH_VALUE = JAVA_CLASS_PATH_VALUE;
@@ -84,6 +89,32 @@ public class ClassPathUtilsTest {
         assertThat(ClassPathUtils.getClassPath(systemProperties), is(SUREFIRE_TEST_CLASS_PATH_VALUE));
     }
 
+    @Test
+    public void getClassPathUrlsExcludingJavaHomeNoExcludes() {
+        final int expectedUrlCount = 2;
+        final Properties systemProperties = getPopulatedProperties();
+
+        final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
+                JAVA_HOME_VALUE, JAVA_CLASS_PATH_VALUE, PATH_SEPARATOR_VALUE);
+
+        assertThat(classPathUrls.length, is(expectedUrlCount));
+
+        int urlCount = 0;
+
+        for (final URL classPathUrl : classPathUrls) {
+            final String classPath = classPathUrl.toString();
+
+            if (classPath.contains(COHERENCE_JAR)) {
+                urlCount++;
+            }
+
+            if (classPath.contains(OTHER_JAR)) {
+                urlCount++;
+            }
+        }
+
+        assertThat(urlCount, is(expectedUrlCount));
+    }
 
     private Properties getPopulatedProperties() {
         final Properties properties = new Properties();

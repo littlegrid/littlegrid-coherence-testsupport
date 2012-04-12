@@ -33,14 +33,12 @@ package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.support.BeanUtils;
+import org.littlegrid.support.ClassPathUtils;
 import org.littlegrid.support.PropertiesUtils;
 import org.littlegrid.support.SystemUtils;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -332,7 +330,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (classPathUrls == null) {
             LOGGER.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
 
-            this.classPathUrls = getClassPathUrlsExcludingJavaHome(jarsToExcludeFromClassPath);
+            final Properties systemProperties = System.getProperties();
+            final String pathSeparator = ClassPathUtils.getPathSeparator(systemProperties);
+            final String classPath = ClassPathUtils.getClassPath(systemProperties);
+            final String javaHome = ClassPathUtils.getJavaHome(systemProperties);
+
+            this.classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
+                    javaHome, classPath, pathSeparator, jarsToExcludeFromClassPath);
         }
 
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
@@ -936,41 +940,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         builderKeysAndValues.put(BUILDER_CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY, callbackHandlerInstanceClassName);
 
         return this;
-    }
-
-    static URL[] getClassPathUrlsExcludingJavaHome(final String... jarsToExcludeFromClassPath) {
-        //TODO: littlegrid#7 Pull this out and add support for wildcards, e.g. *jmx*
-        final String pathSeparator = System.getProperty("path.separator");
-        final String[] classPathArray = System.getProperty("java.class.path").split(pathSeparator);
-        final String javaHome = System.getProperty("java.home");
-
-        final List<URL> classPathUrls = new ArrayList<URL>();
-
-        for (final String partOfClassPath : classPathArray) {
-            if (!partOfClassPath.startsWith(javaHome)) {
-                boolean includeInClassPath = true;
-
-                if (jarsToExcludeFromClassPath != null) {
-                    for (final String jarToExclude : jarsToExcludeFromClassPath) {
-                        if (partOfClassPath.endsWith(jarToExclude)) {
-                            LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
-
-                            includeInClassPath = false;
-                        }
-                    }
-                }
-
-                if (includeInClassPath) {
-                    try {
-                        classPathUrls.add(new File(partOfClassPath).toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        throw new IllegalStateException(e);
-                    }
-                }
-            }
-        }
-
-        return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
     /**
