@@ -32,7 +32,6 @@
 package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
-import org.littlegrid.Info;
 import org.littlegrid.support.BeanUtils;
 import org.littlegrid.support.PropertiesUtils;
 import org.littlegrid.support.SystemUtils;
@@ -41,7 +40,13 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,10 +137,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
 
     private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
-
     private Properties additionalSystemProperties = new Properties();
     private Properties builderKeyToSystemPropertyNameMapping = new Properties();
-
     private String[] jarsToExcludeFromClassPath;
     private URL[] classPathUrls;
 

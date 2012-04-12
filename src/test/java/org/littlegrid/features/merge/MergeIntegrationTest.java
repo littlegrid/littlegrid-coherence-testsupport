@@ -54,7 +54,7 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
     public void incrementallyMergeInNewMemberGroups() {
         final int numberOfMembersToStartWith = 1;
         final int numberOfMembersToAddEachTime = 1;
-        final int totalNumberOfMembersToMergeIn = 3;
+        final int numberOfTimesToPerformMerge = 3;
 
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembersToStartWith);
@@ -66,9 +66,10 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
         assertThat(cluster.getMemberSet().size(), is(numberOfMembersToStartWith
                 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
 
-        for (int i = 1; i <= totalNumberOfMembersToMergeIn; i++) {
-            final ClusterMemberGroup newMemberGroup = builder.buildAndConfigureForStorageDisabledClient();
-            final int currentNumberOfMembers = memberGroup.merge(newMemberGroup);
+        builder.setStorageEnabledCount(numberOfMembersToAddEachTime);
+
+        for (int i = 1; i <= numberOfTimesToPerformMerge; i++) {
+            final int currentNumberOfMembers = memberGroup.merge(builder.buildAndConfigureForNoClient());
 
             final int expectedCurrentNumberOfMembers = numberOfMembersToStartWith + (numberOfMembersToAddEachTime * i);
 
@@ -84,7 +85,7 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
 
         final int numberOfMembersToStartWith = 2;
         final int numberOfMembersToAddEachTime = 1;
-        final int totalNumberOfMembersToMergeIn = 4;
+        final int numberOfTimesToPerformMerge = 4;
 
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembersToStartWith);
@@ -98,16 +99,14 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
 
         builder.setStorageEnabledCount(numberOfMembersToAddEachTime);
 
-        int idOfNextMemberToRollOutOfCluster = memberGroup.getStartedMemberIds()[0];
-
-        for (int i = 1; i <= totalNumberOfMembersToMergeIn; i++) {
-            final ClusterMemberGroup newMemberGroup = builder.buildAndConfigureForNoClient();
-
-            // Roll a member in
-            memberGroup.merge(newMemberGroup);
+        for (int i = 1; i <= numberOfTimesToPerformMerge; i++) {
+            // Roll new member(s) in
+            memberGroup.merge(builder.buildAndConfigureForNoClient());
 
             assertThatClusterIsExpectedSize(cluster, numberOfMembersToStartWith + numberOfMembersToAddEachTime
                     + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+
+            final int idOfNextMemberToRollOutOfCluster = memberGroup.getStartedMemberIds()[0];
 
             // Roll the oldest member out
             memberGroup.shutdownMember(idOfNextMemberToRollOutOfCluster);
@@ -117,11 +116,6 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
 
             assertThatClusterIsExpectedSize(cluster, numberOfMembersToStartWith
                     + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-
-            idOfNextMemberToRollOutOfCluster = newMemberGroup.getStartedMemberIds()[0];
         }
-
-        assertThat(cluster.getMemberSet().size(), is(numberOfMembersToStartWith
-                + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP));
     }
 }

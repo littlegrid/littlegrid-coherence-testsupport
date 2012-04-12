@@ -1,5 +1,5 @@
 def generatedSrcBaseDirectory = "${pom.basedir}/target/generated-sources/src/main/java"
-def generatedClassSrcPackage = "org.littlegrid"
+def generatedClassSrcPackage = "org.littlegrid.impl"
 def generatedSrcClassDirectory = generatedSrcBaseDirectory + "/" + generatedClassSrcPackage.replaceAll("\\.", "/")
 def name = "littlegrid"
 def className = "Info"
@@ -11,7 +11,7 @@ def classSource = """package $generatedClassSrcPackage;
 /**
  * littlegrid build information.
  */
-public final class $className {
+final class $className {
     public static final String NAME = "$name";
     public static final String VERSION_NUMBER = "$versionNumber";
     public static final String BUILD_DATE = "$buildDate";

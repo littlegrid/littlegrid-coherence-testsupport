@@ -38,6 +38,12 @@ import java.util.Properties;
  * Class path utilities class.
  */
 public final class ClassPathUtils {
+
+    private static final String PATH_SEPARATOR = "path.separator";
+    private static final String JAVA_CLASS_PATH = "java.class.path";
+    private static final String SUREFIRE_TEST_CLASS_PATH = "surefire.test.class.path";
+    private static final String JAVA_HOME = "java.home";
+
     /**
      * Private constructor to prevent creation.
      */
@@ -45,15 +51,17 @@ public final class ClassPathUtils {
     }
 
     public static String getPathSeparator(final Properties systemProperties) {
-        return systemProperties.getProperty("path.separator");
+        return systemProperties.getProperty(PATH_SEPARATOR);
     }
     
     public static String getClassPath(final Properties systemProperties) {
-        return systemProperties.getProperty("java.class.path");
+        return systemProperties.containsKey(SUREFIRE_TEST_CLASS_PATH)
+                ? systemProperties.getProperty(SUREFIRE_TEST_CLASS_PATH)
+                : systemProperties.getProperty(JAVA_CLASS_PATH);
     }
     
     public static String getJavaHome(final Properties systemProperties) {
-        return systemProperties.getProperty("java.home");
+        return systemProperties.getProperty(JAVA_HOME);
     }
     
     public static URL[] getClassPathUrls(final URL[] classPathUrls,

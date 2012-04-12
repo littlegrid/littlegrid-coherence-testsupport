@@ -50,7 +50,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
     private static final Logger LOGGER = Logger.getLogger(DelegatingClusterMemberWrapper.class.getName());
 
     private final Object clusterMemberInstance;
-    private boolean fullyRunning = false;
+    private boolean running = false;
 
 
     /**
@@ -71,8 +71,6 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-
-        fullyRunning = true;
     }
 
     /**
@@ -82,6 +80,8 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
         LOGGER.fine("About to start this cluster member");
 
         invokeMethod(clusterMemberInstance, "start");
+
+        running = true;
     }
 
     /**
@@ -89,7 +89,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
      */
     @Override
     public void shutdown() {
-        fullyRunning = false;
+        running = false;
 
         LOGGER.fine("Shutting down this cluster member");
 
@@ -101,7 +101,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
      */
     @Override
     public void stop() {
-        fullyRunning = false;
+        running = false;
 
         LOGGER.fine("Stopping this cluster member");
 
@@ -135,12 +135,12 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
     }
 
     /**
-     * Determines if the member is 'fully running', it is  fully running if it has been successfully
+     * Determines if the member is 'running', it is  running if it has been successfully
      * started and stop or shutdown have not been invoked against it.
      *
      * @return true if running.
      */
-    boolean isFullyRunning() {
-        return fullyRunning;
+    boolean isRunning() {
+        return running;
     }
 }

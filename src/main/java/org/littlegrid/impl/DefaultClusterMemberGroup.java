@@ -268,7 +268,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
-                if (memberWrapper.isFullyRunning() && memberWrapper.getLocalMemberId() == memberId) {
+                if (memberWrapper.isRunning() && memberWrapper.getLocalMemberId() == memberId) {
                     return memberWrapper;
                 }
             }
@@ -291,7 +291,10 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
-                memberIds.add(memberWrapper.getLocalMemberId());
+
+                if (memberWrapper.isRunning()) {
+                    memberIds.add(memberWrapper.getLocalMemberId());
+                }
             }
 
             int[] memberIdsArray = new int[memberIds.size()];

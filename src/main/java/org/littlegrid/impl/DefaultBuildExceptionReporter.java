@@ -33,7 +33,6 @@ package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
-import org.littlegrid.Info;
 
 import java.io.PrintStream;
 import java.net.InetAddress;
