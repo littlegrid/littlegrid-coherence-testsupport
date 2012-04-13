@@ -50,14 +50,10 @@ public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTe
     }
 
     @Test (expected = IllegalStateException.class)
-    @Ignore
     public void excludeCoherenceJar() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
-                .setJarsToExcludeFromClassPath("coherence-3.7.1.0.jar")
+                .setJarsToExcludeFromClassPath("coherence")
                 .buildAndConfigureForNoClient();
-
-        System.out.println(System.getProperty("java.class.path"));
-        
     }
 }

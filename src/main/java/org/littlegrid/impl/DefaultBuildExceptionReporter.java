@@ -33,6 +33,7 @@ package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
+import org.littlegrid.support.ClassPathUtils;
 
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -54,6 +55,8 @@ import static java.lang.String.format;
  */
 public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildExceptionReporter {
     private static final String SECTION_DIVIDER = "----------";
+    private static final String KEY_VALUE_OUTPUT = "    %s = %s";
+
 
     /**
      * {@inheritDoc}
@@ -109,7 +112,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         for (final String key : map.keySet()) {
             String value = map.get(key);
 
-            out.println(format("    key=%s, value=%s", key, value));
+            out.println(format(KEY_VALUE_OUTPUT, key, value));
         }
     }
 
@@ -125,7 +128,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         for (final String key : map.keySet()) {
             String value = map.get(key);
 
-            out.println(format("    key=%s, value=%s", key, value));
+            out.println(format(KEY_VALUE_OUTPUT, key, value));
         }
     }
 
@@ -139,7 +142,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         for (final String key : map.keySet()) {
             String value = map.get(key);
 
-            out.println(format("    key=%s, value=%s", key, value));
+            out.println(format(KEY_VALUE_OUTPUT, key, value));
         }
     }
 
@@ -154,12 +157,12 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
 
     private void outputJavaHome(final PrintStream out) {
         out.println(SECTION_DIVIDER);
-        out.println("Java home................: " + System.getProperty("java.home"));
+        out.println("Java home................: " + ClassPathUtils.getJavaHome(System.getProperties()));
     }
 
     private void outputClassPath(final PrintStream out) {
         out.println(SECTION_DIVIDER);
-        out.println("Class path...............: " + System.getProperty("java.class.path"));
+        out.println("Class path...............: " + ClassPathUtils.getClassPath(System.getProperties()));
     }
 
     private void outputClassPathInUse(final PrintStream out,
@@ -218,7 +221,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         for (final String key : map.keySet()) {
             String value = map.get(key);
 
-            out.println(format("    key=%s, value=%s", key, value));
+            out.println(format(KEY_VALUE_OUTPUT, key, value));
         }
     }
 

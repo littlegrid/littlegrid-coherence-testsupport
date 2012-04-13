@@ -76,7 +76,7 @@ public final class ClassPathUtils {
      */
     public static String getClassPath(final Properties systemProperties) {
         if (systemProperties.containsKey(SUREFIRE_TEST_CLASS_PATH)) {
-            LOGGER.info("Note: class path is being controlled by Surefire");
+            LOGGER.fine("Note: class path is being controlled by Surefire");
 
             return systemProperties.getProperty(SUREFIRE_TEST_CLASS_PATH);
         } else {
@@ -118,7 +118,7 @@ public final class ClassPathUtils {
 
                 if (jarsToExcludeFromClassPath != null) {
                     for (final String jarToExclude : jarsToExcludeFromClassPath) {
-                        if (partOfClassPath.endsWith(jarToExclude)) {
+                        if (partOfClassPath.contains(jarToExclude)) {
                             LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
 
                             includeInClassPath = false;

@@ -92,7 +92,6 @@ public class ClassPathUtilsTest {
     @Test
     public void getClassPathUrlsExcludingJavaHomeNoExcludes() {
         final int expectedUrlCount = 2;
-        final Properties systemProperties = getPopulatedProperties();
 
         final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
                 JAVA_HOME_VALUE, JAVA_CLASS_PATH_VALUE, PATH_SEPARATOR_VALUE);
