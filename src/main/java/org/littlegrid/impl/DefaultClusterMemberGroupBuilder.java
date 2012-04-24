@@ -145,6 +145,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
+        LOGGER.info(format("Initialising %s %s", Info.getName(), Info.getVersionNumber()));
+
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
     }
