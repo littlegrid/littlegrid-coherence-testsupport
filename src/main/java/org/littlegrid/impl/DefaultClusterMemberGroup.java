@@ -398,7 +398,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
-            if (memberWrapper != null) {
+            if (memberWrapper == null) {
+                LOGGER.warning(format("Member with id '%d' did not exist in group - so cannot shut it down", memberId));
+            } else {
                 memberWrapper.shutdown();
             }
         }
@@ -462,7 +464,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
-            if (memberWrapper != null) {
+            if (memberWrapper == null) {
+                LOGGER.warning(format("Member with id '%d' did not exist in group - so cannot stop it", memberId));
+            } else {
                 memberWrapper.stop();
             }
         }
