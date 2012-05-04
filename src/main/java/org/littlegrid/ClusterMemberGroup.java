@@ -611,6 +611,33 @@ public interface ClusterMemberGroup {
          * @since 2.6
          */
         Builder setCallbackHandlerInstanceClassName(String callbackHandlerInstanceClassName);
+
+        /**
+         * Sets the site name that the cluster members belong to.
+         *
+         * @param siteName Site name.
+         * @return builder.
+         * @since 2.8
+         */
+        Builder setSiteName(String siteName);
+
+        /**
+         * Sets the rack name that the cluster members belong to.
+         *
+         * @param rackName Rack name.
+         * @return builder.
+         * @since 2.8
+         */
+        Builder setRackName(String rackName);
+
+        /**
+         * Sets the machine name that the cluster members belong to.
+         *
+         * @param machineName Machine name.
+         * @return builder.
+         * @since 2.8
+         */
+        Builder setMachineName(String machineName);
     }
 
     /**

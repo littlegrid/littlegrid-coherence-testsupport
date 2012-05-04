@@ -51,7 +51,7 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 32;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 35;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
     private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
@@ -77,6 +77,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY = "CustomConfiguredCacheConfiguration";
 
     private static final String CLUSTER_NAME_KEY = "ClusterName";
+    private static final String SITE_NAME_KEY = "SiteName";
+    private static final String RACK_NAME_KEY = "RackName";
+    private static final String MACHINE_NAME_KEY = "MachineName";
     private static final String CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY = "CustomConfiguredRoleName";
     private static final String STORAGE_ENABLED_ROLE_NAME_KEY = "StorageEnabledRoleName";
     private static final String STORAGE_ENABLED_PROXY_ROLE_NAME_KEY = "StorageEnabledExtendProxyRoleName";
@@ -213,6 +216,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedCustomConfiguredCacheConfiguration = "custom-configured-cache-configuration.xml";
 
         final String expectedClusterName = "cluster-name";
+        final String expectedSiteName = "site-name";
+        final String expectedRackName = "rack-name";
+        final String expectedMachineName = "machine-name";
         final String expectedCustomConfiguredRoleName = "custom-configurable-member";
         final String expectedStorageEnabledRoleName = "storage-enabled";
         final String expectedStorageEnabledProxyRoleName = "storage-enabled-proxy";
@@ -239,6 +245,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setCustomConfiguredCacheConfiguration(expectedCustomConfiguredCacheConfiguration);
 
         builder.setClusterName(expectedClusterName);
+        builder.setSiteName(expectedSiteName);
+        builder.setRackName(expectedRackName);
+        builder.setMachineName(expectedMachineName);
         builder.setCustomConfiguredRoleName(expectedCustomConfiguredRoleName);
         builder.setStorageEnabledRoleName(expectedStorageEnabledRoleName);
         builder.setStorageEnabledExtendProxyRoleName(expectedStorageEnabledProxyRoleName);
@@ -270,6 +279,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY), is(expectedCustomConfiguredCacheConfiguration));
 
         assertThat(builderSettings.get(CLUSTER_NAME_KEY), is(expectedClusterName));
+        assertThat(builderSettings.get(SITE_NAME_KEY), is(expectedSiteName));
+        assertThat(builderSettings.get(RACK_NAME_KEY), is(expectedRackName));
+        assertThat(builderSettings.get(MACHINE_NAME_KEY), is(expectedMachineName));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY), is(expectedCustomConfiguredRoleName));
         assertThat(builderSettings.get(STORAGE_ENABLED_ROLE_NAME_KEY), is(expectedStorageEnabledRoleName));
         assertThat(builderSettings.get(STORAGE_ENABLED_PROXY_ROLE_NAME_KEY), is(expectedStorageEnabledProxyRoleName));
