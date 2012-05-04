@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
@@ -43,12 +44,23 @@ import static org.junit.Assert.assertThat;
  */
 public class AdditionalSystemPropertiesIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void exampleOfAdditionalSystemProperties() {
+    public void additionalSystemProperties() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(1)
                 .setAdditionalSystemProperties("properties/additionalSystemProperties.properties")
                 .buildAndConfigureForStorageDisabledClient();
 
         assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
+    }
+
+    @Test
+    public void additionalSystemProperty() {
+        final String expectedKey = "additionalSystemPropertyKey";
+        final String expectedValue = "additionalSystemPropertyValue";
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setAdditionalSystemProperty(expectedKey, expectedValue)
+                .buildAndConfigureForStorageDisabledClient();
+
+        assertThat(System.getProperty(expectedKey), is(expectedValue));
     }
 }

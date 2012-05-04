@@ -145,7 +145,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        LOGGER.info(format("Initialising %s %s", Info.getName(), Info.getVersionNumber()));
+        LOGGER.info(format("%s %s - initialising", Info.getName(), Info.getVersionNumber()));
 
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
@@ -598,6 +598,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup.Builder setAdditionalSystemProperties(final String commaDelimitedPropertiesFilenames) {
         setAdditionalSystemProperties(PropertiesUtils.loadProperties(Level.INFO, commaDelimitedPropertiesFilenames));
+
+        return this;
+    }
+
+    @Override
+    public ClusterMemberGroup.Builder setAdditionalSystemProperty(final String key,
+                                                                  final String value) {
+
+        additionalSystemProperties.setProperty(key, value);
 
         return this;
     }

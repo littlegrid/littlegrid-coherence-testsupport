@@ -266,9 +266,8 @@ public interface ClusterMemberGroup {
         Builder setCustomConfiguredCacheConfiguration(String cacheConfiguration);
 
         /**
-         * Used to set any remaining system properties that are required, for instance if the
-         * standard Coherence names for system properties aren't being used - i.e. a different
-         * named property is used for enabling distributed local storage.
+         * Used to set any remaining system properties that are required when starting the cluster member
+         * group.
          *
          * @param properties Properties to be turned into system properties.
          * @return builder.
@@ -276,8 +275,8 @@ public interface ClusterMemberGroup {
         Builder setAdditionalSystemProperties(Properties properties);
 
         /**
-         * Used to set any remaining system properties that are required - multiple properties files are
-         * supported by passing as a comma separated string.
+         * Used to set any remaining system properties that are required when starting the cluster
+         * member group - multiple properties files are supported by passing as a comma separated string.
          *
          * @param commaDelimitedPropertiesFilenames
          *         String of properties filenames, multiple property
@@ -285,6 +284,18 @@ public interface ClusterMemberGroup {
          * @return builder.
          */
         Builder setAdditionalSystemProperties(String commaDelimitedPropertiesFilenames);
+
+        /**
+         * Used to set an additional system property that is required when starting the cluster
+         * member group.
+         *
+         * @param key   System property key.
+         * @param value System property value.
+         * @return builder.
+         * @since 2.8
+         */
+        Builder setAdditionalSystemProperty(String key,
+                                            String value);
 
         /**
          * Sets the number of storage enabled members (i.e. 'cache servers') the cluster member
