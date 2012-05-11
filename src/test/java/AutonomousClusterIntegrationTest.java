@@ -29,50 +29,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.group.wka_autonomous;
-
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-import java.util.logging.Logger;
+import static org.junit.Assert.assertEquals;
 
-import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
-
-/**
- * Cluster member group WKA tests.
- */
-public final class WkaIntegrationTest {
-    private static final Logger LOGGER = Logger.getLogger(WkaIntegrationTest.class.getName());
-
+public class AutonomousClusterIntegrationTest {
     @Test
-    public void twoSmallMemberGroupsWithDifferentWkas() {
-        final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
-        final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+    public void twoAutonomousClusters() {
+        final int numberOfMembers = 2;
+        final int expectedClusterSize = numberOfMembers + 1; // Include this test which will join as a member
 
-        ClusterMemberGroup memberGroup1 = null;
-        ClusterMemberGroup memberGroup2 = null;
+        ClusterMemberGroup memberGroupCluster1 = null;
+        ClusterMemberGroup memberGroupCluster2 = null;
 
         try {
             final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers);
-            memberGroup1 = builder.buildAndConfigureForNoClient();
 
+            // Build the first cluster (we won't actually be connecting to this one)
+            memberGroupCluster1 = builder.buildAndConfigureForNoClient();
+
+            // The second cluster will need to run on a different port to avoid clustering with
+            // the first cluster
             final int member2WkaPort = builder.getWkaPort() + 100;
-            LOGGER.warning(format("A different WKA port of '%s' has been configured for a WKA test", member2WkaPort));
 
-            memberGroup2 = ClusterMemberGroupUtils.newBuilder()
+            // Build the second cluster - we will join this cluster through this test by
+            // asserting the cluster size
+            memberGroupCluster2 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers)
                     .setWkaPort(member2WkaPort)
                     .buildAndConfigureForStorageDisabledClient();
 
-            assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+            // Check the size of the second cluster
+            assertEquals(expectedClusterSize, CacheFactory.ensureCluster().getMemberSet().size());
         } finally {
-            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup1, memberGroup2);
+            ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
+                    memberGroupCluster1, memberGroupCluster2);
         }
     }
 }
