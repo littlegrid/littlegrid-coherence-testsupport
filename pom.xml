@@ -217,6 +217,31 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>customArgLineToBeUsed</id>
+            <activation>
+                <property>
+                    <name>argLine</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <!--
+                                If using this custom argLine profile (typically to support command-line override),
+                                then in additional to your own user specified settings you should also include
+                                those from the default profile as sensible memory defaults.
+                            -->
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <properties>
