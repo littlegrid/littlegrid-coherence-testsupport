@@ -60,8 +60,8 @@ public final class BeanUtils {
 
         int propertiesSetCounter = 0;
 
-        for (final String key : properties.stringPropertyNames()) {
-            final String value = properties.getProperty(key);
+        for (final Object key : properties.keySet()) {
+            final String value = properties.getProperty((String) key);
             final String methodName = "set" + key;
 
             try {

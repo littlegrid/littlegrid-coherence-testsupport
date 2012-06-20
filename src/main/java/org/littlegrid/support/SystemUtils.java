@@ -52,7 +52,8 @@ public final class SystemUtils {
     public static Properties snapshotSystemProperties() {
         final Properties properties = new Properties();
 
-        for (final String key : System.getProperties().stringPropertyNames()) {
+        for (final Object object : System.getProperties().keySet()) {
+            final String key = (String) object;
             final String value = System.getProperty(key);
 
             properties.setProperty(key, value);
@@ -67,10 +68,11 @@ public final class SystemUtils {
      * @param properties New and updated system properties.
      */
     public static void applyToSystemProperties(final Properties properties) {
-        for (final String key : properties.stringPropertyNames()) {
+        for (final Object object : properties.keySet()) {
+            final String key = (String) object;
             final String value = properties.getProperty(key);
 
-            if (!value.trim().isEmpty()) {
+            if (value.trim().length() > 0) {
                 System.setProperty(key, value);
             }
         }
@@ -101,7 +103,9 @@ public final class SystemUtils {
 
         final Properties properties = new Properties();
 
-        for (final String key : propertiesToCheck.stringPropertyNames()) {
+        for (final Object object : propertiesToCheck.keySet()) {
+            final String key = (String) object;
+
             if (key.contains(prefix)) {
                 String keyToUse = key;
 

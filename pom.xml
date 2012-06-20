@@ -232,6 +232,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <forkMode>always</forkMode>
+                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m ${argLine}</argLine>
                             <!--
                                 If using this custom argLine profile (typically to support command-line override),
                                 then in additional to your own user specified settings you should also include

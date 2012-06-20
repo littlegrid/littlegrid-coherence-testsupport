@@ -148,7 +148,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        LOGGER.info(format("%s %s - initialising", Info.getName(), Info.getVersionNumber()));
+        LOGGER.info(format("___ %s %s - initialising builder", Info.getName(), Info.getVersionNumber()));
 
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
@@ -213,7 +213,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private static boolean stringHasValue(final String stringToCheckForValue) {
-        return stringToCheckForValue != null && !stringToCheckForValue.trim().isEmpty();
+        return stringToCheckForValue != null && stringToCheckForValue.trim().length() > 0;
     }
 
     private void setBuilderValue(final String key,
@@ -1067,7 +1067,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final String customConfiguredCacheConfiguration =
                 getBuilderValueAsString(BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY);
 
-        if (customConfiguredCacheConfiguration.isEmpty()) {
+        if (customConfiguredCacheConfiguration.length() == 0) {
             setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         } else {
             setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY);
@@ -1202,7 +1202,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final long fastStartJoinTimeout = getBuilderValueAsLong(BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS);
         final String overrideConfiguration = getBuilderValueAsString(BUILDER_OVERRIDE_CONFIGURATION_KEY);
 
-        if (fastStartJoinTimeout > 0 && (overrideConfiguration == null || overrideConfiguration.trim().isEmpty())) {
+        if (fastStartJoinTimeout > 0 && (overrideConfiguration == null || overrideConfiguration.trim().length() == 0)) {
             LOGGER.warning("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
                     + "now be configured to be used");
 
@@ -1283,7 +1283,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             throw new IllegalArgumentException(format("System property key cannot be null for value of: '%s'", value));
         }
 
-        if (value != null && !value.isEmpty()) {
+        if (value != null && value.trim().length() > 0) {
             properties.setProperty(key, value);
         }
     }
