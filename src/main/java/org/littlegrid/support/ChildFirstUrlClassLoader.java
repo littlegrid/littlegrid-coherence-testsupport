@@ -52,7 +52,7 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
      * {@inheritDoc}
      */
     @Override
-    public Class<?> loadClass(final String name)
+    public synchronized Class<?> loadClass(final String name)
             throws ClassNotFoundException {
 
         Class loadedClass = findLoadedClass(name);
