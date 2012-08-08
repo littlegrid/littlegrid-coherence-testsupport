@@ -105,9 +105,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         out.println(SECTION_DIVIDER);
         out.println("Builder keys and values - sorted to help identification");
 
-        Map<String,
-
-                String> map = new TreeMap<String, String>(builderKeysAndValues);
+        final Map<String, String> map = new TreeMap<String, String>(builderKeysAndValues);
 
         for (final String key : map.keySet()) {
             String value = map.get(key);
@@ -123,7 +121,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         out.println(SECTION_DIVIDER);
         out.println("Builder key to system property name mapping - sorted to help identification");
 
-        Map<String, String> map = new TreeMap(builderKeyToSystemPropertyNameMapping);
+        final Map<String, String> map = new TreeMap(builderKeyToSystemPropertyNameMapping);
 
         for (final String key : map.keySet()) {
             String value = map.get(key);
@@ -137,7 +135,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         out.println(SECTION_DIVIDER);
         out.println("System properties current: all current system properties - sorted to help identification");
 
-        Map<String, String> map = new TreeMap(System.getProperties());
+        final Map<String, String> map = new TreeMap(System.getProperties());
 
         for (final String key : map.keySet()) {
             String value = map.get(key);
@@ -216,7 +214,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         out.println(SECTION_DIVIDER);
         out.println("System properties applied: sorted to help identification");
 
-        Map<String, String> map = new TreeMap(systemPropertiesToBeApplied);
+        final Map<String, String> map = new TreeMap(systemPropertiesToBeApplied);
 
         for (final String key : map.keySet()) {
             String value = map.get(key);
