@@ -49,11 +49,14 @@ import static org.junit.Assert.assertThat;
  * Child first URL class loader tests.
  */
 public final class ChildFirstUrlClassLoaderTest {
+
+    private static final String TARGET_TEST_CLASSES_DIRECTORY = "./target/test-classes";
+
     @Test
     public void loadClassFromChildClassLoader()
             throws Throwable {
 
-        final URL url = new File("./target/test-classes").toURI().toURL();
+        final URL url = new File(TARGET_TEST_CLASSES_DIRECTORY).toURI().toURL();
         final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
         final Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
 
@@ -89,7 +92,7 @@ public final class ChildFirstUrlClassLoaderTest {
 
         final int numberOfTasks = 100;
         final int numberOfThreads = 50;
-        final URL url = new File("./target/test-classes").toURI().toURL();
+        final URL url = new File(TARGET_TEST_CLASSES_DIRECTORY).toURI().toURL();
         final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
 
         final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
