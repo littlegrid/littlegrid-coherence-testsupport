@@ -35,6 +35,11 @@ import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -48,12 +53,12 @@ public final class ChildFirstUrlClassLoaderTest {
     public void loadClassFromChildClassLoader()
             throws Throwable {
 
-        URL url = new File("./target/test-classes").toURI().toURL();
-        ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
-        Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
+        final URL url = new File("./target/test-classes").toURI().toURL();
+        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
+        final Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
 
-        Object objectFromClassLoadedByChildFirst = clazz.newInstance();
-        Dummy dummy = new Dummy();
+        final Object objectFromClassLoadedByChildFirst = clazz.newInstance();
+        final Dummy dummy = new Dummy();
 
         assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(), is(childFirstLoader));
         assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(),
@@ -64,21 +69,67 @@ public final class ChildFirstUrlClassLoaderTest {
     public void loadClassWhenClassNotFound()
             throws Throwable {
 
-        URL url = new File("someMadeUpPathThatWillEnsureClassNotLoadedFromChildButDelegatedToParent").toURI().toURL();
-        ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
-        Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
+        final URL url = new File("someMadeUpPathThatWillEnsureClassNotLoadedFromChildButDelegatedToParent")
+                .toURI().toURL();
 
-        Object objectFromClassLoadedByChildFirst = clazz.newInstance();
-        Dummy dummy = new Dummy();
+        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
+        final Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
+
+        final Object objectFromClassLoadedByChildFirst = clazz.newInstance();
+        final Dummy dummy = new Dummy();
 
         assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(), not(childFirstLoader));
         assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(),
                 is(dummy.getClass().getClassLoader()));
     }
 
+    @Test
+    public void multiThreadedLoad()
+            throws Throwable {
+
+        final int numberOfTasks = 100;
+        final int numberOfThreads = 50;
+        final URL url = new File("./target/test-classes").toURI().toURL();
+        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
+
+        final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        final List<Callable<Void>> tasks = getTasks(childFirstLoader, numberOfTasks);
+
+        executorService.invokeAll(tasks);
+    }
+
+    private List<Callable<Void>> getTasks(final ClassLoader classLoader,
+                                          int numberOfTasks) {
+
+        final List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(numberOfTasks);
+
+        for (int i = 0; i < numberOfTasks; i++) {
+            tasks.add(new LoadClassCallable(classLoader));
+        }
+
+        return tasks;
+    }
+
     /**
      * Dummy class to test class loading.
      */
     public static class Dummy {
+    }
+
+    public static class LoadClassCallable implements Callable {
+        private ClassLoader classLoader;
+
+        public LoadClassCallable(final ClassLoader classLoader) {
+            this.classLoader = classLoader;
+        }
+
+        @Override
+        public Object call()
+                throws Exception {
+
+            classLoader.loadClass(Dummy.class.getName());
+
+            return null;
+        }
     }
 }

@@ -52,6 +52,27 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
      * {@inheritDoc}
      */
     @Override
+    protected synchronized Class<?> findClass(String name)
+            throws ClassNotFoundException {
+
+        return super.findClass(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected synchronized Class<?> loadClass(final String name,
+                                              final boolean resolve)
+            throws ClassNotFoundException {
+
+        return super.loadClass(name, resolve);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public synchronized Class<?> loadClass(final String name)
             throws ClassNotFoundException {
 
