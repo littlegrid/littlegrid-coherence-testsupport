@@ -456,11 +456,26 @@ public interface ClusterMemberGroup {
          * cluster members, this is useful if JMX JARs or JDBC drivers are resulting in (inert)
          * warning or error messages when starting the cluster member.
          *
-         * @param jarsToExcludeFromClassPath Jars to be excluded, in the form of
-         *                                   name-of-the-jar-to-exclude.jar
+         * @param jarsToExcludeFromClassPath Jars to be excluded, in the form of:
+         *                                   <i>name-of-the-jar-to-exclude.jar</i>
+         *                                   or:
+         *                                   <i>name-of-the-jar-to-exclude.jar,another-jar-to-exclude-1.1.jar</i>
+         *                                   or abbreviated - useful to avoid specifying version numbers:
+         *                                   <i>name-of,another</i>
          * @return builder.
          */
         Builder setJarsToExcludeFromClassPath(String... jarsToExcludeFromClassPath);
+
+        /**
+         * Sets the names of specific core JAR files (e.g. rt.jar) to be excluded from the class loading
+         * of the cluster members, this is useful if the JAVA_HOME environment variable differs from the
+         * version of Java being used in an IDE.
+         *
+         * @param coreJarsToExcludeFromClassPath Core Java Jars to be excluded, in the form of
+         *                                       name-of-the-jar-to-exclude.jar
+         * @return builder.
+         */
+        Builder setCoreJarsToExcludeFromClassPath(String... coreJarsToExcludeFromClassPath);
 
         /**
          * Sets the well-known address which is used to control which IP address/hostname that

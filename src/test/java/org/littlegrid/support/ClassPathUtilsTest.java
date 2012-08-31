@@ -31,13 +31,10 @@
 
 package org.littlegrid.support;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URL;
 import java.util.Properties;
-import java.util.jar.Manifest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -94,7 +91,7 @@ public class ClassPathUtilsTest {
         final int expectedUrlCount = 2;
 
         final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
-                JAVA_HOME_VALUE, JAVA_CLASS_PATH_VALUE, PATH_SEPARATOR_VALUE);
+                JAVA_HOME_VALUE, JAVA_CLASS_PATH_VALUE, PATH_SEPARATOR_VALUE, null);
 
         assertThat(classPathUrls.length, is(expectedUrlCount));
 
@@ -113,6 +110,17 @@ public class ClassPathUtilsTest {
         }
 
         assertThat(urlCount, is(expectedUrlCount));
+    }
+
+    @Test
+    public void getClassPathUrlsExcludingJavaHomeWithExcludes() {
+        final int expectedUrlCount = 1;
+        final String jarsToExcludeFromClassPath = ",, , coherence ,, , ";
+
+        final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
+                JAVA_HOME_VALUE, JAVA_CLASS_PATH_VALUE, PATH_SEPARATOR_VALUE, jarsToExcludeFromClassPath);
+
+        assertThat(classPathUrls.length, is(expectedUrlCount));
     }
 
     private Properties getPopulatedProperties() {

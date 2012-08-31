@@ -49,18 +49,10 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
      *
      * @param urls URLs from which to try and load classes.
      */
-    public ChildFirstUrlClassLoader(final URL[] urls) {
-        super(urls);
-    }
+    public ChildFirstUrlClassLoader(final URL[] urls,
+                                    final ClassLoader classLoader) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected synchronized Class<?> findClass(String name)
-            throws ClassNotFoundException {
-
-        return super.findClass(name);
+        super(urls, classLoader);
     }
 
     /**
@@ -71,16 +63,6 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                                               final boolean resolve)
             throws ClassNotFoundException {
 
-        return super.loadClass(name, resolve);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized Class<?> loadClass(final String name)
-            throws ClassNotFoundException {
-
         Class loadedClass = findLoadedClass(name);
 
         if (loadedClass == null) {
@@ -89,7 +71,7 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                 loadedClass = findClass(name);
             } catch (ClassNotFoundException e) {
                 // Child didn't have the class, delegate to parent class-loader
-                loadedClass = super.loadClass(name);
+                loadedClass = getParent().loadClass(name);
             } catch (SecurityException e) {
                 throw new IllegalStateException(
                         "Please check your class path as it should not contain "
@@ -97,12 +79,11 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                         + "problem are if your JAVA_HOME environment variable is different from the JDK configured in "
                         + "your IDE or if you're using OSGI and some of the OSGI bundled JARs are being included in "
                         + "your class path: " + e);
-            } catch (LinkageError e) {
-                LOGGER.warning(format("Suppressing linkage error occurred which occurred loading class '%s'", name));
-
-                // Try and use the class that has already been loaded
-                loadedClass = super.loadClass(name, false);
             }
+        }
+
+        if (resolve) {
+            resolveClass(loadedClass);
         }
 
         return loadedClass;

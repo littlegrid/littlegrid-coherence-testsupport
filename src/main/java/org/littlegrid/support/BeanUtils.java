@@ -76,8 +76,13 @@ public final class BeanUtils {
                         // Try invoking with a long as a parameter
                         ClassHelper.invoke(bean, methodName, new Object[]{Long.parseLong(value)});
                     } catch (Exception e3) {
-                        throw new IllegalStateException(format(
+                        try {
+                            // Try invoking with a string array as a parameter
+                            ClassHelper.invoke(bean, methodName, new Object[]{new String[]{value}});
+                        } catch (Exception e4) {
+                            throw new IllegalStateException(format(
                                 "Unable to invoke '%s' to set value to: '%s' due to: %s", methodName, value, e));
+                        }
                     }
                 }
             }

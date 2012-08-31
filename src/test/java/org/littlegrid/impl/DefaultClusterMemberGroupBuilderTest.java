@@ -51,7 +51,7 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 35;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 37;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
     private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
@@ -70,6 +70,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
     private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
     private static final String SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "SuggestedSleepAfterStopDurationDefault";
+
+    private static final String JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY = "JarsToExcludeFromClassPath";
+    private static final String CORE_JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY = "CoreJarsToExcludeFromClassPath";
 
     private static final String CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
@@ -114,7 +117,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         // Ensure that override settings aren't picked up and applied - thus only the defaults are
         // used which these tests can then safely assert against.
-        System.setProperty("littlegrid.builder.override", "");
+        System.setProperty("littlegrid.builder.override", "non-existent-override-file.properties");
     }
 
     @After
@@ -123,9 +126,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
-    public void nonSystemPropertyBuilderSettings() {
+    public void nonCoherenceBuilderSettings() {
 //        setAdditionalSystemProperties
-//        setJarsToExcludeFromClassPath
 //        setBuilderProperties
 
         final String expectedExceptionReportInstanceClassName = "com.g.h.i.BuildExceptionReporter";
@@ -145,6 +147,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final int expectedSleepDuration36x = 23;
         final int expectedSleepDurationDefault = 24;
 
+        final String jarsToExcludeFromClassPath = "abc.jar,def.jar";
+        final String coreJarsToExcludeFromClassPath = "rt.jar";
+
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
@@ -163,6 +168,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setSuggestedSleepAfterStopDuration35x(expectedSleepDuration35x);
         builder.setSuggestedSleepAfterStopDuration36x(expectedSleepDuration36x);
         builder.setSuggestedSleepAfterStopDurationDefault(expectedSleepDurationDefault);
+
+        builder.setJarsToExcludeFromClassPath(jarsToExcludeFromClassPath);
+        builder.setCoreJarsToExcludeFromClassPath(coreJarsToExcludeFromClassPath);
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
@@ -201,13 +209,14 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.get(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY),
                 is(Integer.toString(expectedSleepDurationDefault)));
+
+        assertThat(builderSettings.get(JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY), is(jarsToExcludeFromClassPath));
+        assertThat(builderSettings.get(CORE_JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY), is(coreJarsToExcludeFromClassPath));
     }
 
     @Test
-    public void systemPropertyBuilderSettings() {
+    public void coherenceSystemPropertyBuilderSettings() {
         /*
-        setStorageEnabledSpecificCacheConfiguration
-        setExtendProxySpecificCacheConfiguration
         setClientOverrideConfiguration
          */
         final String expectedCacheConfiguration = "cache-configuration.xml";

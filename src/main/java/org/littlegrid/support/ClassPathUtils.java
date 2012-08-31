@@ -106,7 +106,7 @@ public final class ClassPathUtils {
     public static URL[] getClassPathUrlsExcludingJavaHome(final String javaHomePath,
                                                           final String classPath,
                                                           final String pathSeparator,
-                                                          final String... jarsToExcludeFromClassPath) {
+                                                          final String jarsToExcludeFromClassPath) {
 
         final String[] classPathArray = classPath.split(pathSeparator);
 
@@ -117,9 +117,12 @@ public final class ClassPathUtils {
                 boolean includeInClassPath = true;
 
                 if (jarsToExcludeFromClassPath != null) {
-                    for (final String jarToExclude : jarsToExcludeFromClassPath) {
-                        if (partOfClassPath.contains(jarToExclude)) {
-                            LOGGER.fine(format("JAR: '%s' specified for exclusion from class path", jarToExclude));
+                    for (final String jarToExclude : jarsToExcludeFromClassPath.split(",")) {
+                        final String trimmedJarToExclude = jarToExclude.trim();
+
+                        if (trimmedJarToExclude.length() != 0 && partOfClassPath.contains(trimmedJarToExclude)) {
+                            LOGGER.fine(format("JAR: '%s' specified for exclusion from class path",
+                                    trimmedJarToExclude));
 
                             includeInClassPath = false;
                         }

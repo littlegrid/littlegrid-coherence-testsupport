@@ -38,8 +38,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -49,7 +51,6 @@ import static org.junit.Assert.assertThat;
  * Child first URL class loader tests.
  */
 public final class ChildFirstUrlClassLoaderTest {
-
     private static final String TARGET_TEST_CLASSES_DIRECTORY = "./target/test-classes";
 
     @Test
@@ -57,7 +58,9 @@ public final class ChildFirstUrlClassLoaderTest {
             throws Throwable {
 
         final URL url = new File(TARGET_TEST_CLASSES_DIRECTORY).toURI().toURL();
-        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
+        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url},
+                this.getClass().getClassLoader());
+
         final Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
 
         final Object objectFromClassLoadedByChildFirst = clazz.newInstance();
@@ -75,7 +78,9 @@ public final class ChildFirstUrlClassLoaderTest {
         final URL url = new File("someMadeUpPathThatWillEnsureClassNotLoadedFromChildButDelegatedToParent")
                 .toURI().toURL();
 
-        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
+        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url},
+                this.getClass().getClassLoader());
+
         final Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
 
         final Object objectFromClassLoadedByChildFirst = clazz.newInstance();
@@ -90,15 +95,32 @@ public final class ChildFirstUrlClassLoaderTest {
     public void multiThreadedLoad()
             throws Throwable {
 
+        final int numberOfInvokeAlls = 5;
         final int numberOfTasks = 100;
         final int numberOfThreads = 50;
         final URL url = new File(TARGET_TEST_CLASSES_DIRECTORY).toURI().toURL();
-        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url});
 
         final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-        final List<Callable<Void>> tasks = getTasks(childFirstLoader, numberOfTasks);
 
-        executorService.invokeAll(tasks);
+        int exceptionCounter = 0;
+
+        for (int i = 0; i < numberOfInvokeAlls; i++) {
+            final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(new URL[]{url},
+                    this.getClass().getClassLoader());
+
+            final List<Callable<Void>> tasks = getTasks(childFirstLoader, numberOfTasks);
+            final List<Future<Void>> futures = executorService.invokeAll(tasks);
+
+            for (final Future<Void> future : futures) {
+                try {
+                    future.get();
+                } catch (ExecutionException e) {
+                    exceptionCounter++;
+                }
+            }
+        }
+
+        assertThat(exceptionCounter, is(0));
     }
 
     private List<Callable<Void>> getTasks(final ClassLoader classLoader,

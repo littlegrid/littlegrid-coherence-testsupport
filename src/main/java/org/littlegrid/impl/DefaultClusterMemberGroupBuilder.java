@@ -126,6 +126,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_LOG_DESTINATION_KEY = "LogDestination";
     private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
 
+    private static final String BUILDER_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "JarsToExcludeFromClassPath";
+    private static final String BUILDER_CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "CoreJarsToExcludeFromClassPath";
+
     private static final String BUILDER_COHERENCE_MANAGEMENT = "CoherenceManagement";
     private static final String BUILDER_COHERENCE_MANAGEMENT_REMOTE = "CoherenceManagementRemote";
     private static final String BUILDER_MANAGEMENT_JMX_REMOTE = "ManagementJmxRemote";
@@ -140,7 +143,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
     private Properties additionalSystemProperties = new Properties();
     private Properties builderKeyToSystemPropertyNameMapping = new Properties();
-    private String[] jarsToExcludeFromClassPath;
     private URL[] classPathUrls;
 
 
@@ -359,7 +361,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             final String javaHome = ClassPathUtils.getJavaHome(systemProperties);
 
             this.classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
-                    javaHome, classPath, pathSeparator, jarsToExcludeFromClassPath);
+                    javaHome, classPath, pathSeparator,
+                    getBuilderValueAsString(BUILDER_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
+                            + ", " + getBuilderValueAsString(BUILDER_CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
         }
 
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
@@ -810,9 +814,40 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      */
     @Override
     public ClusterMemberGroup.Builder setJarsToExcludeFromClassPath(final String... jarsToExcludeFromClassPath) {
-        this.jarsToExcludeFromClassPath = jarsToExcludeFromClassPath;
+        setBuilderValue(BUILDER_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
+                stringArrayToCommaDelimitedString(jarsToExcludeFromClassPath));
 
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setCoreJarsToExcludeFromClassPath(
+            final String... coreJarsToExcludeFromClassPath) {
+
+        setBuilderValue(BUILDER_CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
+                stringArrayToCommaDelimitedString(coreJarsToExcludeFromClassPath));
+
+        return this;
+    }
+
+    private String stringArrayToCommaDelimitedString(final String[] jarsToExcludeFromClassPath) {
+        final StringBuilder sb = new StringBuilder();
+
+        int count = 0;
+
+        for (final String jarToExcludeFromClassPath : jarsToExcludeFromClassPath) {
+            if (count > 0) {
+                sb.append(",");
+            }
+
+            sb.append(jarToExcludeFromClassPath);
+            count++;
+        }
+
+        return sb.toString();
     }
 
     /**

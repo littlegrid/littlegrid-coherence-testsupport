@@ -74,7 +74,9 @@ class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> 
         final ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 
         try {
-            final ChildFirstUrlClassLoader childFirstUrlClassLoader = new ChildFirstUrlClassLoader(classPathUrls);
+            final ChildFirstUrlClassLoader childFirstUrlClassLoader = new ChildFirstUrlClassLoader(classPathUrls,
+                    this.getClass().getClassLoader());
+
             Thread.currentThread().setContextClassLoader(childFirstUrlClassLoader);
 
             final DelegatingClusterMemberWrapper memberWrapper =

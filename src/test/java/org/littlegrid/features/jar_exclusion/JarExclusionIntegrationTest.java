@@ -45,16 +45,26 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
  */
 public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void startAndShutdownWithKnownRequiredJarBeingExcluded() {
+    public void startAndShutdownWithKnownJarBeingExcludedThatHasNoEffect() {
         final int numberOfMembers = SINGLE_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-        final String jarToExclude = "junit-4.8.2.jar";
+        final String jarToExclude = "junit ";
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(1)
+                .setStorageEnabledCount(numberOfMembers)
                 .setJarsToExcludeFromClassPath(jarToExclude)
                 .buildAndConfigureForStorageDisabledClient();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void startAndShutdownWithCoherenceJarBeingExcluded() {
+        final String jarToExclude = ",, , junit, coherence ,, ";
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(2)
+                .setJarsToExcludeFromClassPath(jarToExclude)
+                .buildAndConfigureForStorageDisabledClient();
     }
 }
