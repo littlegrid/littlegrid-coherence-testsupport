@@ -145,8 +145,10 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
     }
 
     private void outputHeading(final PrintStream out) {
-        out.println("******************************************************");
-        out.println("Exception occurred, trouble-shooting information below");
+        out.println("**********************************************************************************************");
+        out.println("If you would like help, then please email this entire exception report to: help@littlegrid.org");
+        out.println();
+        out.println("Exception occurred, trouble-shooting information below:");
         out.println("Name.....................: " + Info.getName());
         out.println("Version number...........: " + Info.getVersionNumber());
         out.println("Build date...............: " + Info.getBuildDate());

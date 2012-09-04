@@ -33,17 +33,12 @@ package org.littlegrid.support;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.logging.Logger;
-
-import static java.lang.String.format;
 
 /**
  * Child-first URL class-loader, changes the normal class-loading order by attempting
  * to load the class locally from the child before delegating to the parent.
  */
 public class ChildFirstUrlClassLoader extends URLClassLoader {
-    private static final Logger LOGGER = Logger.getLogger(ChildFirstUrlClassLoader.class.getName());
-
     /**
      * Constructor.
      *
@@ -75,10 +70,10 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
             } catch (SecurityException e) {
                 throw new IllegalStateException(
                         "Please check your class path as it should not contain "
-                        + "any core JAR files relating to the JRE/JDK such as rt.jar etc.  Typical reasons for this "
-                        + "problem are if your JAVA_HOME environment variable is different from the JDK configured in "
-                        + "your IDE or if you're using OSGI and some of the OSGI bundled JARs are being included in "
-                        + "your class path: " + e);
+                                + "any core JAR files relating to the JRE/JDK such as rt.jar etc.  Typical reasons for this "
+                                + "problem are if your JAVA_HOME environment variable is different from the JDK configured in "
+                                + "your IDE or if you're using OSGI and some of the OSGI bundled JARs are being included in "
+                                + "your class path: " + e);
             }
         }
 
