@@ -474,6 +474,7 @@ public interface ClusterMemberGroup {
          * @param coreJarsToExcludeFromClassPath Core Java Jars to be excluded, in the form of
          *                                       name-of-the-jar-to-exclude.jar
          * @return builder.
+         * @since 2.11
          */
         Builder setCoreJarsToExcludeFromClassPath(String... coreJarsToExcludeFromClassPath);
 

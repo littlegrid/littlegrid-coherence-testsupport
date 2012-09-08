@@ -33,12 +33,16 @@ package org.littlegrid.support;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Child-first URL class-loader, changes the normal class-loading order by attempting
  * to load the class locally from the child before delegating to the parent.
  */
 public class ChildFirstUrlClassLoader extends URLClassLoader {
+    private Map<String, URL> loadedResources = new HashMap<String, URL>();
+
     /**
      * Constructor.
      *
@@ -48,6 +52,28 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                                     final ClassLoader classLoader) {
 
         super(urls, classLoader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized URL getResource(final String name) {
+        URL loadResource = loadedResources.get(name);
+
+        if (loadResource == null) {
+            // Hasn't already been loaded, so check if this child class-loader can load the resource
+            loadResource = findResource(name);
+
+            if (loadResource == null) {
+                // Child didn't have the resource, delegate to parent class-loader mechanism
+                loadResource = super.getResource(name);
+            } else {
+                loadedResources.put(name, loadResource);
+            }
+        }
+
+        return loadResource;
     }
 
     /**
@@ -68,12 +94,11 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                 // Child didn't have the class, delegate to parent class-loader
                 loadedClass = getParent().loadClass(name);
             } catch (SecurityException e) {
-                throw new IllegalStateException(
-                        "Please check your class path as it should not contain "
-                                + "any core JAR files relating to the JRE/JDK such as rt.jar etc.  Typical reasons for this "
-                                + "problem are if your JAVA_HOME environment variable is different from the JDK configured in "
-                                + "your IDE or if you're using OSGI and some of the OSGI bundled JARs are being included in "
-                                + "your class path: " + e);
+                throw new IllegalStateException("Please check your class path as it should not contain "
+                        + "any core JAR files relating to the JRE/JDK such as rt.jar etc.  Typical reasons for this "
+                        + "problem are if your JAVA_HOME environment variable is different from the JDK configured in "
+                        + "your IDE or if you're using OSGI and some of the OSGI bundled JARs are being included in "
+                        + "your class path: " + e);
             }
         }
 

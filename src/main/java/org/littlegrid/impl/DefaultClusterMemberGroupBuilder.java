@@ -143,14 +143,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
     private Properties additionalSystemProperties = new Properties();
     private Properties builderKeyToSystemPropertyNameMapping = new Properties();
-    private URL[] classPathUrls;
 
 
     /**
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        LOGGER.info(format("___ %s %s - initialising builder", Info.getName(), Info.getVersionNumber()));
+        LOGGER.info(format("___ %s %s - initialising builder", Info.getName(), Info.getVersionNumber()) + " ___");
 
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
@@ -351,20 +350,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                 storageEnabledExtendProxyCount, customConfiguredCount, jmxMonitorCount));
 
         final int numberOfThreadsInStartUpPool = getBuilderValueAsInt(BUILDER_NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
-
-        if (classPathUrls == null) {
-            LOGGER.fine("Cluster member group config class path URLs null, setting to current (minus Java home)");
-
-            final Properties systemProperties = System.getProperties();
-            final String pathSeparator = ClassPathUtils.getPathSeparator(systemProperties);
-            final String classPath = ClassPathUtils.getClassPath(systemProperties);
-            final String javaHome = ClassPathUtils.getJavaHome(systemProperties);
-
-            this.classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
-                    javaHome, classPath, pathSeparator,
-                    getBuilderValueAsString(BUILDER_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
-                            + ", " + getBuilderValueAsString(BUILDER_CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
-        }
+        final Properties systemProperties = System.getProperties();
+        final String pathSeparator = ClassPathUtils.getPathSeparator(systemProperties);
+        final String classPath = ClassPathUtils.getClassPath(systemProperties);
+        final String javaHome = ClassPathUtils.getJavaHome(systemProperties);
+        final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
+                javaHome, classPath, pathSeparator,
+                getBuilderValueAsString(BUILDER_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
+                        + ", " + getBuilderValueAsString(BUILDER_CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
 
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
 
