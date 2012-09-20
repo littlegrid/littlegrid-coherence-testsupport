@@ -36,17 +36,22 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.String.format;
+
 /**
  * Child-first URL class-loader, changes the normal class-loading order by attempting
  * to load the class locally from the child before delegating to the parent.
  */
 public class ChildFirstUrlClassLoader extends URLClassLoader {
+    private static final String CLASS_IN_JAVA_PACKAGE_HIERARCHY = "java.";
+
     private Map<String, URL> loadedResources = new HashMap<String, URL>();
 
     /**
      * Constructor.
      *
-     * @param urls URLs from which to try and load classes.
+     * @param urls        URLs from which to try and load classes.
+     * @param classLoader Parent class loader.
      */
     public ChildFirstUrlClassLoader(final URL[] urls,
                                     final ClassLoader classLoader) {
@@ -84,21 +89,28 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                                               final boolean resolve)
             throws ClassNotFoundException {
 
-        Class loadedClass = findLoadedClass(name);
+        Class loadedClass = null;
 
-        if (loadedClass == null) {
-            try {
-                // Hasn't already been loaded, so check if this child class-loader can load the class
-                loadedClass = findClass(name);
-            } catch (ClassNotFoundException e) {
-                // Child didn't have the class, delegate to parent class-loader
-                loadedClass = getParent().loadClass(name);
-            } catch (SecurityException e) {
-                throw new IllegalStateException("Please check your class path as it should not contain "
-                        + "any core JAR files relating to the JRE/JDK such as rt.jar etc.  Typical reasons for this "
-                        + "problem are if your JAVA_HOME environment variable is different from the JDK configured in "
-                        + "your IDE or if you're using OSGI and some of the OSGI bundled JARs are being included in "
-                        + "your class path: " + e);
+        if (name.startsWith(CLASS_IN_JAVA_PACKAGE_HIERARCHY)) {
+            loadedClass = getParent().loadClass(name);
+        } else {
+            loadedClass = findLoadedClass(name);
+
+            if (loadedClass == null) {
+                try {
+                    // Hasn't already been loaded, so check if this child class-loader can load the class
+                    loadedClass = findClass(name);
+                } catch (ClassNotFoundException e) {
+                    // Child didn't have the class, delegate to parent class-loader
+                    loadedClass = getParent().loadClass(name);
+                } catch (SecurityException e) {
+                    throw new IllegalStateException(format("Cannot load '%s' , please check your class path as it "
+                            + "should not contain any core JAR files relating to the JRE/JDK such as rt.jar "
+                            + "etc.  Typical reasons for this problem are if your JAVA_HOME environment "
+                            + "variable is different from the JDK configured in your IDE or if you're using "
+                            + "OSGI and some of the OSGI bundled JARs are being included in your class path: '%s'",
+                            name, e));
+                }
             }
         }
 

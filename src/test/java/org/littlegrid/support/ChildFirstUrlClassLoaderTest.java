@@ -37,6 +37,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -72,7 +73,22 @@ public final class ChildFirstUrlClassLoaderTest {
     }
 
     @Test
-    public void loadClassWhenClassNotFound()
+    public void delegateWhenLoadingCoreClass()
+            throws Throwable {
+
+        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(
+                ClassPathUtils.getClassPathUrlsExcludingJavaHome("made-up-java-home-so-real-one-will-not-be-excluded",
+                        ClassPathUtils.getClassPath(System.getProperties()),
+                        ClassPathUtils.getPathSeparator(System.getProperties()),
+                        null),
+                this.getClass().getClassLoader());
+
+        childFirstLoader.loadClass(String.class.getName());
+        childFirstLoader.loadClass(Map.class.getName());
+    }
+
+    @Test
+    public void loadClassWhenClassNotFoundByChild()
             throws Throwable {
 
         final URL url = new File("someMadeUpPathThatWillEnsureClassNotLoadedFromChildButDelegatedToParent")
