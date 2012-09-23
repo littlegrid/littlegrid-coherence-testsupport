@@ -182,7 +182,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties environmentVariablesBuilderOverrides = SystemUtils.getPropertiesWithPrefix(
                 SystemUtils.getEnvironmentVariables(), prefix, true);
 
-        LOGGER.info(format("Prefixed '%s' environment variables found '%s'", BUILDER_OVERRIDE_KEY,
+        LOGGER.info(format("Prefixed '%s' environment variables found: %s", BUILDER_OVERRIDE_KEY,
                 environmentVariablesBuilderOverrides.size()));
 
         BeanUtils.multiSetter(this, environmentVariablesBuilderOverrides);
@@ -190,7 +190,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final Properties systemPropertiesBuilderOverrides =
                 SystemUtils.getPropertiesWithPrefix(System.getProperties(), prefix, true);
 
-        LOGGER.info(format("Prefixed '%s' system properties found '%s'", BUILDER_OVERRIDE_KEY,
+        LOGGER.info(format("Prefixed '%s' system properties found: %s", BUILDER_OVERRIDE_KEY,
                 systemPropertiesBuilderOverrides.size()));
 
         BeanUtils.multiSetter(this, systemPropertiesBuilderOverrides);

@@ -75,7 +75,7 @@ public final class ClusterMemberGroupTestSupport {
 
     public static void sleepForSeconds(final int seconds) {
         LOGGER.info(format(
-                "Coherence '%s' - so will now sleep for '%s' seconds to allow the member left to be acknowledged",
+                "Coherence '%s' - so will now sleep for %s seconds to allow the member left to be acknowledged",
                 CacheFactory.VERSION, seconds));
 
         try {

@@ -14,13 +14,12 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
  */
 public class BuildForStorageEnabledMemberIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void whatever() {
+    public void storageEnabledMemberOnly() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .buildAndConfigureForStorageEnabledMember();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
         cache.put("key", "value");
-
     }
 }

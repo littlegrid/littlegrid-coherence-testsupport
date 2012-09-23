@@ -104,7 +104,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     public int merge(final ClusterMemberGroup otherMemberGroup) {
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) otherMemberGroup;
 
-        LOGGER.info(format("About to merge - current members started: '%s', members started to merge in: '%s'",
+        LOGGER.info(format("About to merge - current members started: %s, members started to merge in: %s",
                 this.getMemberFutures().size(), defaultClusterMemberGroup.getMemberFutures().size()));
 
         merge(defaultClusterMemberGroup.getMemberFutures());
@@ -233,7 +233,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         if (memberIdSet.size() != memberIds.length) {
-            throw new IllegalStateException(format("There were '%s' member ids %s - however only these were "
+            throw new IllegalStateException(format("There were %s member ids %s - however only these were "
                     + "unique member ids %s.  Ensure that the Coherence JAR is on your test class path",
                     memberIds.length, Arrays.toString(memberIds), memberIdSet));
         }
@@ -372,7 +372,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public ClusterMember getClusterMember(final int memberId) {
         if (!startInvoked) {
-            LOGGER.warning(format("Cluster member group never started - cannot get member '%s'", memberId));
+            LOGGER.warning(format("Cluster member group never started - cannot get member %s", memberId));
 
             return null;
         }

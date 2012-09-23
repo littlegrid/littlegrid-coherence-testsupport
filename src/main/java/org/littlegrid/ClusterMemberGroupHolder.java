@@ -6,10 +6,11 @@ import java.util.logging.Logger;
 import static java.lang.String.format;
 
 /**
+ * This is an experimental feature and is likely to change in the future!
+ *
  * @since 2.11
  */
-//TODO:
-public interface ClusterMemberGroupHolder {
+interface ClusterMemberGroupHolder {
     void start();
 
     void shutdown();

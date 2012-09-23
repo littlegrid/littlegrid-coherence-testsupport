@@ -8,10 +8,11 @@ import java.util.logging.Logger;
 import static java.lang.String.format;
 
 /**
+ * This is an experimental feature and is likely to change in the future!
+ *
  * @since 2.11
  */
-//TODO:
-public class ClusterMemberGroupHolderUtils {
+class ClusterMemberGroupHolderUtils {
     private static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupHolderUtils.class.getName());
 
     private static Map<Class, HolderBuilderCountingContainer> builderContainers =
@@ -33,7 +34,7 @@ public class ClusterMemberGroupHolderUtils {
         }
 
         final int currentCount = builderContainer.incrementCounterAndGet();
-        LOGGER.fine(format("Builder container count for '%s' is now '%s'",
+        LOGGER.fine(format("Builder container count for '%s' is now %s",
                 clusterMemberGroupHolderClass, currentCount));
 
         return builderContainer.getBuilderHolder();
@@ -57,7 +58,7 @@ public class ClusterMemberGroupHolderUtils {
 
                 builderContainers.remove(clusterMemberGroupHolderClass);
             } else if (currentCount > 0) {
-                LOGGER.fine(format("Builder container count for '%s' is now '%s' - deferring shutdown",
+                LOGGER.fine(format("Builder container count for '%s' is now %s - deferring shutdown",
                         clusterMemberGroupHolderClass, currentCount));
             } else {
                 throw new IllegalStateException(format(

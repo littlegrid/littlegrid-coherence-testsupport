@@ -91,26 +91,22 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
 
         Class loadedClass = null;
 
-        if (name.startsWith(CLASS_IN_JAVA_PACKAGE_HIERARCHY)) {
-            loadedClass = getParent().loadClass(name);
-        } else {
-            loadedClass = findLoadedClass(name);
+        loadedClass = findLoadedClass(name);
 
-            if (loadedClass == null) {
-                try {
-                    // Hasn't already been loaded, so check if this child class-loader can load the class
-                    loadedClass = findClass(name);
-                } catch (ClassNotFoundException e) {
-                    // Child didn't have the class, delegate to parent class-loader
-                    loadedClass = getParent().loadClass(name);
-                } catch (SecurityException e) {
-                    throw new IllegalStateException(format("Cannot load '%s' , please check your class path as it "
-                            + "should not contain any core JAR files relating to the JRE/JDK such as rt.jar "
-                            + "etc.  Typical reasons for this problem are if your JAVA_HOME environment "
-                            + "variable is different from the JDK configured in your IDE or if you're using "
-                            + "OSGI and some of the OSGI bundled JARs are being included in your class path: '%s'",
-                            name, e));
-                }
+        if (loadedClass == null) {
+            try {
+                // Hasn't already been loaded, so check if this child class-loader can load the class
+                loadedClass = findClass(name);
+            } catch (ClassNotFoundException e) {
+                // Child didn't have the class, delegate to parent class-loader
+                loadedClass = getParent().loadClass(name);
+            } catch (SecurityException e) {
+                throw new IllegalStateException(format("Cannot load '%s' , please check your class path as it "
+                        + "should not contain any core JAR files relating to the JRE/JDK such as rt.jar "
+                        + "etc.  Typical reasons for this problem are if your JAVA_HOME environment "
+                        + "variable is different from the JDK configured in your IDE or if you're using "
+                        + "OSGI and some of the OSGI bundled JARs are being included in your class path: '%s'",
+                        name, e));
             }
         }
 

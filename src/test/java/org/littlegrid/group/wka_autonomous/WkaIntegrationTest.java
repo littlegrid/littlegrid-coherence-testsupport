@@ -63,7 +63,7 @@ public final class WkaIntegrationTest {
             memberGroup1 = builder.buildAndConfigureForNoClient();
 
             final int member2WkaPort = builder.getWkaPort() + 100;
-            LOGGER.warning(format("A different WKA port of '%s' has been configured for a WKA test", member2WkaPort));
+            LOGGER.warning(format("A different WKA port of %s has been configured for a WKA test", member2WkaPort));
 
             memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfMembers)
