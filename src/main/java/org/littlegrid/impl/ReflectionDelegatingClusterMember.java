@@ -104,7 +104,8 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
 
             delegateInstance = constructor.newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException(format("Cannot create instance of '%s'", delegateInstanceClassName));
+            throw new IllegalStateException(format("Cannot create instance of '%s', exception: %s",
+                    delegateInstanceClassName, e));
         }
 
         try {

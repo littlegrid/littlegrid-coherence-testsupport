@@ -34,8 +34,10 @@ package org.littlegrid;
 import com.tangosol.net.CacheFactory;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
+import static java.lang.String.format;
+
 /**
- * Cluster member group factory.
+ * Cluster member group utilities.
  */
 public final class ClusterMemberGroupUtils {
     /**
@@ -59,7 +61,11 @@ public final class ClusterMemberGroupUtils {
      * @param clusterMemberGroups Member groups.
      */
     public static void shutdownClusterMemberGroups(final ClusterMemberGroup... clusterMemberGroups) {
-        boolean exceptionOccurredDuringShutdown = false;
+        if (clusterMemberGroups == null) {
+            return;
+        }
+
+        int exceptionDuringShutdownCounter = 0;
 
         for (final ClusterMemberGroup clusterMemberGroup : clusterMemberGroups) {
             try {
@@ -67,14 +73,16 @@ public final class ClusterMemberGroupUtils {
                     clusterMemberGroup.shutdownAll();
                 }
             } catch (Exception e) {
-                exceptionOccurredDuringShutdown = true;
+                exceptionDuringShutdownCounter++;
 
                 // Ignore and allow looping to try and shutdown any other cluster member groups if running
             }
         }
 
-        if (exceptionOccurredDuringShutdown) {
-            throw new IllegalStateException("Exception occurred shutting down group");
+        if (exceptionDuringShutdownCounter > 0) {
+            throw new IllegalStateException(format("Whilst attempting to shutdown the total of %s member group(s), "
+                    + "%s of them threw exceptions during their shutdown",
+                    clusterMemberGroups.length, exceptionDuringShutdownCounter));
         }
     }
 
