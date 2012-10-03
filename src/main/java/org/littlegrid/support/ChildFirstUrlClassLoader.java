@@ -61,6 +61,7 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
 
     /**
      * {@inheritDoc}
+     * @since 2.11
      */
     @Override
     public synchronized URL getResource(final String name) {

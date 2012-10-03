@@ -633,6 +633,30 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
+    public ClusterMemberGroup.Builder setAdditionalSystemProperty(final String key,
+                                                                  final int value) {
+
+        setAdditionalSystemProperty(key, Integer.toString(value));
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setAdditionalSystemProperty(final String key,
+                                                                  final boolean value) {
+
+        setAdditionalSystemProperty(key, Boolean.toString(value));
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ClusterMemberGroup.Builder setStorageEnabledCount(final int numberOfMembers) {
         setBuilderValue(BUILDER_STORAGE_ENABLED_COUNT_KEY, numberOfMembers);
 

@@ -298,6 +298,30 @@ public interface ClusterMemberGroup {
                                             String value);
 
         /**
+         * Used to set an additional system property that is required when starting the cluster
+         * member group.
+         *
+         * @param key   System property key.
+         * @param value System property value.
+         * @return builder.
+         * @since 2.13
+         */
+        Builder setAdditionalSystemProperty(String key,
+                                            int value);
+
+        /**
+         * Used to set an additional system property that is required when starting the cluster
+         * member group.
+         *
+         * @param key   System property key.
+         * @param value System property value.
+         * @return builder.
+         * @since 2.13
+         */
+        Builder setAdditionalSystemProperty(String key,
+                                            boolean value);
+
+        /**
          * Sets the number of storage enabled members (i.e. 'cache servers') the cluster member
          * group should contain.
          *

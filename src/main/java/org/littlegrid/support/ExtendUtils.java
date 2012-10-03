@@ -35,6 +35,7 @@ import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
 import com.tangosol.net.AbstractInvocable;
+import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 
 import java.io.IOException;
@@ -87,8 +88,27 @@ public final class ExtendUtils {
     }
 
     /**
+     * Gets the member id via the invocation service of the Extend proxy server that the
+     * Extend client is connected to.
+     *
+     * @param invocationService Invocation service.
+     * @return Extend proxy Coherence version.
+     * @since 2.13
+     */
+    @SuppressWarnings("unchecked")
+    public static String getExtendProxyMemberVersionThatClientIsConnectedTo(final InvocationService invocationService) {
+        final Map result = invocationService.query(new GetExtendProxyVersionInvocable(), null);
+
+        final List<String> list = new ArrayList<String>(result.values());
+
+        return list.get(0);
+    }
+
+    /**
      * Simple invocable to return the cluster size - useful for Extend-based clients
      * to check cluster size is as expected.
+     *
+     * @since 2.6
      */
     public static final class GetClusterSizeInvocable extends AbstractInvocable
             implements PortableObject {
@@ -122,6 +142,8 @@ public final class ExtendUtils {
      * Simple invocable to return the Extend proxy member Id that the Extend client is
      * connected to - this is useful for instance in tests were that particular proxy
      * server is required to be stopped to test failover.
+     *
+     * @since 2.6
      */
     public static final class GetExtendProxyMemberIdInvocable extends AbstractInvocable
             implements PortableObject {
@@ -132,6 +154,39 @@ public final class ExtendUtils {
         @Override
         public void run() {
             setResult(getService().getCluster().getLocalMember().getId());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void readExternal(final PofReader reader)
+                throws IOException {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void writeExternal(final PofWriter writer)
+                throws IOException {
+        }
+    }
+
+    /**
+     * Simple invocable to return the Coherence version that the Extend proxy is running.
+     *
+     * @since 2.13
+     */
+    public static final class GetExtendProxyVersionInvocable extends AbstractInvocable
+            implements PortableObject {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void run() {
+            setResult(CacheFactory.VERSION);
         }
 
         /**

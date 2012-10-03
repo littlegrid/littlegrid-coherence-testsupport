@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.support.ExtendUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -132,11 +133,16 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
     }
 
     @Test
-    public void extendClientCacheConfigurationNotSpecified() {
+    public void extendProxyVersion() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
                 .buildAndConfigureForExtendClient();
 
-        // This should work, only a log message is logged when no Extend client cache config is specified
+        final InvocationService invocationService =
+                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
+
+        final String version = ExtendUtils.getExtendProxyMemberVersionThatClientIsConnectedTo(invocationService);
+        assertThat(version, is(CacheFactory.VERSION));
     }
 }

@@ -12,5 +12,9 @@
             <type-id>1002</type-id>
             <class-name>org.littlegrid.support.ExtendUtils$GetExtendProxyMemberIdInvocable</class-name>
         </user-type>
+        <user-type>
+            <type-id>1003</type-id>
+            <class-name>org.littlegrid.support.ExtendUtils$GetExtendProxyVersionInvocable</class-name>
+        </user-type>
     </user-type-list>
 </pof-config>

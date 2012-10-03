@@ -206,19 +206,16 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
-        final Properties additionalSystemProperties = new Properties();
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.address.2", builder.getWkaAddress());
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.port.2", Integer.toString(builder.getExtendPort() + 1));
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.address.3", builder.getWkaAddress());
-        additionalSystemProperties.setProperty("tangosol.coherence.extend.port.3", Integer.toString(builder.getExtendPort() + 1));
-
         memberGroup = builder
                 .setStorageEnabledCount(numberOfStorageEnabledMembers)
                 .setExtendProxyCount(numberOfExtendProxyMembers)
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
                 .setClientCacheConfiguration(
                         "coherence/littlegrid-test-extend-client-cache-config-with-multiple-remote-addresses.xml")
-                .setAdditionalSystemProperties(additionalSystemProperties)
+                .setAdditionalSystemProperty("tangosol.coherence.extend.address.2", builder.getWkaAddress())
+                .setAdditionalSystemProperty("tangosol.coherence.extend.port.2", builder.getExtendPort() + 1)
+                .setAdditionalSystemProperty("tangosol.coherence.extend.address.3", builder.getWkaAddress())
+                .setAdditionalSystemProperty("tangosol.coherence.extend.port.3", builder.getExtendPort() + 1)
                 .setLogLevel(6)
                 .buildAndConfigureForExtendClient();
 
