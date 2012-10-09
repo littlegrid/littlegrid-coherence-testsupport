@@ -1,0 +1,7 @@
+<coherence>
+    <cluster-config>
+        <member-identity>
+            <member-name>MemberNameFromOverrideFile</member-name>
+        </member-identity>
+    </cluster-config>
+</coherence>

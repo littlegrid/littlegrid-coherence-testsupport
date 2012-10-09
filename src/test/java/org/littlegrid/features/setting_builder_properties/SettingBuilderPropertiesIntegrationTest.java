@@ -39,8 +39,8 @@ import org.littlegrid.ClusterMemberGroupUtils;
 import java.util.Properties;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIGURATION_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
@@ -57,8 +57,8 @@ public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestSh
         Properties properties = new Properties();
         properties.setProperty("StorageEnabledCount", Integer.toString(storageEnabledCount));
         properties.setProperty("ExtendProxyCount", Integer.toString(extendProxyCount));
-        properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE);
-        properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIG_FILE);
+        properties.setProperty("CacheConfiguration", TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE);
+        properties.setProperty("ClientCacheConfiguration", EXTEND_CLIENT_CACHE_CONFIGURATION_FILE);
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setBuilderProperties(properties)

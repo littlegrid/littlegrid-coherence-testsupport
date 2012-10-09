@@ -39,10 +39,12 @@ import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLIENT_OVERRIDE_CONFIGURATION_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_MEMBER_NAME;
 
 /**
  * Variety of cluster member group tests, useful as a quick baseline check as a variety of
@@ -57,7 +59,7 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
     public void storageEnabledMembersWithCacheConfiguration() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForStorageDisabledClient();
 
         performSimplePutSizeGet(KNOWN_TEST_CACHE);
@@ -66,10 +68,10 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
     @Test
     public void extendProxyWithSeparateStorageEnabledMembers() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .setExtendProxyCount(1)
                 .setStorageEnabledCount(2)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForExtendClient();
 
         performSimplePutSizeGet(KNOWN_EXTEND_TEST_CACHE);
@@ -89,6 +91,15 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
                 .buildAndConfigureForNoClient();
 
         assertThat(memberGroup.getStartedMemberIds().length, is(expectedNumberOfMembers));
+    }
+
+    @Test
+    public void clientOverrideSpecified() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setClientOverrideConfiguration(CLIENT_OVERRIDE_CONFIGURATION_FILE)
+                .buildAndConfigureForStorageDisabledClient();
+
+        assertThat(CacheFactory.getCluster().getLocalMember().getMemberName(), is(KNOWN_MEMBER_NAME));
     }
 
     private void performSimplePutSizeGet(final String cacheName) {

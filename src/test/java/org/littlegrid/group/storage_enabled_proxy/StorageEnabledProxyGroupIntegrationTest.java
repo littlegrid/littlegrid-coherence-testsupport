@@ -41,11 +41,11 @@ import org.littlegrid.support.ExtendUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 
 /**
  * Cluster member group Extend tests.
@@ -55,8 +55,8 @@ public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfter
     public void singleStorageEnabledExtendProxy() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
@@ -71,7 +71,7 @@ public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfter
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(numberOfStorageEnabledExtendProxies)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForExtendClient();
 
         final InvocationService invocationService =

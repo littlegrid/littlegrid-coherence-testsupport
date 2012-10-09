@@ -39,7 +39,6 @@ import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.SystemUtils;
 
-import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
@@ -51,7 +50,7 @@ import static org.junit.Assert.assertThat;
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 37;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 38;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
     private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
@@ -77,6 +76,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
     private static final String OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
+    private static final String CLIENT_OVERRIDE_CONFIGURATION_KEY = "ClientOverrideConfiguration";
     private static final String CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY = "CustomConfiguredCacheConfiguration";
 
     private static final String CLUSTER_NAME_KEY = "ClusterName";
@@ -222,6 +222,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedCacheConfiguration = "cache-configuration.xml";
         final String expectedClientCacheConfiguration = "client-cache-configuration.xml";
         final String expectedOverrideConfiguration = "override-configuration.xml";
+        final String expectedClientOverrideConfiguration = "client-override-configuration.xml";
         final String expectedCustomConfiguredCacheConfiguration = "custom-configured-cache-configuration.xml";
 
         final String expectedClusterName = "cluster-name";
@@ -251,6 +252,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setCacheConfiguration(expectedCacheConfiguration);
         builder.setClientCacheConfiguration(expectedClientCacheConfiguration);
         builder.setOverrideConfiguration(expectedOverrideConfiguration);
+        builder.setClientOverrideConfiguration(expectedClientOverrideConfiguration);
         builder.setCustomConfiguredCacheConfiguration(expectedCustomConfiguredCacheConfiguration);
 
         builder.setClusterName(expectedClusterName);
@@ -285,6 +287,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(CACHE_CONFIGURATION_KEY), is(expectedCacheConfiguration));
         assertThat(builderSettings.get(CLIENT_CACHE_CONFIGURATION_KEY), is(expectedClientCacheConfiguration));
         assertThat(builderSettings.get(OVERRIDE_CONFIGURATION_KEY), is(expectedOverrideConfiguration));
+        assertThat(builderSettings.get(CLIENT_OVERRIDE_CONFIGURATION_KEY), is(expectedClientOverrideConfiguration));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY), is(expectedCustomConfiguredCacheConfiguration));
 
         assertThat(builderSettings.get(CLUSTER_NAME_KEY), is(expectedClusterName));

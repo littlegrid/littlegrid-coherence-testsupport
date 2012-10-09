@@ -96,13 +96,14 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String BUILDER_CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
     private static final String BUILDER_OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
+    private static final String BUILDER_CLIENT_OVERRIDE_CONFIGURATION_KEY = "ClientOverrideConfiguration";
+
     private static final String BUILDER_CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY =
             "CustomConfiguredCacheConfiguration";
-
     private static final String BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY = "DistributedLocalStorage";
     private static final String BUILDER_TCMP_ENABLED_KEY = "TcmpEnabled";
-    private static final String BUILDER_EXTEND_ENABLED_KEY = "ExtendEnabled";
 
+    private static final String BUILDER_EXTEND_ENABLED_KEY = "ExtendEnabled";
     private static final String BUILDER_CLUSTER_NAME_KEY = "ClusterName";
     private static final String BUILDER_SITE_NAME_KEY = "SiteName";
     private static final String BUILDER_RACK_NAME_KEY = "RackName";
@@ -113,33 +114,33 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     private static final String BUILDER_EXTEND_PROXY_ROLE_NAME_KEY = "ExtendProxyRoleName";
     private static final String BUILDER_JMX_MONITOR_ROLE_NAME_KEY = "JmxMonitorRoleName";
     private static final String BUILDER_STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
-    private static final String BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY = "ExtendClientRoleName";
 
+    private static final String BUILDER_EXTEND_CLIENT_ROLE_NAME_KEY = "ExtendClientRoleName";
     private static final String BUILDER_WKA_PORT_KEY = "WkaPort";
     private static final String BUILDER_LOCAL_ADDRESS_KEY = "LocalAddress";
     private static final String BUILDER_LOCAL_PORT_KEY = "LocalPort";
     private static final String BUILDER_WKA_ADDRESS_KEY = "WkaAddress";
     private static final String BUILDER_EXTEND_ADDRESS_KEY = "ExtendAddress";
     private static final String BUILDER_EXTEND_PORT_KEY = "ExtendPort";
+
     private static final String BUILDER_TTL_KEY = "Ttl";
-
     private static final String BUILDER_LOG_DESTINATION_KEY = "LogDestination";
+
     private static final String BUILDER_LOG_LEVEL_KEY = "LogLevel";
-
     private static final String BUILDER_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "JarsToExcludeFromClassPath";
-    private static final String BUILDER_CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "CoreJarsToExcludeFromClassPath";
 
+    private static final String BUILDER_CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "CoreJarsToExcludeFromClassPath";
     private static final String BUILDER_COHERENCE_MANAGEMENT = "CoherenceManagement";
     private static final String BUILDER_COHERENCE_MANAGEMENT_REMOTE = "CoherenceManagementRemote";
-    private static final String BUILDER_MANAGEMENT_JMX_REMOTE = "ManagementJmxRemote";
 
+    private static final String BUILDER_MANAGEMENT_JMX_REMOTE = "ManagementJmxRemote";
     private static final String COHERENCE_MANAGEMENT_NONE = "none";
+
     private static final String COHERENCE_MANAGEMENT_ALL = "all";
 
     private static final String BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
-
     private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
     private Properties additionalSystemProperties = new Properties();
     private Properties builderKeyToSystemPropertyNameMapping = new Properties();
@@ -566,6 +567,16 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup.Builder setClientCacheConfiguration(final String cacheConfiguration) {
         setBuilderValue(BUILDER_CLIENT_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup.Builder setClientOverrideConfiguration(final String overrideConfiguration) {
+        setBuilderValue(BUILDER_CLIENT_OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
         return this;
     }
@@ -1199,7 +1210,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_CACHE_CONFIGURATION_KEY);
         }
 
-        setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        final String clientOverrideConfiguration = getBuilderValueAsString(BUILDER_CLIENT_OVERRIDE_CONFIGURATION_KEY);
+
+        if (stringHasValue(clientOverrideConfiguration)) {
+            setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_CLIENT_OVERRIDE_CONFIGURATION_KEY);
+        } else {
+            setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_OVERRIDE_CONFIGURATION_KEY);
+        }
 
         setWhenValidUsingNameMappingAndSuppliedValue(properties, BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY,
                 Boolean.FALSE.toString());
@@ -1281,6 +1298,13 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             LOGGER.warning("No client cache configuration has been specified for Extend clients");
         } else {
             setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_CLIENT_CACHE_CONFIGURATION_KEY);
+        }
+
+        final String clientOverrideConfiguration = getBuilderValueAsString(BUILDER_CLIENT_OVERRIDE_CONFIGURATION_KEY);
+
+        // If client override specified then use it instead of the currently configured override - if one is set
+        if (stringHasValue(clientOverrideConfiguration)) {
+            setWhenValidUsingNameMappingAndBuilderValue(properties, BUILDER_CLIENT_OVERRIDE_CONFIGURATION_KEY);
         }
 
         setWhenValidUsingNameMappingAndSuppliedValue(properties, BUILDER_DISTRIBUTED_LOCAL_STORAGE_KEY,

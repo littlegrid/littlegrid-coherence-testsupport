@@ -44,12 +44,14 @@ import org.littlegrid.support.ExtendUtils;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLIENT_OVERRIDE_CONFIGURATION_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_MEMBER_NAME;
 import static org.littlegrid.support.ExtendUtils.getClusterSizeThatExtendClientIsConnectedTo;
 
 /**
@@ -60,8 +62,8 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
     public void noStorageEnabledMembersCannotStoreData() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(1)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
@@ -82,8 +84,8 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(1)
                 .setStorageEnabledCount(2)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForExtendClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
@@ -100,13 +102,13 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
         try {
             storageEnabledGroup = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(numberOfCacheServers)
-                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                     .buildAndConfigureForNoClient();
 
             extendProxyGroup = ClusterMemberGroupUtils.newBuilder()
                     .setExtendProxyCount(1)
-                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
-                    .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                    .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
+                    .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                     .buildAndConfigureForExtendClient();
 
             final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
@@ -122,7 +124,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setExtendProxyCount(numberOfExtendProxies)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForExtendClient();
 
         final InvocationService invocationService =
@@ -136,7 +138,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
     public void extendProxyVersion() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)
-                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIG_FILE)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForExtendClient();
 
         final InvocationService invocationService =
@@ -144,5 +146,16 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
 
         final String version = ExtendUtils.getExtendProxyMemberVersionThatClientIsConnectedTo(invocationService);
         assertThat(version, is(CacheFactory.VERSION));
+    }
+
+    @Test
+    public void extendClientOverride() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledExtendProxyCount(1)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
+                .setClientOverrideConfiguration(CLIENT_OVERRIDE_CONFIGURATION_FILE)
+                .buildAndConfigureForExtendClient();
+
+        assertThat(CacheFactory.getCluster().getLocalMember().getMemberName(), is(KNOWN_MEMBER_NAME));
     }
 }

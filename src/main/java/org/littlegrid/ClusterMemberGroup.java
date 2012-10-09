@@ -249,13 +249,15 @@ public interface ClusterMemberGroup {
 
         /**
          * Sets the specific Coherence override file to be used, for instance when using Extend
-         * based clients or when a client requires a different override file (perhaps because the
-         * server cluster members need to be required with the SpringAwareCacheFactory).
+         * based clients or when a client requires a different override file - examples might be
+         * when the server cluster members need something like the SpringAwareCacheFactory, but
+         * that isn't required for the client.
          *
          * @param overrideConfiguration Override configuration.
          * @return builder.
+         * @since 2.13
          */
-//        Builder setClientOverrideConfiguration(String overrideConfiguration);
+        Builder setClientOverrideConfiguration(String overrideConfiguration);
 
         /**
          * Sets the cache configuration to be used for custom configured cluster member groups.

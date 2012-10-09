@@ -7,14 +7,13 @@ import org.littlegrid.ClusterMemberGroupUtils;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
@@ -29,7 +28,7 @@ public final class JmxMonitorIntegrationTest extends AbstractAfterTestShutdownIn
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .setJmxMonitorCount(numberOfMembers)
                 .buildAndConfigureForStorageDisabledClient();
 

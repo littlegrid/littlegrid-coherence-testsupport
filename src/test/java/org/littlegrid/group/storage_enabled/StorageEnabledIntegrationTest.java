@@ -38,7 +38,7 @@ import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 
 /**
  * Storage-enabled member integration tests.
@@ -47,7 +47,7 @@ public final class StorageEnabledIntegrationTest extends AbstractAfterTestShutdo
     @Test
     public void memberGroupWithCacheConfigurationAndKnownCache() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .setStorageEnabledCount(1)
                 .buildAndConfigureForStorageDisabledClient();
 
@@ -58,7 +58,7 @@ public final class StorageEnabledIntegrationTest extends AbstractAfterTestShutdo
     @Test(expected = IllegalArgumentException.class)
     public void memberGroupWithCacheConfigurationAndUnknownCache() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForStorageDisabledClient();
 
         CacheFactory.getCache("this-cache-will-not-be-found-in-cache-configuration");

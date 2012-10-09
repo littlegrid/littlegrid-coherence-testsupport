@@ -38,7 +38,7 @@ import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
@@ -51,7 +51,7 @@ public final class CustomConfiguredMemberIntegrationTest extends AbstractAfterTe
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCustomConfiguredCacheConfiguration(TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCustomConfiguredCacheConfiguration(TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .setCustomConfiguredCount(numberOfMembers)
                 .buildAndConfigureForStorageDisabledClient();
 

@@ -48,17 +48,23 @@ import static org.junit.Assert.assertThat;
 public final class ClusterMemberGroupTestSupport {
     public static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupTestSupport.class.getName());
 
-    public static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE = "coherence/littlegrid-test-cache-config.xml";
-    public static final String TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIG_FILE =
+    public static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE =
+            "coherence/littlegrid-test-cache-config.xml";
+
+    public static final String TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE =
             "coherence/littlegrid-test-custom-configured-cache-config.xml";
 
-    public static final String EXTEND_CLIENT_CACHE_CONFIG_FILE =
+    public static final String EXTEND_CLIENT_CACHE_CONFIGURATION_FILE =
             "coherence/littlegrid-test-extend-client-cache-config.xml";
 
+    public static final String CLIENT_OVERRIDE_CONFIGURATION_FILE =
+            "coherence/littlegrid-test-client-override-config.xml";
+
     public static final String KNOWN_TEST_CACHE = "known-cache";
-    public static final String KNOWN_TEST_CUSTOM_CONFIGURED_CACHE = "cache-only-for-custom-configured";
     public static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
     public static final String INVOCATION_SERVICE_NAME = "InvocationService";
+
+    public static final String KNOWN_MEMBER_NAME = "MemberNameFromOverrideFile";
 
     public static final int CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP = 1;
     public static final int SINGLE_TEST_CLUSTER_SIZE = 1;

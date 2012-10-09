@@ -7,7 +7,7 @@ import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 
 /**
  * Build for storage-enabled member integration test.
@@ -16,7 +16,7 @@ public class BuildForStorageEnabledMemberIntegrationTest extends AbstractAfterTe
     @Test
     public void storageEnabledMemberOnly() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIG_FILE)
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .buildAndConfigureForStorageEnabledMember();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
