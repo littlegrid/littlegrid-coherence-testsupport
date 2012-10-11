@@ -118,6 +118,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         // Ensure that override settings aren't picked up and applied - thus only the defaults are
         // used which these tests can then safely assert against.
         System.setProperty("littlegrid.builder.override", "non-existent-override-file.properties");
+        System.setProperty("littlegrid.builder.override", "non-existent-override-file.properties");
     }
 
     @After

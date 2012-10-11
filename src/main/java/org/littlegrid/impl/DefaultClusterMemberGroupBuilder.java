@@ -193,6 +193,12 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             builderOverrides = SystemUtils.getPropertiesWithPrefix(
                     environmentVariablesOrSystemProperties, preferredPrefix, true);
+
+            // When the prefix littlegrid.builder. is used then it could leave an incorrect key to be applied
+            // to the builder if the littlegrid.builder.override system property is specified or if the
+            // system property mapping override is specified - simply remove both if they exists
+            builderOverrides.remove("override");
+            builderOverrides.remove("system.property.mapping.override");
         } else {
             LOGGER.warning(format(
                     "Please note: the preferred prefix for system properties is now '%s' instead of '%s'",
