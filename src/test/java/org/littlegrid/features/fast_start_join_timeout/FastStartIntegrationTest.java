@@ -60,21 +60,21 @@ public class FastStartIntegrationTest extends AbstractAfterTestShutdownIntegrati
             ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
         }
 
-        final long timeWithFastStart;
+        final long timeWithPurposelySlowJoinTimeout;
 
         try {
-            final long startTimeWithFastStart = System.currentTimeMillis();
+            final long startTime = System.currentTimeMillis();
 
             memberGroup = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(1)
-                    .setFastStartJoinTimeoutMilliseconds(TimeUnit.SECONDS.toMillis(2))
+                    .setFastStartJoinTimeoutMilliseconds(TimeUnit.SECONDS.toMillis(5))
                     .buildAndConfigureForStorageDisabledClient();
 
-            timeWithFastStart = System.currentTimeMillis() - startTimeWithFastStart;
+            timeWithPurposelySlowJoinTimeout = System.currentTimeMillis() - startTime;
         } finally {
             ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
         }
 
-        assertThat(timeWithFastStart < timeWithDefault, is(true));
+        assertThat(timeWithPurposelySlowJoinTimeout > timeWithDefault, is(true));
     }
 }
