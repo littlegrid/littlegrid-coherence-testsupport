@@ -12,7 +12,10 @@ import static java.lang.String.format;
  *
  * @since 2.11
  */
-class ClusterMemberGroupHolderUtils {
+final class ClusterMemberGroupHolderUtils {
+    private ClusterMemberGroupHolderUtils() {
+    }
+
     private static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupHolderUtils.class.getName());
 
     private static Map<Class, HolderBuilderCountingContainer> builderContainers =

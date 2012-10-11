@@ -140,7 +140,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final String BUILDER_FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
+    private static final String LEGACY_BUILDER_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY =
+            BUILDER_OVERRIDE_KEY + ".";
+
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
+
     private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
     private Properties additionalSystemProperties = new Properties();
     private Properties builderKeyToSystemPropertyNameMapping = new Properties();
@@ -166,6 +170,42 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void loadAndSetBuilderKeysAndValues() {
+        loadAndSetBuilderKeysAndValuesUsingPropertiesFiles();
+
+        loadAndSetBuilderKeysAndValues("environment variables", BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY,
+                SystemUtils.getEnvironmentVariables());
+
+        loadAndSetBuilderKeysAndValues("system properties", BUILDER_SYSTEM_PROPERTY_PREFIX_KEY,
+                System.getProperties());
+    }
+
+    private void loadAndSetBuilderKeysAndValues(final String propertiesDescription,
+                                                final String preferredPrefix,
+                                                final Properties environmentVariablesOrSystemProperties) {
+
+        String prefixUsed = LEGACY_BUILDER_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY;
+
+        Properties builderOverrides = SystemUtils.getPropertiesWithPrefix(
+                environmentVariablesOrSystemProperties, prefixUsed, true);
+
+        if (builderOverrides.size() == 0) {
+            prefixUsed = preferredPrefix;
+
+            builderOverrides = SystemUtils.getPropertiesWithPrefix(
+                    environmentVariablesOrSystemProperties, preferredPrefix, true);
+        } else {
+            LOGGER.warning(format(
+                    "Please note: the preferred prefix for system properties is now '%s' instead of '%s'",
+                    preferredPrefix,
+                    LEGACY_BUILDER_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY));
+        }
+
+        LOGGER.info(format("Prefixed '%s' %s found: %s", prefixUsed, propertiesDescription, builderOverrides.size()));
+
+        BeanUtils.multiSetter(this, builderOverrides);
+    }
+
+    private void loadAndSetBuilderKeysAndValuesUsingPropertiesFiles() {
         BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.FINE, BUILDER_DEFAULT_PROPERTIES_FILENAME));
 
         final String alternativePropertiesFilename = System.getProperty(BUILDER_OVERRIDE_KEY);
@@ -178,23 +218,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                     BUILDER_OVERRIDE_PROPERTIES_FILENAME,
                     LITTLEGRID_DIRECTORY_SLASH + BUILDER_OVERRIDE_PROPERTIES_FILENAME));
         }
-
-        final String prefix = BUILDER_OVERRIDE_KEY + ".";
-        final Properties environmentVariablesBuilderOverrides = SystemUtils.getPropertiesWithPrefix(
-                SystemUtils.getEnvironmentVariables(), prefix, true);
-
-        LOGGER.info(format("Prefixed '%s' environment variables found: %s", BUILDER_OVERRIDE_KEY,
-                environmentVariablesBuilderOverrides.size()));
-
-        BeanUtils.multiSetter(this, environmentVariablesBuilderOverrides);
-
-        final Properties systemPropertiesBuilderOverrides =
-                SystemUtils.getPropertiesWithPrefix(System.getProperties(), prefix, true);
-
-        LOGGER.info(format("Prefixed '%s' system properties found: %s", BUILDER_OVERRIDE_KEY,
-                systemPropertiesBuilderOverrides.size()));
-
-        BeanUtils.multiSetter(this, systemPropertiesBuilderOverrides);
     }
 
     private void loadBuilderKeyToSystemPropertyNameMapping() {

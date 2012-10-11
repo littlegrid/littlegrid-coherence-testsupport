@@ -52,14 +52,21 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
  * Builder system property override tests that use the littlegrid.builder.override system
  * property to specify an alternative properties file through a system property.
  */
-public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class BuilderSystemPropertyOverrideIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
 
-    public static final String BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT = BUILDER_OVERRIDE_KEY + ".StorageEnabledCount";
+    public static final String BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT =
+            "littlegrid.builder.StorageEnabledCount";
+
+    public static final String LEGACY_BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT =
+            "littlegrid.builder.override.StorageEnabledCount";
+
 
     @Before
     public void beforeTest() {
         System.clearProperty(BUILDER_OVERRIDE_KEY);
         System.clearProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
+        System.clearProperty(LEGACY_BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT);
         System.clearProperty(BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT);
     }
 
@@ -102,6 +109,19 @@ public class BuilderSystemPropertyOverrideIntegrationTest extends AbstractAfterT
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");
+    }
+
+    @Test
+    public void systemPropertyOverrideStorageEnabledUsingLegacyBuilderOverridePrefix() {
+        final int numberOfStorageEnabled = 2;
+        final int expectedClusterSize = numberOfStorageEnabled + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+
+        System.setProperty(LEGACY_BUILDER_OVERRIDE_STORAGE_ENABLED_COUNT, Integer.toString(numberOfStorageEnabled));
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .buildAndConfigureForStorageDisabledClient();
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 
     @Test

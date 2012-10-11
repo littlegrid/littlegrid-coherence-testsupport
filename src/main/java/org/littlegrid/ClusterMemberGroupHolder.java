@@ -25,6 +25,9 @@ interface ClusterMemberGroupHolder {
         ClusterMemberGroupHolder build();
     }
 
+    /**
+     * Builder holder - experimental.
+     */
     public class DefaultClusterMemberGroupHolderBuilder implements Builder {
         private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupHolderBuilder.class.getName());
 

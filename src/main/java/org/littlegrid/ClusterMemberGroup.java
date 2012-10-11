@@ -159,6 +159,24 @@ public interface ClusterMemberGroup {
         String BUILDER_OVERRIDE_KEY = "littlegrid.builder.override";
 
         /**
+         * Constant defining the prefix to be used when configuring littlegrid via system
+         * properties, for example: -Dlittlegrid.builder.ExtendPort=12345 - this configures the
+         * Extend port via a system property.
+         *
+         * @since 2.13
+         */
+        String BUILDER_SYSTEM_PROPERTY_PREFIX_KEY = "littlegrid.builder.";
+
+        /**
+         * Constant defining the prefix to be used when configuring littlegrid via environment
+         * variables, for example: export littlegrid_builder_ExtendPort=12345 (Unix/Linux) or
+         * set littlegrid_builder_ExtendPort=12345 (Windows).
+         *
+         * @since 2.13
+         */
+        String BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY = "littlegrid_builder_";
+
+        /**
          * Constant defining the name of the system property that can be used to supply a different
          * mapping override file by setting a system property with this name and the value being the
          * required override file to be use.
