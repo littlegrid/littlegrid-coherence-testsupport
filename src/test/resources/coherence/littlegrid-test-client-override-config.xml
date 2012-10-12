@@ -1,5 +1,8 @@
-<coherence>
-    <cluster-config>
+<coherence  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://xmlns.oracle.com/coherence/coherence-operational-config"
+            xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-operational-config coherence-operational-config.xsd">
+
+<cluster-config>
         <member-identity>
             <member-name>MemberNameFromOverrideFile</member-name>
         </member-identity>

@@ -31,7 +31,15 @@
 
 package org.littlegrid.features.containing_class_loader;
 
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
+import com.tangosol.io.pof.PofReader;
+import com.tangosol.io.pof.PofWriter;
+import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
 import com.tangosol.util.ClassHelper;
+import com.tangosol.util.InvocableMap;
+import com.tangosol.util.processor.AbstractProcessor;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -39,10 +47,14 @@ import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.features.PretendServer;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
+import java.io.IOException;
+import java.util.Date;
+
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 
 /**
@@ -50,7 +62,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_S
  */
 public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void getActualContainingClassLoader() {
+    public void getContainingClassLoader() {
         final int numberOfMembers = 2;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
@@ -75,14 +87,14 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
     }
 
     @Test
-    public void usingActualContainingClassLoaderToControlObject()
+    public void usingContainingClassLoaderToControlObject()
             throws Exception {
 
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int memberIdToRunPretendServerIn = 2;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCustomConfiguredCount(numberOfMembers)
+                .setStorageEnabledCount(numberOfMembers)
                 .buildAndConfigureForStorageDisabledClient();
 
         assertThat(memberGroup.getStartedMemberIds().length, is(numberOfMembers));
@@ -96,4 +108,74 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
         ClassHelper.invoke(pretendServer, "start", new Object[]{});
         ClassHelper.invoke(pretendServer, "shutdown", new Object[]{});
     }
+
+/*
+    @Test
+    public void usingContainingClassLoaderToControlSingleton() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(1)
+                .buildAndConfigureForStorageDisabledClient();
+
+        final ClassLoader containingClassLoader =
+                memberGroup.getClusterMember(1).getActualContainingClassLoader();
+
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        final Date businessDate = (Date) cache.invoke("123", new BusinessDayProcessor());
+
+
+    }
+*/
+
+    @Test
+    public void usingContainingClassLoaderToGetValue() {
+
+    }
+
+/*
+    public static class BusinessDayProcessor extends AbstractProcessor implements PortableObject {
+        @Override
+        public Object process(final InvocableMap.Entry entry) {
+            return new Date();
+//            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void readExternal(final PofReader reader)
+                throws IOException {
+        }
+
+        @Override
+        public void writeExternal(final PofWriter writer)
+                throws IOException {
+        }
+    }
+
+    public static class BusinessDay {
+        private int day;
+        private int month;
+        private int year;
+
+        private static BusinessDay INSTANCE;
+
+        public static synchronized BusinessDay getInstance() {
+            if (INSTANCE == null) {
+                INSTANCE = new BusinessDay();
+            }
+
+            return INSTANCE;
+        }
+
+        public int getDay() {
+            return day;
+        }
+
+        public int getMonth() {
+            return month;
+        }
+
+        public int getYear() {
+            return year;
+        }
+    }
+*/
 }
