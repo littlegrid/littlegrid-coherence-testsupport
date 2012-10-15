@@ -205,7 +205,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                     LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY));
         }
 
-        LOGGER.info(format("Prefixed '%s' %s found: %s", prefixUsed, propertiesDescription, builderOverrides.size()));
+        LOGGER.info(format("Prefixed '%s' %s found: %d", prefixUsed, propertiesDescription, builderOverrides.size()));
 
         BeanUtils.multiSetter(this, builderOverrides);
     }

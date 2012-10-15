@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!--<cache-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+              <!--xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"-->
+              <!--xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd">-->
+
+<cache-config>
+    <defaults>
+        <serializer>
+            <instance>
+                <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name>
+                <init-params>
+                    <init-param>
+                        <param-type>java.lang.String</param-type>
+                        <param-value>coherence/littlegrid-test-pof-config.xml</param-value>
+                    </init-param>
+                </init-params>
+            </instance>
+        </serializer>
+    </defaults>
+
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>known-cache</cache-name>
+            <scheme-name>simple-distributed-scheme</scheme-name>
+        </cache-mapping>
+    </caching-scheme-mapping>
+
+    <caching-schemes>
+        <distributed-scheme>
+            <scheme-name>simple-distributed-scheme</scheme-name>
+            <backing-map-scheme>
+                <read-write-backing-map-scheme>
+                    <internal-cache-scheme>
+                        <local-scheme/>
+                    </internal-cache-scheme>
+                    <cachestore-scheme>
+                        <class-scheme>
+                            <class-name system-property="example.cachestore">com.tangosol.util.NullImplementation$NullCacheStore</class-name>
+                        </class-scheme>
+                    </cachestore-scheme>
+                    <write-delay system-property="example.write.delay">0</write-delay>
+                </read-write-backing-map-scheme>
+            </backing-map-scheme>
+            <autostart>true</autostart>
+        </distributed-scheme>
+    </caching-schemes>
+</cache-config>

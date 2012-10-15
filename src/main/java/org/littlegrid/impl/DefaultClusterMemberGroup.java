@@ -96,7 +96,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         callbackHandler.doBeforeStart();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -110,6 +109,24 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         merge(defaultClusterMemberGroup.getMemberFutures());
 
         return memberFutures.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClassLoader[] getActualContainingClassLoaders(final int... memberIds) {
+        final List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
+
+        for (final int memberId : memberIds) {
+            final ClusterMember member = getClusterMember(memberId);
+
+            if (member != null) {
+                classLoaders.add(member.getActualContainingClassLoader());
+            }
+        }
+
+        return classLoaders.toArray(new ClassLoader[classLoaders.size()]);
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
@@ -246,7 +263,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                                                final int numberOfThreadsInStartUpPool) {
         final int oneMB = 1024 * 1024;
 
-        LOGGER.fine(format("About to start '%d' cluster member(s) in group, using '%d' threads in pool",
+        LOGGER.fine(format("About to start %d cluster member(s) in group, using %d threads in pool",
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         LOGGER.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
@@ -377,7 +394,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return null;
         }
 
-        LOGGER.fine(format("About to get cluster member '%d'", memberId));
+        LOGGER.fine(format("About to get cluster member %d", memberId));
 
         return getClusterMemberWrapper(memberId);
     }
@@ -394,12 +411,12 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         for (final int memberId : memberIds) {
-            LOGGER.info(format("About to shutdown cluster member '%d'", memberId));
+            LOGGER.info(format("About to shutdown cluster member %d", memberId));
 
             final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
             if (memberWrapper == null) {
-                LOGGER.warning(format("Member with id '%d' did not exist in group - so cannot shut it down", memberId));
+                LOGGER.warning(format("Member with id %d did not exist in group - so cannot shut it down", memberId));
             } else {
                 memberWrapper.shutdown();
             }
@@ -425,7 +442,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         callbackHandler.doBeforeShutdown();
 
-        LOGGER.info(format("Shutting down '%d' cluster member(s) in group", memberFutures.size()));
+        LOGGER.info(format("Shutting down %d cluster member(s) in group", memberFutures.size()));
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {
@@ -460,12 +477,12 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         for (final int memberId : memberIds) {
-            LOGGER.info(format("About to stop cluster member with id '%d'", memberId));
+            LOGGER.info(format("About to stop cluster member with id %d", memberId));
 
             final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
             if (memberWrapper == null) {
-                LOGGER.warning(format("Member with id '%d' did not exist in group - so cannot stop it", memberId));
+                LOGGER.warning(format("Member with id %d did not exist in group - so cannot stop it", memberId));
             } else {
                 memberWrapper.stop();
             }
@@ -485,7 +502,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        LOGGER.info(format("Stopping '%d' cluster member(s) in this group", memberFutures.size()));
+        LOGGER.info(format("Stopping %d cluster member(s) in this group", memberFutures.size()));
 
         try {
             for (int i = 0; i < memberFutures.size(); i++) {

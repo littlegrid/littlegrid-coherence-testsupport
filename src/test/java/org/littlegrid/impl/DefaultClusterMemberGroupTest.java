@@ -165,7 +165,7 @@ public final class DefaultClusterMemberGroupTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void ensureMemberIdsAreUniqueWhenTheyAreDuplicates() {
+    public void ensureMemberIdsAreUniqueWhenThereAreDuplicates() {
         final int[] memberIds = {1, 1, 1};
 
         DefaultClusterMemberGroup.ensureMemberIdsAreUnique(memberIds);

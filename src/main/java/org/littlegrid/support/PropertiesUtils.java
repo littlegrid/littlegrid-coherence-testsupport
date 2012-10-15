@@ -69,7 +69,7 @@ public final class PropertiesUtils {
                 currentProperties.load(url.openStream());
 
                 LOGGER.log(loadedPropertyFileLogLevel,
-                        format("File '%s' found and %s properties loaded", propertiesFilename,
+                        format("File '%s' found and %d properties loaded", propertiesFilename,
                                 currentProperties.size()));
 
                 properties.putAll(currentProperties);

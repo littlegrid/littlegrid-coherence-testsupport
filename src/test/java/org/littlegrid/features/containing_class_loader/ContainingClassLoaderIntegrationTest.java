@@ -31,31 +31,27 @@
 
 package org.littlegrid.features.containing_class_loader;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-import com.tangosol.io.pof.PofReader;
-import com.tangosol.io.pof.PofWriter;
-import com.tangosol.io.pof.PortableObject;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+import com.tangosol.net.cache.AbstractCacheStore;
 import com.tangosol.util.ClassHelper;
-import com.tangosol.util.InvocableMap;
-import com.tangosol.util.processor.AbstractProcessor;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.features.PretendServer;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
-import java.io.IOException;
-import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 
 /**
  * Cluster member actual containing class loader tests.
@@ -76,7 +72,7 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
         for (final int memberId : memberIds) {
             // This cluster member will be a wrapper around another class which is held in a
             // child-first class loader.
-            final ClusterMemberGroup.ClusterMember member = memberGroup.getClusterMember(memberId);
+            final ClusterMember member = memberGroup.getClusterMember(memberId);
 
             assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
 
@@ -127,8 +123,77 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 */
 
     @Test
-    public void usingContainingClassLoaderToGetValue() {
+    public void usingContainingClassLoaderToGetValue()
+            throws Exception {
 
+        final int expectedStoreCount = 10;
+        final int writeDelay = 2;
+
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)
+                .setCacheConfiguration("coherence/littlegrid-test-cache-store-cache-config.xml")
+                .setAdditionalSystemProperty("example.cachestore", CountingCacheStore.class.getName())
+                .setAdditionalSystemProperty("example.write.delay", writeDelay + "s")
+                .buildAndConfigureForStorageDisabledClient();
+
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+
+        for (int i = 0; i < expectedStoreCount; i++) {
+            cache.put(i, i);
+        }
+
+        TimeUnit.SECONDS.sleep(writeDelay + 1); // wait an extra second
+
+        int totalCount = 0;
+
+        for (final ClassLoader classLoader : memberGroup.getActualContainingClassLoaders(
+                memberGroup.getStartedMemberIds())) {
+
+            final Class cacheStore = classLoader.loadClass(CountingCacheStore.class.getName());
+            final int countForMember = (Integer) ClassHelper.invokeStatic(cacheStore, "getStoreCounter", new Object[]{});
+
+            totalCount += countForMember;
+        }
+
+        assertThat(totalCount, is(expectedStoreCount));
+    }
+
+    @Test
+    public void containingClassLoaderWhenNonStartedMemberIdsSpecified() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)
+                .buildAndConfigureForStorageDisabledClient();
+
+        final ClassLoader[] classLoaders = memberGroup.getActualContainingClassLoaders(1, 3, 5, 7);
+
+        assertThat(classLoaders.length, is(1));
+    }
+
+
+    public static class CountingCacheStore extends AbstractCacheStore {
+        private static final AtomicInteger loadCounter = new AtomicInteger();
+        private static final AtomicInteger storeCounter = new AtomicInteger();
+
+        @Override
+        public Object load(final Object key) {
+            return loadCounter.incrementAndGet();
+        }
+
+        @Override
+        public void store(final Object key,
+                          final Object value) {
+
+            System.out.println("store");
+            storeCounter.incrementAndGet();
+        }
+
+        public static int getLoadCounter() {
+            return loadCounter.get();
+        }
+
+        public static int getStoreCounter() {
+            return storeCounter.get();
+        }
     }
 
 /*

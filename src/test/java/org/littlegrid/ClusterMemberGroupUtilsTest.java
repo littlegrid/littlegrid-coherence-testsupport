@@ -106,6 +106,11 @@ public class ClusterMemberGroupUtilsTest {
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public ClassLoader[] getActualContainingClassLoaders(final int... memberIds) {
+            throw new UnsupportedOperationException();
+        }
+
         public static int getShutdownAllInvokedCounter() {
             return shutdownAllInvokedCounter;
         }

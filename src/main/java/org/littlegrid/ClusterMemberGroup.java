@@ -111,9 +111,19 @@ public interface ClusterMemberGroup {
      *
      * @param memberGroup Cluster member group to be merged.
      * @return new size of combined member group.
+     * @since 2.7
      */
     int merge(final ClusterMemberGroup memberGroup);
 
+    /**
+     * Returns the class loaders into which the the cluster members have been loaded - only
+     * class loaders belonging to valid member ids are returned.
+     *
+     * @param memberIds Member ids.
+     * @return class loaders.
+     * @since 2.13
+     */
+    ClassLoader[] getActualContainingClassLoaders(int... memberIds);
 
     /**
      * Cluster member interface - implementations of this class need to provide basic functionality,
