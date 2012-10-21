@@ -293,8 +293,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final int extendProxyCount = getBuilderValueAsInt(EXTEND_PROXY_COUNT_KEY);
         final int jmxMonitorCount = getBuilderValueAsInt(JMX_MONITOR_COUNT_KEY);
 
-        return buildClusterMembers(storageEnabledCount,
-                customConfiguredCount, storageEnabledExtendProxyCount, extendProxyCount, jmxMonitorCount);
+        return buildClusterMembers(storageEnabledCount, customConfiguredCount,
+                storageEnabledExtendProxyCount, extendProxyCount,
+                jmxMonitorCount);
     }
 
     /**
@@ -371,12 +372,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
         LOGGER.info(format(
-                "___ %s %s starting - Storage-enabled: %s, Extend proxy: %s, "
-                        + "Storage-enabled Extend proxy: %s, "
-                        + "Custom configured: %s, JMX monitor: %s ___",
+                "___ %s %s starting - Storage-enabled: %d, Extend proxy: %d, Storage-enabled proxy: %d, "
+                        + "JMX: %d, Custom configured: %d ___",
                 Info.getName(), Info.getVersionNumber(),
-                storageEnabledCount, extendProxyCount,
-                storageEnabledExtendProxyCount, customConfiguredCount, jmxMonitorCount));
+                storageEnabledCount, extendProxyCount, storageEnabledExtendProxyCount,
+                jmxMonitorCount, customConfiguredCount));
 
         final int numberOfThreadsInStartUpPool = getBuilderValueAsInt(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
         final Properties systemProperties = System.getProperties();
@@ -395,9 +395,11 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
-            buildJmxMonitorMembers(jmxMonitorCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
+            buildJmxMonitorMembers(jmxMonitorCount, containerGroup, classPathUrls,
+                    numberOfThreadsInStartUpPool);
 
-            buildExtendProxyMembers(extendProxyCount, containerGroup, classPathUrls, numberOfThreadsInStartUpPool);
+            buildExtendProxyMembers(extendProxyCount, containerGroup, classPathUrls,
+                    numberOfThreadsInStartUpPool);
 
             buildStorageEnabledExtendProxyMembers(storageEnabledExtendProxyCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
@@ -1088,7 +1090,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForStorageEnabled() {
+    Properties getSystemPropertiesForStorageEnabled() {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, true);
@@ -1107,7 +1109,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForJmxMonitor() {
+    Properties getSystemPropertiesForJmxMonitor() {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
@@ -1132,7 +1134,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForCustomConfigured() {
+    Properties getSystemPropertiesForCustomConfigured() {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
@@ -1161,7 +1163,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * @param extendPort Extend port.
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForExtendProxy(final int extendPort) {
+    Properties getSystemPropertiesForExtendProxy(final int extendPort) {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
@@ -1183,7 +1185,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * @param extendPort Extend port.
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForStorageEnabledExtendProxy(final int extendPort) {
+    Properties getSystemPropertiesForStorageEnabledExtendProxy(final int extendPort) {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
@@ -1204,7 +1206,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForStorageDisabledClient() {
+    Properties getSystemPropertiesForStorageDisabledClient() {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         final String clientCacheConfiguration = getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
@@ -1287,7 +1289,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      *
      * @return properties to be applied to system properties.
      */
-    public Properties getSystemPropertiesForExtendProxyClient() {
+    Properties getSystemPropertiesForExtendProxyClient() {
         final Properties properties = new Properties();
 
         final String clientCacheConfiguration = getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);

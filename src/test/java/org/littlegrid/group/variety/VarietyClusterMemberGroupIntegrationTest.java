@@ -99,7 +99,7 @@ public final class VarietyClusterMemberGroupIntegrationTest extends AbstractAfte
                 .setClientOverrideConfiguration(CLIENT_OVERRIDE_CONFIGURATION_FILE)
                 .buildAndConfigureForStorageDisabledClient();
 
-        assertThat(CacheFactory.getCluster().getLocalMember().getMemberName(), is(KNOWN_MEMBER_NAME));
+        assertThat(CacheFactory.ensureCluster().getLocalMember().getMemberName(), is(KNOWN_MEMBER_NAME));
     }
 
     private void performSimplePutSizeGet(final String cacheName) {

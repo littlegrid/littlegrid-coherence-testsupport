@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import com.tangosol.util.ClassHelper;
+import org.littlegrid.CategorisableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
@@ -39,6 +40,7 @@ import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.CategorisableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
  * Delegating cluster member wrapper, loads a class that implements {@link
@@ -130,6 +132,12 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
         try {
             return ClassHelper.invoke(objectToInvokeMethodOn, methodName, new Object[]{});
         } catch (Exception e) {
+            if (e.getCause().getMessage().contains("Error instantiating Filter with name: gzip")) {
+                throw new CategorisableException(
+                        "Please check caches are marked with <autostart>true</autostart> in config",
+                        e, SUSPECTED_AUTOSTART_EXCEPTION);
+            }
+
             throw new IllegalStateException(e);
         }
     }

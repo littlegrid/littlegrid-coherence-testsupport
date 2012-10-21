@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import com.tangosol.net.CacheFactory;
+import org.littlegrid.CategorisableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.support.SystemUtils;
@@ -51,6 +52,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.CategorisableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
 
 /**
  * Default local process cluster member group implementation.
@@ -250,9 +252,10 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         if (memberIdSet.size() != memberIds.length) {
-            throw new IllegalStateException(format("There were %s member ids %s - however only these were "
-                    + "unique member ids %s.  Ensure that the Coherence JAR is on your test class path",
-                    memberIds.length, Arrays.toString(memberIds), memberIdSet));
+            throw new CategorisableException(CHECK_CHILD_FIRST_CLASS_PATH_IN_USE,
+                    format("There were %s member ids %s - however only these were unique member "
+                            + "ids %s.  Ensure that the Coherence JAR is on your test class path",
+                            memberIds.length, Arrays.toString(memberIds), memberIdSet));
         }
     }
 
@@ -344,6 +347,8 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             }
 
             return memberIdsArray;
+        } catch (CategorisableException e) {
+            throw e;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

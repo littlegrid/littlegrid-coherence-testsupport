@@ -29,26 +29,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features;
+package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
+import org.junit.Test;
+
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
- * A pretend server class, used to demonstrate how getting a handle to the 'containing class loader'
- * allows classes to be loaded, objects created and methods invoked that are accessible only to
- * the particular cluster member.
  */
-public class PretendServer {
-    public void start() {
-        System.out.println("Started server in member: " + getCoherenceRunningContext());
-    }
+public class NonAutoStartedServiceCausingExceptionIntegrationTest
+        extends AbstractAfterTestShutdownIntegrationTest {
 
-    public void shutdown() {
-        System.out.println("Stopped server in member: " + getCoherenceRunningContext());
-    }
+    @Test(expected = IllegalStateException.class)
+    public void whatever() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(1)
+                .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-autostart.xml")
+                .buildAndConfigureForStorageDisabledClient();
 
-    private String getCoherenceRunningContext() {
-        return CacheFactory.ensureCluster().getLocalMember().getId() + ", class loader: "
-                + this.getClass().getClassLoader();
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        cache.put("key", "value");
     }
 }

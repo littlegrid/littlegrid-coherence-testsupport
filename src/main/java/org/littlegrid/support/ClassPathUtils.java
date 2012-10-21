@@ -133,7 +133,8 @@ public final class ClassPathUtils {
                     try {
                         classPathUrls.add(new File(partOfClassPath).toURI().toURL());
                     } catch (MalformedURLException e) {
-                        throw new IllegalStateException(e);
+                        throw new IllegalStateException(
+                                format("Part of class path '%s' has a malformed URL", partOfClassPath));
                     }
                 }
             }

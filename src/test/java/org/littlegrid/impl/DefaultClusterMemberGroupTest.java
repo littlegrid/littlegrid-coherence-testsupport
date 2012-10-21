@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import org.junit.Test;
+import org.littlegrid.CategorisableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -44,6 +45,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.CategorisableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
 
 /**
  * Direct starting of cluster members.
@@ -164,11 +166,15 @@ public final class DefaultClusterMemberGroupTest {
         DefaultClusterMemberGroup.ensureMemberIdsAreUnique(memberIds);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void ensureMemberIdsAreUniqueWhenThereAreDuplicates() {
         final int[] memberIds = {1, 1, 1};
 
-        DefaultClusterMemberGroup.ensureMemberIdsAreUnique(memberIds);
+        try {
+            DefaultClusterMemberGroup.ensureMemberIdsAreUnique(memberIds);
+        } catch (CategorisableException e) {
+            assertThat(e.getReasonEnum(), is(CHECK_CHILD_FIRST_CLASS_PATH_IN_USE));
+        }
     }
 
     private static Properties getPopulatedProperties() {

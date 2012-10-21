@@ -1,10 +1,14 @@
-<coherence  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns="http://xmlns.oracle.com/coherence/coherence-operational-config"
-            xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-operational-config coherence-operational-config.xsd">
+<coherence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://xmlns.oracle.com/coherence/coherence-operational-config"
+           xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-operational-config coherence-operational-config.xsd">
 
-<cluster-config>
+    <cluster-config>
         <member-identity>
             <member-name>MemberNameFromOverrideFile</member-name>
         </member-identity>
+        <multicast-listener>
+            <join-timeout-milliseconds system-property="littlegrid.join.timeout.milliseconds">1500
+            </join-timeout-milliseconds>
+        </multicast-listener>
     </cluster-config>
 </coherence>

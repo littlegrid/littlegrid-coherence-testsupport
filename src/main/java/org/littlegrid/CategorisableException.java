@@ -29,26 +29,68 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features;
+package org.littlegrid;
 
-import com.tangosol.net.CacheFactory;
+import static java.lang.String.format;
 
 /**
- * A pretend server class, used to demonstrate how getting a handle to the 'containing class loader'
- * allows classes to be loaded, objects created and methods invoked that are accessible only to
- * the particular cluster member.
+ * Categorisable exception.
+ *
+ * @since 2.13
  */
-public class PretendServer {
-    public void start() {
-        System.out.println("Started server in member: " + getCoherenceRunningContext());
+public class CategorisableException extends RuntimeException {
+    private final ReasonEnum reasonEnum;
+
+    /**
+     * Types of exception reason.
+     */
+    public static enum ReasonEnum {
+        SECURITY_EXCEPTION,
+        SUSPECTED_AUTOSTART_EXCEPTION,
+        UNABLE_TO_SET_BEAN_PROPERTY,
+        CHECK_CHILD_FIRST_CLASS_PATH_IN_USE
     }
 
-    public void shutdown() {
-        System.out.println("Stopped server in member: " + getCoherenceRunningContext());
+    /**
+     * Constructor.
+     *
+     * @param message    Message.
+     * @param cause      Cause of exception.
+     * @param reasonEnum Exception enum if exception is potentially recognisable.
+     */
+    public CategorisableException(final String message,
+                                  final Throwable cause,
+                                  final ReasonEnum reasonEnum) {
+        super(message, cause);
+        this.reasonEnum = reasonEnum;
     }
 
-    private String getCoherenceRunningContext() {
-        return CacheFactory.ensureCluster().getLocalMember().getId() + ", class loader: "
-                + this.getClass().getClassLoader();
+    /**
+     * Constructor.
+     *
+     * @param reasonEnum Exception enum if exception is potentially recognisable.
+     * @param message    Message.
+     */
+    public CategorisableException(final ReasonEnum reasonEnum,
+                                  String message) {
+        super(message);
+        this.reasonEnum = reasonEnum;
+    }
+
+    /**
+     * Returns the suggested exception reason.
+     *
+     * @return suggested reason.
+     */
+    public ReasonEnum getReasonEnum() {
+        return reasonEnum;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return format(format("%s %s", reasonEnum.toString(), getMessage()));
     }
 }

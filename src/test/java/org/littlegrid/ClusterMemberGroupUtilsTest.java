@@ -42,7 +42,7 @@ import static org.junit.Assert.assertThat;
 public class ClusterMemberGroupUtilsTest {
     @Test
     public void attemptToShutdownNullMemberGroup() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(null);
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups((ClusterMemberGroup) null);
     }
 
     @Test

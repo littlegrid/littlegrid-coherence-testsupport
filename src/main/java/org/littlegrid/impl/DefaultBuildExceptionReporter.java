@@ -31,6 +31,7 @@
 
 package org.littlegrid.impl;
 
+import org.littlegrid.CategorisableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.support.ClassPathUtils;
@@ -71,7 +72,9 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
         if (throwable instanceof ClusterMemberGroupBuildException) {
             final ClusterMemberGroupBuildException buildException = (ClusterMemberGroupBuildException) throwable;
 
+            out.println("Build exception");
             outputHeading(out);
+            outputSuggestedExceptionReason(out, buildException.getCause());
             outputJavaHome(out);
             outputClassPath(out);
             outputClassPathInUse(out, buildException.getClassPathUrls());
@@ -88,7 +91,9 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
             outputBuilderKeysAndValues(out, builderKeysAndValues);
             outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMapping);
             outputException(out, throwable.getCause());
+            outputSuggestedExceptionReason(out, buildException.getCause());
         } else {
+            out.println("Exception");
             outputHeading(out);
             outputJavaHome(out);
             outputClassPath(out);
@@ -96,6 +101,15 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
             outputMemory(out);
             outputNetwork(out);
             outputException(out, throwable);
+        }
+    }
+
+    private void outputSuggestedExceptionReason(final PrintStream out,
+                                                final Throwable cause) {
+
+        if (cause instanceof CategorisableException) {
+            out.println(SECTION_DIVIDER);
+            out.println("Possible exception reason: " + cause);
         }
     }
 

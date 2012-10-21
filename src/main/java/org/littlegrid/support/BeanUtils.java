@@ -32,10 +32,12 @@
 package org.littlegrid.support;
 
 import com.tangosol.util.ClassHelper;
+import org.littlegrid.CategorisableException;
 
 import java.util.Properties;
 
 import static java.lang.String.format;
+import static org.littlegrid.CategorisableException.ReasonEnum.UNABLE_TO_SET_BEAN_PROPERTY;
 
 /**
  * Bean utilities class.
@@ -80,8 +82,9 @@ public final class BeanUtils {
                             // Try invoking with a string array as a parameter
                             ClassHelper.invoke(bean, methodName, new Object[]{new String[]{value}});
                         } catch (Exception e4) {
-                            throw new IllegalStateException(format(
-                                "Unable to invoke '%s' to set value to: '%s' due to: %s", methodName, value, e));
+                            throw new CategorisableException(UNABLE_TO_SET_BEAN_PROPERTY,
+                                    format("Unable to invoke '%s' to set value to: '%s' due to: %s",
+                                            methodName, value, e));
                         }
                     }
                 }

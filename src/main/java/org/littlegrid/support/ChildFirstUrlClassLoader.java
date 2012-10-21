@@ -31,12 +31,15 @@
 
 package org.littlegrid.support;
 
+import org.littlegrid.CategorisableException;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static org.littlegrid.CategorisableException.ReasonEnum.SECURITY_EXCEPTION;
 
 /**
  * Child-first URL class-loader, changes the normal class-loading order by attempting
@@ -61,6 +64,7 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
 
     /**
      * {@inheritDoc}
+     *
      * @since 2.11
      */
     @Override
@@ -102,12 +106,14 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                 // Child didn't have the class, delegate to parent class-loader
                 loadedClass = getParent().loadClass(name);
             } catch (SecurityException e) {
-                throw new IllegalStateException(format("Cannot load '%s' , please check your class path as it "
-                        + "should not contain any core JAR files relating to the JRE/JDK such as rt.jar "
-                        + "etc.  Typical reasons for this problem are if your JAVA_HOME environment "
-                        + "variable is different from the JDK configured in your IDE or if you're using "
-                        + "OSGI and some of the OSGI bundled JARs are being included in your class path: '%s'",
-                        name, e));
+                throw new CategorisableException(SECURITY_EXCEPTION,
+                        format("Cannot load '%s' , please check your class path as it "
+                                + "should not contain any core JAR files relating to the JRE/JDK such "
+                                + "as rt.jar etc.  Typical reasons for this problem are if your JAVA_HOME "
+                                + "environment variable is different from the JDK configured in your IDE "
+                                + "or if you're using OSGI and some of the OSGI bundled JARs are being "
+                                + "included in your class path: '%s'",
+                                name, e));
             }
         }
 

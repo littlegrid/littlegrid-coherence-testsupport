@@ -105,7 +105,7 @@ public class DefaultClusterMember implements ClusterMemberGroup.ClusterMember,
      */
     @Override
     public int getLocalMemberId() {
-        return CacheFactory.getCluster().getLocalMember().getId();
+        return CacheFactory.ensureCluster().getLocalMember().getId();
     }
 
     /**
