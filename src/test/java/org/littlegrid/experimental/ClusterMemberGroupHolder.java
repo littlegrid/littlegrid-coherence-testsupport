@@ -1,4 +1,7 @@
-package org.littlegrid;
+package org.littlegrid.experimental;
+
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.logging.Logger;

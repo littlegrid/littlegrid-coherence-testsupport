@@ -45,9 +45,16 @@ public class CategorisableException extends RuntimeException {
      * Types of exception reason.
      */
     public static enum ReasonEnum {
+        /** Exception reason. */
         SECURITY_EXCEPTION,
+
+        /** Exception reason. */
         SUSPECTED_AUTOSTART_EXCEPTION,
+
+        /** Exception reason. */
         UNABLE_TO_SET_BEAN_PROPERTY,
+
+        /** Exception reason. */
         CHECK_CHILD_FIRST_CLASS_PATH_IN_USE
     }
 
@@ -71,8 +78,8 @@ public class CategorisableException extends RuntimeException {
      * @param reasonEnum Exception enum if exception is potentially recognisable.
      * @param message    Message.
      */
-    public CategorisableException(final ReasonEnum reasonEnum,
-                                  String message) {
+    public CategorisableException(final String message,
+                                  final ReasonEnum reasonEnum) {
         super(message);
         this.reasonEnum = reasonEnum;
     }

@@ -391,6 +391,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
 
         try {
+            final long startTime = System.currentTimeMillis();
+
             //TODO: tidy this up, all very similar
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
@@ -407,8 +409,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
             buildCustomConfiguredMembers(customConfiguredCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
-            LOGGER.info(format("___ Group of cluster member(s) started, member Ids: %s ___",
-                    Arrays.toString(containerGroup.getStartedMemberIds())));
+            final long startDuration = System.currentTimeMillis() - startTime;
+
+            LOGGER.info(format("___ Group of cluster member(s) started in %dms, member Ids: %s ___",
+                    startDuration, Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
 

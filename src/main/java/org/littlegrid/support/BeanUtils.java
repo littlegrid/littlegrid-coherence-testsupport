@@ -82,9 +82,10 @@ public final class BeanUtils {
                             // Try invoking with a string array as a parameter
                             ClassHelper.invoke(bean, methodName, new Object[]{new String[]{value}});
                         } catch (Exception e4) {
-                            throw new CategorisableException(UNABLE_TO_SET_BEAN_PROPERTY,
+                            throw new CategorisableException(
                                     format("Unable to invoke '%s' to set value to: '%s' due to: %s",
-                                            methodName, value, e));
+                                            methodName, value, e),
+                                    UNABLE_TO_SET_BEAN_PROPERTY);
                         }
                     }
                 }

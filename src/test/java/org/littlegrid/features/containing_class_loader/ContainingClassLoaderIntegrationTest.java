@@ -35,13 +35,13 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.cache.AbstractCacheStore;
 import com.tangosol.util.ClassHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.features.PretendServer;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -129,41 +129,48 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 */
 
     @Test
-    @Ignore
+//    @Ignore
     public void usingContainingClassLoaderToGetValue()
             throws Exception {
 
-        final int expectedStoreCount = 10;
-        final int writeDelay = 2;
+        final String loadExceptionKeys = "1,9,11";
+        final String storeExceptionKeys = "3,4,5";
+        final int putTotal = 10;
+        final int expectedStoreCount = putTotal - (loadExceptionKeys.split(",").length);
+        final int writeDelaySeconds = 1;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)
                 .setCacheConfiguration("coherence/littlegrid-test-cache-store-cache-config.xml")
-                .setAdditionalSystemProperty("example.cachestore", CountingCacheStore.class.getName())
-                .setAdditionalSystemProperty("example.write.delay", writeDelay + "s")
-                .setAdditionalSystemProperty("littlegrid.stub.cache.store.exception.keys", "3,4,5")
+                .setAdditionalSystemProperty("example.cachestore", StubCacheStore.class.getName())
+                .setAdditionalSystemProperty("example.write.delay", writeDelaySeconds + "s")
+                .setAdditionalSystemProperty("littlegrid.stub.cache.load.exception.keys", loadExceptionKeys)
+                .setAdditionalSystemProperty("littlegrid.stub.cache.load.exception.class.name", IllegalStateException.class.getName())
+                .setAdditionalSystemProperty("littlegrid.stub.cache.store.exception.keys", storeExceptionKeys)
+//                .setAdditionalSystemProperty("littlegrid.stub.cache.store.exception.class.name", IllegalArgumentException.class.getName())
                 .buildAndConfigureForStorageDisabledClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
 
-        for (int i = 0; i < expectedStoreCount; i++) {
+        for (int i = 0; i < putTotal; i++) {
             cache.put(i, i);
         }
 
-        TimeUnit.SECONDS.sleep(writeDelay + 1); // wait an extra second
+        TimeUnit.SECONDS.sleep(writeDelaySeconds + 1); // wait an extra second
 
-        int totalCount = 0;
+        int totalStoreCount = 0;
 
         for (final ClassLoader classLoader : memberGroup.getActualContainingClassLoaders(
                 memberGroup.getStartedMemberIds())) {
 
-            final Class cacheStore = classLoader.loadClass(CountingCacheStore.class.getName());
-            final int countForMember = (Integer) ClassHelper.invokeStatic(cacheStore, "getStoreCounter", new Object[]{});
+            final Class cacheStore = classLoader.loadClass(StubCacheStore.class.getName());
+            final int storeCountForMember = (Integer)
+                    ClassHelper.invokeStatic(cacheStore, "getStoreCounter", new Object[]{});
 
-            totalCount += countForMember;
+            totalStoreCount += storeCountForMember;
         }
 
-        assertThat(totalCount, is(expectedStoreCount));
+        assertThat(totalStoreCount, is(expectedStoreCount));
     }
 
     @Test
@@ -178,33 +185,46 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
     }
 
 
-    public static class CountingCacheStore extends AbstractCacheStore {
-        private static final Logger LOGGER = Logger.getLogger(CountingCacheStore.class.getName());
+    public static class StubCacheStore extends AbstractCacheStore {
+        private static final Logger LOGGER = Logger.getLogger(StubCacheStore.class.getName());
 
         private static final AtomicInteger loadCounter = new AtomicInteger();
         private static final AtomicInteger storeCounter = new AtomicInteger();
 
         private List<String> loadKeysThatWillGenerateExceptions = new ArrayList<String>();
+        private String loadExceptionClassName;
         private List<String> storeKeysThatWillGenerateExceptions = new ArrayList<String>();
+        private String storeExceptionClassName;
 
-        public CountingCacheStore() {
+        public StubCacheStore() {
+            final int memberId = CacheFactory.getCluster().getLocalMember().getId();
+
             final String loadKeys = System.getProperty("littlegrid.stub.cache.load.exception.keys", "");
             loadKeysThatWillGenerateExceptions.addAll(Arrays.asList(loadKeys.split(",")));
+
+            if (loadKeysThatWillGenerateExceptions.size() > 0) {
+                LOGGER.info(format("Member: %d - the following keys will cause exceptions when load is invoked: %s",
+                        memberId, loadKeysThatWillGenerateExceptions));
+
+                loadExceptionClassName = System.getProperty("littlegrid.stub.cache.load.exception.class.name",
+                        UnsupportedOperationException.class.getName());
+            }
 
             final String storeKeys = System.getProperty("littlegrid.stub.cache.store.exception.keys", "");
             storeKeysThatWillGenerateExceptions.addAll(Arrays.asList(storeKeys.split(",")));
 
             if (storeKeysThatWillGenerateExceptions.size() > 0) {
-                LOGGER.info(format("The following keys will cause exceptions when store is invoked: %s",
-                        storeKeysThatWillGenerateExceptions));
+                LOGGER.info(format("Member: %d - the following keys will cause exceptions when store is invoked: %s",
+                        memberId, storeKeysThatWillGenerateExceptions));
+
+                storeExceptionClassName = System.getProperty("littlegrid.stub.cache.store.exception.class.name",
+                        UnsupportedOperationException.class.getName());
             }
         }
 
         @Override
         public Object load(final Object key) {
-            if (loadKeysThatWillGenerateExceptions.contains(key.toString())) {
-                throw new UnsupportedOperationException();
-            }
+            generateExceptionIfConfigured(key, loadKeysThatWillGenerateExceptions, loadExceptionClassName);
 
             return loadCounter.incrementAndGet();
         }
@@ -213,11 +233,8 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
         public void store(final Object key,
                           final Object value) {
 
-            if (storeKeysThatWillGenerateExceptions.contains(key.toString())) {
-                throw new UnsupportedOperationException();
-            }
+            generateExceptionIfConfigured(key, storeKeysThatWillGenerateExceptions, storeExceptionClassName);
 
-            System.out.println("store");
             storeCounter.incrementAndGet();
         }
 
@@ -227,6 +244,30 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 
         public static int getStoreCounter() {
             return storeCounter.get();
+        }
+
+        public void generateExceptionIfConfigured(final Object key,
+                                                  final List<String> keysThatWillGenerateExceptions,
+                                                  final String exceptionClassName) {
+
+            final String unexpectedExceptionMessage = format("Exception occurred whilst generating exception for "
+                    + "specified key '%s', requested exception type to generate '%s'", key, exceptionClassName);
+
+            if (keysThatWillGenerateExceptions.contains(key.toString())) {
+                try {
+                    final Class exceptionClass = this.getClass().getClassLoader().loadClass(exceptionClassName);
+                    final String message = format(
+                            "Key '%s' was configured to throw exception - throwing requested exception", key);
+
+                    throw (RuntimeException) ClassHelper.newInstance(exceptionClass, new Object[]{message});
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalStateException(unexpectedExceptionMessage, e);
+                } catch (InstantiationException e) {
+                    throw new IllegalStateException(unexpectedExceptionMessage, e);
+                } catch (InvocationTargetException e) {
+                    throw new IllegalStateException(unexpectedExceptionMessage, e);
+                }
+            }
         }
     }
 

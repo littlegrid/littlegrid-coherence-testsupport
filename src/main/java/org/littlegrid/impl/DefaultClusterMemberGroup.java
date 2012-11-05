@@ -252,10 +252,11 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         if (memberIdSet.size() != memberIds.length) {
-            throw new CategorisableException(CHECK_CHILD_FIRST_CLASS_PATH_IN_USE,
+            throw new CategorisableException(
                     format("There were %s member ids %s - however only these were unique member "
                             + "ids %s.  Ensure that the Coherence JAR is on your test class path",
-                            memberIds.length, Arrays.toString(memberIds), memberIdSet));
+                            memberIds.length, Arrays.toString(memberIds), memberIdSet),
+                    CHECK_CHILD_FIRST_CLASS_PATH_IN_USE);
         }
     }
 
