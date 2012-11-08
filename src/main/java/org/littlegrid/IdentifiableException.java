@@ -34,11 +34,11 @@ package org.littlegrid;
 import static java.lang.String.format;
 
 /**
- * Categorisable exception.
+ * Identifiable exception.
  *
  * @since 2.13
  */
-public class CategorisableException extends RuntimeException {
+public class IdentifiableException extends RuntimeException {
     private final ReasonEnum reasonEnum;
 
     /**
@@ -55,7 +55,10 @@ public class CategorisableException extends RuntimeException {
         UNABLE_TO_SET_BEAN_PROPERTY,
 
         /** Exception reason. */
-        CHECK_CHILD_FIRST_CLASS_PATH_IN_USE
+        CHECK_CHILD_FIRST_CLASS_PATH_IN_USE,
+
+        /** Exception reason. */
+        CHECK_CACHE_CONFIGURATION_FILE_BEING_USED
     }
 
     /**
@@ -65,9 +68,9 @@ public class CategorisableException extends RuntimeException {
      * @param cause      Cause of exception.
      * @param reasonEnum Exception enum if exception is potentially recognisable.
      */
-    public CategorisableException(final String message,
-                                  final Throwable cause,
-                                  final ReasonEnum reasonEnum) {
+    public IdentifiableException(final String message,
+                                 final Throwable cause,
+                                 final ReasonEnum reasonEnum) {
         super(message, cause);
         this.reasonEnum = reasonEnum;
     }
@@ -78,8 +81,8 @@ public class CategorisableException extends RuntimeException {
      * @param reasonEnum Exception enum if exception is potentially recognisable.
      * @param message    Message.
      */
-    public CategorisableException(final String message,
-                                  final ReasonEnum reasonEnum) {
+    public IdentifiableException(final String message,
+                                 final ReasonEnum reasonEnum) {
         super(message);
         this.reasonEnum = reasonEnum;
     }

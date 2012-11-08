@@ -34,6 +34,8 @@ package org.littlegrid;
 import com.tangosol.net.CacheFactory;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
+import java.io.IOException;
+
 import static java.lang.String.format;
 
 /**
@@ -75,7 +77,8 @@ public final class ClusterMemberGroupUtils {
             } catch (Exception e) {
                 exceptionDuringShutdownCounter++;
 
-                // Ignore and allow looping to try and shutdown any other cluster member groups if running
+                // Ignore for now and carry on looping to try and shutdown any other
+                // cluster member groups that may be running
             }
         }
 
@@ -98,5 +101,41 @@ public final class ClusterMemberGroupUtils {
         } finally {
             shutdownClusterMemberGroups(memberGroups);
         }
+    }
+
+    /**
+     * Launches a littlegrid cluster member group, this technique is useful when an external process
+     * is required - for instance, if launching littlegrid from .Net or perhaps if you want to run
+     * mini-clusters on your development machine and connect to then via an external process such as
+     * WebLogic or Tomcat etc.
+     *
+     * @param args Arguments - this is expected to be the name of a single properties file from
+     *             which the cluster member group configuration should be specified.
+     * @throws IOException - exception.
+     * @since 2.13
+     */
+    public static void main(final String[] args)
+            throws IOException {
+
+        final ClusterMemberGroup memberGroup = launchClusterMemberGroup(args);
+
+        System.out.println();
+        System.out.println("Cluster member group launched, press Enter to shutdown...");
+        System.in.read();
+
+        shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    static ClusterMemberGroup launchClusterMemberGroup(final String[] args) {
+        if (args.length != 1) {
+            System.out.println("Cannot launch cluster member group - please specify a properties file containing "
+                    + "the configuration");
+
+            System.exit(1);
+        }
+
+        System.setProperty(ClusterMemberGroup.Builder.BUILDER_OVERRIDE_KEY, args[0]);
+
+        return newBuilder().buildAndConfigureForNoClient();
     }
 }

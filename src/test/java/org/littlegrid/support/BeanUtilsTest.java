@@ -32,14 +32,14 @@
 package org.littlegrid.support;
 
 import org.junit.Test;
-import org.littlegrid.CategorisableException;
+import org.littlegrid.IdentifiableException;
 
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.CategorisableException.ReasonEnum.UNABLE_TO_SET_BEAN_PROPERTY;
+import static org.littlegrid.IdentifiableException.ReasonEnum.UNABLE_TO_SET_BEAN_PROPERTY;
 
 /**
  * Bean utilities test.
@@ -159,7 +159,7 @@ public final class BeanUtilsTest {
 
         try {
             BeanUtils.multiSetter(new Person(), properties);
-        } catch (CategorisableException e) {
+        } catch (IdentifiableException e) {
             assertThat(e.getReasonEnum(), is(UNABLE_TO_SET_BEAN_PROPERTY));
         }
     }

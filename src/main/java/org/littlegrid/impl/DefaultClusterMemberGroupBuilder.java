@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.support.BeanUtils;
 import org.littlegrid.support.ClassPathUtils;
 import org.littlegrid.support.PropertiesUtils;
@@ -349,6 +350,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureForStorageEnabledMember() {
         final ClusterMemberGroup memberGroup = build();
@@ -413,6 +415,10 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             LOGGER.info(format("___ Group of cluster member(s) started in %dms, member Ids: %s ___",
                     startDuration, Arrays.toString(containerGroup.getStartedMemberIds())));
+        } catch (ClusterMemberGroupBuildException e) {
+            exceptionReporter.report(e, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
+
+            throw e;
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
 

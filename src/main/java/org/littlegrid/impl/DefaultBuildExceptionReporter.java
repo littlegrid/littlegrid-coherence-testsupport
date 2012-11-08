@@ -31,7 +31,7 @@
 
 package org.littlegrid.impl;
 
-import org.littlegrid.CategorisableException;
+import org.littlegrid.IdentifiableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.support.ClassPathUtils;
@@ -107,7 +107,7 @@ public class DefaultBuildExceptionReporter implements ClusterMemberGroup.BuildEx
     private void outputSuggestedExceptionReason(final PrintStream out,
                                                 final Throwable cause) {
 
-        if (cause instanceof CategorisableException) {
+        if (cause instanceof IdentifiableException) {
             out.println(SECTION_DIVIDER);
             out.println("Possible exception reason: " + cause);
         }

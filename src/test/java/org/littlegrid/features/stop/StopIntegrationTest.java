@@ -33,26 +33,21 @@ package org.littlegrid.features.stop;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
-import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.LARGE_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SINGLE_TEST_CLUSTER_SIZE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
-import static org.littlegrid.support.ExtendUtils.getExtendProxyMemberIdThatClientIsConnectedTo;
 
 /**
  * Cluster member group stop tests, for stopping all the members, specific members and
@@ -195,40 +190,6 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 
         assertThatClusterIsExpectedSize(cluster, expectedClusterSizeAfterStop);
-    }
-
-    @Test
-    public void startAndStopExtendProxyThatExtendClientIsConnectedTo() {
-        final int numberOfExtendProxyMembers = MEDIUM_TEST_CLUSTER_SIZE;
-        final int numberOfStorageEnabledMembers = SINGLE_TEST_CLUSTER_SIZE;
-
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
-
-        memberGroup = builder
-                .setStorageEnabledCount(numberOfStorageEnabledMembers)
-                .setExtendProxyCount(numberOfExtendProxyMembers)
-                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
-                .setClientCacheConfiguration(
-                        "coherence/littlegrid-test-extend-client-cache-config-with-multiple-remote-addresses.xml")
-                .setAdditionalSystemProperty("tangosol.coherence.extend.address.2", builder.getWkaAddress())
-                .setAdditionalSystemProperty("tangosol.coherence.extend.port.2", builder.getExtendPort() + 1)
-                .setAdditionalSystemProperty("tangosol.coherence.extend.address.3", builder.getWkaAddress())
-                .setAdditionalSystemProperty("tangosol.coherence.extend.port.3", builder.getExtendPort() + 1)
-                .setLogLevel(6)
-                .buildAndConfigureForExtendClient();
-
-        final InvocationService invocationService =
-                (InvocationService) CacheFactory.getService(INVOCATION_SERVICE_NAME);
-
-        final int memberIdToStop = getExtendProxyMemberIdThatClientIsConnectedTo(invocationService);
-
-        memberGroup.stopMember(memberIdToStop);
-
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
-
-        final int memberNowConnectedTo = getExtendProxyMemberIdThatClientIsConnectedTo(invocationService);
-
-        assertThat(memberNowConnectedTo != memberIdToStop, is(true));
     }
 
     @Test

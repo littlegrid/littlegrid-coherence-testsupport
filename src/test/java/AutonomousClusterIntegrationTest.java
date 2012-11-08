@@ -40,6 +40,7 @@ public class AutonomousClusterIntegrationTest {
     @Test
     public void twoAutonomousClusters() {
         final int numberOfMembers = 2;
+        final int portOffset = 100;
         final int expectedClusterSize = numberOfMembers + 1; // Include this test which will join as a member
 
         ClusterMemberGroup memberGroupCluster1 = null;
@@ -54,7 +55,7 @@ public class AutonomousClusterIntegrationTest {
 
             // The second cluster will need to run on a different port to avoid clustering with
             // the first cluster
-            final int member2WkaPort = builder.getWkaPort() + 100;
+            final int member2WkaPort = builder.getWkaPort() + portOffset;
 
             // Build the second cluster - we will join this cluster through this test by
             // asserting the cluster size

@@ -55,7 +55,7 @@ public class ClassPathUtilsTest {
 
     private static final String JAVA_CLASS_PATH_KEY = "java.class.path";
     private static final String JAVA_CLASS_PATH_VALUE = JAVA_HOME_VALUE + "/lib/deploy.jar" + PATH_SEPARATOR_VALUE
-            + JAVA_HOME_VALUE + "/rt.jar" +PATH_SEPARATOR_VALUE
+            + JAVA_HOME_VALUE + "/rt.jar" + PATH_SEPARATOR_VALUE
             + COHERENCE_JAR + PATH_SEPARATOR_VALUE + OTHER_JAR;
 
     private static final String SUREFIRE_TEST_CLASS_PATH_KEY = "surefire.test.class.path";

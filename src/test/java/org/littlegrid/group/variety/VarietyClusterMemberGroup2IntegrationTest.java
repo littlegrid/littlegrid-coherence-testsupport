@@ -29,27 +29,37 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.group.variety;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Test;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupUtils;
 
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIGURATION_FILE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
 
 /**
+ * Variety of cluster member group tests, useful as a quick baseline check as a variety of
+ * members are used..
  */
-public class NonAutoStartedServiceCausingExceptionIntegrationTest
-        extends AbstractAfterTestShutdownIntegrationTest {
-
-    @Test(expected = IllegalStateException.class)
-    public void whatever() {
+public final class VarietyClusterMemberGroup2IntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    @Test
+    public void extendProxyWithSeparateStorageEnabledMembers() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(1)
-                .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-autostart.xml")
-                .buildAndConfigureForStorageDisabledClient();
+                .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
+                .setExtendProxyCount(1)
+                .setStorageEnabledCount(2)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
+                .buildAndConfigureForExtendClient();
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("key", "value");
+
+        assertThat(cache.size(), is(1));
     }
 }

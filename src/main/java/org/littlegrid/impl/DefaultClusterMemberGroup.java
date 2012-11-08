@@ -32,7 +32,7 @@
 package org.littlegrid.impl;
 
 import com.tangosol.net.CacheFactory;
-import org.littlegrid.CategorisableException;
+import org.littlegrid.IdentifiableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.support.SystemUtils;
@@ -46,18 +46,20 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.CategorisableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
+import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
 
 /**
  * Default local process cluster member group implementation.
  */
 public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
+    private static final int ONE_MB = 1024 * 1024;
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroup.class.getName());
 
     private final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
@@ -252,7 +254,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         if (memberIdSet.size() != memberIds.length) {
-            throw new CategorisableException(
+            throw new IdentifiableException(
                     format("There were %s member ids %s - however only these were unique member "
                             + "ids %s.  Ensure that the Coherence JAR is on your test class path",
                             memberIds.length, Arrays.toString(memberIds), memberIdSet),
@@ -265,17 +267,19 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                                                final Properties systemPropertiesToBeApplied,
                                                final URL[] classPathUrls,
                                                final int numberOfThreadsInStartUpPool) {
-        final int oneMB = 1024 * 1024;
-
         LOGGER.fine(format("About to start %d cluster member(s) in group, using %d threads in pool",
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         LOGGER.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
         LOGGER.info(format("System properties to be set.: %s", new TreeMap(systemPropertiesToBeApplied)));
+        outputMemoryMessage();
+    }
+
+    private static void outputMemoryMessage() {
         LOGGER.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
-                Runtime.getRuntime().maxMemory() / oneMB,
-                Runtime.getRuntime().totalMemory() / oneMB,
-                Runtime.getRuntime().freeMemory() / oneMB));
+                Runtime.getRuntime().maxMemory() / ONE_MB,
+                Runtime.getRuntime().totalMemory() / ONE_MB,
+                Runtime.getRuntime().freeMemory() / ONE_MB));
     }
 
     private DelegatingClusterMemberWrapper getClusterMemberWrapper(final int memberId) {
@@ -348,9 +352,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             }
 
             return memberIdsArray;
-        } catch (CategorisableException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        } catch (ExecutionException e) {
             throw new IllegalStateException(e);
         }
     }

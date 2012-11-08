@@ -32,15 +32,18 @@
 package org.littlegrid.impl;
 
 import com.tangosol.util.ClassHelper;
-import org.littlegrid.CategorisableException;
+import com.tangosol.util.WrapperException;
+import org.littlegrid.IdentifiableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.CategorisableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
+import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CACHE_CONFIGURATION_FILE_BEING_USED;
+import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
  * Delegating cluster member wrapper, loads a class that implements {@link
@@ -132,9 +135,17 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
         try {
             return ClassHelper.invoke(objectToInvokeMethodOn, methodName, new Object[]{});
         } catch (Exception e) {
-            if (e.getCause().getMessage().contains("Error instantiating Filter with name: gzip")) {
-                throw new CategorisableException(
-                        "Please check caches are marked with <autostart>true</autostart> in config",
+            Throwable originalCause = e;
+
+            while (originalCause.getCause() != null) {
+                originalCause = originalCause.getCause();
+            }
+
+            if (originalCause.getMessage().contains("Error instantiating Filter with name: gzip")) {
+                throw new IdentifiableException(
+                        "Please check that at least one of your caches is marked with <autostart>true</autostart> "
+                                + "in the cache configuration file - this is a current littlegrid limitation "
+                                + "",
                         e, SUSPECTED_AUTOSTART_EXCEPTION);
             }
 
@@ -148,6 +159,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
      *
      * @return true if running.
      */
+
     boolean isRunning() {
         return running;
     }

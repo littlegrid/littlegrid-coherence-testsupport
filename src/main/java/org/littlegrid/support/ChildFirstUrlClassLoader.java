@@ -31,7 +31,7 @@
 
 package org.littlegrid.support;
 
-import org.littlegrid.CategorisableException;
+import org.littlegrid.IdentifiableException;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -39,15 +39,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static org.littlegrid.CategorisableException.ReasonEnum.SECURITY_EXCEPTION;
+import static org.littlegrid.IdentifiableException.ReasonEnum.SECURITY_EXCEPTION;
 
 /**
  * Child-first URL class-loader, changes the normal class-loading order by attempting
  * to load the class locally from the child before delegating to the parent.
  */
 public class ChildFirstUrlClassLoader extends URLClassLoader {
-    private static final String CLASS_IN_JAVA_PACKAGE_HIERARCHY = "java.";
-
     private Map<String, URL> loadedResources = new HashMap<String, URL>();
 
     /**
@@ -106,7 +104,7 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                 // Child didn't have the class, delegate to parent class-loader
                 loadedClass = getParent().loadClass(name);
             } catch (SecurityException e) {
-                throw new CategorisableException(
+                throw new IdentifiableException(
                         format("Cannot load '%s' , please check your class path as it "
                                 + "should not contain any core JAR files relating to the JRE/JDK such "
                                 + "as rt.jar etc.  Typical reasons for this problem are if your JAVA_HOME "

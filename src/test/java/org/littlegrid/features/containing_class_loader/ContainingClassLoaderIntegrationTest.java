@@ -188,8 +188,8 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
     public static class StubCacheStore extends AbstractCacheStore {
         private static final Logger LOGGER = Logger.getLogger(StubCacheStore.class.getName());
 
-        private static final AtomicInteger loadCounter = new AtomicInteger();
-        private static final AtomicInteger storeCounter = new AtomicInteger();
+        private static final AtomicInteger LOAD_COUNTER = new AtomicInteger();
+        private static final AtomicInteger STORE_COUNTER = new AtomicInteger();
 
         private List<String> loadKeysThatWillGenerateExceptions = new ArrayList<String>();
         private String loadExceptionClassName;
@@ -226,7 +226,7 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
         public Object load(final Object key) {
             generateExceptionIfConfigured(key, loadKeysThatWillGenerateExceptions, loadExceptionClassName);
 
-            return loadCounter.incrementAndGet();
+            return LOAD_COUNTER.incrementAndGet();
         }
 
         @Override
@@ -235,15 +235,15 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 
             generateExceptionIfConfigured(key, storeKeysThatWillGenerateExceptions, storeExceptionClassName);
 
-            storeCounter.incrementAndGet();
+            STORE_COUNTER.incrementAndGet();
         }
 
         public static int getLoadCounter() {
-            return loadCounter.get();
+            return LOAD_COUNTER.get();
         }
 
         public static int getStoreCounter() {
-            return storeCounter.get();
+            return STORE_COUNTER.get();
         }
 
         public void generateExceptionIfConfigured(final Object key,

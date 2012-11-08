@@ -32,7 +32,7 @@
 package org.littlegrid.impl;
 
 import org.junit.Test;
-import org.littlegrid.CategorisableException;
+import org.littlegrid.IdentifiableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -45,7 +45,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.CategorisableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
+import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
 
 /**
  * Direct starting of cluster members.
@@ -172,7 +172,7 @@ public final class DefaultClusterMemberGroupTest {
 
         try {
             DefaultClusterMemberGroup.ensureMemberIdsAreUnique(memberIds);
-        } catch (CategorisableException e) {
+        } catch (IdentifiableException e) {
             assertThat(e.getReasonEnum(), is(CHECK_CHILD_FIRST_CLASS_PATH_IN_USE));
         }
     }

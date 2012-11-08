@@ -33,26 +33,19 @@ package org.littlegrid.features.exception_reporter;
 
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 /**
  * Default exception report integration tests.
  */
 public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ClusterMemberGroupBuildException.class)
     public void unknownClusterMemberInstanceClassName() {
         // Use an unknown class to cause an exception
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setClusterMemberInstanceClassName("com.a.b.ClusterMember")
                 .setStorageEnabledCount(1)
-                .buildAndConfigureForNoClient();
-    }
-
-    @Test (expected = IllegalStateException.class)
-    public void excludeCoherenceJar() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(2)
-                .setJarsToExcludeFromClassPath("coherence")
                 .buildAndConfigureForNoClient();
     }
 }

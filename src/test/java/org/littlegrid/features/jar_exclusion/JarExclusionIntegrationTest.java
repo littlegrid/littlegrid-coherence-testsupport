@@ -34,6 +34,7 @@ package org.littlegrid.features.jar_exclusion;
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
@@ -58,9 +59,9 @@ public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegr
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ClusterMemberGroupBuildException.class)
     public void startAndShutdownWithCoherenceJarBeingExcluded() {
-        final String jarToExclude = ",, , junit, coherence ,, ";
+        final String jarToExclude = ",, , , coherence ,, ";
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
