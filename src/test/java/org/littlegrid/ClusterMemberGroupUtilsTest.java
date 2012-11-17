@@ -48,8 +48,8 @@ public class ClusterMemberGroupUtilsTest {
     @Test
     public void shutdownMemberGroupThatThrowsAnExceptionDuringItsShutdown() {
         final ClusterMemberGroup[] memberGroups = {
-                new MockExceptionThrowingClusterMemberGroup(),
-                new MockExceptionThrowingClusterMemberGroup()
+                new StubExceptionThrowingClusterMemberGroup(),
+                new StubExceptionThrowingClusterMemberGroup()
         };
 
         try {
@@ -58,7 +58,7 @@ public class ClusterMemberGroupUtilsTest {
             // This is the expected exception
         }
 
-        assertThat(MockExceptionThrowingClusterMemberGroup.getShutdownAllInvokedCounter(), is(memberGroups.length));
+        assertThat(StubExceptionThrowingClusterMemberGroup.getShutdownAllInvokedCounter(), is(memberGroups.length));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class ClusterMemberGroupUtilsTest {
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 
-    public static class MockExceptionThrowingClusterMemberGroup implements ClusterMemberGroup {
+    public static class StubExceptionThrowingClusterMemberGroup implements ClusterMemberGroup {
         private static int shutdownAllInvokedCounter;
 
         @Override

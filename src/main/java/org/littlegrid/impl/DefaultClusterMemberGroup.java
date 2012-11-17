@@ -32,9 +32,9 @@
 package org.littlegrid.impl;
 
 import com.tangosol.net.CacheFactory;
-import org.littlegrid.IdentifiableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
+import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.SystemUtils;
 
 import java.net.URL;
@@ -451,11 +451,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         callbackHandler.doBeforeShutdown();
+        final int memberCount = memberFutures.size();
 
-        LOGGER.info(format("Shutting down %d cluster member(s) in group", memberFutures.size()));
+        LOGGER.info(format("Shutting down %d cluster member(s) in group", memberCount));
 
         try {
-            for (int i = 0; i < memberFutures.size(); i++) {
+            final long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < memberCount; i++) {
                 final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
 
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
@@ -464,8 +467,10 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             }
 
             memberFutures.clear();
+            final long shutdownDuration = System.currentTimeMillis() - startTime;
 
-            LOGGER.info("___ Group of cluster member(s) shutdown ___");
+            LOGGER.info(format("___ Group of %d cluster member(s) shutdown in %dms___",
+                    memberCount, shutdownDuration));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

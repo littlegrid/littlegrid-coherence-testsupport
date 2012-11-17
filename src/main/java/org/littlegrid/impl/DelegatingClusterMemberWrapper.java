@@ -32,17 +32,14 @@
 package org.littlegrid.impl;
 
 import com.tangosol.util.ClassHelper;
-import com.tangosol.util.WrapperException;
-import org.littlegrid.IdentifiableException;
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CACHE_CONFIGURATION_FILE_BEING_USED;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**

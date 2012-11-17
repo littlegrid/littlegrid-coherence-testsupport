@@ -51,11 +51,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
  * Default cluster member group builder implementation.
  */
-public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGroup.Builder {
+public class DefaultClusterMemberGroupBuilder implements Builder {
     private static final String DEFAULT_PROPERTIES_FILENAME =
             "littlegrid/littlegrid-builder-default.properties";
 
@@ -145,10 +146,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
 
-    private Map<String, String> builderKeysAndValues = new HashMap<String, String>();
-    private Properties additionalSystemProperties = new Properties();
-    private Properties builderKeyToSystemPropertyNameMapping = new Properties();
-
+    private final Map<String, String> builderKeysAndValues = new HashMap<String, String>();
+    private final Properties additionalSystemProperties = new Properties();
+    private final Properties builderKeyToSystemPropertyNameMapping = new Properties();
 
     /**
      * Default constructor.
@@ -227,8 +227,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     }
 
     private void loadBuilderKeyToSystemPropertyNameMapping() {
-        builderKeyToSystemPropertyNameMapping =
-                PropertiesUtils.loadProperties(Level.FINE, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME);
+        builderKeyToSystemPropertyNameMapping.putAll(
+                PropertiesUtils.loadProperties(Level.FINE, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME));
 
         final String alternativePropertiesFile = System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
 
@@ -287,7 +287,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         }
     }
 
-    private ClusterMemberGroup build() {
+    protected ClusterMemberGroup build() {
         final int storageEnabledCount = getBuilderValueAsInt(STORAGE_ENABLED_COUNT_KEY);
         final int customConfiguredCount = getBuilderValueAsInt(CUSTOM_CONFIGURED_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
@@ -305,60 +305,51 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
     @Override
     public ClusterMemberGroup buildAndConfigureForNoClient() {
         final ClusterMemberGroup memberGroup = build();
+        final Properties systemProperties = new Properties();
 
-        ((DefaultClusterMemberGroup) memberGroup).startAll();
-
-        return memberGroup;
+        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureForStorageDisabledClient() {
         final ClusterMemberGroup memberGroup = build();
         final Properties systemProperties = getSystemPropertiesForStorageDisabledClient();
 
-        SystemUtils.applyToSystemProperties(systemProperties);
-
-        LOGGER.info(format("System properties set for client: %s", new TreeMap(systemProperties)));
-
-        ((DefaultClusterMemberGroup) memberGroup).startAll();
-
-        return memberGroup;
+        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureForExtendClient() {
         final ClusterMemberGroup memberGroup = build();
         final Properties systemProperties = getSystemPropertiesForExtendProxyClient();
 
-        SystemUtils.applyToSystemProperties(systemProperties);
-
-        LOGGER.info(format("System properties set for client: %s", new TreeMap(systemProperties)));
-
-        ((DefaultClusterMemberGroup) memberGroup).startAll();
-
-        return memberGroup;
+        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureForStorageEnabledMember() {
         final ClusterMemberGroup memberGroup = build();
         final Properties systemProperties = getSystemPropertiesForStorageEnabled();
 
+        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ClusterMemberGroup applyClientOrMemberSystemPropertiesAndStartAll(final ClusterMemberGroup memberGroup,
+                                                                              final Properties systemProperties) {
+
         SystemUtils.applyToSystemProperties(systemProperties);
 
-        LOGGER.info(format("System properties set for member: %s", new TreeMap(systemProperties)));
+        LOGGER.info(format("System properties set for client/member: %s", new TreeMap(systemProperties)));
 
         ((DefaultClusterMemberGroup) memberGroup).startAll();
 
@@ -371,6 +362,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
                                                           final int extendProxyCount,
                                                           final int jmxMonitorCount) {
 
+        final long startTime = System.currentTimeMillis();
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
         LOGGER.info(format(
@@ -393,8 +385,6 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
 
         try {
-            final long startTime = System.currentTimeMillis();
-
             //TODO: tidy this up, all very similar
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
@@ -413,8 +403,9 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
 
             final long startDuration = System.currentTimeMillis() - startTime;
 
-            LOGGER.info(format("___ Group of cluster member(s) started in %dms, member Ids: %s ___",
-                    startDuration, Arrays.toString(containerGroup.getStartedMemberIds())));
+            LOGGER.info(format("___ Group of %d cluster member(s) started in %dms, member Ids are: %s ___",
+                    containerGroup.getStartedMemberIds().length, startDuration,
+                    Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (ClusterMemberGroupBuildException e) {
             exceptionReporter.report(e, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
 
@@ -432,7 +423,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExceptionReporterInstanceClassName(
+    public Builder setExceptionReporterInstanceClassName(
             final String exceptionReportInstanceClassName) {
 
         setBuilderValue(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
@@ -595,7 +586,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCacheConfiguration(final String cacheConfiguration) {
+    public Builder setCacheConfiguration(final String cacheConfiguration) {
         setBuilderValue(CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
@@ -605,7 +596,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setClientCacheConfiguration(final String cacheConfiguration) {
+    public Builder setClientCacheConfiguration(final String cacheConfiguration) {
         setBuilderValue(CLIENT_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
@@ -615,7 +606,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setClientOverrideConfiguration(final String overrideConfiguration) {
+    public Builder setClientOverrideConfiguration(final String overrideConfiguration) {
         setBuilderValue(CLIENT_OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
         return this;
@@ -625,7 +616,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCustomConfiguredCacheConfiguration(final String cacheConfiguration) {
+    public Builder setCustomConfiguredCacheConfiguration(final String cacheConfiguration) {
         setBuilderValue(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
@@ -635,7 +626,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setOverrideConfiguration(final String overrideConfiguration) {
+    public Builder setOverrideConfiguration(final String overrideConfiguration) {
         setBuilderValue(OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
         return this;
@@ -645,7 +636,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setAdditionalSystemProperties(final Properties properties) {
+    public Builder setAdditionalSystemProperties(final Properties properties) {
         additionalSystemProperties.putAll(properties);
 
         return this;
@@ -655,15 +646,15 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setAdditionalSystemProperties(final String commaDelimitedPropertiesFilenames) {
+    public Builder setAdditionalSystemProperties(final String commaDelimitedPropertiesFilenames) {
         setAdditionalSystemProperties(PropertiesUtils.loadProperties(Level.INFO, commaDelimitedPropertiesFilenames));
 
         return this;
     }
 
     @Override
-    public ClusterMemberGroup.Builder setAdditionalSystemProperty(final String key,
-                                                                  final String value) {
+    public Builder setAdditionalSystemProperty(final String key,
+                                               final String value) {
 
         additionalSystemProperties.setProperty(key, value);
 
@@ -674,8 +665,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setAdditionalSystemProperty(final String key,
-                                                                  final int value) {
+    public Builder setAdditionalSystemProperty(final String key,
+                                               final int value) {
 
         setAdditionalSystemProperty(key, Integer.toString(value));
 
@@ -686,8 +677,8 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setAdditionalSystemProperty(final String key,
-                                                                  final boolean value) {
+    public Builder setAdditionalSystemProperty(final String key,
+                                               final boolean value) {
 
         setAdditionalSystemProperty(key, Boolean.toString(value));
 
@@ -698,7 +689,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setStorageEnabledCount(final int numberOfMembers) {
+    public Builder setStorageEnabledCount(final int numberOfMembers) {
         setBuilderValue(STORAGE_ENABLED_COUNT_KEY, numberOfMembers);
 
         return this;
@@ -708,7 +699,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCustomConfiguredCount(final int numberOfMembers) {
+    public Builder setCustomConfiguredCount(final int numberOfMembers) {
         setBuilderValue(CUSTOM_CONFIGURED_COUNT_KEY, numberOfMembers);
 
         return this;
@@ -718,7 +709,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyCount(final int numberOfMembers) {
+    public Builder setStorageEnabledExtendProxyCount(final int numberOfMembers) {
         setBuilderValue(STORAGE_ENABLED_PROXY_COUNT_KEY, numberOfMembers);
 
         return this;
@@ -728,7 +719,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExtendProxyCount(final int numberOfMembers) {
+    public Builder setExtendProxyCount(final int numberOfMembers) {
         setBuilderValue(EXTEND_PROXY_COUNT_KEY, numberOfMembers);
 
         return this;
@@ -738,7 +729,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setJmxMonitorCount(final int numberOfMembers) {
+    public Builder setJmxMonitorCount(final int numberOfMembers) {
         setBuilderValue(JMX_MONITOR_COUNT_KEY, numberOfMembers);
 
         return this;
@@ -748,7 +739,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setLogDestination(final String logDestination) {
+    public Builder setLogDestination(final String logDestination) {
         setBuilderValue(LOG_DESTINATION_KEY, logDestination);
 
         return this;
@@ -758,7 +749,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setClusterName(final String clusterName) {
+    public Builder setClusterName(final String clusterName) {
         setBuilderValue(CLUSTER_NAME_KEY, clusterName);
 
         return this;
@@ -768,7 +759,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setLogLevel(final int logLevel) {
+    public Builder setLogLevel(final int logLevel) {
         setBuilderValue(LOG_LEVEL_KEY, logLevel);
 
         return this;
@@ -778,7 +769,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCustomConfiguredRoleName(final String roleName) {
+    public Builder setCustomConfiguredRoleName(final String roleName) {
         setBuilderValue(CUSTOM_CONFIGURED_ROLE_NAME_KEY, roleName);
 
         return this;
@@ -788,7 +779,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setStorageEnabledRoleName(final String roleName) {
+    public Builder setStorageEnabledRoleName(final String roleName) {
         setBuilderValue(STORAGE_ENABLED_ROLE_NAME_KEY, roleName);
 
         return this;
@@ -798,7 +789,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
+    public Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
         setBuilderValue(STORAGE_ENABLED_PROXY_ROLE_NAME_KEY, roleName);
 
         return this;
@@ -808,7 +799,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExtendProxyRoleName(final String roleName) {
+    public Builder setExtendProxyRoleName(final String roleName) {
         setBuilderValue(EXTEND_PROXY_ROLE_NAME_KEY, roleName);
 
         return this;
@@ -818,7 +809,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setJmxMonitorRoleName(final String roleName) {
+    public Builder setJmxMonitorRoleName(final String roleName) {
         setBuilderValue(JMX_MONITOR_ROLE_NAME_KEY, roleName);
 
         return this;
@@ -828,7 +819,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setStorageDisabledClientRoleName(final String roleName) {
+    public Builder setStorageDisabledClientRoleName(final String roleName) {
         setBuilderValue(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY, roleName);
 
         return this;
@@ -838,7 +829,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExtendClientRoleName(final String roleName) {
+    public Builder setExtendClientRoleName(final String roleName) {
         setBuilderValue(EXTEND_CLIENT_ROLE_NAME_KEY, roleName);
 
         return this;
@@ -848,7 +839,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setClusterMemberInstanceClassName(final String clusterMemberInstanceClassName) {
+    public Builder setClusterMemberInstanceClassName(final String clusterMemberInstanceClassName) {
         setBuilderValue(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY, clusterMemberInstanceClassName);
 
         return this;
@@ -858,7 +849,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCustomConfiguredClusterMemberInstanceClassName(
+    public Builder setCustomConfiguredClusterMemberInstanceClassName(
             final String clusterMemberInstanceClassName) {
 
         setBuilderValue(CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY,
@@ -871,7 +862,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setJarsToExcludeFromClassPath(final String... jarsToExcludeFromClassPath) {
+    public Builder setJarsToExcludeFromClassPath(final String... jarsToExcludeFromClassPath) {
         setBuilderValue(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
                 stringArrayToCommaDelimitedString(jarsToExcludeFromClassPath));
 
@@ -882,7 +873,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCoreJarsToExcludeFromClassPath(
+    public Builder setCoreJarsToExcludeFromClassPath(
             final String... coreJarsToExcludeFromClassPath) {
 
         setBuilderValue(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
@@ -912,7 +903,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setWkaAddress(final String wkaAddress) {
+    public Builder setWkaAddress(final String wkaAddress) {
         setBuilderValue(WKA_ADDRESS_KEY, wkaAddress);
 
         return this;
@@ -930,7 +921,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setWkaPort(final int wkaPort) {
+    public Builder setWkaPort(final int wkaPort) {
         setBuilderValue(WKA_PORT_KEY, wkaPort);
 
         return this;
@@ -948,7 +939,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setExtendPort(final int extendPort) {
+    public Builder setExtendPort(final int extendPort) {
         setBuilderValue(EXTEND_PORT_KEY, extendPort);
 
         return this;
@@ -966,7 +957,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setBuilderProperties(final Properties properties) {
+    public Builder setBuilderProperties(final Properties properties) {
         BeanUtils.multiSetter(this, properties);
 
         return this;
@@ -976,7 +967,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setBuilderProperties(final String commaDelimitedPropertiesFilenames) {
+    public Builder setBuilderProperties(final String commaDelimitedPropertiesFilenames) {
         setBuilderProperties(PropertiesUtils.loadProperties(Level.INFO, commaDelimitedPropertiesFilenames));
 
         return this;
@@ -986,7 +977,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setBuilderProperties(final String... propertiesFilenames) {
+    public Builder setBuilderProperties(final String... propertiesFilenames) {
         setBuilderProperties(PropertiesUtils.loadProperties(Level.INFO, propertiesFilenames));
 
         return this;
@@ -996,7 +987,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setTtl(final int ttl) {
+    public Builder setTtl(final int ttl) {
         setBuilderValue(TTL_KEY, ttl);
 
         return this;
@@ -1006,7 +997,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
+    public Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
         setBuilderValue(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY, numberOfThreadsInStartUpPool);
 
         return this;
@@ -1016,7 +1007,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDuration35x(final int sleepAfterStopDuration) {
+    public Builder setSuggestedSleepAfterStopDuration35x(final int sleepAfterStopDuration) {
         setBuilderValue(SLEEP_AFTER_STOP_DURATION_35X_KEY, sleepAfterStopDuration);
 
         return this;
@@ -1026,7 +1017,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDuration36x(final int sleepAfterStopDuration) {
+    public Builder setSuggestedSleepAfterStopDuration36x(final int sleepAfterStopDuration) {
         setBuilderValue(SLEEP_AFTER_STOP_DURATION_36X_KEY, sleepAfterStopDuration);
 
         return this;
@@ -1036,7 +1027,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSuggestedSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
+    public Builder setSuggestedSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
         setBuilderValue(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY, sleepAfterStopDuration);
 
         return this;
@@ -1046,7 +1037,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setFastStartJoinTimeoutMilliseconds(final long joinTimeoutMilliseconds) {
+    public Builder setFastStartJoinTimeoutMilliseconds(final long joinTimeoutMilliseconds) {
         setBuilderValue(FAST_START_JOIN_TIMEOUT_MILLISECONDS, joinTimeoutMilliseconds);
 
         return this;
@@ -1056,7 +1047,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setCallbackHandlerInstanceClassName(
+    public Builder setCallbackHandlerInstanceClassName(
             final String callbackHandlerInstanceClassName) {
 
         setBuilderValue(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY, callbackHandlerInstanceClassName);
@@ -1068,7 +1059,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setSiteName(final String siteName) {
+    public Builder setSiteName(final String siteName) {
         setBuilderValue(SITE_NAME_KEY, siteName);
 
         return this;
@@ -1078,7 +1069,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setRackName(final String rackName) {
+    public Builder setRackName(final String rackName) {
         setBuilderValue(RACK_NAME_KEY, rackName);
 
         return this;
@@ -1088,7 +1079,7 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
      * {@inheritDoc}
      */
     @Override
-    public ClusterMemberGroup.Builder setMachineName(final String machineName) {
+    public Builder setMachineName(final String machineName) {
         setBuilderValue(MACHINE_NAME_KEY, machineName);
 
         return this;
@@ -1384,5 +1375,49 @@ public final class DefaultClusterMemberGroupBuilder implements ClusterMemberGrou
         if (value != null && value.trim().length() > 0) {
             properties.setProperty(key, value);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+
+        final DefaultClusterMemberGroupBuilder otherBuilder = (DefaultClusterMemberGroupBuilder) other;
+
+        return additionalSystemProperties.equals(otherBuilder.additionalSystemProperties)
+                && builderKeyToSystemPropertyNameMapping.equals(otherBuilder.builderKeyToSystemPropertyNameMapping)
+                && builderKeysAndValues.equals(otherBuilder.builderKeysAndValues);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int seed = 31;
+
+        int result = builderKeysAndValues != null ? builderKeysAndValues.hashCode() : 0;
+
+        result = seed * result + (additionalSystemProperties != null
+                ? additionalSystemProperties.hashCode() : 0);
+
+        result = seed * result + (builderKeyToSystemPropertyNameMapping != null
+                ? builderKeyToSystemPropertyNameMapping.hashCode() : 0);
+
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return builderKeysAndValues.toString() + "!" + additionalSystemProperties.toString()
+                + "!" + builderKeyToSystemPropertyNameMapping.toString();
     }
 }

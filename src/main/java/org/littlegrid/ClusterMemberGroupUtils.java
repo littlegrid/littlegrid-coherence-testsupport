@@ -35,13 +35,18 @@ import com.tangosol.net.CacheFactory;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
+import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
  * Cluster member group utilities.
  */
 public final class ClusterMemberGroupUtils {
+    private static Map<Builder, Integer> activeBuilders = new ConcurrentHashMap<Builder, Integer>();
+
     /**
      * Private constructor to prevent creation.
      */
@@ -53,7 +58,7 @@ public final class ClusterMemberGroupUtils {
      *
      * @return builder.
      */
-    public static ClusterMemberGroup.Builder newBuilder() {
+    public static Builder newBuilder() {
         return new DefaultClusterMemberGroupBuilder();
     }
 
@@ -120,7 +125,7 @@ public final class ClusterMemberGroupUtils {
         final ClusterMemberGroup memberGroup = launchClusterMemberGroup(args);
 
         System.out.println();
-        System.out.println("Cluster member group launched, press Enter to shutdown...");
+        System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process...");
         System.in.read();
 
         shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
@@ -134,7 +139,7 @@ public final class ClusterMemberGroupUtils {
             System.exit(1);
         }
 
-        System.setProperty(ClusterMemberGroup.Builder.BUILDER_OVERRIDE_KEY, args[0]);
+        System.setProperty(Builder.BUILDER_OVERRIDE_KEY, args[0]);
 
         return newBuilder().buildAndConfigureForNoClient();
     }

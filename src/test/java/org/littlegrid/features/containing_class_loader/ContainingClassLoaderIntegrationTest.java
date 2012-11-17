@@ -129,7 +129,17 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 */
 
     @Test
-//    @Ignore
+    public void containingClassLoaderWhenNonStartedMemberIdsSpecified() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)
+                .buildAndConfigureForStorageDisabledClient();
+
+        final ClassLoader[] classLoaders = memberGroup.getActualContainingClassLoaders(1, 3, 5, 7);
+
+        assertThat(classLoaders.length, is(1));
+    }
+
+    @Test
     public void usingContainingClassLoaderToGetValue()
             throws Exception {
 
@@ -144,10 +154,8 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
                 .setCacheConfiguration("coherence/littlegrid-test-cache-store-cache-config.xml")
                 .setAdditionalSystemProperty("example.cachestore", StubCacheStore.class.getName())
                 .setAdditionalSystemProperty("example.write.delay", writeDelaySeconds + "s")
-                .setAdditionalSystemProperty("littlegrid.stub.cache.load.exception.keys", loadExceptionKeys)
-                .setAdditionalSystemProperty("littlegrid.stub.cache.load.exception.class.name", IllegalStateException.class.getName())
                 .setAdditionalSystemProperty("littlegrid.stub.cache.store.exception.keys", storeExceptionKeys)
-//                .setAdditionalSystemProperty("littlegrid.stub.cache.store.exception.class.name", IllegalArgumentException.class.getName())
+                .setAdditionalSystemProperty("littlegrid.stub.cache.store.exception.class.name", IllegalArgumentException.class.getName())
                 .buildAndConfigureForStorageDisabledClient();
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
@@ -172,18 +180,6 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 
         assertThat(totalStoreCount, is(expectedStoreCount));
     }
-
-    @Test
-    public void containingClassLoaderWhenNonStartedMemberIdsSpecified() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)
-                .buildAndConfigureForStorageDisabledClient();
-
-        final ClassLoader[] classLoaders = memberGroup.getActualContainingClassLoaders(1, 3, 5, 7);
-
-        assertThat(classLoaders.length, is(1));
-    }
-
 
     public static class StubCacheStore extends AbstractCacheStore {
         private static final Logger LOGGER = Logger.getLogger(StubCacheStore.class.getName());

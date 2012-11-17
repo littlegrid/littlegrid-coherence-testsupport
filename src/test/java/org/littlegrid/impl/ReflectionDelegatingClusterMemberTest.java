@@ -51,7 +51,7 @@ public final class ReflectionDelegatingClusterMemberTest {
     @Test
     public void operateDelegate() {
         final ReflectionDelegatingClusterMember delegatingClusterMember = new ReflectionDelegatingClusterMember()
-                .setDelegateInstanceClassName(MockDelegateClusterMember.class.getName())
+                .setDelegateInstanceClassName(StubDelegateClusterMember.class.getName())
                 .setStartMethodName("myStart")
                 .setShutdownMethodName("myShutdown")
                 .setStopMethodName("myStop")
@@ -68,10 +68,10 @@ public final class ReflectionDelegatingClusterMemberTest {
     }
 
     /**
-     * Simple mock delegate that increments a counter each time a method is invoked, allowing
+     * Simple stub delegate that increments a counter each time a method is invoked, allowing
      * for the total to be checked.
      */
-    public static class MockDelegateClusterMember {
+    public static class StubDelegateClusterMember {
         private int count;
 
         public void myStart() {

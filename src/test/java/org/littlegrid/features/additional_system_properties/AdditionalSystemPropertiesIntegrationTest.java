@@ -54,13 +54,21 @@ public class AdditionalSystemPropertiesIntegrationTest extends AbstractAfterTest
 
     @Test
     public void additionalSystemProperty() {
-        final String expectedKey = "additionalSystemPropertyKey";
-        final String expectedValue = "additionalSystemPropertyValue";
+        final String expectedKeyForString = "additionalSystemPropertyKeyForString";
+        final String expectedValueForString = "additionalSystemPropertyValueForString";
+        final String expectedKeyForInt = "additionalSystemPropertyKeyForInt";
+        final int expectedValueForInt = 1;
+        final String expectedKeyForBoolean = "additionalSystemPropertyKeyForBoolean";
+        final boolean expectedValueForBoolean = true;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setAdditionalSystemProperty(expectedKey, expectedValue)
+                .setAdditionalSystemProperty(expectedKeyForString, expectedValueForString)
+                .setAdditionalSystemProperty(expectedKeyForInt, expectedValueForInt)
+                .setAdditionalSystemProperty(expectedKeyForBoolean, expectedValueForBoolean)
                 .buildAndConfigureForStorageDisabledClient();
 
-        assertThat(System.getProperty(expectedKey), is(expectedValue));
+        assertThat(System.getProperty(expectedKeyForString), is(expectedValueForString));
+        assertThat(Integer.valueOf(System.getProperty(expectedKeyForInt)), is(expectedValueForInt));
+        assertThat(Boolean.valueOf(System.getProperty(expectedKeyForBoolean)), is(expectedValueForBoolean));
     }
 }

@@ -216,9 +216,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void coherenceSystemPropertyBuilderSettings() {
-        /*
-        setClientOverrideConfiguration
-         */
         final String expectedCacheConfiguration = "cache-configuration.xml";
         final String expectedClientCacheConfiguration = "client-cache-configuration.xml";
         final String expectedOverrideConfiguration = "override-configuration.xml";
@@ -326,6 +323,29 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(EXTEND_ENABLED_KEY), nullValue());
     }
 
+    @Test
+    @Ignore
+    public void equalsWhenSame() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Test
+    @Ignore
+    public void equalsWhenDifferent() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Test
+    @Ignore
+    public void hashCodeWhenSame() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Test
+    @Ignore
+    public void hashCodeWhenDifferent() {
+        throw new UnsupportedOperationException();
+    }
 
     @Test
     @Ignore
