@@ -154,7 +154,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        LOGGER.info(format("___ %s %s - initialising builder", Info.getName(), Info.getVersionNumber()) + " ___");
+        LOGGER.info(format("___ %s %s (%s) - initialising builder ___",
+                Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org"));
 
         loadAndSetBuilderKeysAndValues();
         loadBuilderKeyToSystemPropertyNameMapping();
