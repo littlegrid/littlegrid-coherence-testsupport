@@ -119,6 +119,16 @@ public class ClusterMemberGroupUtilsTest {
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public int getWkaPort() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getExtendPort() {
+            throw new UnsupportedOperationException();
+        }
+
         public static int getShutdownAllInvokedCounter() {
             return shutdownAllInvokedCounter;
         }

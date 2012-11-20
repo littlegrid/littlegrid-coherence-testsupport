@@ -46,11 +46,12 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
 /**
  * Cluster member group WKA tests.
  */
-public final class WkaIntegrationTest {
-    private static final Logger LOGGER = Logger.getLogger(WkaIntegrationTest.class.getName());
+public final class WkaAndExtendPortIntegrationTest {
+    private static final Logger LOGGER = Logger.getLogger(WkaAndExtendPortIntegrationTest.class.getName());
 
     @Test
-    public void twoSmallMemberGroupsWithDifferentWkas() {
+    public void twoSmallMemberGroupsWithDifferentWkaAndExtendPorts() {
+        final int offset = 100;
         final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
@@ -58,16 +59,21 @@ public final class WkaIntegrationTest {
         ClusterMemberGroup memberGroup2 = null;
 
         try {
-            final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(numberOfMembers);
-            memberGroup1 = builder.buildAndConfigureForNoClient();
+            memberGroup1 = ClusterMemberGroupUtils.newBuilder()
+                    .setStorageEnabledExtendProxyCount(numberOfMembers)
+                    .buildAndConfigureForNoClient();
 
-            final int member2WkaPort = builder.getWkaPort() + 100;
-            LOGGER.warning(format("A different WKA port of %s has been configured for a WKA test", member2WkaPort));
+            final int memberGroup2WkaPort = memberGroup1.getWkaPort() + offset;
+            final int memberGroup2ExtendPort = memberGroup1.getExtendPort() + offset;
+
+            LOGGER.warning(format(
+                    "A different WKA port of %s has been configured for a WKA test, along with Extend port %s",
+                    memberGroup2WkaPort, memberGroup2ExtendPort));
 
             memberGroup2 = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(numberOfMembers)
-                    .setWkaPort(member2WkaPort)
+                    .setStorageEnabledExtendProxyCount(numberOfMembers)
+                    .setWkaPort(memberGroup2WkaPort)
+                    .setExtendPort(memberGroup2ExtendPort)
                     .buildAndConfigureForStorageDisabledClient();
 
             assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);

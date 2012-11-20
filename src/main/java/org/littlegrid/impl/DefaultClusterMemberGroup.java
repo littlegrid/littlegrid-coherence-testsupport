@@ -71,6 +71,8 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private int sleepAfterStopDuration35x;
     private int sleepAfterStopDuration36x;
     private int sleepAfterStopDurationDefault;
+    private final int wkaPort;
+    private final int extendPort;
 
 
     /**
@@ -84,7 +86,11 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
                                      final int sleepAfterStopDuration35x,
                                      final int sleepAfterStopDuration36x,
-                                     final int sleepAfterStopDurationDefault) {
+                                     final int sleepAfterStopDurationDefault,
+                                     final int wkaPort,
+                                     final int extendPort) {
+        this.wkaPort = wkaPort;
+        this.extendPort = extendPort;
 
         if (callbackHandler == null) {
             throw new IllegalArgumentException("Callback handler cannot be null");
@@ -131,6 +137,22 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         return classLoaders.toArray(new ClassLoader[classLoaders.size()]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getWkaPort() {
+        return wkaPort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getExtendPort() {
+        return extendPort;
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
@@ -444,7 +466,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             memberFutures.clear();
             final long shutdownDuration = System.currentTimeMillis() - startTime;
 
-            LOGGER.info(format("___ Group of %d cluster member(s) shutdown in %dms___",
+            LOGGER.info(format("___ Group of %d cluster member(s) shutdown in %dms ___",
                     memberCount, shutdownDuration));
         } catch (Exception e) {
             throw new IllegalStateException(e);

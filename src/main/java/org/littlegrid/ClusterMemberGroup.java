@@ -126,6 +126,25 @@ public interface ClusterMemberGroup {
     ClassLoader[] getActualContainingClassLoaders(int... memberIds);
 
     /**
+     * Returns the well-known address port that the cluster member group had used to establish
+     * the cluster - this is useful for working out what value was and then subsequently
+     * setting it to a different number when running multiple autonomous clusters.
+     *
+     * @return WKA port.
+     * @since 2.14
+     */
+    int getWkaPort();
+
+    /**
+     * Returns the Extend proxy port, for working out what the default value is and then
+     * subsequently setting it to a different number when running multiple proxy servers.
+     *
+     * @return Extend port.
+     * @since 2.14
+     */
+    int getExtendPort();
+
+    /**
      * Cluster member interface - implementations of this class need to provide basic functionality,
      * so they may be controlled by the {@link ClusterMemberGroup}
      * implementations - typically the default implementation of this class should suffice for most
@@ -565,7 +584,9 @@ public interface ClusterMemberGroup {
         /**
          * Returns the well-known address port, this is useful for working out what the default value
          * is and then subsequently setting it to a different number when running multiple autonomous
-         * clusters.
+         * clusters - since 2.14, it is typically more convenient to get the WKA port from one
+         * cluster member group in order to then offset it for another, such as
+         * <code>setWkaPort(memberGroup1.getWkaPort() + 100).
          *
          * @return WKA port.
          */
@@ -582,7 +603,10 @@ public interface ClusterMemberGroup {
 
         /**
          * Returns the Extend proxy port, for working out what the default value is and then
-         * subsequently setting it to a different number when running multiple proxy servers.
+         * subsequently setting it to a different number when running multiple proxy servers
+         * - since 2.14, it is typically more convenient to get the Extend port from one
+         * cluster member group in order to then offset it for another, such as
+         * <code>setExtendPort(memberGroup1.getExtendPort() + 100).
          *
          * @return Extend port.
          */

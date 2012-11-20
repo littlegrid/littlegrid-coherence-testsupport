@@ -579,8 +579,11 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final int duration35x = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_35X_KEY);
         final int duration36x = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_36X_KEY);
         final int durationDefault = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
+        final int wkaPort = getBuilderValueAsInt(WKA_PORT_KEY);
+        final int extendPort = getBuilderValueAsInt(EXTEND_PORT_KEY);
 
-        return new DefaultClusterMemberGroup(createCallbackHandler(), duration35x, duration36x, durationDefault);
+        return new DefaultClusterMemberGroup(createCallbackHandler(), duration35x, duration36x,
+                durationDefault, wkaPort, extendPort);
     }
 
     /**

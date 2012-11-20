@@ -47,15 +47,14 @@ public class AutonomousClusterIntegrationTest {
         ClusterMemberGroup memberGroupCluster2 = null;
 
         try {
-            final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(numberOfMembers);
-
             // Build the first cluster (we won't actually be connecting to this one)
-            memberGroupCluster1 = builder.buildAndConfigureForNoClient();
+            memberGroupCluster1 = ClusterMemberGroupUtils.newBuilder()
+                    .setStorageEnabledCount(numberOfMembers)
+                    .buildAndConfigureForNoClient();
 
             // The second cluster will need to run on a different port to avoid clustering with
             // the first cluster
-            final int member2WkaPort = builder.getWkaPort() + portOffset;
+            final int member2WkaPort = memberGroupCluster1.getWkaPort() + portOffset;
 
             // Build the second cluster - we will join this cluster through this test by
             // asserting the cluster size
