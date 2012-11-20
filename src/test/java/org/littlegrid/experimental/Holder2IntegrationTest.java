@@ -1,6 +1,5 @@
 package org.littlegrid.experimental;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
@@ -14,25 +13,37 @@ import static org.littlegrid.ClusterMemberGroup.Builder;
 /**
  *
  */
-@Ignore
-public class WhateverIntegrationTest {
-    private static final Map<String, Whatever> activeMemberGroups =
-            new HashMap<String, Whatever>();
+//@Ignore
+public class Holder2IntegrationTest {
+    private static final Map<String, CountingClusterMemberGroupHolder> activeMemberGroups =
+            new HashMap<String, CountingClusterMemberGroupHolder>();
 
     @Test
     public void whatever() {
-        ClusterMemberGroup memberGroup = null;
+        ClusterMemberGroup memberGroup1 = null;
+        ClusterMemberGroup memberGroup2 = null;
+        ClusterMemberGroup memberGroup3 = null;
+        ClusterMemberGroup memberGroup4 = null;
 
         try {
-            memberGroup = newBuilder()
+            memberGroup1 = newBuilder()
                     .setStorageEnabledCount(1)
                     .buildAndConfigureForStorageDisabledClient();
 
-            memberGroup = newBuilder()
+            memberGroup2 = newBuilder()
                     .setStorageEnabledCount(1)
                     .buildAndConfigureForStorageDisabledClient();
+
+            memberGroup3 = newBuilder()
+                    .setStorageEnabledCount(1)
+                    .buildAndConfigureForStorageDisabledClient();
+
+            memberGroup4 = newBuilder()
+                    .setStorageEnabledCount(1)
+                    .setExtendProxyCount(1)
+                    .buildAndConfigureForStorageDisabledClient();
         } finally {
-            shutdownClusterMemberGroups(memberGroup);
+            shutdownClusterMemberGroups(memberGroup1, memberGroup2, memberGroup3, memberGroup4);
         }
     }
 
@@ -48,11 +59,11 @@ public class WhateverIntegrationTest {
         }
     }
 
-    public class Whatever {
+    public class CountingClusterMemberGroupHolder {
         private ClusterMemberGroup memberGroup;
         private AtomicInteger counter = new AtomicInteger();
 
-        public Whatever(final ClusterMemberGroup memberGroup) {
+        public CountingClusterMemberGroupHolder(final ClusterMemberGroup memberGroup) {
             this.memberGroup = memberGroup;
         }
 
@@ -70,37 +81,37 @@ public class WhateverIntegrationTest {
     }
 
     public class ReferenceCountingClusterMemberGroupBuilder extends DefaultClusterMemberGroupBuilder {
-        private final Map<String, Whatever> activeMemberGroups;
+        private final Map<String, CountingClusterMemberGroupHolder> activeMemberGroups;
 
-        public ReferenceCountingClusterMemberGroupBuilder(final Map<String, Whatever> activeMemberGroups) {
+        public ReferenceCountingClusterMemberGroupBuilder(final Map<String, CountingClusterMemberGroupHolder> activeMemberGroups) {
             this.activeMemberGroups = activeMemberGroups;
         }
 
         @Override
         protected ClusterMemberGroup build() {
             final String key = this.toString();
-            Whatever whatever = activeMemberGroups.get(key);
+            CountingClusterMemberGroupHolder countingClusterMemberGroupHolder = activeMemberGroups.get(key);
 
-            if (whatever == null) {
+            if (countingClusterMemberGroupHolder == null) {
                 System.out.println("About to really build - BUILD");
 
                 final ClusterMemberGroup memberGroup = super.build();
 
-                whatever = new Whatever(memberGroup);
-                whatever.incrementAndGet();
+                countingClusterMemberGroupHolder = new CountingClusterMemberGroupHolder(memberGroup);
+                countingClusterMemberGroupHolder.incrementAndGet();
 
-                activeMemberGroups.put(key, whatever);
+                activeMemberGroups.put(key, countingClusterMemberGroupHolder);
 
                 return memberGroup;
             } else {
                 System.out.println("About to just use an existing one - REUSE");
 
-                whatever = activeMemberGroups.get(key);
-                whatever.incrementAndGet();
+                countingClusterMemberGroupHolder = activeMemberGroups.get(key);
+                countingClusterMemberGroupHolder.incrementAndGet();
 
-                activeMemberGroups.put(key, whatever);
+                activeMemberGroups.put(key, countingClusterMemberGroupHolder);
 
-                return whatever.getMemberGroup();
+                return countingClusterMemberGroupHolder.getMemberGroup();
             }
         }
     }

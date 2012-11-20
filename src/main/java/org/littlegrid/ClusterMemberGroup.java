@@ -553,7 +553,7 @@ public interface ClusterMemberGroup {
 
         /**
          * Sets the well-known address port which is to be used, typically the default value will
-         * suffice, but when the need to run with two separate autonomous clusters is required,
+         * suffice, but when the need to run with multiple separate autonomous clusters is required,
          * then this value will need to be changed for one of the clusters - otherwise all the
          * cluster members will simply join the same cluster.
          *
@@ -563,8 +563,8 @@ public interface ClusterMemberGroup {
         Builder setWkaPort(int wkaPort);
 
         /**
-         * Returns the well-known port, this is useful for working out what the default value is
-         * and then subsequently setting it to a different number when running two autonomous
+         * Returns the well-known address port, this is useful for working out what the default value
+         * is and then subsequently setting it to a different number when running multiple autonomous
          * clusters.
          *
          * @return WKA port.

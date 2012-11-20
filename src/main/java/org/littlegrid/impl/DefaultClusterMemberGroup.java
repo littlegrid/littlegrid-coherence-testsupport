@@ -288,9 +288,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         try {
-            for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
-
+            for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
                 if (memberWrapper.isRunning() && memberWrapper.getLocalMemberId() == memberId) {
@@ -309,40 +307,19 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public int[] getStartedMemberIds() {
-        try {
-            final List<Integer> memberIds = new ArrayList<Integer>();
-
-            for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
-
-                final DelegatingClusterMemberWrapper memberWrapper = task.get();
-
-                if (memberWrapper.isRunning()) {
-                    memberIds.add(memberWrapper.getLocalMemberId());
-                }
-            }
-
-            int[] memberIdsArray = new int[memberIds.size()];
-
-            for (int i = 0; i < memberIds.size(); i++) {
-                memberIdsArray[i] = memberIds.get(i);
-            }
-
-            return memberIdsArray;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+        return getStartedMemberIds(memberFutures);
     }
 
     static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {
         try {
             final List<Integer> memberIds = new ArrayList<Integer>();
 
-            for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
-
+            for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
-                memberIds.add(memberWrapper.getLocalMemberId());
+
+                if (memberWrapper.isRunning()) {
+                    memberIds.add(memberWrapper.getLocalMemberId());
+                }
             }
 
             int[] memberIdsArray = new int[memberIds.size()];
@@ -458,9 +435,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         try {
             final long startTime = System.currentTimeMillis();
 
-            for (int i = 0; i < memberCount; i++) {
-                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
-
+            for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
                 memberWrapper.shutdown();
@@ -520,9 +495,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         LOGGER.info(format("Stopping %d cluster member(s) in this group", memberFutures.size()));
 
         try {
-            for (int i = 0; i < memberFutures.size(); i++) {
-                final Future<DelegatingClusterMemberWrapper> task = memberFutures.get(i);
-
+            for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
                 memberWrapper.stop();
