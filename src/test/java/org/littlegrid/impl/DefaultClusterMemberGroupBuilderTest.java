@@ -325,30 +325,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     @Ignore
-    public void equalsWhenSame() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Test
-    @Ignore
-    public void equalsWhenDifferent() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Test
-    @Ignore
-    public void hashCodeWhenSame() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Test
-    @Ignore
-    public void hashCodeWhenDifferent() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Test
-    @Ignore
     public void defaultMappingSystemPropertiesForStorageEnabled() {
         final String expectedCacheConfiguration = "cache-config.xml";
         final String expectedOverrideConfiguration = "override-config.xml";

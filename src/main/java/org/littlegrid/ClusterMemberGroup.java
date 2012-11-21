@@ -177,6 +177,25 @@ public interface ClusterMemberGroup {
     }
 
     /**
+     * Build and configure enum.
+     *
+     * @since 2.14
+     */
+    enum BuildAndConfigureEnum {
+        /** Build type. */
+        STORAGE_DISABLED_CLIENT,
+
+        /** Build type. */
+        EXTEND_CLIENT,
+
+        /** Build type. */
+        NO_CLIENT,
+
+        /** Build type. */
+        STORAGE_ENABLED_MEMEBER
+    }
+
+    /**
      * Builder interface for cluster member group.
      */
     interface Builder {
@@ -255,6 +274,18 @@ public interface ClusterMemberGroup {
          * @since 2.6
          */
         ClusterMemberGroup buildAndConfigureForStorageEnabledMember();
+
+        /**
+         * Builds and returns a <em>running cluster member group</em>, based upon the default
+         * values and any values that have been overridden or explicitly set - with this
+         * build method, the enum parameters defines what (if any) system properties need to
+         * be set.
+         *
+         * @param buildAndConfigureEnum  Build and configure type.
+         * @return running cluster member group.
+         * @since 2.14
+         */
+        ClusterMemberGroup buildAndConfigureFor(BuildAndConfigureEnum buildAndConfigureEnum);
 
         /**
          * Sets the exception report instance class name.
@@ -586,7 +617,7 @@ public interface ClusterMemberGroup {
          * is and then subsequently setting it to a different number when running multiple autonomous
          * clusters - since 2.14, it is typically more convenient to get the WKA port from one
          * cluster member group in order to then offset it for another, such as
-         * <code>setWkaPort(memberGroup1.getWkaPort() + 100).
+         * <code>setWkaPort(memberGroup1.getWkaPort() + 100)</code>.
          *
          * @return WKA port.
          */
@@ -606,7 +637,7 @@ public interface ClusterMemberGroup {
          * subsequently setting it to a different number when running multiple proxy servers
          * - since 2.14, it is typically more convenient to get the Extend port from one
          * cluster member group in order to then offset it for another, such as
-         * <code>setExtendPort(memberGroup1.getExtendPort() + 100).
+         * <code>setExtendPort(memberGroup1.getExtendPort() + 100)</code>.
          *
          * @return Extend port.
          */

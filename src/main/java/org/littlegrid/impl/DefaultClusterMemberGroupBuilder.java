@@ -51,6 +51,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMEBER;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
@@ -288,27 +293,12 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         }
     }
 
-    protected ClusterMemberGroup build() {
-        final int storageEnabledCount = getBuilderValueAsInt(STORAGE_ENABLED_COUNT_KEY);
-        final int customConfiguredCount = getBuilderValueAsInt(CUSTOM_CONFIGURED_COUNT_KEY);
-        final int storageEnabledExtendProxyCount = getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
-        final int extendProxyCount = getBuilderValueAsInt(EXTEND_PROXY_COUNT_KEY);
-        final int jmxMonitorCount = getBuilderValueAsInt(JMX_MONITOR_COUNT_KEY);
-
-        return buildClusterMembers(storageEnabledCount, customConfiguredCount,
-                storageEnabledExtendProxyCount, extendProxyCount,
-                jmxMonitorCount);
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public ClusterMemberGroup buildAndConfigureForNoClient() {
-        final ClusterMemberGroup memberGroup = build();
-        final Properties systemProperties = new Properties();
-
-        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
+        return buildAndConfigureFor(NO_CLIENT);
     }
 
     /**
@@ -316,10 +306,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public ClusterMemberGroup buildAndConfigureForStorageDisabledClient() {
-        final ClusterMemberGroup memberGroup = build();
-        final Properties systemProperties = getSystemPropertiesForStorageDisabledClient();
-
-        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
+        return buildAndConfigureFor(STORAGE_DISABLED_CLIENT);
     }
 
     /**
@@ -327,10 +314,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public ClusterMemberGroup buildAndConfigureForExtendClient() {
-        final ClusterMemberGroup memberGroup = build();
-        final Properties systemProperties = getSystemPropertiesForExtendProxyClient();
-
-        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
+        return buildAndConfigureFor(EXTEND_CLIENT);
     }
 
     /**
@@ -338,15 +322,39 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public ClusterMemberGroup buildAndConfigureForStorageEnabledMember() {
-        final ClusterMemberGroup memberGroup = build();
-        final Properties systemProperties = getSystemPropertiesForStorageEnabled();
-
-        return applyClientOrMemberSystemPropertiesAndStartAll(memberGroup, systemProperties);
+        return buildAndConfigureFor(STORAGE_ENABLED_MEMEBER);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
-    private ClusterMemberGroup applyClientOrMemberSystemPropertiesAndStartAll(final ClusterMemberGroup memberGroup,
-                                                                              final Properties systemProperties) {
+    @Override
+    public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
+        final ClusterMemberGroup memberGroup = buildClusterMembers();
+        final Properties systemProperties;
+
+        switch (buildAndConfigureEnum) {
+            case STORAGE_DISABLED_CLIENT:
+                systemProperties = getSystemPropertiesForStorageDisabledClient();
+                break;
+
+            case EXTEND_CLIENT:
+                systemProperties = getSystemPropertiesForExtendProxyClient();
+                break;
+
+            case STORAGE_ENABLED_MEMEBER:
+                systemProperties = getSystemPropertiesForStorageEnabled();
+                break;
+
+            case NO_CLIENT:
+                systemProperties = new Properties();
+                break;
+
+            default:
+                throw new IllegalArgumentException(format("Invalid build and configure type: %s",
+                        buildAndConfigureEnum));
+        }
 
         SystemUtils.applyToSystemProperties(systemProperties);
 
@@ -357,11 +365,12 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         return memberGroup;
     }
 
-    private DefaultClusterMemberGroup buildClusterMembers(final int storageEnabledCount,
-                                                          final int customConfiguredCount,
-                                                          final int storageEnabledExtendProxyCount,
-                                                          final int extendProxyCount,
-                                                          final int jmxMonitorCount) {
+    private DefaultClusterMemberGroup buildClusterMembers() {
+        final int storageEnabledCount = getBuilderValueAsInt(STORAGE_ENABLED_COUNT_KEY);
+        final int customConfiguredCount = getBuilderValueAsInt(CUSTOM_CONFIGURED_COUNT_KEY);
+        final int storageEnabledExtendProxyCount = getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
+        final int extendProxyCount = getBuilderValueAsInt(EXTEND_PROXY_COUNT_KEY);
+        final int jmxMonitorCount = getBuilderValueAsInt(JMX_MONITOR_COUNT_KEY);
 
         final long startTime = System.currentTimeMillis();
         final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
@@ -1379,49 +1388,5 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         if (value != null && value.trim().length() > 0) {
             properties.setProperty(key, value);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
-
-        final DefaultClusterMemberGroupBuilder otherBuilder = (DefaultClusterMemberGroupBuilder) other;
-
-        return additionalSystemProperties.equals(otherBuilder.additionalSystemProperties)
-                && builderKeyToSystemPropertyNameMapping.equals(otherBuilder.builderKeyToSystemPropertyNameMapping)
-                && builderKeysAndValues.equals(otherBuilder.builderKeysAndValues);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int seed = 31;
-
-        int result = builderKeysAndValues != null ? builderKeysAndValues.hashCode() : 0;
-
-        result = seed * result + (additionalSystemProperties != null
-                ? additionalSystemProperties.hashCode() : 0);
-
-        result = seed * result + (builderKeyToSystemPropertyNameMapping != null
-                ? builderKeyToSystemPropertyNameMapping.hashCode() : 0);
-
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return builderKeysAndValues.toString() + "!" + additionalSystemProperties.toString()
-                + "!" + builderKeyToSystemPropertyNameMapping.toString();
     }
 }

@@ -82,6 +82,8 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
      * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
      * @param sleepAfterStopDurationDefault Default sleep duration.
+     * @param wkaPort                       WKA port.
+     * @param extendPort                    Extend port.
      */
     public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
                                      final int sleepAfterStopDuration35x,
