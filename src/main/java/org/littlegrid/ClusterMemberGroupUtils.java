@@ -126,6 +126,7 @@ public final class ClusterMemberGroupUtils {
 
         System.out.println();
         System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process...");
+        System.out.println("Note: littlegrid 2.14 introduced the more flexible ClusterMemberGroupLauncher");
         System.in.read();
 
         shutdownCacheFactoryThenClusterMemberGroups(memberGroup);

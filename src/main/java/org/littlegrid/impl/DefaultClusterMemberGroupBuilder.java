@@ -55,7 +55,7 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMEBER;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
@@ -322,7 +322,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public ClusterMemberGroup buildAndConfigureForStorageEnabledMember() {
-        return buildAndConfigureFor(STORAGE_ENABLED_MEMEBER);
+        return buildAndConfigureFor(STORAGE_ENABLED_MEMBER);
     }
 
     /**
@@ -343,7 +343,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 systemProperties = getSystemPropertiesForExtendProxyClient();
                 break;
 
-            case STORAGE_ENABLED_MEMEBER:
+            case STORAGE_ENABLED_MEMBER:
                 systemProperties = getSystemPropertiesForStorageEnabled();
                 break;
 

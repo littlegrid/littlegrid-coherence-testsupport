@@ -36,6 +36,8 @@ import java.util.Properties;
 
 /**
  * Cluster member group exception.
+ *
+ * @since 2.2.1
  */
 public class ClusterMemberGroupBuildException extends RuntimeException {
     private Properties systemPropertiesBeforeStartInvoked;

@@ -192,7 +192,7 @@ public interface ClusterMemberGroup {
         NO_CLIENT,
 
         /** Build type. */
-        STORAGE_ENABLED_MEMEBER
+        STORAGE_ENABLED_MEMBER
     }
 
     /**
@@ -446,7 +446,7 @@ public interface ClusterMemberGroup {
         /**
          * Sets the log destination where the cluster members should output to.
          *
-         * @param logDestination Log destination (standard Coherence log - stdout, log4j, java).
+         * @param logDestination Log destination (standard Coherence: - stdout, stderr, log4j, java).
          * @return builder.
          */
         Builder setLogDestination(String logDestination);
@@ -462,7 +462,7 @@ public interface ClusterMemberGroup {
         /**
          * Sets the log level that the cluster members should run with.
          *
-         * @param logLevel Log level (standard Coherence 0-9).
+         * @param logLevel Log level (standard Coherence: 0-9).
          * @return builder.
          */
         Builder setLogLevel(int logLevel);

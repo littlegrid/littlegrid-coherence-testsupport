@@ -58,6 +58,9 @@ public class IdentifiableException extends RuntimeException {
         CHECK_CHILD_FIRST_CLASS_PATH_IN_USE,
 
         /** Exception reason. */
+        JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL,
+
+        /** Exception reason. */
         CHECK_CACHE_CONFIGURATION_FILE_BEING_USED
     }
 

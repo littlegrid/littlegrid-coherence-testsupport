@@ -31,11 +31,14 @@
 
 package org.littlegrid;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
+import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
@@ -58,12 +61,14 @@ public class IdentifiableExceptionIntegrationTest
     }
 
     @Test
-    public void exceptionDueToNoAutoStartedServices() {
+    public void exceptionDueToNoAutoStartedServicesThisTestIsForCoherence371AndAbove() {
         try {
             memberGroup = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledCount(1)
                     .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-autostart.xml")
                     .buildAndConfigureForStorageDisabledClient();
+
+            fail("Note: this test is for Coherence 3.7.1.x and above - it will fail with older versions");
         } catch (ClusterMemberGroupBuildException e) {
             final IdentifiableException identifiableException = (IdentifiableException) e.getCause();
 
@@ -71,4 +76,20 @@ public class IdentifiableExceptionIntegrationTest
         }
     }
 
+    @Test
+    @Ignore
+    public void exceptionDueToJoinTimeoutMillisTooSmall() {
+        try {
+            memberGroup = ClusterMemberGroupUtils.newBuilder()
+                    .setStorageEnabledCount(1)
+                    .setFastStartJoinTimeoutMilliseconds(1)
+                    .buildAndConfigureForStorageDisabledClient();
+
+            fail("Note: this test is for Coherence 3.7.1.x and above - it will fail with older versions");
+        } catch (ClusterMemberGroupBuildException e) {
+            final IdentifiableException identifiableException = (IdentifiableException) e.getCause();
+
+            assertThat(identifiableException.getReasonEnum(), is(JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL));
+        }
+    }
 }
