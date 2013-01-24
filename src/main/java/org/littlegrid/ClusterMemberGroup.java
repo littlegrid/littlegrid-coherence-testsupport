@@ -278,7 +278,7 @@ public interface ClusterMemberGroup {
         /**
          * Builds and returns a <em>running cluster member group</em>, based upon the default
          * values and any values that have been overridden or explicitly set - with this
-         * build method, the enum parameters defines what (if any) system properties need to
+         * build method, the enum parameter defines what (if any) system properties need to
          * be set.
          *
          * @param buildAndConfigureEnum  Build and configure type.
@@ -286,6 +286,15 @@ public interface ClusterMemberGroup {
          * @since 2.14
          */
         ClusterMemberGroup buildAndConfigureFor(BuildAndConfigureEnum buildAndConfigureEnum);
+
+        /**
+         * Builds and returns a <em>running cluster member group</em>, based upon the default
+         * values and any values that have been overridden or explicitly set.
+         *
+         * @return running cluster member group.
+         * @since 2.14
+         */
+        ClusterMemberGroup buildAndConfigure();
 
         /**
          * Sets the exception report instance class name.
@@ -763,6 +772,32 @@ public interface ClusterMemberGroup {
          * @since 2.8
          */
         Builder setMachineName(String machineName);
+
+        /**
+         * Sets application console class name if running 'mini-cluster' standalone process.
+         *
+         * @param appConsoleClassName  Application console class name.
+         * @return builder.
+         * @since 2.14
+         */
+        Builder setAppConsoleClassName(String appConsoleClassName);
+
+        /**
+         * Returns application console class name.
+         *
+         * @return class name..
+         * @since 2.14
+         */
+        String getAppConsoleClassName();
+
+        /**
+         * Sets build and configure enum name, used in-conjunction with buildAndConfigureFor();
+         *
+         * @param buildAndConfigureEnumName  Build and configure enum name.
+         * @return builder.
+         * @since 2.14
+         */
+        Builder setBuildAndConfigureFor(String buildAndConfigureEnumName);
     }
 
     /**

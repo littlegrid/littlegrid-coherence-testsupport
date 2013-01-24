@@ -147,6 +147,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     private static final String FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
+    private static final String BUILD_AND_CONFIG_ENUM_NAME_KEY = "BuildAndConfigureEnumName";
+    private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
+
     private static final String LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY = BUILDER_OVERRIDE_KEY + ".";
 
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
@@ -363,6 +366,15 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         ((DefaultClusterMemberGroup) memberGroup).startAll();
 
         return memberGroup;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup buildAndConfigure() {
+        return buildAndConfigureFor(Enum.valueOf(BuildAndConfigureEnum.class,
+                getBuilderValueAsString(BUILD_AND_CONFIG_ENUM_NAME_KEY)));
     }
 
     private DefaultClusterMemberGroup buildClusterMembers() {
@@ -1094,6 +1106,34 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public Builder setMachineName(final String machineName) {
         setBuilderValue(MACHINE_NAME_KEY, machineName);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setAppConsoleClassName(final String appConsoleClassName) {
+        setBuilderValue(APP_CONSOLE_CLASS_NAME_KEY, appConsoleClassName);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAppConsoleClassName() {
+        return getBuilderValueAsString(APP_CONSOLE_CLASS_NAME_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setBuildAndConfigureFor(final String buildAndConfigureEnumName) {
+        setBuilderValue(BUILD_AND_CONFIG_ENUM_NAME_KEY, buildAndConfigureEnumName);
 
         return this;
     }

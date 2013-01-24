@@ -45,12 +45,13 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.*;
 
 /**
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 38;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 40;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
     private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
@@ -108,6 +109,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     private static final String FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
+    private static final String BUILD_AND_CONFIG_ENUM_NAME_KEY = "BuildAndConfigureEnumName";
+    private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
+
     private Properties systemPropertiesBeforeTest;
 
 
@@ -150,6 +154,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String jarsToExcludeFromClassPath = "abc.jar,def.jar";
         final String coreJarsToExcludeFromClassPath = "rt.jar";
 
+        final String appConsoleClassName = "com.a.b.c.Console";
+        final String buildAndConfigureEnumName = STORAGE_DISABLED_CLIENT.name();
+
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
@@ -171,6 +178,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         builder.setJarsToExcludeFromClassPath(jarsToExcludeFromClassPath);
         builder.setCoreJarsToExcludeFromClassPath(coreJarsToExcludeFromClassPath);
+
+        builder.setAppConsoleClassName(appConsoleClassName);
+        builder.setBuildAndConfigureFor(buildAndConfigureEnumName);
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
@@ -212,6 +222,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.get(JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY), is(jarsToExcludeFromClassPath));
         assertThat(builderSettings.get(CORE_JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY), is(coreJarsToExcludeFromClassPath));
+
+        assertThat(builderSettings.get(APP_CONSOLE_CLASS_NAME_KEY), is(appConsoleClassName));
+        assertThat(builderSettings.get(BUILD_AND_CONFIG_ENUM_NAME_KEY), is(buildAndConfigureEnumName));
     }
 
     @Test

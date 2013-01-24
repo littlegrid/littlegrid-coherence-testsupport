@@ -61,14 +61,6 @@ public class ClusterMemberGroupUtilsTest {
         assertThat(StubExceptionThrowingClusterMemberGroup.getShutdownAllInvokedCounter(), is(memberGroups.length));
     }
 
-    @Test
-    public void launchClusterMemberGroup() {
-        final ClusterMemberGroup memberGroup =
-                ClusterMemberGroupUtils.launchClusterMemberGroup(new String[]{"properties/memberGroup1.properties"});
-
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
     public static class StubExceptionThrowingClusterMemberGroup implements ClusterMemberGroup {
         private static int shutdownAllInvokedCounter;
 

@@ -31,16 +31,35 @@
 
 package org.littlegrid;
 
-import org.junit.Ignore;
+import com.tangosol.net.CacheFactory;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
+import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Cluster member group launcher integration tests.
  */
-public class ClusterMemberGroupLauncherIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    @Ignore
-    public void whatever() {
-        ClusterMemberGroupLauncher.launchClusterMemberGroup(new String[]{"STORAGE_ENABLED_MEMBER"});
+    public void launchAndStartConsole() {
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(
+                new String[]{"properties/memberGroup1.properties"});
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), 3 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    public static class NoWaitConsole {
+        public static void main(String[] args) {
+            System.out.println("Console launched - and done");
+        }
     }
 }

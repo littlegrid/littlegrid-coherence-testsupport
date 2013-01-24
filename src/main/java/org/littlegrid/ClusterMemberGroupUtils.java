@@ -32,21 +32,19 @@
 package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
+import com.tangosol.util.ClassHelper;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
- * Cluster member group utilities.
+ * Cluster member group utilities, used for the creation of {@link ClusterMemberGroup.Builder}
+ * and for shutting down {@link ClusterMemberGroup}(s).
  */
 public final class ClusterMemberGroupUtils {
-    private static Map<Builder, Integer> activeBuilders = new ConcurrentHashMap<Builder, Integer>();
-
     /**
      * Private constructor to prevent creation.
      */
@@ -119,29 +117,29 @@ public final class ClusterMemberGroupUtils {
      * @throws IOException - exception.
      * @since 2.13
      */
-    public static void main(final String[] args)
-            throws IOException {
-
-        final ClusterMemberGroup memberGroup = launchClusterMemberGroup(args);
-
-        System.out.println();
-        System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process...");
-        System.out.println("Note: littlegrid 2.14 introduced the more flexible ClusterMemberGroupLauncher");
-        System.in.read();
+    public static void main(final String[] args) {
+        final ClusterMemberGroup memberGroup = launchAndStartConsole(args);
 
         shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 
-    static ClusterMemberGroup launchClusterMemberGroup(final String[] args) {
-        if (args.length != 1) {
-            System.out.println("Cannot launch cluster member group - please specify a properties file containing "
-                    + "the configuration");
-
-            System.exit(1);
+    static ClusterMemberGroup launchAndStartConsole(final String[] args) {
+        if (args.length == 1) {
+            System.setProperty(Builder.BUILDER_OVERRIDE_KEY, args[0]);
         }
 
-        System.setProperty(Builder.BUILDER_OVERRIDE_KEY, args[0]);
+        final Builder builder = newBuilder();
+        final ClusterMemberGroup memberGroup = builder.buildAndConfigure();
 
-        return newBuilder().buildAndConfigureForNoClient();
+        try {
+            Class consoleClass =
+                    ClusterMemberGroupUtils.class.getClassLoader().loadClass(builder.getAppConsoleClassName());
+
+            ClassHelper.invokeStatic(consoleClass, "main", new Object[]{new String[]{}});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return memberGroup;
     }
 }
