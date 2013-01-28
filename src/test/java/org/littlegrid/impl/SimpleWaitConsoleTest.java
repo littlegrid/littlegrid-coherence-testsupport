@@ -29,30 +29,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.impl;
+
+import org.junit.Test;
 
 /**
- * Cluster member group app.
- *
- * @since 2.14
+ * Simple wait console tests.
  */
-public class ClusterMemberGroupApp {
-    /**
-     * Default scope to enable test coverage.
-     */
-    ClusterMemberGroupApp() {
-    }
-
-    /**
-     * Launches a littlegrid cluster member group, this technique is useful when an external process
-     * is required - for instance, if launching littlegrid from .Net or perhaps if you want to run
-     * mini-clusters on your development machine and connect to then via an external process such as
-     * WebLogic or Tomcat etc.
-     *
-     * @param args Arguments - this is expected to be the name of a single properties file from
-     *             which the cluster member group configuration should be specified.
-     */
-    public static void main(String[] args) {
-        ClusterMemberGroupUtils.main(args);
+public class SimpleWaitConsoleTest {
+    @Test
+    public void construct() {
+        new SimpleWaitConsole();
     }
 }

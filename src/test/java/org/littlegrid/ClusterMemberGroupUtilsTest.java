@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,8 +41,18 @@ import static org.junit.Assert.assertThat;
  */
 public class ClusterMemberGroupUtilsTest {
     @Test
+    public void construct() {
+        new ClusterMemberGroupUtils();
+    }
+
+    @Test
     public void attemptToShutdownNullMemberGroup() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups((ClusterMemberGroup) null);
+        ClusterMemberGroupUtils.shutdownClusterMemberGroups((ClusterMemberGroup) null);
+    }
+
+    @Test
+    public void attemptToShutdownWithEmptyMemberGroup() {
+        ClusterMemberGroupUtils.shutdownClusterMemberGroups();
     }
 
     @Test

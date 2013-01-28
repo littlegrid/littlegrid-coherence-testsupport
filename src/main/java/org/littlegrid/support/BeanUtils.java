@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,9 +44,9 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.UNABLE_TO_SET_BEAN
  */
 public final class BeanUtils {
     /**
-     * Private constructor to prevent creation.
+     * Default constructor to enable test coverage.
      */
-    private BeanUtils() {
+    BeanUtils() {
     }
 
     /**

@@ -18,9 +18,9 @@ public final class PropertiesUtils {
     private static final String DELIMITER = ",";
 
     /**
-     * Private constructor to prevent creation.
+     * Default scope to enable test coverage.
      */
-    private PropertiesUtils() {
+    PropertiesUtils() {
     }
 
     /**

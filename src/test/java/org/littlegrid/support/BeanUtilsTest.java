@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,6 +54,11 @@ public final class BeanUtilsTest {
     private static final long EXPECTED_BIRTH_DATE_MILLIS = 1234567890;
     private static final String HOBBIES = "Yoga,Ballroom dancing";
 
+
+    @Test
+    public void construct() {
+        new BeanUtils();
+    }
 
     @Test
     public void emptyPropertiesNothingToSet() {

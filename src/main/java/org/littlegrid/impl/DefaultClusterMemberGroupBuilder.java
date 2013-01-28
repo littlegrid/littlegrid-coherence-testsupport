@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -147,7 +147,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     private static final String FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
-    private static final String BUILD_AND_CONFIG_ENUM_NAME_KEY = "BuildAndConfigureEnumName";
+    private static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
 
     private static final String LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY = BUILDER_OVERRIDE_KEY + ".";
@@ -374,7 +374,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public ClusterMemberGroup buildAndConfigure() {
         return buildAndConfigureFor(Enum.valueOf(BuildAndConfigureEnum.class,
-                getBuilderValueAsString(BUILD_AND_CONFIG_ENUM_NAME_KEY)));
+                getBuilderValueAsString(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY)));
     }
 
     private DefaultClusterMemberGroup buildClusterMembers() {
@@ -1132,8 +1132,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
-    public Builder setBuildAndConfigureFor(final String buildAndConfigureEnumName) {
-        setBuilderValue(BUILD_AND_CONFIG_ENUM_NAME_KEY, buildAndConfigureEnumName);
+    public Builder setBuildAndConfigureForEnumName(final String buildAndConfigureEnumName) {
+        setBuilderValue(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY, buildAndConfigureEnumName);
 
         return this;
     }

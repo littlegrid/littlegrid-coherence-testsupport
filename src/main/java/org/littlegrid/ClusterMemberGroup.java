@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -797,7 +797,7 @@ public interface ClusterMemberGroup {
          * @return builder.
          * @since 2.14
          */
-        Builder setBuildAndConfigureFor(String buildAndConfigureEnumName);
+        Builder setBuildAndConfigureForEnumName(String buildAndConfigureEnumName);
     }
 
     /**

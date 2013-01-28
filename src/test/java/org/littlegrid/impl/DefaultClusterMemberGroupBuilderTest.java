@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -109,7 +109,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     private static final String FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
 
-    private static final String BUILD_AND_CONFIG_ENUM_NAME_KEY = "BuildAndConfigureEnumName";
+    private static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
 
     private Properties systemPropertiesBeforeTest;
@@ -155,7 +155,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String coreJarsToExcludeFromClassPath = "rt.jar";
 
         final String appConsoleClassName = "com.a.b.c.Console";
-        final String buildAndConfigureEnumName = STORAGE_DISABLED_CLIENT.name();
+        final String buildAndConfigureForEnumName = STORAGE_DISABLED_CLIENT.name();
 
         final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
 
@@ -180,7 +180,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setCoreJarsToExcludeFromClassPath(coreJarsToExcludeFromClassPath);
 
         builder.setAppConsoleClassName(appConsoleClassName);
-        builder.setBuildAndConfigureFor(buildAndConfigureEnumName);
+        builder.setBuildAndConfigureForEnumName(buildAndConfigureForEnumName);
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
@@ -224,7 +224,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(CORE_JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY), is(coreJarsToExcludeFromClassPath));
 
         assertThat(builderSettings.get(APP_CONSOLE_CLASS_NAME_KEY), is(appConsoleClassName));
-        assertThat(builderSettings.get(BUILD_AND_CONFIG_ENUM_NAME_KEY), is(buildAndConfigureEnumName));
+        assertThat(builderSettings.get(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY), is(buildAndConfigureForEnumName));
     }
 
     @Test

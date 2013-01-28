@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,9 +52,9 @@ public final class ClassPathUtils {
     private static final String JAVA_HOME = "java.home";
 
     /**
-     * Private constructor to prevent creation.
+     * Default scope to enable test coverage.
      */
-    private ClassPathUtils() {
+    ClassPathUtils() {
     }
 
     /**

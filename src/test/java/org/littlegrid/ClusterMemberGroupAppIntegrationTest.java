@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,11 @@
 package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.io.IOException;
 
@@ -55,6 +59,11 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), 3 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    @Test
+    public void start() {
+        ClusterMemberGroupApp.main(new String[]{"properties/memberGroup1.properties"});
     }
 
     public static class NoWaitConsole {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,9 +46,9 @@ import static org.littlegrid.ClusterMemberGroup.Builder;
  */
 public final class ClusterMemberGroupUtils {
     /**
-     * Private constructor to prevent creation.
+     * Default scope to enable test coverage.
      */
-    private ClusterMemberGroupUtils() {
+    ClusterMemberGroupUtils() {
     }
 
     /**
@@ -66,7 +66,7 @@ public final class ClusterMemberGroupUtils {
      * @param clusterMemberGroups Member groups.
      */
     public static void shutdownClusterMemberGroups(final ClusterMemberGroup... clusterMemberGroups) {
-        if (clusterMemberGroups == null) {
+        if (clusterMemberGroups == null || clusterMemberGroups.length == 0) {
             return;
         }
 
@@ -114,7 +114,6 @@ public final class ClusterMemberGroupUtils {
      *
      * @param args Arguments - this is expected to be the name of a single properties file from
      *             which the cluster member group configuration should be specified.
-     * @throws IOException - exception.
      * @since 2.13
      */
     public static void main(final String[] args) {

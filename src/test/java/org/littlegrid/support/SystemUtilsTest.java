@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,11 @@ public final class SystemUtilsTest {
     public void clearSystemProperties() {
         System.clearProperty(KEY1_WITH_KNOWN_PREFIX);
         System.clearProperty(KEY2_WITH_KNOWN_PREFIX);
+    }
+
+    @Test
+    public void construct() {
+        new SystemUtils();
     }
 
     @Test

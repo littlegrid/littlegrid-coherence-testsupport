@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 Jonathan Hall.
+ * Copyright (c) 2010-2013 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,6 +61,11 @@ public class ClassPathUtilsTest {
     private static final String SUREFIRE_TEST_CLASS_PATH_KEY = "surefire.test.class.path";
     private static final String SUREFIRE_TEST_CLASS_PATH_VALUE = JAVA_CLASS_PATH_VALUE;
 
+
+    @Test
+    public void construct() {
+        new ClassPathUtils();
+    }
 
     @Test
     public void pathSeparator() {

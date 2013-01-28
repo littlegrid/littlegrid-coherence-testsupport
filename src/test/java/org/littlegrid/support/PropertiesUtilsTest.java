@@ -19,6 +19,11 @@ public final class PropertiesUtilsTest {
     public static final String ANOTHER_FILE_THAT_DOES_EXIST = "properties/memberGroup2.properties";
 
     @Test
+    public void construct() {
+        new PropertiesUtils();
+    }
+
+    @Test
     public void fileThatDoesNotExist() {
         final String[] propertiesFilenames = {FILE_THAT_DOES_NOT_EXIST};
 
