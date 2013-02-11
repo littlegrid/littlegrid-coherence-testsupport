@@ -40,7 +40,7 @@ import static org.junit.Assert.assertThat;
  * Cluster member group utilities tests.
  */
 public class ClusterMemberGroupUtilsTest {
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void construct() {
         new ClusterMemberGroupUtils();
     }
@@ -128,6 +128,11 @@ public class ClusterMemberGroupUtilsTest {
 
         @Override
         public int getExtendPort() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object getKey() {
             throw new UnsupportedOperationException();
         }
 

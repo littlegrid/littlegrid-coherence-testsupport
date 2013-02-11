@@ -21,6 +21,7 @@ public final class PropertiesUtils {
      * Default scope to enable test coverage.
      */
     PropertiesUtils() {
+        throw new UnsupportedOperationException();
     }
 
     /**

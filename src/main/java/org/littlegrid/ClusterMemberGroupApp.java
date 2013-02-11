@@ -41,6 +41,7 @@ public class ClusterMemberGroupApp {
      * Default scope to enable test coverage.
      */
     ClusterMemberGroupApp() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -49,8 +50,9 @@ public class ClusterMemberGroupApp {
      * mini-clusters on your development machine and connect to then via an external process such as
      * WebLogic or Tomcat etc.
      *
-     * @param args Arguments - this is expected to be the name of a single properties file from
-     *             which the cluster member group configuration should be specified.
+     * @param args Arguments - either no arguments can be specified or optionally, a single properties
+     *             file can be specified from which the cluster member group configuration should be
+     *             specified.
      */
     public static void main(String[] args) {
         ClusterMemberGroupUtils.main(args);

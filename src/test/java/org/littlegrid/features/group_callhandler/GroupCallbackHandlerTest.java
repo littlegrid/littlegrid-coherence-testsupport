@@ -48,6 +48,8 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
  * Cluster member group callback handler test.
  */
 public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrationTest {
+    private static final int EXPECTED_COUNTED_TOTAL = 16;
+
     @Test
     public void buildForStorageDisabledClientCallbackHandlerAllCalled() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
@@ -56,7 +58,7 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
 
         memberGroup.shutdownAll();
 
-        assertThat(NumberAddCallbackHandler.getCounter(), is(16));
+        assertThat(NumberAddCallbackHandler.getCounter(), is(EXPECTED_COUNTED_TOTAL));
     }
 
     @Test
@@ -67,7 +69,7 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
 
         memberGroup.shutdownAll();
 
-        assertThat(NumberAddCallbackHandler.getCounter(), is(16));
+        assertThat(NumberAddCallbackHandler.getCounter(), is(EXPECTED_COUNTED_TOTAL));
     }
 
     @Test
@@ -78,7 +80,7 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
 
         memberGroup.shutdownAll();
 
-        assertThat(NumberAddCallbackHandler.getCounter(), is(16));
+        assertThat(NumberAddCallbackHandler.getCounter(), is(EXPECTED_COUNTED_TOTAL));
     }
 
     @Test
@@ -89,7 +91,7 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
 
         memberGroup.shutdownAll();
 
-        assertThat(NumberAddCallbackHandler.getCounter(), is(16));
+        assertThat(NumberAddCallbackHandler.getCounter(), is(EXPECTED_COUNTED_TOTAL));
     }
 
     @Test

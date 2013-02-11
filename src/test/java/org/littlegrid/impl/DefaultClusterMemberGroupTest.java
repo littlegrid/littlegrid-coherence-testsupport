@@ -125,7 +125,7 @@ public final class DefaultClusterMemberGroupTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithNoCallbackHandler() {
-        new DefaultClusterMemberGroup(null, 0, 0, 0, 0, 0);
+        new DefaultClusterMemberGroup(null, null, 0, 0, 0, 0, 0);
     }
 
     @Test
@@ -134,7 +134,8 @@ public final class DefaultClusterMemberGroupTest {
         final int expectedDuration36x = 17;
         final int expectedDurationDefault = 15;
 
-        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(new DefaultCallbackHandler(),
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(null,
+                new DefaultCallbackHandler(),
                 expectedDuration35x, expectedDuration36x, expectedDurationDefault, 0, 0);
 
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.5f), is(expectedDuration35x));
@@ -148,7 +149,7 @@ public final class DefaultClusterMemberGroupTest {
 
         assertThat(handler.getDoAfterCounter(), is(0));
 
-        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(handler, 0, 0, 0, 0, 0);
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(null, handler, 0, 0, 0, 0, 0);
 
         memberGroup.startAll();
 

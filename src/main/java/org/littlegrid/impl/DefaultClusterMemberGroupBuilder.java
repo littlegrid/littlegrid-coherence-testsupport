@@ -158,10 +158,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     private final Properties additionalSystemProperties = new Properties();
     private final Properties builderKeyToSystemPropertyNameMapping = new Properties();
 
+    private final Map<Object, ClusterMemberGroup> cachedMemberGroups;
+
     /**
      * Default constructor.
      */
-    public DefaultClusterMemberGroupBuilder() {
+    public DefaultClusterMemberGroupBuilder(final Map<Object, ClusterMemberGroup> cachedMemberGroups) {
+        this.cachedMemberGroups = cachedMemberGroups;
+
         LOGGER.info(format("___ %s %s (%s) - initialising builder ___",
                 Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org"));
 
@@ -334,7 +338,18 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
+        final ClusterMemberGroup existingMemberGroup = cachedMemberGroups.get(this);
+
+/*
+        if (existingMemberGroup != null) {
+            return existingMemberGroup;
+        }
+*/
+
         final ClusterMemberGroup memberGroup = buildClusterMembers();
+        cachedMemberGroups.put(this, memberGroup);
+
+
         final Properties systemProperties;
 
         switch (buildAndConfigureEnum) {
@@ -603,7 +618,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final int wkaPort = getBuilderValueAsInt(WKA_PORT_KEY);
         final int extendPort = getBuilderValueAsInt(EXTEND_PORT_KEY);
 
-        return new DefaultClusterMemberGroup(createCallbackHandler(), duration35x, duration36x,
+        return new DefaultClusterMemberGroup(this, createCallbackHandler(), duration35x, duration36x,
                 durationDefault, wkaPort, extendPort);
     }
 
@@ -1136,6 +1151,60 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         setBuilderValue(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY, buildAndConfigureEnumName);
 
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object otherObject) {
+        if (this == otherObject){
+            return true;
+        }
+
+        if (otherObject == null || getClass() != otherObject.getClass()) {
+            return false;
+        }
+
+        final DefaultClusterMemberGroupBuilder otherMemberGroup = (DefaultClusterMemberGroupBuilder) otherObject;
+
+        if (!additionalSystemProperties.equals(otherMemberGroup.additionalSystemProperties)) {
+            return false;
+        }
+
+        if (!builderKeyToSystemPropertyNameMapping.equals(otherMemberGroup.builderKeyToSystemPropertyNameMapping)) {
+            return false;
+        }
+
+        if (!builderKeysAndValues.equals(otherMemberGroup.builderKeysAndValues)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int result = builderKeysAndValues.hashCode();
+        result = 31 * result + additionalSystemProperties.hashCode();
+        result = 31 * result + builderKeyToSystemPropertyNameMapping.hashCode();
+
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Builder{" +
+                "builderKeysAndValues=" + builderKeysAndValues +
+                ", additionalSystemProperties=" + additionalSystemProperties +
+                ", builderKeyToSystemPropertyNameMapping=" + builderKeyToSystemPropertyNameMapping +
+                '}';
     }
 
     /**

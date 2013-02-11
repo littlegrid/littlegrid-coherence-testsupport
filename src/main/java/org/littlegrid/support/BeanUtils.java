@@ -44,9 +44,10 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.UNABLE_TO_SET_BEAN
  */
 public final class BeanUtils {
     /**
-     * Default constructor to enable test coverage.
+     * Default scope to enable test coverage.
      */
     BeanUtils() {
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -35,20 +35,26 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.Builder;
+import static org.littlegrid.ClusterMemberGroup.ClusterMemberGroupAware;
 
 /**
  * Cluster member group utilities, used for the creation of {@link ClusterMemberGroup.Builder}
  * and for shutting down {@link ClusterMemberGroup}(s).
  */
 public final class ClusterMemberGroupUtils {
+    private static final Map<Object, ClusterMemberGroup> CACHED_MEMBER_GROUPS =
+            new HashMap<Object, ClusterMemberGroup>();
+
     /**
      * Default scope to enable test coverage.
      */
     ClusterMemberGroupUtils() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -57,7 +63,7 @@ public final class ClusterMemberGroupUtils {
      * @return builder.
      */
     public static Builder newBuilder() {
-        return new DefaultClusterMemberGroupBuilder();
+        return new DefaultClusterMemberGroupBuilder(CACHED_MEMBER_GROUPS);
     }
 
     /**
@@ -120,6 +126,7 @@ public final class ClusterMemberGroupUtils {
         final ClusterMemberGroup memberGroup = launchAndStartConsole(args);
 
         shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        System.exit(0);
     }
 
     static ClusterMemberGroup launchAndStartConsole(final String[] args) {
@@ -134,7 +141,14 @@ public final class ClusterMemberGroupUtils {
             Class consoleClass =
                     ClusterMemberGroupUtils.class.getClassLoader().loadClass(builder.getAppConsoleClassName());
 
-            ClassHelper.invokeStatic(consoleClass, "main", new Object[]{new String[]{}});
+            if (ClusterMemberGroupAware.class.isAssignableFrom(consoleClass)) {
+                ClusterMemberGroupAware memberGroupAware = (ClusterMemberGroupAware) consoleClass.newInstance();
+                memberGroupAware.setClusterMemberGroup(memberGroup);
+
+                ClassHelper.invoke(memberGroupAware, "main", new Object[]{new String[]{}});
+            } else {
+                ClassHelper.invokeStatic(consoleClass, "main", new Object[]{new String[]{}});
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

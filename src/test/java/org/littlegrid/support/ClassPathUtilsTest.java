@@ -62,7 +62,7 @@ public class ClassPathUtilsTest {
     private static final String SUREFIRE_TEST_CLASS_PATH_VALUE = JAVA_CLASS_PATH_VALUE;
 
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void construct() {
         new ClassPathUtils();
     }

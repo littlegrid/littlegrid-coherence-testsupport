@@ -55,7 +55,7 @@ public final class BeanUtilsTest {
     private static final String HOBBIES = "Yoga,Ballroom dancing";
 
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void construct() {
         new BeanUtils();
     }

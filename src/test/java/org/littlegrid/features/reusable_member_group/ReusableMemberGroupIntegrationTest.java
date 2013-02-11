@@ -29,16 +29,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.support;
+package org.littlegrid.features.reusable_member_group;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 /**
- * Extend utils tests.
+ * Reusable member group integration tests.
  */
-public class ExtendUtilsTest {
-    @Test(expected = UnsupportedOperationException.class)
-    public void construct() {
-        new ExtendUtils();
+public class ReusableMemberGroupIntegrationTest {
+    private ClusterMemberGroup memberGroup;
+
+    @Before
+    public void beforeTest() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(2)
+                .setFastStartJoinTimeoutMilliseconds(0)
+                .buildAndConfigureForStorageDisabledClient();
+    }
+
+    @After
+    public void afterTest() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    @Test
+    public void whatever1() {
+
+
+    }
+
+    @Test
+    public void whatever2() {
+
+    }
+
+    @Test
+    public void whatever3() {
+
     }
 }

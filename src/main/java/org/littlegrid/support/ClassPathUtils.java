@@ -55,6 +55,7 @@ public final class ClassPathUtils {
      * Default scope to enable test coverage.
      */
     ClassPathUtils() {
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -65,6 +65,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
             new ArrayList<Future<DelegatingClusterMemberWrapper>>();
 
+    private Object key;
     private CallbackHandler callbackHandler;
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
@@ -85,12 +86,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
      */
-    public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
+    public DefaultClusterMemberGroup(final Object key,
+                                     final CallbackHandler callbackHandler,
                                      final int sleepAfterStopDuration35x,
                                      final int sleepAfterStopDuration36x,
                                      final int sleepAfterStopDurationDefault,
                                      final int wkaPort,
                                      final int extendPort) {
+        this.key = key;
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
 
@@ -116,7 +119,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) otherMemberGroup;
 
         LOGGER.info(format("About to merge - current members started: %s, members started to merge in: %s",
-                this.getMemberFutures().size(), defaultClusterMemberGroup.getMemberFutures().size()));
+                this.getStartedMemberIds().length, defaultClusterMemberGroup.getMemberFutures().size()));
 
         merge(defaultClusterMemberGroup.getMemberFutures());
 
@@ -155,6 +158,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public int getExtendPort() {
         return extendPort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getKey() {
+        return key;
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {

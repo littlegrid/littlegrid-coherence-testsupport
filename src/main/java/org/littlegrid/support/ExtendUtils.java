@@ -54,6 +54,7 @@ public final class ExtendUtils {
      * Default scope to enable test coverage.
      */
     ExtendUtils() {
+        throw new UnsupportedOperationException();
     }
 
     /**

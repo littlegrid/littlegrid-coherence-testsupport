@@ -58,7 +58,7 @@ public final class SystemUtilsTest {
         System.clearProperty(KEY2_WITH_KNOWN_PREFIX);
     }
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void construct() {
         new SystemUtils();
     }

@@ -18,7 +18,7 @@ public final class PropertiesUtilsTest {
     public static final String FILE_THAT_DOES_EXIST = "properties/memberGroup1.properties";
     public static final String ANOTHER_FILE_THAT_DOES_EXIST = "properties/memberGroup2.properties";
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void construct() {
         new PropertiesUtils();
     }

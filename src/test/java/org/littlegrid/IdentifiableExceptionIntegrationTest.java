@@ -42,6 +42,7 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLI
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
+ * Identifiable exception integration tests.
  */
 public class IdentifiableExceptionIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {

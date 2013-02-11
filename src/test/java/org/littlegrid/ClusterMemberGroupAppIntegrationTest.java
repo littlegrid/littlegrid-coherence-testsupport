@@ -32,18 +32,8 @@
 package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroup;
-import org.littlegrid.ClusterMemberGroupUtils;
 
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
@@ -51,6 +41,11 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
  * Cluster member group launcher integration tests.
  */
 public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    @Test(expected = UnsupportedOperationException.class)
+    public void construct() {
+        new ClusterMemberGroupApp();
+    }
+
     @Test
     public void launchAndStartConsole() {
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(
@@ -64,6 +59,14 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
     @Test
     public void start() {
         ClusterMemberGroupApp.main(new String[]{"properties/memberGroup1.properties"});
+    }
+
+    @Test
+    public void whatever() {
+        System.setProperty("littlegrid.builder.AppConsoleClassName", "org.littlegrid.impl.WhateverConsole");
+        System.setProperty("littlegrid.builder.StorageEnabledCount", "2");
+
+        ClusterMemberGroupApp.main(new String[]{});
     }
 
     public static class NoWaitConsole {

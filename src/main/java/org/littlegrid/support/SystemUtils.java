@@ -42,6 +42,7 @@ public final class SystemUtils {
      * Default scope to enable test coverage.
      */
     SystemUtils() {
+        throw new UnsupportedOperationException();
     }
 
     /**

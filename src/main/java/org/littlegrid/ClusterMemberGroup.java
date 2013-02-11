@@ -113,7 +113,7 @@ public interface ClusterMemberGroup {
      * @return new size of combined member group.
      * @since 2.7
      */
-    int merge(final ClusterMemberGroup memberGroup);
+    int merge(ClusterMemberGroup memberGroup);
 
     /**
      * Returns the class loaders into which the the cluster members have been loaded - only
@@ -143,6 +143,14 @@ public interface ClusterMemberGroup {
      * @since 2.14
      */
     int getExtendPort();
+
+    /**
+     * Returns a key to this cluster member group.
+     *
+     * @return key.
+     * @since 2.15
+     */
+    Object getKey();
 
     /**
      * Cluster member interface - implementations of this class need to provide basic functionality,
@@ -843,5 +851,14 @@ public interface ClusterMemberGroup {
          * Performs any necessary actions after the cluster member has been shutdown.
          */
         void doAfterShutdown();
+    }
+
+    /**
+     * Cluster member group aware interface.
+     *
+     * @since 2.15
+     */
+    interface ClusterMemberGroupAware {
+        void setClusterMemberGroup(ClusterMemberGroup clusterMemberGroup);
     }
 }
