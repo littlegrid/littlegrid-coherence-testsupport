@@ -100,6 +100,8 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     public void start() {
         try {
             final Class clusterMemberClass = this.getClass().getClassLoader().loadClass(delegateInstanceClassName);
+
+            @SuppressWarnings("unchecked")
             final Constructor constructor = clusterMemberClass.getConstructor();
 
             delegateInstance = constructor.newInstance();

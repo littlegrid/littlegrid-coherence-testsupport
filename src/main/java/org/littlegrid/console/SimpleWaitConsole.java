@@ -1,4 +1,4 @@
-package org.littlegrid.impl;
+package org.littlegrid.console;
 
 import java.io.IOException;
 

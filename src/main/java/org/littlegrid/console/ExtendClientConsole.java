@@ -29,49 +29,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.console;
 
-import com.tangosol.net.CacheFactory;
-import org.junit.Test;
-
-import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
-import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
+import org.littlegrid.ClusterMemberGroup;
 
 /**
- * Cluster member group launcher integration tests.
+ * Extend client console.
+ *
+ * @since 2.15
  */
-public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
-    @Test(expected = UnsupportedOperationException.class)
-    public void construct() {
-        new ClusterMemberGroupApp();
-    }
-
-    @Test
-    public void launchAndStartConsole() {
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(
-                new String[]{"properties/memberGroup1.properties"});
-
-        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), 3 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
-
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
-    @Test
-    public void start() {
-        ClusterMemberGroupApp.main(new String[]{"properties/memberGroup1.properties"});
-    }
-
-    @Test
-    public void whatever() {
-        System.setProperty("littlegrid.builder.AppConsoleClassName", "org.littlegrid.console.DefaultCommandConsole");
-        System.setProperty("littlegrid.builder.StorageEnabledCount", "2");
-
-        ClusterMemberGroupApp.main(new String[]{});
-    }
-
-    public static class NoWaitConsole {
-        public static void main(String[] args) {
-            System.out.println("Console launched - and done");
-        }
+public class ExtendClientConsole extends DefaultCommandConsole {
+    @Override
+    public ClusterMemberGroup build(final ClusterMemberGroup.Builder builder) {
+        return builder.buildAndConfigureForExtendClient();
     }
 }

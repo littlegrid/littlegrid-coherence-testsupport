@@ -97,7 +97,7 @@ public final class ExtendStopIntegrationTest extends AbstractAfterTestShutdownIn
                 .setAdditionalSystemProperty("tangosol.coherence.extend.address.2", builder.getWkaAddress())
                 .setAdditionalSystemProperty("tangosol.coherence.extend.port.2", builder.getExtendPort() + 1)
                 .setAdditionalSystemProperty("tangosol.coherence.extend.address.3", builder.getWkaAddress())
-                .setAdditionalSystemProperty("tangosol.coherence.extend.port.3", builder.getExtendPort() + 1)
+                .setAdditionalSystemProperty("tangosol.coherence.extend.port.3", builder.getExtendPort() + 2)
                 .setLogLevel(6)
                 .buildAndConfigureForExtendClient();
 

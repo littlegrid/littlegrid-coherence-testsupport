@@ -190,16 +190,24 @@ public interface ClusterMemberGroup {
      * @since 2.14
      */
     enum BuildAndConfigureEnum {
-        /** Build type. */
+        /**
+         * Build type.
+         */
         STORAGE_DISABLED_CLIENT,
 
-        /** Build type. */
+        /**
+         * Build type.
+         */
         EXTEND_CLIENT,
 
-        /** Build type. */
+        /**
+         * Build type.
+         */
         NO_CLIENT,
 
-        /** Build type. */
+        /**
+         * Build type.
+         */
         STORAGE_ENABLED_MEMBER
     }
 
@@ -289,7 +297,7 @@ public interface ClusterMemberGroup {
          * build method, the enum parameter defines what (if any) system properties need to
          * be set.
          *
-         * @param buildAndConfigureEnum  Build and configure type.
+         * @param buildAndConfigureEnum Build and configure type.
          * @return running cluster member group.
          * @since 2.14
          */
@@ -784,7 +792,7 @@ public interface ClusterMemberGroup {
         /**
          * Sets application console class name if running 'mini-cluster' standalone process.
          *
-         * @param appConsoleClassName  Application console class name.
+         * @param appConsoleClassName Application console class name.
          * @return builder.
          * @since 2.14
          */
@@ -801,7 +809,7 @@ public interface ClusterMemberGroup {
         /**
          * Sets build and configure enum name, used in-conjunction with buildAndConfigureFor();
          *
-         * @param buildAndConfigureEnumName  Build and configure enum name.
+         * @param buildAndConfigureEnumName Build and configure enum name.
          * @return builder.
          * @since 2.14
          */
@@ -853,12 +861,11 @@ public interface ClusterMemberGroup {
         void doAfterShutdown();
     }
 
-    /**
-     * Cluster member group aware interface.
-     *
-     * @since 2.15
-     */
-    interface ClusterMemberGroupAware {
-        void setClusterMemberGroup(ClusterMemberGroup clusterMemberGroup);
+    interface Console {
+        ClusterMemberGroup build(Builder builder);
+
+        void initialiseStreams(String[] args);
+
+        void start(ClusterMemberGroup clusterMemberGroup);
     }
 }

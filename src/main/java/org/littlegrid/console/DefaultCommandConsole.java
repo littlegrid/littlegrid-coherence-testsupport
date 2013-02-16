@@ -1,43 +1,66 @@
-package org.littlegrid.impl;
+package org.littlegrid.console;
 
-import com.tangosol.coherence.component.util.logOutput.Log4j;
+import com.tangosol.coherence.dslquery.QueryPlus;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroup.ClusterMemberGroupAware;
+import static org.littlegrid.ClusterMemberGroup.Console;
 
 /**
  */
-public class WhateverConsole implements ClusterMemberGroupAware {
+public class DefaultCommandConsole implements Console {
     private static final String COMMAND_PROMPT = "lg> ";
-    private static final String STOP_MEMBER_COMMAND = "stopMember";
+    private static final String STOP_MEMBER_COMMAND = "stop member";
     private static final String BYE_COMMAND = "bye";
-    private static final String GET_STARTED_MEMBER_IDS_COMMAND = "getStartedMemberIds";
-    private static final String SHUTDOWN_ALL_COMMAND = "shutdownAll";
-    private static final String STOP_ALL_COMMAND = "stopAll";
+    private static final String QUIT_COMMAND = "quit";
+    private static final String GET_STARTED_MEMBER_IDS_COMMAND = "get started";
+    private static final String SHUTDOWN_ALL_COMMAND = "shutdown all";
+    private static final String STOP_ALL_COMMAND = "stop all";
     private static final String SLEEP_COMMAND = "sleep";
-    private static final String SHUTDOWN_MEMBER_COMMAND = "shutdownMember";
-    private static final String MERGE_STORAGE_ENABLED_COMMAND = "mergeStorageEnabledMember";
-    private static final String MERGE_EXTEND_PROXY_COMMAND = "mergeExtendProxyMember";
+    private static final String SHUTDOWN_MEMBER_COMMAND = "shutdown member";
+    private static final String MERGE_STORAGE_ENABLED_COMMAND = "merge storage enabled";
+    private static final String MERGE_EXTEND_PROXY_COMMAND = "merge extend proxy";
     private static final String HELP_COMMAND = "help";
-    private static final String PAUSE_COMMAND = "pause";
     private static final String COMMENT_COMMAND = "#";
+    private static final String COHQL_COMMAND = "cohql";
+    private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1250;
 
-    private ClusterMemberGroup memberGroup;
+    private InputStream in;
+    private PrintStream out;
 
-    private PrintStream out = System.out;
+    @Override
+    public void initialiseStreams(final String[] args) {
+        setInputStream(System.in);
+        setPrintStream(System.out);
+    }
 
-    public void main(String[] args)
-            throws IOException, InterruptedException {
+    public void setInputStream(final InputStream in) {
+        this.in = in;
+    }
 
-        final Scanner scanner = new Scanner(System.in);
+    public void setPrintStream(final PrintStream out) {
+        this.out = out;
+    }
+
+    @Override
+    public ClusterMemberGroup build(final ClusterMemberGroup.Builder builder) {
+        return builder.buildAndConfigureForNoClient();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void start(ClusterMemberGroup clusterMemberGroup) {
+        final Scanner scanner = new Scanner(in);
+//        final Scanner scanner = new Scanner(System.in);
 //        final Scanner scanner = new Scanner(new FileInputStream("whatever.txt"));
         boolean exit = false;
 
@@ -52,40 +75,40 @@ public class WhateverConsole implements ClusterMemberGroupAware {
                     command = command.trim();
 
                     if (command.startsWith(STOP_MEMBER_COMMAND)) {
-                        stopMember(command);
+                        stopMember(clusterMemberGroup, command);
 
                     } else if (command.startsWith(SHUTDOWN_MEMBER_COMMAND)) {
-                        shutdownMember(command);
+                        shutdownMember(clusterMemberGroup, command);
 
                     } else if (command.startsWith(SLEEP_COMMAND)) {
                         sleep(command);
 
                     } else if (command.equals(STOP_ALL_COMMAND)) {
-                        stopAll();
+                        stopAll(clusterMemberGroup);
 
                     } else if (command.equals(SHUTDOWN_ALL_COMMAND)) {
-                        shutdownAll();
+                        shutdownAll(clusterMemberGroup);
 
                     } else if (command.equals(GET_STARTED_MEMBER_IDS_COMMAND)) {
-                        outputStartedMemberIds();
+                        outputStartedMemberIds(clusterMemberGroup);
 
                     } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND)) {
-                        mergeStorageEnabledMember();
+                        mergeStorageEnabledMember(clusterMemberGroup);
 
                     } else if (command.startsWith(MERGE_EXTEND_PROXY_COMMAND)) {
-                        mergeExtendProxyMember(command);
+                        mergeExtendProxyMember(clusterMemberGroup, command);
 
                     } else if (command.equals(HELP_COMMAND)) {
                         outputHelp();
 
-                    } else if (command.equals(PAUSE_COMMAND)) {
-                        pause();
-
-                    } else if (command.equals(BYE_COMMAND)) {
+                    } else if (command.equals(BYE_COMMAND) || command.equals(QUIT_COMMAND)) {
                         exit = true;
 
                     } else if (command.startsWith(COMMENT_COMMAND)) {
                         out.println(command);
+
+                    } else if (command.equals(COHQL_COMMAND)) {
+                        cohQl();
 
                     } else if (command.equals("")) {
                         // Do nothing
@@ -100,12 +123,10 @@ public class WhateverConsole implements ClusterMemberGroupAware {
         } while (!exit);
     }
 
-    private void pause()
-            throws IOException {
+    private void cohQl()
+            throws Exception {
 
-        out.println("Pausing, press <Enter> to continue");
-
-        System.in.read();
+        QueryPlus.main(new String[]{});
     }
 
     private void outputHelp() {
@@ -113,17 +134,22 @@ public class WhateverConsole implements ClusterMemberGroupAware {
         out.println(format("%s n, m - shuts down the specified cluster member(s)", SHUTDOWN_MEMBER_COMMAND));
         out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
         out.println(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
-        out.println(format("%s - exits this application", BYE_COMMAND));
+        out.println(format("%s - exits this application - same as %s", BYE_COMMAND, QUIT_COMMAND));
+        out.println(format("%s - quits this application - same as %s", QUIT_COMMAND, BYE_COMMAND));
         out.println(format("%s - displays member Ids known to this application", GET_STARTED_MEMBER_IDS_COMMAND));
         out.println(format("%s n - sleeps for the specified time in seconds", SLEEP_COMMAND));
         out.println(format("%s - merges storage enabled member into this application", MERGE_STORAGE_ENABLED_COMMAND));
-        out.println(format("%s n - merges Extend proxy member with specified port into this application", MERGE_EXTEND_PROXY_COMMAND));
+        out.println(format("%s n - merges Extend proxy member with specified port into this application",
+                MERGE_EXTEND_PROXY_COMMAND));
         out.println(format("%s - displays this help", HELP_COMMAND));
-        out.println(format("%s - pauses until Enter key is pressed", PAUSE_COMMAND));
-        out.println(format("%s - a comment line, useful when scripting", COMMENT_COMMAND));
+        out.println(format("%s - a comment line, useful when scripting and wanting to comment scripts",
+                COMMENT_COMMAND));
+        out.println(format("%s - launches CohQL console", COHQL_COMMAND));
     }
 
-    private void mergeExtendProxyMember(final String command) {
+    private void mergeExtendProxyMember(final ClusterMemberGroup memberGroup,
+                                        final String command) {
+
         final int extendPort = parseInteger(MERGE_EXTEND_PROXY_COMMAND, command);
 
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
@@ -135,10 +161,10 @@ public class WhateverConsole implements ClusterMemberGroupAware {
                 .setCustomConfiguredCount(0)
                 .buildAndConfigure());
 
-        outputStartedMemberIds();
+        outputStartedMemberIds(memberGroup);
     }
 
-    private void mergeStorageEnabledMember() {
+    private void mergeStorageEnabledMember(final ClusterMemberGroup memberGroup) {
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(1)
                 .setExtendProxyCount(0)
@@ -147,43 +173,50 @@ public class WhateverConsole implements ClusterMemberGroupAware {
                 .setCustomConfiguredCount(0)
                 .buildAndConfigure());
 
-        outputStartedMemberIds();
+        outputStartedMemberIds(memberGroup);
     }
 
-    private void shutdownAll() {
+    private void shutdownAll(final ClusterMemberGroup memberGroup) {
         memberGroup.shutdownAll();
     }
 
-    private void stopAll() {
+    private void stopAll(final ClusterMemberGroup memberGroup) {
         memberGroup.stopAll();
     }
 
-    private void sleep(final String command) throws InterruptedException {
+    private void sleep(final String command)
+            throws InterruptedException {
+
         final int sleepTime = parseInteger(SLEEP_COMMAND, command);
 
         out.println(format("About to sleep for %d seconds", sleepTime));
         TimeUnit.SECONDS.sleep(sleepTime);
     }
 
-    private void shutdownMember(final String command) {
+    private void shutdownMember(final ClusterMemberGroup memberGroup,
+                                final String command) {
+
         final int[] memberId = parseIntegers(SHUTDOWN_MEMBER_COMMAND, command);
 
         memberGroup.shutdownMember(memberId);
 
-        outputStartedMemberIds();
+        outputStartedMemberIds(memberGroup);
     }
 
-    private void stopMember(final String command) throws InterruptedException {
+    private void stopMember(final ClusterMemberGroup memberGroup,
+                            final String command)
+            throws InterruptedException {
+
         final int[] memberId = parseIntegers(STOP_MEMBER_COMMAND, command);
 
         memberGroup.stopMember(memberId);
 
-        TimeUnit.MILLISECONDS.sleep(1250);
+        TimeUnit.MILLISECONDS.sleep(WAIT_MILLISECONDS_AFTER_STOP_COMMAND);
 
-        outputStartedMemberIds();
+        outputStartedMemberIds(memberGroup);
     }
 
-    private void outputStartedMemberIds() {
+    private void outputStartedMemberIds(final ClusterMemberGroup memberGroup) {
         out.println("Started member ids: " + Arrays.toString(memberGroup.getStartedMemberIds()));
     }
 
@@ -206,10 +239,5 @@ public class WhateverConsole implements ClusterMemberGroupAware {
         }
 
         return numbers;
-    }
-
-    @Override
-    public void setClusterMemberGroup(final ClusterMemberGroup clusterMemberGroup) {
-        memberGroup = clusterMemberGroup;
     }
 }

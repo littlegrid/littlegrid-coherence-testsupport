@@ -40,7 +40,6 @@ import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
@@ -68,6 +67,8 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
             LOGGER.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
 
             final Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
+
+            @SuppressWarnings("unchecked")
             final Constructor constructor = clusterMemberClass.getConstructor();
 
             clusterMemberInstance = constructor.newInstance();

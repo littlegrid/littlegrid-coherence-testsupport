@@ -40,7 +40,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.ClusterMemberGroup.ClusterMemberGroupAware;
+import static org.littlegrid.ClusterMemberGroup.Console;
 
 /**
  * Cluster member group utilities, used for the creation of {@link ClusterMemberGroup.Builder}
@@ -135,18 +135,21 @@ public final class ClusterMemberGroupUtils {
         }
 
         final Builder builder = newBuilder();
-        final ClusterMemberGroup memberGroup = builder.buildAndConfigure();
+        final ClusterMemberGroup memberGroup;
 
         try {
-            Class consoleClass =
+            final Class consoleClass =
                     ClusterMemberGroupUtils.class.getClassLoader().loadClass(builder.getAppConsoleClassName());
 
-            if (ClusterMemberGroupAware.class.isAssignableFrom(consoleClass)) {
-                ClusterMemberGroupAware memberGroupAware = (ClusterMemberGroupAware) consoleClass.newInstance();
-                memberGroupAware.setClusterMemberGroup(memberGroup);
+            if (Console.class.isAssignableFrom(consoleClass)) {
+                final Console console = (Console) consoleClass.newInstance();
 
-                ClassHelper.invoke(memberGroupAware, "main", new Object[]{new String[]{}});
+                console.initialiseStreams(args);
+                memberGroup = console.build(builder);
+                console.start(memberGroup);
             } else {
+                memberGroup = builder.buildAndConfigure();
+
                 ClassHelper.invokeStatic(consoleClass, "main", new Object[]{new String[]{}});
             }
         } catch (Exception e) {

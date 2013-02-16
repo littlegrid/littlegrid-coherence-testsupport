@@ -139,6 +139,7 @@ public final class ChildFirstUrlClassLoaderTest {
         assertThat(exceptionCounter, is(0));
     }
 
+    @SuppressWarnings("unchecked")
     private List<Callable<Void>> getTasks(final ClassLoader classLoader,
                                           int numberOfTasks) {
 
