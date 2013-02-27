@@ -202,7 +202,7 @@
                                 below argLine settings are used to avoid the perm-space from becoming full.
                             -->
                             <forkMode>always</forkMode>
-                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=512m</argLine>
+                            <argLine>-Xmx1024m -Xms1024m -XX:MaxPermSize=512m</argLine>
                         </configuration>
                     </plugin>
 
