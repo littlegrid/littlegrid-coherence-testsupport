@@ -132,7 +132,7 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
-        public Object getKey() {
+        public String getClientCacheConfiguration() {
             throw new UnsupportedOperationException();
         }
 

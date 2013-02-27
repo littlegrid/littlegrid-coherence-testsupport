@@ -33,12 +33,14 @@ package org.littlegrid.console;
 
 import org.littlegrid.ClusterMemberGroup;
 
+import static org.littlegrid.ClusterMemberGroup.Builder;
+
 /**
  * Storage disabled client console.
  */
 public class StorageDisabledClientConsole extends DefaultCommandConsole {
     @Override
-    public ClusterMemberGroup build(final ClusterMemberGroup.Builder builder) {
+    public ClusterMemberGroup build(final Builder builder) {
         return builder.buildAndConfigureForStorageDisabledClient();
     }
 }

@@ -145,12 +145,12 @@ public interface ClusterMemberGroup {
     int getExtendPort();
 
     /**
-     * Returns a key to this cluster member group.
+     * Returns the client cache configuration filename.
      *
-     * @return key.
+     * @return filename.
      * @since 2.15
      */
-    Object getKey();
+    String getClientCacheConfiguration();
 
     /**
      * Cluster member interface - implementations of this class need to provide basic functionality,

@@ -66,7 +66,7 @@ public class EntryProcessorFailoverIntegrationTest {
                 .setStorageEnabledCount(3)
                 .setCacheConfiguration("simple-cache-config.xml")
                 .setLogLevel(3)
-                .setFastStartJoinTimeoutMilliseconds(100)
+                .setFastStartJoinTimeoutMilliseconds(1000) // Coherence 3.7.x can use 100, older versions require 1000
                 .buildAndConfigureForStorageDisabledClient();
 
         cache = CacheFactory.getCache("test");

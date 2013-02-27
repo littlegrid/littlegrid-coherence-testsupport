@@ -149,7 +149,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
     }
 
     @Test
-    public void extendClientOverride() {
+    public void extendClientOverrideForCoherence37AndAbove() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)
                 .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)

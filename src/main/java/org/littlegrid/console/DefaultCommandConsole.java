@@ -11,26 +11,29 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
+import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.Console;
 
 /**
  */
 public class DefaultCommandConsole implements Console {
+    private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1250;
+
     private static final String COMMAND_PROMPT = "lg> ";
     private static final String STOP_MEMBER_COMMAND = "stop member";
     private static final String BYE_COMMAND = "bye";
     private static final String QUIT_COMMAND = "quit";
-    private static final String GET_STARTED_MEMBER_IDS_COMMAND = "get started";
+    private static final String GET_STARTED_MEMBER_IDS_COMMAND = "members";
     private static final String SHUTDOWN_ALL_COMMAND = "shutdown all";
     private static final String STOP_ALL_COMMAND = "stop all";
     private static final String SLEEP_COMMAND = "sleep";
     private static final String SHUTDOWN_MEMBER_COMMAND = "shutdown member";
-    private static final String MERGE_STORAGE_ENABLED_COMMAND = "merge storage enabled";
-    private static final String MERGE_EXTEND_PROXY_COMMAND = "merge extend proxy";
+    private static final String MERGE_STORAGE_ENABLED_COMMAND = "start storage enabled";
+    private static final String MERGE_EXTEND_PROXY_COMMAND = "start extend proxy";
+    private static final String MERGE_JMX_MONITOR_COMMAND = "start jmx monitor";
     private static final String HELP_COMMAND = "help";
     private static final String COMMENT_COMMAND = "#";
     private static final String COHQL_COMMAND = "cohql";
-    private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1250;
 
     private InputStream in;
     private PrintStream out;
@@ -50,7 +53,7 @@ public class DefaultCommandConsole implements Console {
     }
 
     @Override
-    public ClusterMemberGroup build(final ClusterMemberGroup.Builder builder) {
+    public ClusterMemberGroup build(final Builder builder) {
         return builder.buildAndConfigureForNoClient();
     }
 
@@ -60,8 +63,7 @@ public class DefaultCommandConsole implements Console {
     @Override
     public void start(ClusterMemberGroup clusterMemberGroup) {
         final Scanner scanner = new Scanner(in);
-//        final Scanner scanner = new Scanner(System.in);
-//        final Scanner scanner = new Scanner(new FileInputStream("whatever.txt"));
+
         boolean exit = false;
 
         do {
@@ -98,6 +100,9 @@ public class DefaultCommandConsole implements Console {
                     } else if (command.startsWith(MERGE_EXTEND_PROXY_COMMAND)) {
                         mergeExtendProxyMember(clusterMemberGroup, command);
 
+                    } else if (command.startsWith(MERGE_JMX_MONITOR_COMMAND)) {
+                        mergeJmxMonitorMember(clusterMemberGroup);
+
                     } else if (command.equals(HELP_COMMAND)) {
                         outputHelp();
 
@@ -130,21 +135,35 @@ public class DefaultCommandConsole implements Console {
     }
 
     private void outputHelp() {
-        out.println(format("%s n, m - stops the specified cluster member(s)", STOP_MEMBER_COMMAND));
-        out.println(format("%s n, m - shuts down the specified cluster member(s)", SHUTDOWN_MEMBER_COMMAND));
+        out.println(format("%s n m - stops the specified cluster member(s)", STOP_MEMBER_COMMAND));
+        out.println(format("%s n m - shuts down the specified cluster member(s)", SHUTDOWN_MEMBER_COMMAND));
         out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
         out.println(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
         out.println(format("%s - exits this application - same as %s", BYE_COMMAND, QUIT_COMMAND));
         out.println(format("%s - quits this application - same as %s", QUIT_COMMAND, BYE_COMMAND));
-        out.println(format("%s - displays member Ids known to this application", GET_STARTED_MEMBER_IDS_COMMAND));
-        out.println(format("%s n - sleeps for the specified time in seconds", SLEEP_COMMAND));
-        out.println(format("%s - merges storage enabled member into this application", MERGE_STORAGE_ENABLED_COMMAND));
-        out.println(format("%s n - merges Extend proxy member with specified port into this application",
+        out.println(format("%s - displays member Ids known to this process", GET_STARTED_MEMBER_IDS_COMMAND));
+        out.println(format("%s n - sleeps for the specified time in milliseconds", SLEEP_COMMAND));
+        out.println(format("%s - starts a storage enabled member in this process", MERGE_STORAGE_ENABLED_COMMAND));
+        out.println(format("%s n - starts an Extend proxy member with specified port in this process",
                 MERGE_EXTEND_PROXY_COMMAND));
+        out.println(format("%s - starts a JMX monitor member in this process", MERGE_JMX_MONITOR_COMMAND));
         out.println(format("%s - displays this help", HELP_COMMAND));
         out.println(format("%s - a comment line, useful when scripting and wanting to comment scripts",
                 COMMENT_COMMAND));
         out.println(format("%s - launches CohQL console", COHQL_COMMAND));
+    }
+
+    private void mergeJmxMonitorMember(final ClusterMemberGroup memberGroup) {
+
+        memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(0)
+                .setExtendProxyCount(0)
+                .setStorageEnabledExtendProxyCount(0)
+                .setJmxMonitorCount(1)
+                .setCustomConfiguredCount(0)
+                .buildAndConfigure());
+
+        outputStartedMemberIds(memberGroup);
     }
 
     private void mergeExtendProxyMember(final ClusterMemberGroup memberGroup,
@@ -189,8 +208,8 @@ public class DefaultCommandConsole implements Console {
 
         final int sleepTime = parseInteger(SLEEP_COMMAND, command);
 
-        out.println(format("About to sleep for %d seconds", sleepTime));
-        TimeUnit.SECONDS.sleep(sleepTime);
+        out.println(format("About to sleep for %d milliseconds", sleepTime));
+        TimeUnit.MILLISECONDS.sleep(sleepTime);
     }
 
     private void shutdownMember(final ClusterMemberGroup memberGroup,
@@ -230,12 +249,16 @@ public class DefaultCommandConsole implements Console {
                                        final String commandAndCommaDelimitedNumbers) {
 
         final String commaDelimitedNumbers = commandAndCommaDelimitedNumbers.replaceAll(command, "");
-        final String[] stringNumbers = commaDelimitedNumbers.split(",");
+        final String[] stringNumbers = commaDelimitedNumbers.trim().split(" ");
 
         final int[] numbers = new int[stringNumbers.length];
 
         for (int i = 0; i < numbers.length; i++) {
-            numbers[i] = Integer.parseInt(stringNumbers[i].trim());
+            final String value = stringNumbers[i].trim();
+
+            if (value.length() > 0) {
+                numbers[i] = Integer.parseInt(stringNumbers[i].trim());
+            }
         }
 
         return numbers;

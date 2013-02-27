@@ -164,8 +164,8 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
-    public Object getKey() {
-        return key;
+    public String getClientCacheConfiguration() {
+        throw new UnsupportedOperationException();
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {

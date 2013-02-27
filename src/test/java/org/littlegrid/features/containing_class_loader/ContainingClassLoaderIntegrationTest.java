@@ -82,6 +82,8 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 
             assertThat(member.getActualContainingClassLoader(), instanceOf(ChildFirstUrlClassLoader.class));
 
+            assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));
+
             // Check the the class loader that is containing the actual wrapped cluster member isn't the same
             // as the one that is wrapping the wrapped cluster member.
             assertThat(member.getActualContainingClassLoader(), not(member.getClass().getClassLoader()));

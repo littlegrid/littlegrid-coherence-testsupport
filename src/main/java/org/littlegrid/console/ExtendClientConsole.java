@@ -32,6 +32,9 @@
 package org.littlegrid.console;
 
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
+
+import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
  * Extend client console.
@@ -40,7 +43,18 @@ import org.littlegrid.ClusterMemberGroup;
  */
 public class ExtendClientConsole extends DefaultCommandConsole {
     @Override
-    public ClusterMemberGroup build(final ClusterMemberGroup.Builder builder) {
+    public ClusterMemberGroup build(final Builder builder) {
+        if (builder instanceof DefaultClusterMemberGroupBuilder) {
+            final DefaultClusterMemberGroupBuilder builderImpl = (DefaultClusterMemberGroupBuilder) builder;
+            final String clientCacheConfigurationFilename =
+                    builderImpl.getBuilderKeysAndValues().get("ClientCacheConfiguration");
+
+            if (clientCacheConfigurationFilename == null || clientCacheConfigurationFilename.length() == 0) {
+                throw new IllegalStateException(
+                        "Client cache configuration file cannot be null or blank when using Extend");
+            }
+        }
+
         return builder.buildAndConfigureForExtendClient();
     }
 }

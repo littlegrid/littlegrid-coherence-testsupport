@@ -338,9 +338,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
+/*
+//TODO: this needs to be thought about a bit more...
         final ClusterMemberGroup existingMemberGroup = cachedMemberGroups.get(this);
 
-/*
         if (existingMemberGroup != null) {
             return existingMemberGroup;
         }

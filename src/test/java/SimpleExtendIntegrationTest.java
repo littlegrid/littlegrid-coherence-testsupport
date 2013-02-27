@@ -75,7 +75,7 @@ public class SimpleExtendIntegrationTest {
                 .setCacheConfiguration("simple-extend-cache-config.xml")
                 .setExtendProxyCount(1)
                 .setClientCacheConfiguration("simple-extend-client-cache-config.xml")
-                .setFastStartJoinTimeoutMilliseconds(100)
+                .setFastStartJoinTimeoutMilliseconds(1000) // Coherence 3.7.x can use 100, older versions require 1000
                 .setLogLevel(6)
                 .buildAndConfigureForExtendClient();
     }
