@@ -35,6 +35,7 @@ import com.tangosol.io.pof.PortableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
@@ -149,6 +150,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
     }
 
     @Test
+    @Ignore
     public void extendClientOverrideForCoherence37AndAbove() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledExtendProxyCount(1)

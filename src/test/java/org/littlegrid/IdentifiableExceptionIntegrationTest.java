@@ -62,6 +62,7 @@ public class IdentifiableExceptionIntegrationTest
     }
 
     @Test
+    @Ignore
     public void exceptionDueToNoAutoStartedServicesThisTestIsForCoherence371AndAbove() {
         try {
             memberGroup = ClusterMemberGroupUtils.newBuilder()

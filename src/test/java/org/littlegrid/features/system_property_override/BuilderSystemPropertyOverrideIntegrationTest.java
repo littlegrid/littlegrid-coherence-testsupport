@@ -34,6 +34,7 @@ package org.littlegrid.features.system_property_override;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -108,6 +109,7 @@ public class BuilderSystemPropertyOverrideIntegrationTest
     }
 
     @Test
+    @Ignore
     public void systemPropertyOverrideStorageEnabledUsingLegacyBuilderOverridePrefix() {
         final int numberOfStorageEnabled = 2;
         final int expectedClusterSize = numberOfStorageEnabled + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
