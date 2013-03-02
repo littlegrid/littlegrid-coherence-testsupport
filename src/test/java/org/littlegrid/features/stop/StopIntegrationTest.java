@@ -194,7 +194,7 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
 
     @Test
     public void startAndStopVeryLargeMemberGroup() {
-        final int numberOfMembers = 2 * LARGE_TEST_CLUSTER_SIZE;
+        final int numberOfMembers = 3 * MEDIUM_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
