@@ -1,6 +1,6 @@
 package org.littlegrid.console;
 
-//import com.tangosol.coherence.dslquery.QueryPlus;
+import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
@@ -131,8 +131,10 @@ public class DefaultCommandConsole implements Console {
     private void cohQl()
             throws Exception {
 
-        throw new UnsupportedOperationException("Setting up new CI rig for 3.5.3");
-        //QueryPlus.main(new String[]{});
+        final Class cohqlConsole =
+                this.getClass().getClassLoader().loadClass("com.tangosol.coherence.dslquery.QueryPlus");
+
+        ClassHelper.invokeStatic(cohqlConsole, "main", new Object[]{new String[]{}});
     }
 
     private void outputHelp() {
