@@ -124,6 +124,9 @@
                 <configuration>
                     <instrumentation />
                     <check />
+                    <formats>
+                        <format>xml</format>
+                    </formats>
                 </configuration>
                 <executions>
                     <execution>
