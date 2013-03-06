@@ -35,7 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.SystemUtils;
 
@@ -45,7 +44,8 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.*;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
  * Default cluster member group builder tests.
@@ -131,9 +131,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void nonCoherenceBuilderSettings() {
-//        setAdditionalSystemProperties
-//        setBuilderProperties
-
         final String expectedExceptionReportInstanceClassName = "com.g.h.i.BuildExceptionReporter";
         final String expectedCallbackHandlerInstanceClassName = "com.g.h.i.CallbackHandler";
 
@@ -157,7 +154,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String appConsoleClassName = "com.a.b.c.Console";
         final String buildAndConfigureForEnumName = STORAGE_DISABLED_CLIENT.name();
 
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
         builder.setCallbackHandlerInstanceClassName(expectedCallbackHandlerInstanceClassName);
@@ -257,7 +254,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final int expectedFastStartJoinTimeoutMilliseconds = 231;
 
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setCacheConfiguration(expectedCacheConfiguration);
         builder.setClientCacheConfiguration(expectedClientCacheConfiguration);
@@ -295,7 +292,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
 
         assertThat(builderSettings.get(CACHE_CONFIGURATION_KEY), is(expectedCacheConfiguration));
+
         assertThat(builderSettings.get(CLIENT_CACHE_CONFIGURATION_KEY), is(expectedClientCacheConfiguration));
+        assertThat(builder.getClientCacheConfiguration(), is(expectedClientCacheConfiguration));
+
         assertThat(builderSettings.get(OVERRIDE_CONFIGURATION_KEY), is(expectedOverrideConfiguration));
         assertThat(builderSettings.get(CLIENT_OVERRIDE_CONFIGURATION_KEY), is(expectedClientOverrideConfiguration));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY), is(expectedCustomConfiguredCacheConfiguration));
@@ -315,8 +315,14 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(EXTEND_CLIENT_ROLE_NAME_KEY), is(expectedExtendClientRoleName));
 
         assertThat(builderSettings.get(WKA_ADDRESS_KEY), is(expectedWkaAddress));
+        assertThat(builder.getWkaAddress(), is(expectedWkaAddress));
+
         assertThat(builderSettings.get(WKA_PORT_KEY), is(Integer.toString(expectedWkaPort)));
+        assertThat(builder.getWkaPort(), is(expectedWkaPort));
+
         assertThat(builderSettings.get(EXTEND_PORT_KEY), is(Integer.toString(expectedExtendPort)));
+        assertThat(builder.getExtendPort(), is(expectedExtendPort));
+
         assertThat(builderSettings.get(TTL_KEY), is(Integer.toString(expectedTtl)));
 
         assertThat(builderSettings.get(LOG_LEVEL_KEY), is(Integer.toString(expectedLogLevel)));
@@ -354,7 +360,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedLogDestination = "stdout";
         final int expectedLogLevel = 3;
 
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
 

@@ -148,7 +148,7 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
                                 + "in the cache configuration file - this is a current littlegrid limitation ",
                         e, SUSPECTED_AUTOSTART_EXCEPTION);
 //            } else if (message.contains("Value out of range [1000,")) {
-//                throw new IdentifiableException("Whatever", e, JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL);
+//                throw new IdentifiableException("Join timeout is too small", e, JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL);
             }
 
             throw new IllegalStateException(e);

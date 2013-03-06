@@ -1,12 +1,20 @@
-package org.littlegrid.console;
+package org.littlegrid.app;
 
 import java.io.IOException;
 
 /**
  * Simple console that pauses.
+ *
+ * @since 2.14
  */
 public class SimpleWaitConsole {
-    public static void main(String[] args)
+    /**
+     * Main method.
+     *
+     * @param args Arguments.
+     * @throws IOException indicates an exception.
+     */
+    public static void main(final String[] args)
             throws IOException {
 
         System.out.println();

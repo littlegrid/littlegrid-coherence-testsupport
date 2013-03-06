@@ -32,10 +32,10 @@
 package org.littlegrid.impl;
 
 import org.junit.Test;
-import org.littlegrid.IdentifiableException;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.IdentifiableException;
 
 import java.net.MalformedURLException;
 import java.net.URL;

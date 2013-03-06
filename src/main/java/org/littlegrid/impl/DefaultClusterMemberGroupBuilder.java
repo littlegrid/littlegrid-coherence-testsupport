@@ -647,6 +647,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
+    public String getClientCacheConfiguration() {
+        return getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Builder setClientOverrideConfiguration(final String overrideConfiguration) {
         setBuilderValue(CLIENT_OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
@@ -1202,10 +1210,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public String toString() {
         return "Builder{" +
-                "builderKeysAndValues=" + builderKeysAndValues +
-                ", additionalSystemProperties=" + additionalSystemProperties +
-                ", builderKeyToSystemPropertyNameMapping=" + builderKeyToSystemPropertyNameMapping +
-                '}';
+                "builderKeysAndValues=" + builderKeysAndValues
+                + ", additionalSystemProperties=" + additionalSystemProperties
+                + ", builderKeyToSystemPropertyNameMapping=" + builderKeyToSystemPropertyNameMapping
+                + '}';
     }
 
     /**

@@ -29,18 +29,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.console;
+package org.littlegrid.app;
 
-import org.littlegrid.ClusterMemberGroup;
-
-import static org.littlegrid.ClusterMemberGroup.Builder;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
- * Storage disabled client console.
+ * Scripting console that processes commands in a file.
+ *
+ * @since 2.15
  */
-public class StorageDisabledClientConsole extends DefaultCommandConsole {
-    @Override
-    public ClusterMemberGroup build(final Builder builder) {
-        return builder.buildAndConfigureForStorageDisabledClient();
-    }
+public class ScriptExecutionDslApp { //extends CommandDslShell {
+//    public ScriptExecutionDslApp(InputStream in, PrintStream out) {
+//        super(in, out);
+//    }
+//
+//    //    @Override
+//    public void doInitialiseStreams(final String[] args) {
+//        try {
+//            //TODO: get filename from arguments
+//            setInputStream(new FileInputStream("THIS IS BE FROM ONE OF THE ARGUMENTS"));
+//        } catch (FileNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        setPrintStream(System.out);
+//    }
 }

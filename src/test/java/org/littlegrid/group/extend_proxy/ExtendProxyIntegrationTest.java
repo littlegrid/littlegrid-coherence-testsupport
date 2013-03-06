@@ -49,10 +49,10 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.CLIENT_OVERRIDE_CONFI
 import static org.littlegrid.ClusterMemberGroupTestSupport.EXTEND_CLIENT_CACHE_CONFIGURATION_FILE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_MEMBER_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_MEMBER_NAME;
 import static org.littlegrid.support.ExtendUtils.getClusterSizeThatExtendClientIsConnectedTo;
 
 /**

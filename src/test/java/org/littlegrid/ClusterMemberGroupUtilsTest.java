@@ -131,11 +131,6 @@ public class ClusterMemberGroupUtilsTest {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public String getClientCacheConfiguration() {
-            throw new UnsupportedOperationException();
-        }
-
         public static int getShutdownAllInvokedCounter() {
             return shutdownAllInvokedCounter;
         }

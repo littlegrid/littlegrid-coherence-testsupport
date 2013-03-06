@@ -32,7 +32,7 @@
 package org.littlegrid.impl;
 
 import org.junit.Test;
-import org.littlegrid.console.SimpleWaitConsole;
+import org.littlegrid.app.SimpleWaitConsole;
 
 /**
  * Simple wait console tests.

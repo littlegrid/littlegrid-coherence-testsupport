@@ -54,7 +54,7 @@ public class ClusterMemberGroupApp {
      *             file can be specified from which the cluster member group configuration should be
      *             specified.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         ClusterMemberGroupUtils.main(args);
     }
 }

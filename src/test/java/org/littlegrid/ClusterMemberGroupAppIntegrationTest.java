@@ -33,7 +33,6 @@ package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
@@ -60,15 +59,6 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
     @Test
     public void start() {
         ClusterMemberGroupApp.main(new String[]{"properties/memberGroup1.properties"});
-    }
-
-    @Test
-    @Ignore
-    public void whatever() {
-        System.setProperty("littlegrid.builder.AppConsoleClassName", "org.littlegrid.console.DefaultCommandConsole");
-        System.setProperty("littlegrid.builder.StorageEnabledCount", "2");
-
-        ClusterMemberGroupApp.main(new String[]{});
     }
 
     public static class NoWaitConsole {

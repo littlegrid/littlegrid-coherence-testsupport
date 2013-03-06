@@ -145,14 +145,6 @@ public interface ClusterMemberGroup {
     int getExtendPort();
 
     /**
-     * Returns the client cache configuration filename.
-     *
-     * @return filename.
-     * @since 2.15
-     */
-    String getClientCacheConfiguration();
-
-    /**
      * Cluster member interface - implementations of this class need to provide basic functionality,
      * so they may be controlled by the {@link ClusterMemberGroup}
      * implementations - typically the default implementation of this class should suffice for most
@@ -349,6 +341,14 @@ public interface ClusterMemberGroup {
          * @return builder.
          */
         Builder setClientCacheConfiguration(String cacheConfiguration);
+
+        /**
+         * Returns the client cache configuration filename.
+         *
+         * @return filename.
+         * @since 2.15
+         */
+        String getClientCacheConfiguration();
 
         /**
          * Sets the specific Coherence override file to be used, for instance when using Extend
@@ -807,7 +807,7 @@ public interface ClusterMemberGroup {
         String getAppConsoleClassName();
 
         /**
-         * Sets build and configure enum name, used in-conjunction with buildAndConfigureFor();
+         * Sets build and configure enum name, used in-conjunction with buildAndConfigureFor();  .
          *
          * @param buildAndConfigureEnumName Build and configure enum name.
          * @return builder.
@@ -859,13 +859,5 @@ public interface ClusterMemberGroup {
          * Performs any necessary actions after the cluster member has been shutdown.
          */
         void doAfterShutdown();
-    }
-
-    interface Console {
-        ClusterMemberGroup build(Builder builder);
-
-        void initialiseStreams(String[] args);
-
-        void start(ClusterMemberGroup clusterMemberGroup);
     }
 }

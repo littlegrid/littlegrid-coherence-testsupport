@@ -57,18 +57,18 @@ public class ReusableMemberGroupIntegrationTest {
     }
 
     @Test
-    public void whatever1() {
+    public void test1() {
 
 
     }
 
     @Test
-    public void whatever2() {
+    public void test2() {
 
     }
 
     @Test
-    public void whatever3() {
+    public void test3() {
 
     }
 }

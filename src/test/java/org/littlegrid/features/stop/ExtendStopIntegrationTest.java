@@ -36,11 +36,11 @@ import com.tangosol.net.Cluster;
 import com.tangosol.net.InvocationService;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.INVOCATION_SERVICE_NAME;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
@@ -86,7 +86,7 @@ public final class ExtendStopIntegrationTest extends AbstractAfterTestShutdownIn
         final int numberOfExtendProxyMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int numberOfStorageEnabledMembers = SINGLE_TEST_CLUSTER_SIZE;
 
-        final ClusterMemberGroup.Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         memberGroup = builder
                 .setStorageEnabledCount(numberOfStorageEnabledMembers)

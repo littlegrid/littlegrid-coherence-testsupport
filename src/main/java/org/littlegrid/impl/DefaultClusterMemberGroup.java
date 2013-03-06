@@ -160,14 +160,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         return extendPort;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getClientCacheConfiguration() {
-        throw new UnsupportedOperationException();
-    }
-
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
         memberFutures.addAll(memberFuturesToAdd);
 
