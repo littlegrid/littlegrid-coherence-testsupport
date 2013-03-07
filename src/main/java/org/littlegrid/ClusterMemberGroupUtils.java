@@ -46,9 +46,6 @@ import static org.littlegrid.ClusterMemberGroup.Builder;
  * and for shutting down {@link ClusterMemberGroup}(s).
  */
 public final class ClusterMemberGroupUtils {
-    private static final Map<Object, ClusterMemberGroup> CACHED_MEMBER_GROUPS =
-            new HashMap<Object, ClusterMemberGroup>();
-
     /**
      * Default scope to enable test coverage.
      */
@@ -62,7 +59,7 @@ public final class ClusterMemberGroupUtils {
      * @return builder.
      */
     public static Builder newBuilder() {
-        return new DefaultClusterMemberGroupBuilder(CACHED_MEMBER_GROUPS);
+        return new DefaultClusterMemberGroupBuilder();
     }
 
     /**

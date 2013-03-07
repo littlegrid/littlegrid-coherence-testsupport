@@ -33,6 +33,7 @@ package org.littlegrid.features.reusable_member_group;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -40,6 +41,7 @@ import org.littlegrid.ClusterMemberGroupUtils;
 /**
  * Reusable member group integration tests.
  */
+@Ignore
 public class ReusableMemberGroupIntegrationTest {
     private ClusterMemberGroup memberGroup;
 

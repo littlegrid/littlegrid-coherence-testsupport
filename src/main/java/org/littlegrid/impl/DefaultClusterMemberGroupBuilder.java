@@ -158,14 +158,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     private final Properties additionalSystemProperties = new Properties();
     private final Properties builderKeyToSystemPropertyNameMapping = new Properties();
 
-    private final Map<Object, ClusterMemberGroup> cachedMemberGroups;
-
     /**
      * Default constructor.
      */
-    public DefaultClusterMemberGroupBuilder(final Map<Object, ClusterMemberGroup> cachedMemberGroups) {
-        this.cachedMemberGroups = cachedMemberGroups;
-
+    public DefaultClusterMemberGroupBuilder() {
         LOGGER.info(format("___ %s %s (%s) - initialising builder ___",
                 Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org"));
 
@@ -338,18 +334,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
-/*
-//TODO: this needs to be thought about a bit more...
-        final ClusterMemberGroup existingMemberGroup = cachedMemberGroups.get(this);
-
-        if (existingMemberGroup != null) {
-            return existingMemberGroup;
-        }
-*/
-
         final ClusterMemberGroup memberGroup = buildClusterMembers();
-        cachedMemberGroups.put(this, memberGroup);
-
 
         final Properties systemProperties;
 
@@ -423,7 +408,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
 
         try {
-            //TODO: tidy this up, all very similar
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 
@@ -1165,9 +1149,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     /**
      * {@inheritDoc}
      */
+/*
     @Override
     public boolean equals(final Object otherObject) {
-        if (this == otherObject){
+        if (this == otherObject) {
             return true;
         }
 
@@ -1191,29 +1176,32 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         return true;
     }
+*/
 
     /**
      * {@inheritDoc}
      */
+/*
     @Override
     public int hashCode() {
+        final int multiplier = 31;
+
         int result = builderKeysAndValues.hashCode();
-        result = 31 * result + additionalSystemProperties.hashCode();
-        result = 31 * result + builderKeyToSystemPropertyNameMapping.hashCode();
+        result = multiplier * result + additionalSystemProperties.hashCode();
+        result = multiplier * result + builderKeyToSystemPropertyNameMapping.hashCode();
 
         return result;
     }
+*/
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "Builder{" +
-                "builderKeysAndValues=" + builderKeysAndValues
-                + ", additionalSystemProperties=" + additionalSystemProperties
-                + ", builderKeyToSystemPropertyNameMapping=" + builderKeyToSystemPropertyNameMapping
-                + '}';
+        return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
+                + "builderKeyToSystemPropertyNameMapping=%s}",
+                builderKeysAndValues, additionalSystemProperties, builderKeyToSystemPropertyNameMapping);
     }
 
     /**

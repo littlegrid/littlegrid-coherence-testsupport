@@ -130,6 +130,18 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
+    @Ignore
+    public void equalsWhenShouldBeEqual() {
+
+    }
+
+    @Test
+    @Ignore
+    public void equalsWhenShouldNotBeEquals() {
+
+    }
+
+    @Test
     public void nonCoherenceBuilderSettings() {
         final String expectedExceptionReportInstanceClassName = "com.g.h.i.BuildExceptionReporter";
         final String expectedCallbackHandlerInstanceClassName = "com.g.h.i.CallbackHandler";

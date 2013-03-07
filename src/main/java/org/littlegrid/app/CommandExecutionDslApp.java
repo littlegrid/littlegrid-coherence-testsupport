@@ -31,30 +31,32 @@
 
 package org.littlegrid.app;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.PrintStream;
+
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
  * Scripting console that processes commands in a file.
  *
  * @since 2.15
  */
-public class ScriptExecutionDslApp { //extends CommandDslShell {
-//    public ScriptExecutionDslApp(InputStream in, PrintStream out) {
-//        super(in, out);
-//    }
-//
-//    //    @Override
-//    public void doInitialiseStreams(final String[] args) {
-//        try {
-//            //TODO: get filename from arguments
-//            setInputStream(new FileInputStream("THIS IS BE FROM ONE OF THE ARGUMENTS"));
-//        } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        setPrintStream(System.out);
-//    }
+public class CommandExecutionDslApp {
+    /**
+     * Launches the application.
+     *
+     * @param args Arguments.
+     */
+    public static void main(final String[] args)
+            throws FileNotFoundException {
+
+        final InputStream in = new FileInputStream(new File("whatever.txt"));
+
+        final CommandDslShell shell = new CommandDslShell(in, System.out);
+        shell.start("");
+    }
 }

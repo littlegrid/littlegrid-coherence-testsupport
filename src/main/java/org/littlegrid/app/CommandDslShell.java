@@ -48,7 +48,7 @@ import static java.lang.String.format;
  *
  * @since 2.15
  */
-public class CommandDslShell {
+class CommandDslShell {
     private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1250;
 
     private static final String COMMAND_PROMPT = "lg> ";
@@ -77,13 +77,8 @@ public class CommandDslShell {
         this.out = out;
     }
 
-    public static void main(final String[] args) {
-        final CommandDslShell shell = new CommandDslShell(System.in, System.out);
-
-
-    }
-
-    public void doStart(final ClusterMemberGroup clusterMemberGroup) {
+    public void start(final String commandsPassedIn) {
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder().buildAndConfigure();
         final Scanner scanner = new Scanner(in);
 
         boolean exit = false;
@@ -99,31 +94,31 @@ public class CommandDslShell {
                 try {
 
                     if (command.startsWith(STOP_MEMBER_COMMAND)) {
-                        stopMember(clusterMemberGroup, command);
+                        stopMember(memberGroup, command);
 
                     } else if (command.startsWith(SHUTDOWN_MEMBER_COMMAND)) {
-                        shutdownMember(clusterMemberGroup, command);
+                        shutdownMember(memberGroup, command);
 
                     } else if (command.startsWith(SLEEP_COMMAND)) {
                         sleep(command);
 
                     } else if (command.equals(STOP_ALL_COMMAND)) {
-                        stopAll(clusterMemberGroup);
+                        stopAll(memberGroup);
 
                     } else if (command.equals(SHUTDOWN_ALL_COMMAND)) {
-                        shutdownAll(clusterMemberGroup);
+                        shutdownAll(memberGroup);
 
                     } else if (command.equals(GET_STARTED_MEMBER_IDS_COMMAND)) {
-                        outputStartedMemberIds(clusterMemberGroup);
+                        outputStartedMemberIds(memberGroup);
 
                     } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND)) {
-                        mergeStorageEnabledMember(clusterMemberGroup);
+                        mergeStorageEnabledMember(memberGroup);
 
                     } else if (command.startsWith(MERGE_EXTEND_PROXY_COMMAND)) {
-                        mergeExtendProxyMember(clusterMemberGroup, command);
+                        mergeExtendProxyMember(memberGroup, command);
 
                     } else if (command.startsWith(MERGE_JMX_MONITOR_COMMAND)) {
-                        mergeJmxMonitorMember(clusterMemberGroup);
+                        mergeJmxMonitorMember(memberGroup);
 
                     } else if (command.equals(HELP_COMMAND)) {
                         outputHelp();
@@ -148,6 +143,8 @@ public class CommandDslShell {
                 }
             }
         } while (!exit);
+
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 
     private void cohQl()
