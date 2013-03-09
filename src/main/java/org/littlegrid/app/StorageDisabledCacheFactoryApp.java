@@ -7,8 +7,14 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DI
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
+ *
+ * @since 2.15
  */
 public class StorageDisabledCacheFactoryApp {
+    /**
+     *
+     * @param args
+     */
     public static void main(final String[] args) {
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "AppConsoleClassName",
                 CacheFactory.class.getName());
