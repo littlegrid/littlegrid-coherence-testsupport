@@ -31,6 +31,7 @@
 
 package org.littlegrid.app;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
@@ -38,6 +39,7 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_
 /**
  * Extend client REPL application tests.
  */
+@Ignore
 public class ExtendClientReplAppTest {
     @Test(expected = IllegalStateException.class)
     public void startWithNoClientCacheConfiguration() {
