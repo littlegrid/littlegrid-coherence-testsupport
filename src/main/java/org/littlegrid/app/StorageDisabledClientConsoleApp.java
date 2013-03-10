@@ -31,25 +31,29 @@
 
 package org.littlegrid.app;
 
-import java.io.IOException;
+import com.tangosol.net.CacheFactory;
+import org.littlegrid.ClusterMemberGroupUtils;
+
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
- * Simple console that pauses.
+ * Storage disabled client (CacheFactory) console application.
  *
- * @since 2.14
+ * @since 2.15
  */
-public class SimpleWaitConsole {
+public class StorageDisabledClientConsoleApp {
     /**
-     * Main method.
      *
-     * @param args Arguments.
-     * @throws IOException indicates an exception.
+     * @param args
      */
-    public static void main(final String[] args)
-            throws IOException {
+    public static void main(final String[] args) {
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "AppConsoleClassName",
+                CacheFactory.class.getName());
 
-        System.out.println();
-        System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process");
-        System.in.read();
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
+                STORAGE_DISABLED_CLIENT.name());
+
+        ClusterMemberGroupUtils.main(args);
     }
 }

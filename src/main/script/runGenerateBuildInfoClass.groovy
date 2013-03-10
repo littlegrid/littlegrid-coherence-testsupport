@@ -12,9 +12,9 @@ def classSource = """package $generatedClassSrcPackage;
  * littlegrid build information.
  */
 final class $className {
-    public static final String NAME = "$name";
-    public static final String VERSION_NUMBER = "$versionNumber";
-    public static final String BUILD_DATE = "$buildDate";
+    private static final String NAME = "$name";
+    private static final String VERSION_NUMBER = "$versionNumber";
+    private static final String BUILD_DATE = "$buildDate";
 
 
     private $className() {

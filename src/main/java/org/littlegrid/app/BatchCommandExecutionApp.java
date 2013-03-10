@@ -31,25 +31,47 @@
 
 package org.littlegrid.app;
 
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
- * Simple console that pauses.
+ * Batch command execution application.
  *
- * @since 2.14
+ * @since 2.15
  */
-public class SimpleWaitConsole {
+public class BatchCommandExecutionApp {
+    private static final String COMMAND_FILE_ARGUMENT = "commandFile=";
+
     /**
-     * Main method.
+     * Launches the application.
      *
      * @param args Arguments.
-     * @throws IOException indicates an exception.
+     * @throws FileNotFoundException Indicates file not found.
      */
     public static void main(final String[] args)
-            throws IOException {
+            throws FileNotFoundException {
 
-        System.out.println();
-        System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process");
-        System.in.read();
+
+        final InputStream in = new FileInputStream(parseCommandFile(args));
+
+        final CommandDslShell shell = new CommandDslShell(in, System.out);
+        shell.start(args);
+    }
+
+    private static String parseCommandFile(final String[] args) {
+        if (1 == 1) {
+            throw new UnsupportedOperationException();
+        }
+
+        final String commandsPassedIn = "";
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[0].startsWith(COMMAND_FILE_ARGUMENT)) {
+                return args[0].replaceAll(COMMAND_FILE_ARGUMENT, "");
+            }
+        }
+
+        return commandsPassedIn;
     }
 }

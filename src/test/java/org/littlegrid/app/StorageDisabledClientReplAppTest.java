@@ -31,32 +31,17 @@
 
 package org.littlegrid.app;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import org.junit.Test;
+import org.littlegrid.app.StorageDisabledClientReplApp;
 
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
- * Scripting console that processes commands in a file.
- *
- * @since 2.15
+ * Storage disabled client REPL application tests.
  */
-public class CommandExecutionDslApp {
-    /**
-     * Launches the application.
-     *
-     * @param args Arguments.
-     */
-    public static void main(final String[] args)
-            throws FileNotFoundException {
-
-        final InputStream in = new FileInputStream(new File("whatever.txt"));
-
-        final CommandDslShell shell = new CommandDslShell(in, System.out);
-        shell.start("");
+public class StorageDisabledClientReplAppTest {
+    @Test
+    public void start() {
+        StorageDisabledClientReplApp.main(new String[]{"commands=# Storage disabled client test; bye"});
     }
 }

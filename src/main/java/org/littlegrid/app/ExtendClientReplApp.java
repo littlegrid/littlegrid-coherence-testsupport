@@ -31,25 +31,35 @@
 
 package org.littlegrid.app;
 
-import java.io.IOException;
+import org.littlegrid.ClusterMemberGroupUtils;
+
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.Builder;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
- * Simple console that pauses.
+ * Extend client REPL application.
  *
- * @since 2.14
+ * @since 2.15
  */
-public class SimpleWaitConsole {
+public class ExtendClientReplApp {
     /**
-     * Main method.
-     *
      * @param args Arguments.
-     * @throws IOException indicates an exception.
      */
-    public static void main(final String[] args)
-            throws IOException {
+    public static void main(final String[] args) {
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
+                EXTEND_CLIENT.name());
 
-        System.out.println();
-        System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process");
-        System.in.read();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        if (builder.getClientCacheConfiguration() == null
+                || builder.getClientCacheConfiguration().trim().length() == 0) {
+
+            throw new IllegalStateException(
+                    "No ClientCacheConfiguration file specified, cannot configure for Extend client - exiting");
+        } else {
+            final CommandDslShell shell = new CommandDslShell(System.in, System.out);
+            shell.start(args);
+        }
     }
 }

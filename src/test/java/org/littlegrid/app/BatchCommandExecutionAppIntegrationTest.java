@@ -31,25 +31,27 @@
 
 package org.littlegrid.app;
 
-import java.io.IOException;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.FileNotFoundException;
 
 /**
- * Simple console that pauses.
- *
- * @since 2.14
+ * Batch command execution application integration tests.
  */
-public class SimpleWaitConsole {
-    /**
-     * Main method.
-     *
-     * @param args Arguments.
-     * @throws IOException indicates an exception.
-     */
-    public static void main(final String[] args)
-            throws IOException {
+public class BatchCommandExecutionAppIntegrationTest {
+    @Test
+    public void startWithCommandsArgument()
+            throws FileNotFoundException {
 
-        System.out.println();
-        System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process");
-        System.in.read();
+        BatchCommandExecutionApp.main(new String[]{"commands=start storage enabled; start jmx monitor; # ; bye"});
+    }
+
+    @Test
+    @Ignore
+    public void startWithCommandFileAndNoCommandsArgument()
+            throws FileNotFoundException {
+
+        BatchCommandExecutionApp.main(new String[]{"commandFile=command-file.txt"});
     }
 }

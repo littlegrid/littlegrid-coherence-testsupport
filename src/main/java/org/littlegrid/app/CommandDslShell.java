@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 import static java.lang.String.format;
 
 /**
- * Command console.
+ * Command DSL shell.
  *
  * @since 2.15
  */
@@ -66,6 +66,7 @@ class CommandDslShell {
     private static final String HELP_COMMAND = "help";
     private static final String COMMENT_COMMAND = "#";
     private static final String COHQL_COMMAND = "cohql";
+    public static final String COMMANDS_ARGUMENT = "commands=";
 
     private final InputStream in;
     private final PrintStream out;
@@ -77,74 +78,113 @@ class CommandDslShell {
         this.out = out;
     }
 
-    public void start(final String commandsPassedIn) {
+    /**
+     * Starts the shell to process commands.
+     *
+     * @param args Commands passed for execution.
+     */
+    public void start(final String[] args) {
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder().buildAndConfigure();
-        final Scanner scanner = new Scanner(in);
 
-        boolean exit = false;
+        final String commands = parseCommandsString(args);
+        final boolean exit = processCommands(memberGroup, commands);
+
+        if (!exit) {
+            final Scanner scanner = new Scanner(in);
+
+            processCommands(memberGroup, scanner);
+        }
+
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    private String parseCommandsString(final String[] args) {
+        final String commands = "";
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[0].startsWith(COMMANDS_ARGUMENT)) {
+                return args[0].replaceAll(COMMANDS_ARGUMENT, "");
+            }
+        }
+
+        return commands;
+    }
+
+    private void processCommands(final ClusterMemberGroup memberGroup,
+                                 final Scanner scanner) {
+        boolean exit;
 
         do {
             out.println();
             out.print(COMMAND_PROMPT);
+
             final String stringEntered = scanner.nextLine();
-            final String[] commands = stringEntered.split(";");
 
-            for (String command : commands) {
-                command = command.trim();
-                try {
-
-                    if (command.startsWith(STOP_MEMBER_COMMAND)) {
-                        stopMember(memberGroup, command);
-
-                    } else if (command.startsWith(SHUTDOWN_MEMBER_COMMAND)) {
-                        shutdownMember(memberGroup, command);
-
-                    } else if (command.startsWith(SLEEP_COMMAND)) {
-                        sleep(command);
-
-                    } else if (command.equals(STOP_ALL_COMMAND)) {
-                        stopAll(memberGroup);
-
-                    } else if (command.equals(SHUTDOWN_ALL_COMMAND)) {
-                        shutdownAll(memberGroup);
-
-                    } else if (command.equals(GET_STARTED_MEMBER_IDS_COMMAND)) {
-                        outputStartedMemberIds(memberGroup);
-
-                    } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND)) {
-                        mergeStorageEnabledMember(memberGroup);
-
-                    } else if (command.startsWith(MERGE_EXTEND_PROXY_COMMAND)) {
-                        mergeExtendProxyMember(memberGroup, command);
-
-                    } else if (command.startsWith(MERGE_JMX_MONITOR_COMMAND)) {
-                        mergeJmxMonitorMember(memberGroup);
-
-                    } else if (command.equals(HELP_COMMAND)) {
-                        outputHelp();
-
-                    } else if (command.equals(BYE_COMMAND) || command.equals(QUIT_COMMAND)) {
-                        exit = true;
-
-                    } else if (command.startsWith(COMMENT_COMMAND)) {
-                        out.println(command);
-
-                    } else if (command.equals(COHQL_COMMAND)) {
-                        cohQl();
-
-                    } else if (command.equals("")) {
-                        // Do nothing
-
-                    } else {
-                        out.println(format("'%s' is an unknown command", command));
-                    }
-                } catch (Exception e) {
-                    out.println(format("Exception when executing command: '%s' due to: %s", command, e));
-                }
-            }
+            exit = processCommands(memberGroup, stringEntered);
         } while (!exit);
+    }
 
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    private boolean processCommands(final ClusterMemberGroup memberGroup,
+                                    final String stringEntered) {
+
+        boolean exit = false;
+        final String[] commands = stringEntered.split(";");
+
+        for (String command : commands) {
+            command = command.trim();
+            try {
+
+                if (command.startsWith(STOP_MEMBER_COMMAND)) {
+                    stopMember(memberGroup, command);
+
+                } else if (command.startsWith(SHUTDOWN_MEMBER_COMMAND)) {
+                    shutdownMember(memberGroup, command);
+
+                } else if (command.startsWith(SLEEP_COMMAND)) {
+                    sleep(command);
+
+                } else if (command.equals(STOP_ALL_COMMAND)) {
+                    stopAll(memberGroup);
+
+                } else if (command.equals(SHUTDOWN_ALL_COMMAND)) {
+                    shutdownAll(memberGroup);
+
+                } else if (command.equals(GET_STARTED_MEMBER_IDS_COMMAND)) {
+                    outputStartedMemberIds(memberGroup);
+
+                } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND)) {
+                    mergeStorageEnabledMember(memberGroup);
+
+                } else if (command.startsWith(MERGE_EXTEND_PROXY_COMMAND)) {
+                    mergeExtendProxyMember(memberGroup, command);
+
+                } else if (command.startsWith(MERGE_JMX_MONITOR_COMMAND)) {
+                    mergeJmxMonitorMember(memberGroup);
+
+                } else if (command.equals(HELP_COMMAND)) {
+                    outputHelp();
+
+                } else if (command.equals(BYE_COMMAND) || command.equals(QUIT_COMMAND)) {
+                    exit = true;
+
+                } else if (command.startsWith(COMMENT_COMMAND)) {
+                    out.println(command);
+
+                } else if (command.equals(COHQL_COMMAND)) {
+                    cohQl();
+
+                } else if (command.equals("")) {
+                    // Do nothing
+
+                } else {
+                    out.println(format("'%s' is an unknown command", command));
+                }
+            } catch (Exception e) {
+                out.println(format("Exception when executing command: '%s' due to: %s", command, e));
+            }
+        }
+
+        return exit;
     }
 
     private void cohQl()

@@ -31,25 +31,23 @@
 
 package org.littlegrid.app;
 
-import java.io.IOException;
+import org.junit.Test;
+
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
- * Simple console that pauses.
- *
- * @since 2.14
+ * Extend client REPL application tests.
  */
-public class SimpleWaitConsole {
-    /**
-     * Main method.
-     *
-     * @param args Arguments.
-     * @throws IOException indicates an exception.
-     */
-    public static void main(final String[] args)
-            throws IOException {
+public class ExtendClientReplAppTest {
+    @Test(expected = IllegalStateException.class)
+    public void startWithNoClientCacheConfiguration() {
+        ExtendClientReplApp.main(new String[]{});
+    }
 
-        System.out.println();
-        System.out.println("Cluster member group launched, press Enter to shutdown or Ctrl+C to kill the process");
-        System.in.read();
+    @Test
+    public void start() {
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "ClientCacheConfiguration", "some-file.xml");
+
+        ExtendClientReplApp.main(new String[]{"commands=# Extend client REPL test; bye"});
     }
 }
