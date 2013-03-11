@@ -40,6 +40,11 @@ import java.io.IOException;
  * Batch command execution application integration tests.
  */
 public class BatchCommandExecutionAppIntegrationTest {
+    @Test(expected = UnsupportedOperationException.class)
+    public void construct() {
+        new BatchCommandExecutionApp();
+    }
+
     @Test
     public void startWithCommandsArgumentOnly()
             throws IOException {

@@ -44,6 +44,13 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_
  */
 public class ExtendClientReplApp {
     /**
+     * Default scope to enable test coverage.
+     */
+    ExtendClientReplApp() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * @param args Arguments.
      */
     public static void main(final String[] args) {

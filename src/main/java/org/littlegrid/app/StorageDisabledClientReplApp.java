@@ -41,6 +41,13 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_
  */
 public class StorageDisabledClientReplApp {
     /**
+     * Default scope to enable test coverage.
+     */
+    StorageDisabledClientReplApp() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Launches the application.
      *
      * @param args Arguments.

@@ -32,14 +32,16 @@
 package org.littlegrid.app;
 
 import org.junit.Test;
-import org.littlegrid.app.StorageDisabledClientReplApp;
-
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
  * Storage disabled client REPL application tests.
  */
 public class StorageDisabledClientReplAppTest {
+    @Test(expected = UnsupportedOperationException.class)
+    public void construct() {
+        new StorageDisabledClientReplApp();
+    }
+
     @Test
     public void start() {
         StorageDisabledClientReplApp.main(new String[]{"commands=# Storage disabled client test; bye"});

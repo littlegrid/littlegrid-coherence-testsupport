@@ -49,6 +49,13 @@ public class BatchCommandExecutionApp {
     private static final String COMMAND_FILE_ARGUMENT = "commandFile=";
 
     /**
+     * Default scope to enable test coverage.
+     */
+    BatchCommandExecutionApp() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Launches the application.
      *
      * @param args Arguments.

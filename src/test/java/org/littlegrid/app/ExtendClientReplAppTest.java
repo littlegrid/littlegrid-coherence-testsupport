@@ -31,16 +31,36 @@
 
 package org.littlegrid.app;
 
-import org.junit.Ignore;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.littlegrid.support.SystemUtils;
+
+import java.util.Properties;
 
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
  * Extend client REPL application tests.
  */
-@Ignore
 public class ExtendClientReplAppTest {
+    private static Properties systemProperties;
+
+    @BeforeClass
+    public static void beforeTests() {
+        systemProperties = SystemUtils.snapshotSystemProperties();
+    }
+
+    @AfterClass
+    public static void afterTests() {
+        SystemUtils.applyToSystemProperties(systemProperties);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void construct() {
+        new ExtendClientReplApp();
+    }
+
     @Test(expected = IllegalStateException.class)
     public void startWithNoClientCacheConfiguration() {
         ExtendClientReplApp.main(new String[]{});
