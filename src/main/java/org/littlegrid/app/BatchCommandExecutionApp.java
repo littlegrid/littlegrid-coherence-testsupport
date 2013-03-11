@@ -31,9 +31,14 @@
 
 package org.littlegrid.app;
 
-import java.io.FileInputStream;
+import com.tangosol.util.Resources;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+
+import static java.lang.String.format;
 
 /**
  * Batch command execution application.
@@ -47,31 +52,39 @@ public class BatchCommandExecutionApp {
      * Launches the application.
      *
      * @param args Arguments.
-     * @throws FileNotFoundException Indicates file not found.
+     * @throws IOException Indicates file not found.
      */
     public static void main(final String[] args)
-            throws FileNotFoundException {
+            throws IOException {
 
+        final String commandFile = parseCommandFile(args);
+        final InputStream in;
 
-        final InputStream in = new FileInputStream(parseCommandFile(args));
+        if (commandFile == null || commandFile.trim().length() == 0) {
+            in = System.in;
+        } else {
+            final URL url = Resources.findFileOrResource(commandFile, BatchCommandExecutionApp.class.getClassLoader());
+
+            if (url == null) {
+                throw new FileNotFoundException(format("'%s' not found", commandFile));
+            }
+
+            in = url.openStream();
+        }
 
         final CommandDslShell shell = new CommandDslShell(in, System.out);
         shell.start(args);
     }
 
     private static String parseCommandFile(final String[] args) {
-        if (1 == 1) {
-            throw new UnsupportedOperationException();
-        }
-
-        final String commandsPassedIn = "";
+        final String commandFile = "";
 
         for (int i = 0; i < args.length; i++) {
-            if (args[0].startsWith(COMMAND_FILE_ARGUMENT)) {
-                return args[0].replaceAll(COMMAND_FILE_ARGUMENT, "");
+            if (args[i].startsWith(COMMAND_FILE_ARGUMENT)) {
+                return args[i].replaceAll(COMMAND_FILE_ARGUMENT, "");
             }
         }
 
-        return commandsPassedIn;
+        return commandFile;
     }
 }

@@ -51,7 +51,11 @@ import static java.lang.String.format;
 class CommandDslShell {
     private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1250;
 
+    private static final String COMMANDS_ARGUMENT = "commands=";
+    private static final String COMMAND_DELIMITER = ";";
+
     private static final String COMMAND_PROMPT = "lg> ";
+
     private static final String STOP_MEMBER_COMMAND = "stop member";
     private static final String BYE_COMMAND = "bye";
     private static final String QUIT_COMMAND = "quit";
@@ -66,11 +70,16 @@ class CommandDslShell {
     private static final String HELP_COMMAND = "help";
     private static final String COMMENT_COMMAND = "#";
     private static final String COHQL_COMMAND = "cohql";
-    public static final String COMMANDS_ARGUMENT = "commands=";
 
     private final InputStream in;
     private final PrintStream out;
 
+    /**
+     * Constructor.
+     *
+     * @param in  Input stream.
+     * @param out Output stream.
+     */
     public CommandDslShell(final InputStream in,
                            final PrintStream out) {
 
@@ -87,14 +96,17 @@ class CommandDslShell {
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder().buildAndConfigure();
 
         final String commands = parseCommandsString(args);
-        final boolean exit = processCommands(memberGroup, commands);
+        final boolean exit = processCommandsString(memberGroup, commands);
+
+        System.out.println("");
 
         if (!exit) {
             final Scanner scanner = new Scanner(in);
 
-            processCommands(memberGroup, scanner);
+            processCommandsStream(memberGroup, scanner);
         }
 
+        System.out.println("Exiting");
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 
@@ -102,16 +114,17 @@ class CommandDslShell {
         final String commands = "";
 
         for (int i = 0; i < args.length; i++) {
-            if (args[0].startsWith(COMMANDS_ARGUMENT)) {
-                return args[0].replaceAll(COMMANDS_ARGUMENT, "");
+            if (args[i].startsWith(COMMANDS_ARGUMENT)) {
+                return args[i].replaceAll(COMMANDS_ARGUMENT, "");
             }
         }
 
         return commands;
     }
 
-    private void processCommands(final ClusterMemberGroup memberGroup,
-                                 final Scanner scanner) {
+    private void processCommandsStream(final ClusterMemberGroup memberGroup,
+                                       final Scanner scanner) {
+
         boolean exit;
 
         do {
@@ -120,20 +133,20 @@ class CommandDslShell {
 
             final String stringEntered = scanner.nextLine();
 
-            exit = processCommands(memberGroup, stringEntered);
+            exit = processCommandsString(memberGroup, stringEntered);
         } while (!exit);
     }
 
-    private boolean processCommands(final ClusterMemberGroup memberGroup,
-                                    final String stringEntered) {
+    private boolean processCommandsString(final ClusterMemberGroup memberGroup,
+                                          final String stringEntered) {
 
         boolean exit = false;
-        final String[] commands = stringEntered.split(";");
+        final String[] commands = stringEntered.split(COMMAND_DELIMITER);
 
         for (String command : commands) {
             command = command.trim();
-            try {
 
+            try {
                 if (command.startsWith(STOP_MEMBER_COMMAND)) {
                     stopMember(memberGroup, command);
 

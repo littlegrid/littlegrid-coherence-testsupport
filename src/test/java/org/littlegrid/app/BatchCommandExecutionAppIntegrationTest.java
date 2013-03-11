@@ -31,27 +31,48 @@
 
 package org.littlegrid.app;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Batch command execution application integration tests.
  */
 public class BatchCommandExecutionAppIntegrationTest {
     @Test
-    public void startWithCommandsArgument()
-            throws FileNotFoundException {
+    public void startWithCommandsArgumentOnly()
+            throws IOException {
 
-        BatchCommandExecutionApp.main(new String[]{"commands=start storage enabled; start jmx monitor; # ; bye"});
+        BatchCommandExecutionApp.main(new String[]{
+                "some-string-before",
+                "commands=start storage enabled; start jmx monitor; # ; bye",
+                "some-string-after"
+        });
     }
 
     @Test
-    @Ignore
     public void startWithCommandFileAndNoCommandsArgument()
-            throws FileNotFoundException {
+            throws IOException {
 
-        BatchCommandExecutionApp.main(new String[]{"commandFile=command-file.txt"});
+        BatchCommandExecutionApp.main(new String[]{
+                "some-string-before",
+                "commandFile=command-file.txt",
+                "some-string-after"
+        });
+    }
+
+    @Test
+    public void startWithCommandsArgumentAndCommandFile()
+            throws IOException {
+
+        BatchCommandExecutionApp.main(new String[]{"commands=members", "commandFile=command-file.txt"});
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void startWithCommandFileThatDoesNotExist()
+            throws IOException {
+
+        BatchCommandExecutionApp.main(new String[]{"commandFile=file-that-does-not-exist.xml"});
     }
 }
