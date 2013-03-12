@@ -31,8 +31,8 @@
 
 package org.littlegrid.app;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.littlegrid.support.SystemUtils;
 
@@ -46,14 +46,14 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_
 public class ExtendClientReplAppTest {
     private static Properties systemProperties;
 
-    @BeforeClass
-    public static void beforeTests() {
+    @Before
+    public void beforeTest() {
         systemProperties = SystemUtils.snapshotSystemProperties();
     }
 
-    @AfterClass
-    public static void afterTests() {
-        SystemUtils.applyToSystemProperties(systemProperties);
+    @After
+    public void afterTest() {
+        System.setProperties(systemProperties);
     }
 
     @Test(expected = UnsupportedOperationException.class)
