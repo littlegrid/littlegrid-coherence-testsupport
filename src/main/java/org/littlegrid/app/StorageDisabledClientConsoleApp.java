@@ -44,8 +44,11 @@ import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_
  */
 public class StorageDisabledClientConsoleApp {
     /**
+     * Launches a CacheFactory console using the littlegrid configuration supplied via system properties
+     * or environment variables, resulting in an entire cluster in a single JVM and access to try things
+     * via the standard Coherence CacheFactory console.
      *
-     * @param args
+     * @param args Arguments - this application doesn't use any supplied arguments.
      */
     public static void main(final String[] args) {
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "AppConsoleClassName",
