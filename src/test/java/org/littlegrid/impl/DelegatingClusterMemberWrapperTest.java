@@ -29,47 +29,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.app;
+package org.littlegrid.impl;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.littlegrid.support.SystemUtils;
 
-import java.util.Properties;
-
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import java.net.URL;
 
 /**
- * Extend client REPL application tests.
+ * Delegating cluster member wrapper tests.
  */
-public class ExtendClientReplAppTest {
-    private Properties systemProperties;
-
-    @Before
-    public void beforeTest() {
-        systemProperties = SystemUtils.snapshotSystemProperties();
-    }
-
-    @After
-    public void afterTest() {
-        System.setProperties(systemProperties);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void construct() {
-        new ExtendClientReplApp();
-    }
-
+public final class DelegatingClusterMemberWrapperTest {
     @Test(expected = IllegalStateException.class)
-    public void startWithNoClientCacheConfiguration() {
-        ExtendClientReplApp.main(new String[]{});
-    }
-
-    @Test
-    public void start() {
-        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "ClientCacheConfiguration", "some-file.xml");
-
-        ExtendClientReplApp.main(new String[]{"commands=# Extend client REPL test; bye"});
+    public void invoke() {
+        DelegatingClusterMemberWrapper.invokeMethod("a-string", "nonExistentMethod");
     }
 }

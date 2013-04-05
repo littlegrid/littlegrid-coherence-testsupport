@@ -107,7 +107,7 @@ public final class ClassPathUtils {
     public static URL[] getClassPathUrlsExcludingJavaHome(final String javaHomePath,
                                                           final String classPath,
                                                           final String pathSeparator,
-                                                          final String jarsToExcludeFromClassPath) {
+                                                          final String jarsToExcludeFromClassPath) throws MalformedURLException {
 
         final String[] classPathArray = classPath.split(pathSeparator);
 
@@ -131,12 +131,7 @@ public final class ClassPathUtils {
                 }
 
                 if (includeInClassPath) {
-                    try {
-                        classPathUrls.add(new File(partOfClassPath).toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        throw new IllegalStateException(
-                                format("Part of class path '%s' has a malformed URL", partOfClassPath));
-                    }
+                    classPathUrls.add(new File(partOfClassPath).toURI().toURL());
                 }
             }
         }

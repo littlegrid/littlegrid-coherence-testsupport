@@ -29,47 +29,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.app;
+package org.littlegrid.impl;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.littlegrid.support.SystemUtils;
-
-import java.util.Properties;
-
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
- * Extend client REPL application tests.
+ * Default builder exception reporter tests.
  */
-public class ExtendClientReplAppTest {
-    private Properties systemProperties;
-
-    @Before
-    public void beforeTest() {
-        systemProperties = SystemUtils.snapshotSystemProperties();
-    }
-
-    @After
-    public void afterTest() {
-        System.setProperties(systemProperties);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void construct() {
-        new ExtendClientReplApp();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void startWithNoClientCacheConfiguration() {
-        ExtendClientReplApp.main(new String[]{});
-    }
-
+public class DefaultBuildExceptionReporterTest {
     @Test
-    public void start() {
-        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "ClientCacheConfiguration", "some-file.xml");
-
-        ExtendClientReplApp.main(new String[]{"commands=# Extend client REPL test; bye"});
+    public void nonBuilderException() {
+        new DefaultBuildExceptionReporter().report(new RuntimeException(), null, null);
     }
 }

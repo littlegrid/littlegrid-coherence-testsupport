@@ -33,6 +33,7 @@ package org.littlegrid.support;
 
 import org.junit.Test;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -92,7 +93,9 @@ public class ClassPathUtilsTest {
     }
 
     @Test
-    public void getClassPathUrlsExcludingJavaHomeNoExcludes() {
+    public void getClassPathUrlsExcludingJavaHomeNoExcludes()
+            throws MalformedURLException {
+
         final int expectedUrlCount = 2;
 
         final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
@@ -118,7 +121,9 @@ public class ClassPathUtilsTest {
     }
 
     @Test
-    public void getClassPathUrlsExcludingJavaHomeWithExcludes() {
+    public void getClassPathUrlsExcludingJavaHomeWithExcludes()
+            throws MalformedURLException {
+
         final int expectedUrlCount = 1;
         final String jarsToExcludeFromClassPath = ",, , coherence ,, , ";
 

@@ -400,14 +400,17 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final String pathSeparator = ClassPathUtils.getPathSeparator(systemProperties);
         final String classPath = ClassPathUtils.getClassPath(systemProperties);
         final String javaHome = ClassPathUtils.getJavaHome(systemProperties);
-        final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
+
+        DefaultClusterMemberGroup containerGroup = null;
+
+        try {
+            final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
                 javaHome, classPath, pathSeparator,
                 getBuilderValueAsString(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
                         + ", " + getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
 
-        final DefaultClusterMemberGroup containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
+            containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
 
-        try {
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
 

@@ -140,7 +140,7 @@ public final class ClusterMemberGroupUtils {
 
             ClassHelper.invokeStatic(consoleClass, "main", new Object[]{new String[]{}});
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
 
         return memberGroup;

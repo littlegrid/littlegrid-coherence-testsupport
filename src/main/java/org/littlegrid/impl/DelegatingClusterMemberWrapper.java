@@ -43,8 +43,8 @@ import static java.lang.String.format;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
- * Delegating cluster member wrapper, loads a class that implements {@link
- * org.littlegrid.ClusterMemberGroup.ClusterMember}
+ * Delegating cluster member wrapper, loads a class that implements
+ * {@link org.littlegrid.ClusterMemberGroup.ClusterMember}
  * into a separate class loader and then delegates requests (start, stop, shutdown etc.) to
  * the instance of the wrapped class.
  */
@@ -128,8 +128,8 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
         return (ClassLoader) invokeMethod(clusterMemberInstance, "getActualContainingClassLoader");
     }
 
-    private Object invokeMethod(final Object objectToInvokeMethodOn,
-                                final String methodName) {
+    static Object invokeMethod(final Object objectToInvokeMethodOn,
+                        final String methodName) {
 
         try {
             return ClassHelper.invoke(objectToInvokeMethodOn, methodName, new Object[]{});

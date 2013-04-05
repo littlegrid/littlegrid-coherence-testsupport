@@ -64,6 +64,11 @@ public class CommandDslShellIntegrationTest {
     }
 
     @Test
+    public void emptyString() {
+        new CommandDslShell(System.in, System.out).start(new String[]{"commands=;;bye"});
+    }
+
+    @Test
     public void quit() {
         new CommandDslShell(System.in, System.out).start(new String[]{"commands=quit"});
     }
@@ -71,6 +76,16 @@ public class CommandDslShellIntegrationTest {
     @Test
     public void members() {
         new CommandDslShell(System.in, System.out).start(new String[]{"commands=members; bye"});
+    }
+
+    @Test
+    public void unknownCommand() {
+        new CommandDslShell(System.in, System.out).start(new String[]{"commands=this is unknown; bye"});
+    }
+
+    @Test
+    public void invalidExtendPortCommand() {
+        new CommandDslShell(System.in, System.out).start(new String[]{"commands=start extend proxy ABC; bye"});
     }
 
     @Test

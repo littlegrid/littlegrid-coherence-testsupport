@@ -32,8 +32,15 @@
 package org.littlegrid;
 
 import com.tangosol.net.CacheFactory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.littlegrid.support.SystemUtils;
 
+import java.util.Properties;
+
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
@@ -41,17 +48,56 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
  * Cluster member group launcher application integration tests.
  */
 public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    private Properties systemProperties;
+
+    @Before
+    public void beforeTest() {
+        systemProperties = SystemUtils.snapshotSystemProperties();
+    }
+
+    @After
+    public void afterTest() {
+        System.setProperties(systemProperties);
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void construct() {
         new ClusterMemberGroupApp();
     }
 
     @Test
-    public void launchAndStartConsole() {
+    public void launchAndStartConsoleWithArguments() {
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(
                 new String[]{"properties/memberGroup1.properties"});
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), 3 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    @Test
+    public void launchAndStartConsoleWithoutArguments() {
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "AppConsoleClassName",
+                NoWaitConsole.class.getName());
+
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
+                STORAGE_DISABLED_CLIENT.name());
+
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(new String[]{});
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+    @Test (expected = IllegalStateException.class)
+    public void launchAndStartConsoleBadConsole() {
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "AppConsoleClassName",
+                NoWaitConsole.class.getName() + "xyz");
+
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(new String[]{});
+
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }

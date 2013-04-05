@@ -196,6 +196,7 @@ class CommandDslShell {
                     cohQl();
 
                 } else if (command.equals("")) {
+                    System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHH");
                     // Do nothing
 
                 } else {

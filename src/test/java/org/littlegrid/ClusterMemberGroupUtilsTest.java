@@ -47,7 +47,12 @@ public class ClusterMemberGroupUtilsTest {
 
     @Test
     public void attemptToShutdownNullMemberGroup() {
-        ClusterMemberGroupUtils.shutdownClusterMemberGroups((ClusterMemberGroup) null);
+        ClusterMemberGroupUtils.shutdownClusterMemberGroups((ClusterMemberGroup[]) null);
+    }
+
+    @Test
+    public void attemptToShutdownEmptyArrayMemberGroup() {
+        ClusterMemberGroupUtils.shutdownClusterMemberGroups(new ClusterMemberGroup[0]);
     }
 
     @Test
