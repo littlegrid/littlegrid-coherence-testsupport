@@ -29,34 +29,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.app;
+package org.littlegrid;
 
-import com.tangosol.net.CacheFactory;
-import org.littlegrid.ClusterMemberGroupUtils;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
+import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL;
+import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
- * Storage disabled client (CacheFactory) console application.
- *
- * @since 2.15
+ * Identifiable exception tests.
  */
-public class StorageDisabledClientConsoleApp {
-    /**
-     * Launches a CacheFactory console using the littlegrid configuration supplied via system properties
-     * or environment variables, resulting in an entire cluster in a single JVM and access to try things
-     * via the standard Coherence CacheFactory console.
-     *
-     * @param args Arguments - this application doesn't use any supplied arguments.
-     */
-    public static void main(final String[] args) {
-        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "AppConsoleClassName",
-                CacheFactory.class.getName());
-
-        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
-                STORAGE_DISABLED_CLIENT.name());
-
-        ClusterMemberGroupUtils.main(args);
+public class IdentifiableExceptionTest {
+    @Test
+    public void construct() {
+        new IdentifiableException("message", new RuntimeException(), SUSPECTED_AUTOSTART_EXCEPTION);
     }
 }

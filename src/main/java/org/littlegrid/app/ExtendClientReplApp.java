@@ -38,7 +38,8 @@ import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
- * Extend client REPL application.
+ * Extend client REPL application, providing access to CohQL and littlegrid features
+ * for easy use and experimentation.
  *
  * @since 2.15
  */

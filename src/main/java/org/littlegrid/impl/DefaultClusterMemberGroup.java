@@ -65,7 +65,6 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
             new ArrayList<Future<DelegatingClusterMemberWrapper>>();
 
-    private Object key;
     private CallbackHandler callbackHandler;
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
@@ -86,14 +85,12 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
      */
-    public DefaultClusterMemberGroup(final Object key,
-                                     final CallbackHandler callbackHandler,
+    public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
                                      final int sleepAfterStopDuration35x,
                                      final int sleepAfterStopDuration36x,
                                      final int sleepAfterStopDurationDefault,
                                      final int wkaPort,
                                      final int extendPort) {
-        this.key = key;
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
 
@@ -309,7 +306,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 Runtime.getRuntime().freeMemory() / ONE_MB));
     }
 
-    private DelegatingClusterMemberWrapper getClusterMemberWrapper(final int memberId) {
+    DelegatingClusterMemberWrapper getClusterMemberWrapper(final int memberId) {
         if (!startInvoked) {
             throw new IllegalStateException("Cluster member group never started");
         }

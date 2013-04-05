@@ -31,12 +31,14 @@
 
 package org.littlegrid.app;
 
+import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +51,7 @@ import static java.lang.String.format;
  * @since 2.15
  */
 class CommandDslShell {
-    private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1250;
+    private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1000;
 
     private static final String COMMANDS_ARGUMENT = "commands=";
     private static final String COMMAND_DELIMITER = ";";
@@ -69,6 +71,7 @@ class CommandDslShell {
     private static final String MERGE_JMX_MONITOR_COMMAND = "start jmx monitor";
     private static final String HELP_COMMAND = "help";
     private static final String COMMENT_COMMAND = "#";
+    private static final String CONSOLE_COMMAND = "console";
     private static final String COHQL_COMMAND = "cohql";
 
     private final InputStream in;
@@ -168,6 +171,9 @@ class CommandDslShell {
                 } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND)) {
                     mergeStorageEnabledMember(memberGroup);
 
+                } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND + " *")) {
+                    mergeStorageEnabledMember(memberGroup, 10);
+
                 } else if (command.startsWith(MERGE_EXTEND_PROXY_COMMAND)) {
                     mergeExtendProxyMember(memberGroup, command);
 
@@ -182,6 +188,9 @@ class CommandDslShell {
 
                 } else if (command.startsWith(COMMENT_COMMAND)) {
                     out.println(command);
+
+                } else if (command.equals(CONSOLE_COMMAND)) {
+                    console();
 
                 } else if (command.equals(COHQL_COMMAND)) {
                     cohQl();
@@ -198,6 +207,22 @@ class CommandDslShell {
         }
 
         return exit;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void console()
+            throws Exception {
+
+        CacheFactory.main(new String[]{});
+
+        Class coherenceConsole = Class.forName("com.tangosol.coherence.component.application.console.Coherence",
+                true, Thread.currentThread().getContextClassLoader());
+
+        Object component = ClassHelper.invokeStatic(coherenceConsole, "get_Instance", null);
+        Method stopMethod = coherenceConsole.getDeclaredMethod("setStop", boolean.class);
+
+        stopMethod.setAccessible(true);
+        stopMethod.invoke(component, false);
     }
 
     private void cohQl()
@@ -226,10 +251,10 @@ class CommandDslShell {
         out.println(format("%s - a comment line, useful when scripting and wanting to comment scripts",
                 COMMENT_COMMAND));
         out.println(format("%s - launches CohQL console", COHQL_COMMAND));
+        out.println(format("%s - launches Coherence console (not for Extend clients)", CONSOLE_COMMAND));
     }
 
     private void mergeJmxMonitorMember(final ClusterMemberGroup memberGroup) {
-
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(0)
                 .setExtendProxyCount(0)
@@ -261,6 +286,20 @@ class CommandDslShell {
     private void mergeStorageEnabledMember(final ClusterMemberGroup memberGroup) {
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(1)
+                .setExtendProxyCount(0)
+                .setStorageEnabledExtendProxyCount(0)
+                .setJmxMonitorCount(0)
+                .setCustomConfiguredCount(0)
+                .buildAndConfigure());
+
+        outputStartedMemberIds(memberGroup);
+    }
+
+    private void mergeStorageEnabledMember(final ClusterMemberGroup memberGroup,
+                                           final int numberOfMembers) {
+
+        memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(numberOfMembers)
                 .setExtendProxyCount(0)
                 .setStorageEnabledExtendProxyCount(0)
                 .setJmxMonitorCount(0)

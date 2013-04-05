@@ -45,6 +45,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
 
 /**
@@ -125,7 +126,7 @@ public final class DefaultClusterMemberGroupTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructWithNoCallbackHandler() {
-        new DefaultClusterMemberGroup(null, null, 0, 0, 0, 0, 0);
+        new DefaultClusterMemberGroup(null, 0, 0, 0, 0, 0);
     }
 
     @Test
@@ -134,7 +135,7 @@ public final class DefaultClusterMemberGroupTest {
         final int expectedDuration36x = 17;
         final int expectedDurationDefault = 15;
 
-        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(null,
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(
                 new DefaultCallbackHandler(),
                 expectedDuration35x, expectedDuration36x, expectedDurationDefault, 0, 0);
 
@@ -149,7 +150,7 @@ public final class DefaultClusterMemberGroupTest {
 
         assertThat(handler.getDoAfterCounter(), is(0));
 
-        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(null, handler, 0, 0, 0, 0, 0);
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(handler, 0, 0, 0, 0, 0);
 
         memberGroup.startAll();
 
@@ -176,6 +177,42 @@ public final class DefaultClusterMemberGroupTest {
         } catch (IdentifiableException e) {
             assertThat(e.getReasonEnum(), is(CHECK_CHILD_FIRST_CLASS_PATH_IN_USE));
         }
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getClusterMemberWrapperWhenNotStarted() {
+        getConstructedMemberGroup().getClusterMemberWrapper(1);
+    }
+
+    @Test
+    public void getClusterMemberWhenNotStarted() {
+        final ClusterMember member = getConstructedMemberGroup().getClusterMember(1);
+
+        assertThat(member, nullValue());
+    }
+
+    @Test
+    public void shutdownMemberWhenNotStarted() {
+        getConstructedMemberGroup().shutdownMember(1);
+    }
+
+    @Test
+    public void stopMemberWhenNotStarted() {
+        getConstructedMemberGroup().stopMember(1);
+    }
+
+    @Test
+    public void shutdownAllWhenNotStarted() {
+        getConstructedMemberGroup().shutdownAll();
+    }
+
+    @Test
+    public void stopAllWhenNotStarted() {
+        getConstructedMemberGroup().startAll();
+    }
+
+    private DefaultClusterMemberGroup getConstructedMemberGroup() {
+        return new DefaultClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
     }
 
     private static Properties getPopulatedProperties() {

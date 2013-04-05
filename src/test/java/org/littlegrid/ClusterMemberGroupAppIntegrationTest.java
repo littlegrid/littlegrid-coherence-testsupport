@@ -38,7 +38,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
- * Cluster member group launcher integration tests.
+ * Cluster member group launcher application integration tests.
  */
 public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test(expected = UnsupportedOperationException.class)

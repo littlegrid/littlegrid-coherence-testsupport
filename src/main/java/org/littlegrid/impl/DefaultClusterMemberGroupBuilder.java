@@ -174,7 +174,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      *
      * @return builder keys and values.
      */
-    public Map<String, String> getBuilderKeysAndValues() {
+    Map<String, String> getBuilderKeysAndValues() {
         return builderKeysAndValues;
     }
 
@@ -603,7 +603,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final int wkaPort = getBuilderValueAsInt(WKA_PORT_KEY);
         final int extendPort = getBuilderValueAsInt(EXTEND_PORT_KEY);
 
-        return new DefaultClusterMemberGroup(this, createCallbackHandler(), duration35x, duration36x,
+        return new DefaultClusterMemberGroup(createCallbackHandler(), duration35x, duration36x,
                 durationDefault, wkaPort, extendPort);
     }
 

@@ -92,9 +92,7 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
                                               final boolean resolve)
             throws ClassNotFoundException {
 
-        Class loadedClass = null;
-
-        loadedClass = findLoadedClass(name);
+        Class loadedClass = findLoadedClass(name);
 
         if (loadedClass == null) {
             try {

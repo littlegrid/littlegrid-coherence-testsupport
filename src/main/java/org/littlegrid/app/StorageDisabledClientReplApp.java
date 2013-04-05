@@ -35,7 +35,8 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DI
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
- * Storage disabled client REPL application.
+ * Storage disabled client REPL application, providing access to the CacheFactory console, CohQL
+ * and littlegrid features for easy use and experimentation.
  *
  * @since 2.15
  */

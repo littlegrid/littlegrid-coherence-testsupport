@@ -122,7 +122,6 @@ public final class ClusterMemberGroupUtils {
         final ClusterMemberGroup memberGroup = launchAndStartConsole(args);
 
         shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-        System.exit(0);
     }
 
     static ClusterMemberGroup launchAndStartConsole(final String[] args) {
