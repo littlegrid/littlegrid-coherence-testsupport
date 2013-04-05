@@ -34,6 +34,10 @@ package org.littlegrid.impl;
 import org.junit.Test;
 import org.littlegrid.app.SimpleWaitConsole;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Simple wait console tests.
  */
@@ -41,5 +45,20 @@ public class SimpleWaitConsoleTest {
     @Test
     public void construct() {
         new SimpleWaitConsole();
+    }
+
+    @Test
+    public void constructAndLaunch()
+            throws IOException {
+
+        final InputStream originalInput = System.in;
+
+        try {
+            System.setIn(new ByteArrayInputStream(new byte[]{}));
+
+            SimpleWaitConsole.main(new String[]{});
+        } finally {
+            System.setIn(originalInput);
+        }
     }
 }
