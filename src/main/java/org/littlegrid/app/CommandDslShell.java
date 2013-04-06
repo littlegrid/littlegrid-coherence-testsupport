@@ -196,8 +196,7 @@ class CommandDslShell {
                     cohQl();
 
                 } else if (command.equals("")) {
-                    System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHH");
-                    // Do nothing
+                    out.println();
 
                 } else {
                     out.println(format("'%s' is an unknown command", command));

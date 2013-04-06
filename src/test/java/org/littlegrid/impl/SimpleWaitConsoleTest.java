@@ -48,7 +48,7 @@ public class SimpleWaitConsoleTest {
     }
 
     @Test
-    public void constructAndLaunch()
+    public void constructAndStart()
             throws IOException {
 
         final InputStream originalInput = System.in;

@@ -351,13 +351,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 systemProperties = getSystemPropertiesForStorageEnabled();
                 break;
 
-            case NO_CLIENT:
+            default:
                 systemProperties = new Properties();
                 break;
-
-            default:
-                throw new IllegalArgumentException(format("Invalid build and configure type: %s",
-                        buildAndConfigureEnum));
         }
 
         SystemUtils.applyToSystemProperties(systemProperties);

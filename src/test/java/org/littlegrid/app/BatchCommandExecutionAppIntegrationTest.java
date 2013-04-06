@@ -31,6 +31,7 @@
 
 package org.littlegrid.app;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -43,6 +44,14 @@ public class BatchCommandExecutionAppIntegrationTest {
     @Test(expected = UnsupportedOperationException.class)
     public void construct() {
         new BatchCommandExecutionApp();
+    }
+
+    @Test
+    @Ignore
+    public void startWithNullArguments()
+            throws IOException {
+
+        BatchCommandExecutionApp.main(null);
     }
 
     @Test

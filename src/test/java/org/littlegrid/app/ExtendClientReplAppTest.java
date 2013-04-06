@@ -72,4 +72,9 @@ public class ExtendClientReplAppTest {
 
         ExtendClientReplApp.main(new String[]{"commands=# Extend client REPL test; bye"});
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void startWithNullArguments() {
+        ExtendClientReplApp.main(null);
+    }
 }

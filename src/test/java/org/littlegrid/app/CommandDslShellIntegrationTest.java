@@ -34,6 +34,9 @@ package org.littlegrid.app;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 /**
  * Command DSL shell tests.
  */
@@ -41,6 +44,11 @@ public class CommandDslShellIntegrationTest {
     @Test
     public void stopMember() {
         new CommandDslShell(System.in, System.out).start(new String[]{"commands=stop member 1; bye"});
+    }
+
+    @Test
+    public void stopMembers() {
+        new CommandDslShell(System.in, System.out).start(new String[]{"commands=stop member 1 2 3; bye"});
     }
 
     @Test
@@ -119,8 +127,28 @@ public class CommandDslShellIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void cohQl() {
+        final InputStream originalInput = System.in;
 
+        try {
+            System.setIn(new ByteArrayInputStream(new byte[]{}));
+
+            new CommandDslShell(System.in, System.out).start(new String[]{"commands=cohql; bye"});
+        } finally {
+            System.setIn(originalInput);
+        }
+    }
+
+    @Test
+    public void console() {
+        final InputStream originalInput = System.in;
+
+        try {
+            System.setIn(new ByteArrayInputStream("bye".getBytes()));
+
+            new CommandDslShell(System.in, System.out).start(new String[]{"commands=console; bye"});
+        } finally {
+            System.setIn(originalInput);
+        }
     }
 }
