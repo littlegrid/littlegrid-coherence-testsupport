@@ -83,6 +83,7 @@ public final class ChildFirstUrlClassLoaderTest {
                         null),
                 this.getClass().getClassLoader());
 
+        //TODO: Review this, need to think through the assertions
         childFirstLoader.loadClass(String.class.getName());
         childFirstLoader.loadClass(Map.class.getName());
     }

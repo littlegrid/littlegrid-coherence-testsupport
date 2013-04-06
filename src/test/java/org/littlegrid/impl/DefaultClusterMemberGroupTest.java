@@ -208,7 +208,7 @@ public final class DefaultClusterMemberGroupTest {
 
     @Test
     public void stopAllWhenNotStarted() {
-        getConstructedMemberGroup().startAll();
+        getConstructedMemberGroup().stopAll();
     }
 
     private DefaultClusterMemberGroup getConstructedMemberGroup() {

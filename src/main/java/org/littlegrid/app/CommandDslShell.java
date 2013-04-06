@@ -51,7 +51,7 @@ import static java.lang.String.format;
  * @since 2.15
  */
 class CommandDslShell {
-    private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 1000;
+    private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 750;
 
     private static final String COMMANDS_ARGUMENT = "commands=";
     private static final String COMMAND_DELIMITER = ";";

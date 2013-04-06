@@ -17,7 +17,7 @@ final class $className {
     private static final String BUILD_DATE = "$buildDate";
 
 
-    private $className() {
+    $className() {
     }
 
     public static String getName() {

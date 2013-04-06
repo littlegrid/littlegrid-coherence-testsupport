@@ -29,44 +29,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.app;
+package org.littlegrid.impl;
 
-import org.littlegrid.ClusterMemberGroupUtils;
-
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import org.junit.Test;
 
 /**
- * Extend client REPL application, providing access to CohQL and littlegrid features
- * for easy use and experimentation.
- *
- * @since 2.15
+ * Info tests.
  */
-public class ExtendClientReplApp {
-    /**
-     * Default scope to enable test coverage.
-     */
-    ExtendClientReplApp() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @param args Arguments.
-     */
-    public static void main(final String[] args) {
-        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
-                EXTEND_CLIENT.name());
-
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
-        final String clientCacheConfiguration = builder.getClientCacheConfiguration();
-
-        if (clientCacheConfiguration == null || clientCacheConfiguration.trim().length() == 0) {
-            throw new IllegalStateException(
-                    "No ClientCacheConfiguration file specified, cannot configure for Extend client - exiting");
-        } else {
-            final CommandDslShell shell = new CommandDslShell(System.in, System.out);
-            shell.start(args);
-        }
+public class InfoTest {
+    @Test
+    public void construct() {
+        new Info();
     }
 }

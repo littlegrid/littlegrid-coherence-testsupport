@@ -107,7 +107,8 @@ public final class ClassPathUtils {
     public static URL[] getClassPathUrlsExcludingJavaHome(final String javaHomePath,
                                                           final String classPath,
                                                           final String pathSeparator,
-                                                          final String jarsToExcludeFromClassPath) throws MalformedURLException {
+                                                          final String jarsToExcludeFromClassPath)
+            throws MalformedURLException {
 
         final String[] classPathArray = classPath.split(pathSeparator);
 

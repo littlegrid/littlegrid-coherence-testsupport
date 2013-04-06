@@ -62,7 +62,14 @@ public class ExtendClientReplAppTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void startWithNoClientCacheConfiguration() {
+    public void startWithNullClientCacheConfiguration() {
+        ExtendClientReplApp.main(new String[]{});
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void startWithEmptyStringClientCacheConfiguration() {
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "ClientCacheConfiguration", "");
+
         ExtendClientReplApp.main(new String[]{});
     }
 
