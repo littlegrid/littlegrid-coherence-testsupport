@@ -374,8 +374,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
-        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-
         builder.setCacheConfiguration(expectedCacheConfiguration);
         builder.setOverrideConfiguration(expectedOverrideConfiguration);
 
@@ -388,6 +386,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         builder.setLogDestination(expectedLogDestination);
         builder.setLogLevel(expectedLogLevel);
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
 
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
 
@@ -410,6 +410,13 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(properties.getProperty("tangosol.coherence.log"), is(expectedLogDestination));
         assertThat(properties.getProperty("tangosol.coherence.log.level"), is(Integer.toString(expectedLogLevel)));
+    }
+
+    @Test
+    public void performToString() {
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        assertThat(builder.toString().length() > 0, is(true));
     }
 
     @Test

@@ -45,13 +45,13 @@ import static java.lang.String.format;
  *
  * @since 2.15
  */
-public class BatchCommandExecutionApp {
+public class CommandBatchApp {
     private static final String COMMAND_FILE_ARGUMENT = "commandFile=";
 
     /**
      * Default scope to enable test coverage.
      */
-    BatchCommandExecutionApp() {
+    CommandBatchApp() {
         throw new UnsupportedOperationException();
     }
 
@@ -70,7 +70,7 @@ public class BatchCommandExecutionApp {
         if (commandFile == null || commandFile.trim().length() == 0) {
             in = System.in;
         } else {
-            final URL url = Resources.findFileOrResource(commandFile, BatchCommandExecutionApp.class.getClassLoader());
+            final URL url = Resources.findFileOrResource(commandFile, CommandBatchApp.class.getClassLoader());
 
             if (url == null) {
                 throw new FileNotFoundException(format("'%s' not found", commandFile));

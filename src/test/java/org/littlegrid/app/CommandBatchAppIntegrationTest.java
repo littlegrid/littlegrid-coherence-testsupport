@@ -38,12 +38,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * Batch command execution application integration tests.
+ * Command batch application integration tests.
  */
-public class BatchCommandExecutionAppIntegrationTest {
+public class CommandBatchAppIntegrationTest {
     @Test(expected = UnsupportedOperationException.class)
     public void construct() {
-        new BatchCommandExecutionApp();
+        new CommandBatchApp();
     }
 
     @Test
@@ -51,14 +51,14 @@ public class BatchCommandExecutionAppIntegrationTest {
     public void startWithNullArguments()
             throws IOException {
 
-        BatchCommandExecutionApp.main(null);
+        CommandBatchApp.main(null);
     }
 
     @Test
     public void startWithCommandsArgumentOnly()
             throws IOException {
 
-        BatchCommandExecutionApp.main(new String[]{
+        CommandBatchApp.main(new String[]{
                 "some-string-before",
                 "commands=start storage enabled; start jmx monitor; # ; bye",
                 "some-string-after"
@@ -69,7 +69,7 @@ public class BatchCommandExecutionAppIntegrationTest {
     public void startWithCommandFileAndNoCommandsArgument()
             throws IOException {
 
-        BatchCommandExecutionApp.main(new String[]{
+        CommandBatchApp.main(new String[]{
                 "some-string-before",
                 "commandFile=command-file.txt",
                 "some-string-after"
@@ -80,13 +80,13 @@ public class BatchCommandExecutionAppIntegrationTest {
     public void startWithCommandsArgumentAndCommandFile()
             throws IOException {
 
-        BatchCommandExecutionApp.main(new String[]{"commands=members", "commandFile=command-file.txt"});
+        CommandBatchApp.main(new String[]{"commands=members", "commandFile=command-file.txt"});
     }
 
     @Test(expected = FileNotFoundException.class)
     public void startWithCommandFileThatDoesNotExist()
             throws IOException {
 
-        BatchCommandExecutionApp.main(new String[]{"commandFile=file-that-does-not-exist.xml"});
+        CommandBatchApp.main(new String[]{"commandFile=file-that-does-not-exist.xml"});
     }
 }

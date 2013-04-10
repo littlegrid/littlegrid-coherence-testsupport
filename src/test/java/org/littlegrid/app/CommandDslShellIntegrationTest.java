@@ -107,6 +107,11 @@ public class CommandDslShellIntegrationTest {
     }
 
     @Test
+    public void startMultipleStorageEnabled() {
+        new CommandDslShell(System.in, System.out).start(new String[]{"commands=start storage enabled * 2; bye"});
+    }
+
+    @Test
     public void startExtendProxy() {
         new CommandDslShell(System.in, System.out).start(new String[]{"commands=start extend proxy 25001; bye"});
     }
@@ -124,6 +129,11 @@ public class CommandDslShellIntegrationTest {
     @Test
     public void comment() {
         new CommandDslShell(System.in, System.out).start(new String[]{"commands=# comment; bye"});
+    }
+
+    @Test
+    public void outputDate() {
+        new CommandDslShell(System.in, System.out).start(new String[]{"commands=date; bye"});
     }
 
     @Test

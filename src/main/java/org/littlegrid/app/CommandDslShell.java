@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -55,6 +56,7 @@ class CommandDslShell {
 
     private static final String COMMANDS_ARGUMENT = "commands=";
     private static final String COMMAND_DELIMITER = ";";
+    private static final String NUMBER_DELIMITER = " ";
 
     private static final String COMMAND_PROMPT = "lg> ";
 
@@ -66,9 +68,11 @@ class CommandDslShell {
     private static final String STOP_ALL_COMMAND = "stop all";
     private static final String SLEEP_COMMAND = "sleep";
     private static final String SHUTDOWN_MEMBER_COMMAND = "shutdown member";
-    private static final String MERGE_STORAGE_ENABLED_COMMAND = "start storage enabled";
-    private static final String MERGE_EXTEND_PROXY_COMMAND = "start extend proxy";
-    private static final String MERGE_JMX_MONITOR_COMMAND = "start jmx monitor";
+    private static final String START_STORAGE_ENABLED_COMMAND = "start storage enabled";
+    private static final String START_MULTIPLE_STORAGE_ENABLED_COMMAND = "start storage enabled * ";
+    private static final String START_EXTEND_PROXY_COMMAND = "start extend proxy";
+    private static final String START_JMX_MONITOR_COMMAND = "start jmx monitor";
+    private static final String DATE_COMMAND = "date";
     private static final String HELP_COMMAND = "help";
     private static final String COMMENT_COMMAND = "#";
     private static final String CONSOLE_COMMAND = "console";
@@ -100,8 +104,6 @@ class CommandDslShell {
 
         final String commands = parseCommandsString(args);
         final boolean exit = processCommandsString(memberGroup, commands);
-
-        System.out.println("");
 
         if (!exit) {
             final Scanner scanner = new Scanner(in);
@@ -168,17 +170,17 @@ class CommandDslShell {
                 } else if (command.equals(GET_STARTED_MEMBER_IDS_COMMAND)) {
                     outputStartedMemberIds(memberGroup);
 
-                } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND)) {
-                    mergeStorageEnabledMember(memberGroup);
+                } else if (command.equals(START_STORAGE_ENABLED_COMMAND)) {
+                    startStorageEnabledMember(memberGroup);
 
-                } else if (command.equals(MERGE_STORAGE_ENABLED_COMMAND + " *")) {
-                    mergeStorageEnabledMember(memberGroup, 10);
+                } else if (command.startsWith(START_MULTIPLE_STORAGE_ENABLED_COMMAND)) {
+                    startMultipleStorageEnabledMembers(memberGroup, command);
 
-                } else if (command.startsWith(MERGE_EXTEND_PROXY_COMMAND)) {
-                    mergeExtendProxyMember(memberGroup, command);
+                } else if (command.startsWith(START_EXTEND_PROXY_COMMAND)) {
+                    startExtendProxyMember(memberGroup, command);
 
-                } else if (command.startsWith(MERGE_JMX_MONITOR_COMMAND)) {
-                    mergeJmxMonitorMember(memberGroup);
+                } else if (command.startsWith(START_JMX_MONITOR_COMMAND)) {
+                    startJmxMonitorMember(memberGroup);
 
                 } else if (command.equals(HELP_COMMAND)) {
                     outputHelp();
@@ -195,6 +197,9 @@ class CommandDslShell {
                 } else if (command.equals(COHQL_COMMAND)) {
                     cohQl();
 
+                } else if (command.equals(DATE_COMMAND)) {
+                    outputDate();
+
                 } else if (command.equals("")) {
                     out.println();
 
@@ -207,6 +212,10 @@ class CommandDslShell {
         }
 
         return exit;
+    }
+
+    private void outputDate() {
+        out.println(new Date());
     }
 
     @SuppressWarnings("unchecked")
@@ -243,18 +252,19 @@ class CommandDslShell {
         out.println(format("%s - quits this application - same as %s", QUIT_COMMAND, BYE_COMMAND));
         out.println(format("%s - displays member Ids known to this process", GET_STARTED_MEMBER_IDS_COMMAND));
         out.println(format("%s n - sleeps for the specified time in milliseconds", SLEEP_COMMAND));
-        out.println(format("%s - starts a storage enabled member in this process", MERGE_STORAGE_ENABLED_COMMAND));
+        out.println(format("%s - starts a storage enabled member in this process", START_STORAGE_ENABLED_COMMAND));
         out.println(format("%s n - starts an Extend proxy member with specified port in this process",
-                MERGE_EXTEND_PROXY_COMMAND));
-        out.println(format("%s - starts a JMX monitor member in this process", MERGE_JMX_MONITOR_COMMAND));
+                START_EXTEND_PROXY_COMMAND));
+        out.println(format("%s - starts a JMX monitor member in this process", START_JMX_MONITOR_COMMAND));
         out.println(format("%s - displays this help", HELP_COMMAND));
+        out.println(format("%s - displays the current date and time", DATE_COMMAND));
         out.println(format("%s - a comment line, useful when scripting and wanting to comment scripts",
                 COMMENT_COMMAND));
         out.println(format("%s - launches CohQL console", COHQL_COMMAND));
         out.println(format("%s - launches Coherence console (not for Extend clients)", CONSOLE_COMMAND));
     }
 
-    private void mergeJmxMonitorMember(final ClusterMemberGroup memberGroup) {
+    private void startJmxMonitorMember(final ClusterMemberGroup memberGroup) {
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(0)
                 .setExtendProxyCount(0)
@@ -266,10 +276,10 @@ class CommandDslShell {
         outputStartedMemberIds(memberGroup);
     }
 
-    private void mergeExtendProxyMember(final ClusterMemberGroup memberGroup,
+    private void startExtendProxyMember(final ClusterMemberGroup memberGroup,
                                         final String command) {
 
-        final int extendPort = parseInteger(MERGE_EXTEND_PROXY_COMMAND, command);
+        final int extendPort = parseInteger(START_EXTEND_PROXY_COMMAND, command);
 
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(0)
@@ -283,7 +293,7 @@ class CommandDslShell {
         outputStartedMemberIds(memberGroup);
     }
 
-    private void mergeStorageEnabledMember(final ClusterMemberGroup memberGroup) {
+    private void startStorageEnabledMember(final ClusterMemberGroup memberGroup) {
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(1)
                 .setExtendProxyCount(0)
@@ -295,8 +305,10 @@ class CommandDslShell {
         outputStartedMemberIds(memberGroup);
     }
 
-    private void mergeStorageEnabledMember(final ClusterMemberGroup memberGroup,
-                                           final int numberOfMembers) {
+    private void startMultipleStorageEnabledMembers(final ClusterMemberGroup memberGroup,
+                                                    final String command) {
+
+        final int numberOfMembers = parseInteger(START_MULTIPLE_STORAGE_ENABLED_COMMAND, command);
 
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembers)
@@ -360,10 +372,10 @@ class CommandDslShell {
     }
 
     private static int[] parseIntegers(final String command,
-                                       final String commandAndCommaDelimitedNumbers) {
+                                       final String commandAndDelimitedNumbers) {
 
-        final String commaDelimitedNumbers = commandAndCommaDelimitedNumbers.replaceAll(command, "");
-        final String[] stringNumbers = commaDelimitedNumbers.trim().split(" ");
+        final String delimitedNumbers = commandAndDelimitedNumbers.replaceAll(command, "").replace("*", "");
+        final String[] stringNumbers = delimitedNumbers.trim().split(NUMBER_DELIMITER);
 
         final int[] numbers = new int[stringNumbers.length];
 
@@ -371,7 +383,7 @@ class CommandDslShell {
             final String value = stringNumbers[i].trim();
 
             if (value.length() > 0) {
-                numbers[i] = Integer.parseInt(stringNumbers[i].trim());
+                numbers[i] = Integer.parseInt(value);
             }
         }
 

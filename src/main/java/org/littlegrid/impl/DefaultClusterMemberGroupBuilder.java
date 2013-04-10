@@ -1148,54 +1148,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     /**
      * {@inheritDoc}
      */
-/*
-    @Override
-    public boolean equals(final Object otherObject) {
-        if (this == otherObject) {
-            return true;
-        }
-
-        if (otherObject == null || getClass() != otherObject.getClass()) {
-            return false;
-        }
-
-        final DefaultClusterMemberGroupBuilder otherMemberGroup = (DefaultClusterMemberGroupBuilder) otherObject;
-
-        if (!additionalSystemProperties.equals(otherMemberGroup.additionalSystemProperties)) {
-            return false;
-        }
-
-        if (!builderKeyToSystemPropertyNameMapping.equals(otherMemberGroup.builderKeyToSystemPropertyNameMapping)) {
-            return false;
-        }
-
-        if (!builderKeysAndValues.equals(otherMemberGroup.builderKeysAndValues)) {
-            return false;
-        }
-
-        return true;
-    }
-*/
-
-    /**
-     * {@inheritDoc}
-     */
-/*
-    @Override
-    public int hashCode() {
-        final int multiplier = 31;
-
-        int result = builderKeysAndValues.hashCode();
-        result = multiplier * result + additionalSystemProperties.hashCode();
-        result = multiplier * result + builderKeyToSystemPropertyNameMapping.hashCode();
-
-        return result;
-    }
-*/
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
