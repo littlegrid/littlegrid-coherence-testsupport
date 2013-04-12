@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.SystemUtils;
 
@@ -375,6 +376,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setCacheConfiguration(expectedCacheConfiguration);
+        builder.setStorageEnabledCacheConfiguration(expectedCacheConfiguration);
         builder.setOverrideConfiguration(expectedOverrideConfiguration);
 
         builder.setWkaAddress(expectedWkaAddress);
@@ -410,6 +412,67 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(properties.getProperty("tangosol.coherence.log"), is(expectedLogDestination));
         assertThat(properties.getProperty("tangosol.coherence.log.level"), is(Integer.toString(expectedLogLevel)));
+    }
+
+    @Test
+    public void setAndGetBuilderValueAsInt() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+
+        final String key = "key";
+        final int value = 123;
+
+        defaultBuilder.setBuilderValue(key, value);
+
+        assertThat(defaultBuilder.getBuilderValueAsInt(key), is(value));
+    }
+
+    @Test
+    public void setAndGetBuilderValueAsLong() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+
+        final String key = "key";
+        final long value = 123L;
+
+        defaultBuilder.setBuilderValue(key, value);
+
+        assertThat(defaultBuilder.getBuilderValueAsLong(key), is(value));
+    }
+
+    @Test
+    public void setAndGetBuilderValueAsString() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+
+        final String key = "key";
+        final String value = "123";
+
+        defaultBuilder.setBuilderValue(key, value);
+
+        assertThat(defaultBuilder.getBuilderValueAsString(key), is(value));
+    }
+
+    @Test
+    public void getBuilderValueAsStringWhenNoEntry() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+
+        assertThat(defaultBuilder.getBuilderValueAsString("no-entry"), nullValue());
+    }
+
+    @Test
+    public void setAndGetBuilderValueAsStringWhenValueIsInt() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+
+        final String key = "key";
+        final String value = "123";
+
+        defaultBuilder.setBuilderValue(key, Integer.parseInt(value));
+
+        assertThat(defaultBuilder.getBuilderValueAsString(key), is(value));
+    }
+
+    private DefaultClusterMemberGroupBuilder getDefaultClusterMemberGroupBuilder() {
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        return (DefaultClusterMemberGroupBuilder) builder;
     }
 
     @Test

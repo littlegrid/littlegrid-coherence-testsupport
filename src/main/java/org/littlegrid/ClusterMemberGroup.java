@@ -314,10 +314,12 @@ public interface ClusterMemberGroup {
         Builder setExceptionReporterInstanceClassName(String exceptionReportInstanceClassName);
 
         /**
-         * Sets the cache configuration to be used for the cluster member groups, this is used
-         * for configurations where all TCMP members (storage enabled, Extend proxy and
-         * storage disabled) use the same configuration then this will serve as the only cache
-         * configuration file needing to be used.
+         * Sets the cache configuration to be used for the all cluster members (unless explicitly
+         * overridden), this is used for configurations where all TCMP members (storage enabled,
+         * Extend proxy and storage disabled) use the same configuration then this will serve
+         * as the only cache configuration file needing to be used - from 2.15, if required specific
+         * cache configuration files can be specified for certain cluster member types (storage enabled,
+         * Extend proxies and JMX monitor).
          *
          * @param cacheConfiguration Cache configuration.
          * @return builder.
@@ -436,6 +438,16 @@ public interface ClusterMemberGroup {
         Builder setStorageEnabledCount(int numberOfMembers);
 
         /**
+         * Sets the cache configuration specifically just for the storage enabled cluster members,
+         * this setting if used takes precedence over the general setCacheConfiguration.
+         *
+         * @param cacheConfiguration Cache configuration.
+         * @return builder.
+         * @since 2.15
+         */
+        Builder setStorageEnabledCacheConfiguration(String cacheConfiguration);
+
+        /**
          * Sets the number of custom configured members that the cluster member group should contain.
          *
          * @param numberOfMembers Number of members required.
@@ -461,12 +473,32 @@ public interface ClusterMemberGroup {
         Builder setExtendProxyCount(int numberOfMembers);
 
         /**
+         * Sets the cache configuration specifically just for the Extend proxy cluster members,
+         * this setting if used takes precedence over the general setCacheConfiguration.
+         *
+         * @param cacheConfiguration Cache configuration.
+         * @return builder.
+         * @since 2.15
+         */
+        Builder setExtendProxyCacheConfiguration(String cacheConfiguration);
+
+        /**
          * Sets the number of JMX monitor members the cluster member group should contain.
          *
          * @param numberOfMembers Number of members.
          * @return builder.
          */
         Builder setJmxMonitorCount(int numberOfMembers);
+
+        /**
+         * Sets the cache configuration specifically just for the JMX monitor cluster members,
+         * this setting if used takes precedence over the general setCacheConfiguration.
+         *
+         * @param cacheConfiguration Cache configuration.
+         * @return builder.
+         * @since 2.15
+         */
+        Builder setJmxMonitorCacheConfiguration(String cacheConfiguration);
 
         /**
          * Sets the log destination where the cluster members should output to.

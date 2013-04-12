@@ -40,6 +40,7 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -111,7 +112,20 @@ public final class SystemUtilsTest {
         SystemUtils.applyToSystemProperties(properties);
 
         assertThat(System.getProperties().containsKey(key), is(true));
-        assertThat(System.getProperty(key), is(KNOWN_VALUE_1));
+        assertThat(System.getProperty(key), is(value));
+    }
+
+    @Test
+    public void applyToSystemPropertiesWhenValueIsJustSpaces() {
+        final String key = KEY1_WITH_KNOWN_PREFIX;
+        final String value = "  ";
+
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+
+        SystemUtils.applyToSystemProperties(properties);
+
+        assertThat(System.getProperties().containsKey(key), is(false));
     }
 
     @Test

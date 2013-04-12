@@ -256,44 +256,34 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         return stringToCheckForValue != null && stringToCheckForValue.trim().length() > 0;
     }
 
-    private void setBuilderValue(final String key,
-                                 final int value) {
+    void setBuilderValue(final String key,
+                         final int value) {
 
         builderKeysAndValues.put(key, Integer.toString(value));
     }
 
-    private void setBuilderValue(final String key,
-                                 final long value) {
+    void setBuilderValue(final String key,
+                         final long value) {
 
         builderKeysAndValues.put(key, Long.toString(value));
     }
 
-    private void setBuilderValue(final String key,
-                                 final String value) {
+    void setBuilderValue(final String key,
+                         final String value) {
 
         builderKeysAndValues.put(key, value);
     }
 
-    private int getBuilderValueAsInt(final String builderKey) {
+    int getBuilderValueAsInt(final String builderKey) {
         return Integer.parseInt(builderKeysAndValues.get(builderKey));
     }
 
-    private long getBuilderValueAsLong(final String builderKey) {
+    long getBuilderValueAsLong(final String builderKey) {
         return Long.parseLong(builderKeysAndValues.get(builderKey));
     }
 
-    private String getBuilderValueAsString(final String builderKey) {
-        final Object value = builderKeysAndValues.get(builderKey);
-
-        if (value == null) {
-            return null;
-        }
-
-        if (value instanceof String) {
-            return (String) value;
-        } else {
-            return value.toString();
-        }
+    String getBuilderValueAsString(final String builderKey) {
+        return  builderKeysAndValues.get(builderKey);
     }
 
     /**
@@ -401,9 +391,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         try {
             final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
-                javaHome, classPath, pathSeparator,
-                getBuilderValueAsString(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
-                        + ", " + getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
+                    javaHome, classPath, pathSeparator,
+                    getBuilderValueAsString(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
+                            + ", " + getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
 
             containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
 
@@ -731,6 +721,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
+    public Builder setStorageEnabledCacheConfiguration(final String cacheConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Builder setCustomConfiguredCount(final int numberOfMembers) {
         setBuilderValue(CUSTOM_CONFIGURED_COUNT_KEY, numberOfMembers);
 
@@ -761,10 +759,26 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
+    public Builder setExtendProxyCacheConfiguration(final String cacheConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Builder setJmxMonitorCount(final int numberOfMembers) {
         setBuilderValue(JMX_MONITOR_COUNT_KEY, numberOfMembers);
 
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setJmxMonitorCacheConfiguration(final String cacheConfiguration) {
+        throw new UnsupportedOperationException();
     }
 
     /**
