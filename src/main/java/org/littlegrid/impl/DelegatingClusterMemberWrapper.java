@@ -40,6 +40,7 @@ import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
@@ -49,6 +50,9 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTAR
  * the instance of the wrapped class.
  */
 class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember {
+    static final String ERROR_INSTANTIATING_FILTER_WITH_NAME_GZIP = "Error instantiating Filter with name: gzip";
+    static final String VALUE_OUT_OF_RANGE_1000 = "Value out of range [1000,";
+
     private static final Logger LOGGER = Logger.getLogger(DelegatingClusterMemberWrapper.class.getName());
 
     private final Object clusterMemberInstance;
@@ -129,30 +133,36 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
     }
 
     static Object invokeMethod(final Object objectToInvokeMethodOn,
-                        final String methodName) {
+                               final String methodName) {
 
         try {
             return ClassHelper.invoke(objectToInvokeMethodOn, methodName, new Object[]{});
         } catch (Exception e) {
-            Throwable originalCause = e;
-
-            while (originalCause.getCause() != null) {
-                originalCause = originalCause.getCause();
-            }
-
-            final String message = originalCause.getMessage();
-
-            if (message.contains("Error instantiating Filter with name: gzip")) {
-                throw new IdentifiableException(
-                        "Please check that at least one of your caches is marked with <autostart>true</autostart> "
-                                + "in the cache configuration file - this is a current littlegrid limitation ",
-                        e, SUSPECTED_AUTOSTART_EXCEPTION);
-//            } else if (message.contains("Value out of range [1000,")) {
-//                throw new IdentifiableException("Join timeout is too small", e, JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL);
-            }
-
-            throw new IllegalStateException(e);
+            throw exceptionAfterAttemptedIdentification(e);
         }
+    }
+
+    static RuntimeException exceptionAfterAttemptedIdentification(final Exception exception) {
+        Throwable originalCause = exception;
+
+        while (originalCause.getCause() != null) {
+            originalCause = originalCause.getCause();
+        }
+
+        final String message = originalCause.getMessage();
+
+        if (message.contains(ERROR_INSTANTIATING_FILTER_WITH_NAME_GZIP)) {
+            return new IdentifiableException(
+                    "Please check that at least one of your caches is marked with <autostart>true</autostart> "
+                            + "in the cache configuration file - this is a current littlegrid limitation ",
+                    exception, SUSPECTED_AUTOSTART_EXCEPTION);
+
+        } else if (message.contains(VALUE_OUT_OF_RANGE_1000)) {
+            return new IdentifiableException("Join timeout is too small",
+                    exception, JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL);
+        }
+
+        return new IllegalStateException(exception);
     }
 
     /**

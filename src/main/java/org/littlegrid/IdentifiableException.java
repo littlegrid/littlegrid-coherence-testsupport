@@ -34,7 +34,9 @@ package org.littlegrid;
 import static java.lang.String.format;
 
 /**
- * Identifiable exception.
+ * Identifiable exception, a type of exception type has a cause that has been
+ * identified based upon a known set of circumstances or a particular type of
+ * exception message from the originating exception.
  *
  * @since 2.13
  */
@@ -45,22 +47,34 @@ public class IdentifiableException extends RuntimeException {
      * Types of exception reason.
      */
     public static enum ReasonEnum {
-        /** Exception reason. */
+        /**
+         * Exception reason.
+         */
         SECURITY_EXCEPTION,
 
-        /** Exception reason. */
+        /**
+         * Exception reason.
+         */
         SUSPECTED_AUTOSTART_EXCEPTION,
 
-        /** Exception reason. */
+        /**
+         * Exception reason.
+         */
         UNABLE_TO_SET_BEAN_PROPERTY,
 
-        /** Exception reason. */
+        /**
+         * Exception reason.
+         */
         CHECK_CHILD_FIRST_CLASS_PATH_IN_USE,
 
-        /** Exception reason. */
+        /**
+         * Exception reason.
+         */
         JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL,
 
-        /** Exception reason. */
+        /**
+         * Exception reason.
+         */
         CHECK_CACHE_CONFIGURATION_FILE_BEING_USED
     }
 
