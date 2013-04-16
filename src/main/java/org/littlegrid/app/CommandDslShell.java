@@ -116,6 +116,10 @@ class CommandDslShell {
     }
 
     private String parseCommandsString(final String[] args) {
+        if (args == null) {
+            return "bye";
+        }
+
         final String commands = "";
 
         for (int i = 0; i < args.length; i++) {

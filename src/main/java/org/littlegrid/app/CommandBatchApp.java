@@ -67,7 +67,7 @@ public class CommandBatchApp {
         final String commandFile = parseCommandFile(args);
         final InputStream in;
 
-        if (commandFile == null || commandFile.trim().length() == 0) {
+        if (commandFile.trim().length() == 0) {
             in = System.in;
         } else {
             final URL url = Resources.findFileOrResource(commandFile, CommandBatchApp.class.getClassLoader());

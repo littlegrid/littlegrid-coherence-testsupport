@@ -59,9 +59,8 @@ public class ExtendClientReplApp {
                 EXTEND_CLIENT.name());
 
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
-        final String clientCacheConfiguration = builder.getClientCacheConfiguration();
 
-        if (clientCacheConfiguration == null || clientCacheConfiguration.trim().length() == 0) {
+        if (builder.getClientCacheConfiguration().trim().length() == 0) {
             throw new IllegalStateException(
                     "No ClientCacheConfiguration file specified, cannot configure for Extend client - exiting");
         } else {

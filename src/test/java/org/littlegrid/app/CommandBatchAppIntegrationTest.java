@@ -47,14 +47,6 @@ public class CommandBatchAppIntegrationTest {
     }
 
     @Test
-    @Ignore
-    public void startWithNullArguments()
-            throws IOException {
-
-        CommandBatchApp.main(null);
-    }
-
-    @Test
     public void startWithCommandsArgumentOnly()
             throws IOException {
 
