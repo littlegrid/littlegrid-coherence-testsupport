@@ -458,7 +458,19 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
-    public void defaultMappingSystemPropertiesForStorageEnabled() {
+    public void defaultMappingSystemPropertiesForStorageEnabledWhenNoSpecificSettings() {
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+
+        assertThat(properties.size(), is(18));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForStorageEnabledWhenSpecificSettings() {
         final String expectedCacheConfiguration = "cache-config.xml";
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
@@ -506,18 +518,34 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
-    public void defaultMappingSystemPropertiesForStorageDisabledClient() {
+    public void defaultMappingSystemPropertiesForStorageDisabledClientNoSpecificSettings() {
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+
+        assertThat(properties.size(), is(19));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForStorageDisabledClientSpecificSettings() {
         final String expectedCacheConfiguration = "cache-config.xml";
+        final String expectedOverrideConfiguration = "override-config.xml";
+
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setClientCacheConfiguration(expectedCacheConfiguration);
+        builder.setClientOverrideConfiguration(expectedOverrideConfiguration);
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
 
-        assertThat(properties.size(), is(20));
+        assertThat(properties.size(), is(21));
     }
 
     @Test
@@ -548,22 +576,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
-    public void defaultMappingSystemPropertiesForExtendProxyClient() {
-        final String expectedCacheConfiguration = "cache-config.xml";
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
-
-        builder.setClientCacheConfiguration(expectedCacheConfiguration);
-
-        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
-
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-
-        assertThat(properties.size(), is(9));
-    }
-
-    @Test
-    public void defaultMappingSystemPropertiesForExtendProxyClientWhenNoSpecificCacheConfiguration() {
+    public void defaultMappingSystemPropertiesForExtendProxyClientWhenNoSpecificSettings() {
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
@@ -572,5 +585,24 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
 
         assertThat(properties.size(), is(8));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForExtendProxyClientWhenSpecificSettings() {
+        final String expectedCacheConfiguration = "cache-config.xml";
+        final String expectedOverrideConfiguration = "override-config.xml";
+
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        builder.setClientCacheConfiguration(expectedCacheConfiguration);
+        builder.setClientOverrideConfiguration(expectedOverrideConfiguration);
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
+
+        assertThat(properties.size(), is(10));
     }
 }

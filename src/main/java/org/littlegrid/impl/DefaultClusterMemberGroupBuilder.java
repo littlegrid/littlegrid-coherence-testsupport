@@ -1418,10 +1418,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         final String clientCacheConfiguration = getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
 
-        if (clientCacheConfiguration.length() == 0) {
-            LOGGER.warning("No client cache configuration has been specified for Extend clients");
-        } else {
+        if (stringHasValue(clientCacheConfiguration)) {
             setPropertyUsingNameMappingAndBuilderValue(properties, CLIENT_CACHE_CONFIGURATION_KEY);
+        } else {
+            LOGGER.warning("No client cache configuration has been specified for Extend clients");
         }
 
         final String clientOverrideConfiguration = getBuilderValueAsString(CLIENT_OVERRIDE_CONFIGURATION_KEY);
