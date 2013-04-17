@@ -116,10 +116,6 @@ class CommandDslShell {
     }
 
     private String parseCommandsString(final String[] args) {
-        if (args == null) {
-            return "bye";
-        }
-
         final String commands = "";
 
         for (int i = 0; i < args.length; i++) {
@@ -248,8 +244,12 @@ class CommandDslShell {
     }
 
     private void outputHelp() {
-        out.println(format("%s n m - stops the specified cluster member(s)", STOP_MEMBER_COMMAND));
-        out.println(format("%s n m - shuts down the specified cluster member(s)", SHUTDOWN_MEMBER_COMMAND));
+        out.println(format("%s n m - stops the specified cluster member(s) using their member id",
+                STOP_MEMBER_COMMAND));
+
+        out.println(format("%s n m - shuts down the specified cluster member(s) using their member id",
+                SHUTDOWN_MEMBER_COMMAND));
+
         out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
         out.println(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
         out.println(format("%s - exits this application - same as %s", BYE_COMMAND, QUIT_COMMAND));
@@ -257,13 +257,18 @@ class CommandDslShell {
         out.println(format("%s - displays member Ids known to this process", GET_STARTED_MEMBER_IDS_COMMAND));
         out.println(format("%s n - sleeps for the specified time in milliseconds", SLEEP_COMMAND));
         out.println(format("%s - starts a storage enabled member in this process", START_STORAGE_ENABLED_COMMAND));
+        out.println(format("%s * n - starts the specified number storage enabled member in this process",
+                START_MULTIPLE_STORAGE_ENABLED_COMMAND));
+
         out.println(format("%s n - starts an Extend proxy member with specified port in this process",
                 START_EXTEND_PROXY_COMMAND));
+
         out.println(format("%s - starts a JMX monitor member in this process", START_JMX_MONITOR_COMMAND));
         out.println(format("%s - displays this help", HELP_COMMAND));
         out.println(format("%s - displays the current date and time", DATE_COMMAND));
         out.println(format("%s - a comment line, useful when scripting and wanting to comment scripts",
                 COMMENT_COMMAND));
+
         out.println(format("%s - launches CohQL console", COHQL_COMMAND));
         out.println(format("%s - launches Coherence console (not for Extend clients)", CONSOLE_COMMAND));
     }

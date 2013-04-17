@@ -102,6 +102,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     private static final String CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
+    private static final String STORAGE_ENABLED_CACHE_CONFIGURATION_KEY = "StorageEnabledCacheConfiguration";
+    private static final String EXTEND_PROXY_CACHE_CONFIGURATION_KEY = "ExtendProxyCacheConfiguration";
+    private static final String JMX_MONITOR_CACHE_CONFIGURATION_KEY = "JmxMonitorCacheConfiguration";
     private static final String OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
     private static final String CLIENT_OVERRIDE_CONFIGURATION_KEY = "ClientOverrideConfiguration";
 
@@ -283,7 +286,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     }
 
     String getBuilderValueAsString(final String builderKey) {
-        return  builderKeysAndValues.get(builderKey);
+        return builderKeysAndValues.get(builderKey);
     }
 
     /**
@@ -722,7 +725,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageEnabledCacheConfiguration(final String cacheConfiguration) {
-        throw new UnsupportedOperationException();
+        setBuilderValue(STORAGE_ENABLED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+
+        return this;
     }
 
     /**
@@ -760,7 +765,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExtendProxyCacheConfiguration(final String cacheConfiguration) {
-        throw new UnsupportedOperationException();
+        setBuilderValue(EXTEND_PROXY_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+
+        return this;
     }
 
     /**
@@ -778,7 +785,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setJmxMonitorCacheConfiguration(final String cacheConfiguration) {
-        throw new UnsupportedOperationException();
+        setBuilderValue(JMX_MONITOR_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+
+        return this;
     }
 
     /**
@@ -1179,7 +1188,17 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, true);
-        setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+
+        final String storageEnabledCacheConfigurationKey = STORAGE_ENABLED_CACHE_CONFIGURATION_KEY;
+        final String storageEnabledCacheConfiguration =
+                getBuilderValueAsString(storageEnabledCacheConfigurationKey);
+
+        if (stringHasValue(storageEnabledCacheConfiguration)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, storageEnabledCacheConfigurationKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+        }
+
         setPropertyUsingNameMappingAndBuilderValue(properties, OVERRIDE_CONFIGURATION_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, STORAGE_ENABLED_ROLE_NAME_KEY);
 
@@ -1198,7 +1217,17 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
-        setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+
+        final String jmxMonitorCacheConfigurationKey = JMX_MONITOR_CACHE_CONFIGURATION_KEY;
+        final String jmxMonitorCacheConfiguration =
+                getBuilderValueAsString(jmxMonitorCacheConfigurationKey);
+
+        if (stringHasValue(jmxMonitorCacheConfiguration)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, jmxMonitorCacheConfigurationKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+        }
+
         setPropertyUsingNameMappingAndBuilderValue(properties, OVERRIDE_CONFIGURATION_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, JMX_MONITOR_ROLE_NAME_KEY);
 
@@ -1252,7 +1281,17 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final Properties properties = getSystemPropertiesForTcmpClusterMember();
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
-        setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+
+        final String extendProxyCacheConfigurationKey = EXTEND_PROXY_CACHE_CONFIGURATION_KEY;
+        final String extendProxyCacheConfiguration =
+                getBuilderValueAsString(extendProxyCacheConfigurationKey);
+
+        if (stringHasValue(extendProxyCacheConfiguration)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, extendProxyCacheConfigurationKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+        }
+
         setPropertyUsingNameMappingAndBuilderValue(properties, OVERRIDE_CONFIGURATION_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, EXTEND_PROXY_ROLE_NAME_KEY);
         setPropertyUsingNameMappingAndSuppliedValue(properties, EXTEND_ENABLED_KEY, true);
@@ -1379,7 +1418,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         final String clientCacheConfiguration = getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
 
-        if (clientCacheConfiguration == null) {
+        if (clientCacheConfiguration.length() == 0) {
             LOGGER.warning("No client cache configuration has been specified for Extend clients");
         } else {
             setPropertyUsingNameMappingAndBuilderValue(properties, CLIENT_CACHE_CONFIGURATION_KEY);
@@ -1436,7 +1475,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         setPropertyWhenValid(properties, getPropertyNameFromMapping(nameMappingKey), Integer.toString(value));
     }
 
-    private String getPropertyNameFromMapping(final String nameMappingKey) {
+    String getPropertyNameFromMapping(final String nameMappingKey) {
         final String systemPropertyName = builderKeyToSystemPropertyNameMapping.getProperty(nameMappingKey);
 
         if (systemPropertyName == null) {
@@ -1448,9 +1487,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         return systemPropertyName;
     }
 
-    private void setPropertyWhenValid(final Properties properties,
-                                      final String key,
-                                      final String value) {
+
+    void setPropertyWhenValid(final Properties properties,
+                              final String key,
+                              final String value) {
 
         if (key == null) {
             throw new IllegalArgumentException(format("System property key cannot be null for value of: '%s'", value));

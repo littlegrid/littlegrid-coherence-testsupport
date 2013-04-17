@@ -356,65 +356,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
-    @Ignore
-    public void defaultMappingSystemPropertiesForStorageEnabled() {
-        final String expectedCacheConfiguration = "cache-config.xml";
-        final String expectedOverrideConfiguration = "override-config.xml";
-
-        final String expectedWkaAddress = "234.234.234.123";
-        final String expectedLocalAddress = expectedWkaAddress;
-        final int expectedWkaPort = 12345;
-        final int expectedLocalPort = expectedWkaPort;
-        final int expectedTtl = 2;
-
-        final String expectedClusterName = "cluster-a";
-        final String expectedStorageEnabledRoleName = "storage-enabled";
-
-        final String expectedLogDestination = "stdout";
-        final int expectedLogLevel = 3;
-
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
-
-        builder.setCacheConfiguration(expectedCacheConfiguration);
-        builder.setStorageEnabledCacheConfiguration(expectedCacheConfiguration);
-        builder.setOverrideConfiguration(expectedOverrideConfiguration);
-
-        builder.setWkaAddress(expectedWkaAddress);
-        builder.setWkaPort(expectedWkaPort);
-        builder.setTtl(expectedTtl);
-
-        builder.setClusterName(expectedClusterName);
-        builder.setStorageEnabledRoleName(expectedStorageEnabledRoleName);
-
-        builder.setLogDestination(expectedLogDestination);
-        builder.setLogLevel(expectedLogLevel);
-
-        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-
-        final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
-
-        final boolean expectedTcmpEnabled = true;
-        final boolean expectedDistributedLocalStorage = true;
-
-        assertThat(properties.getProperty("tangosol.coherence.tcmp.enabled"),
-                is(Boolean.toString(expectedTcmpEnabled)));
-
-        assertThat(properties.getProperty("tangosol.coherence.distributed.localstorage"),
-                is(Boolean.toString(expectedDistributedLocalStorage)));
-
-        assertThat(properties.getProperty("tangosol.coherence.wka"), is(expectedWkaAddress));
-        assertThat(properties.getProperty("tangosol.coherence.localhost"), is(expectedLocalAddress));
-        assertThat(properties.getProperty("tangosol.coherence.wka.port"), is(Integer.toString(expectedWkaPort)));
-        assertThat(properties.getProperty("tangosol.coherence.localport"), is(Integer.toString(expectedLocalPort)));
-
-        assertThat(properties.getProperty("tangosol.coherence.cluster"), is(expectedClusterName));
-        assertThat(properties.getProperty("tangosol.coherence.role"), is(expectedStorageEnabledRoleName));
-
-        assertThat(properties.getProperty("tangosol.coherence.log"), is(expectedLogDestination));
-        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(Integer.toString(expectedLogLevel)));
-    }
-
-    @Test
     public void setAndGetBuilderValueAsInt() {
         final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
 
@@ -482,10 +423,80 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builder.toString().length() > 0, is(true));
     }
 
-    @Test
-    @Ignore
-    public void defaultMappingSystemPropertiesForExtendProxy() {
+    @Test(expected = IllegalStateException.class)
+    public void getPropertyNameFromMappingWhenDoesNotExist() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
 
+        defaultBuilder.getPropertyNameFromMapping("UnknownKey");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setPropertyWhenValidWhenKeyIsNull() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+
+        defaultBuilder.setPropertyWhenValid(new Properties(), null, null);
+    }
+
+    @Test
+    public void setPropertyWhenValidWhenValueIsNull() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+        final Properties properties = new Properties();
+
+        defaultBuilder.setPropertyWhenValid(properties, CACHE_CONFIGURATION_KEY, null);
+
+        assertThat(properties.size(), is(0));
+    }
+
+    @Test
+    public void setPropertyWhenValidWhenValueIsSpaces() {
+        final DefaultClusterMemberGroupBuilder defaultBuilder = getDefaultClusterMemberGroupBuilder();
+        final Properties properties = new Properties();
+
+        defaultBuilder.setPropertyWhenValid(properties, CACHE_CONFIGURATION_KEY, "   ");
+
+        assertThat(properties.size(), is(0));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForStorageEnabled() {
+        final String expectedCacheConfiguration = "cache-config.xml";
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        builder.setStorageEnabledCacheConfiguration(expectedCacheConfiguration);
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+
+        assertThat(properties.size(), is(19));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForExtendProxyWhenNoSpecificSettings() {
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+
+        assertThat(properties.size(), is(20));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForExtendProxyWhenSpecificSettings() {
+        final String expectedCacheConfiguration = "cache-config.xml";
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        builder.setExtendProxyCacheConfiguration(expectedCacheConfiguration);
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+
+        assertThat(properties.size(), is(21));
     }
 
     @Test
@@ -495,14 +506,71 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
-    @Ignore
     public void defaultMappingSystemPropertiesForStorageDisabledClient() {
+        final String expectedCacheConfiguration = "cache-config.xml";
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
+        builder.setClientCacheConfiguration(expectedCacheConfiguration);
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+
+        assertThat(properties.size(), is(20));
     }
 
     @Test
-    @Ignore
-    public void defaultMappingSystemPropertiesForExtendProxyClient() {
+    public void defaultMappingSystemPropertiesForJmxMonitorClientWhenNoSpecificSettings() {
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+
+        assertThat(properties.size(), is(18));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForJmxMonitorClientWhenSpecificSettings() {
+        final String expectedCacheConfiguration = "cache-config.xml";
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        builder.setJmxMonitorCacheConfiguration(expectedCacheConfiguration);
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+
+        assertThat(properties.size(), is(19));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForExtendProxyClient() {
+        final String expectedCacheConfiguration = "cache-config.xml";
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        builder.setClientCacheConfiguration(expectedCacheConfiguration);
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+
+        assertThat(properties.size(), is(9));
+    }
+
+    @Test
+    public void defaultMappingSystemPropertiesForExtendProxyClientWhenNoSpecificCacheConfiguration() {
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
+        final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
+        final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
+
+        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+
+        assertThat(properties.size(), is(8));
     }
 }

@@ -48,4 +48,18 @@ public final class BuildExceptionReporterIntegrationTest extends AbstractAfterTe
                 .setStorageEnabledCount(1)
                 .buildAndConfigureForNoClient();
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void unknownReporterInstanceClassName() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setExceptionReporterInstanceClassName("com.a.b.Reporter")
+                .buildAndConfigure();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void unknownCallbackInstanceClassName() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setCallbackHandlerInstanceClassName("com.a.b.CallbackHandler")
+                .buildAndConfigure();
+    }
 }
