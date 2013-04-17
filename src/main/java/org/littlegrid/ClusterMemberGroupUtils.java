@@ -35,9 +35,6 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 

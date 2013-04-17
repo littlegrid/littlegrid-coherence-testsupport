@@ -244,10 +244,10 @@ class CommandDslShell {
     }
 
     private void outputHelp() {
-        out.println(format("%s n m - stops the specified cluster member(s) using their member id",
+        out.println(format("%s memberId1 memberIdX - stops the specified cluster member(s) using their member id",
                 STOP_MEMBER_COMMAND));
 
-        out.println(format("%s n m - shuts down the specified cluster member(s) using their member id",
+        out.println(format("%s memberId1 memberIdX - shuts down the specified cluster member(s) using their member id",
                 SHUTDOWN_MEMBER_COMMAND));
 
         out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
@@ -257,7 +257,7 @@ class CommandDslShell {
         out.println(format("%s - displays member Ids known to this process", GET_STARTED_MEMBER_IDS_COMMAND));
         out.println(format("%s n - sleeps for the specified time in milliseconds", SLEEP_COMMAND));
         out.println(format("%s - starts a storage enabled member in this process", START_STORAGE_ENABLED_COMMAND));
-        out.println(format("%s * n - starts the specified number storage enabled member in this process",
+        out.println(format("%sn - starts the specified number storage enabled member in this process",
                 START_MULTIPLE_STORAGE_ENABLED_COMMAND));
 
         out.println(format("%s n - starts an Extend proxy member with specified port in this process",

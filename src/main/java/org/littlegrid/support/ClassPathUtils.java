@@ -103,6 +103,7 @@ public final class ClassPathUtils {
      * @param pathSeparator              Path separator.
      * @param jarsToExcludeFromClassPath JARs to exclude from final class path.
      * @return class path.
+     * @throws MalformedURLException Indicates exception.
      */
     public static URL[] getClassPathUrlsExcludingJavaHome(final String javaHomePath,
                                                           final String classPath,

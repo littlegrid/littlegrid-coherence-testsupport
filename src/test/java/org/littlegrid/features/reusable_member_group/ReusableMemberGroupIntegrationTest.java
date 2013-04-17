@@ -50,6 +50,10 @@ public class ReusableMemberGroupIntegrationTest {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
                 .setFastStartJoinTimeoutMilliseconds(0)
+//                .setReuseAndShutdown(NOT_REUSABLE)
+//                .setReuseAndShutdown(CACHE_REUSE_WITH_SHUTDOWN_HOOK
+//                .setReuseAndShutdown(REUSABLE_WITH_REFERENCE_COUNTING_SHUTDOWN)
+//                .setReuseAndShutdown(REUSABLE_WITH_REFERENCE_COUNTING_SHUTDOWN)
                 .buildAndConfigureForStorageDisabledClient();
     }
 
