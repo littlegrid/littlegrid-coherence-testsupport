@@ -50,7 +50,8 @@
         <dependency>
             <groupId>com.oracle.coherence</groupId>
             <artifactId>coherence</artifactId>
-            <version>${coherence.version}</version>
+            <!--<version>${coherence.version}</version>-->
+            <version>3.6.1.8</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

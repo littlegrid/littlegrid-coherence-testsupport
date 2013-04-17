@@ -465,8 +465,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
-
-        assertThat(properties.size(), is(18));
     }
 
     @Test
@@ -480,8 +478,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-
-        assertThat(properties.size(), is(19));
     }
 
     @Test
@@ -492,8 +488,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
-
-        assertThat(properties.size(), is(20));
     }
 
     @Test
@@ -507,8 +501,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-
-        assertThat(properties.size(), is(21));
     }
 
     @Test
@@ -525,8 +517,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
-
-        assertThat(properties.size(), is(19));
     }
 
     @Test
@@ -544,8 +534,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
         assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
-
-        assertThat(properties.size(), is(21));
     }
 
     @Test
@@ -556,8 +544,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
-
-        assertThat(properties.size(), is(18));
     }
 
     @Test
@@ -571,8 +557,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-
-        assertThat(properties.size(), is(19));
     }
 
     @Test
@@ -583,8 +567,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
-
-        assertThat(properties.size(), is(8));
     }
 
     @Test
@@ -602,7 +584,5 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
         assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
-
-        assertThat(properties.size(), is(10));
     }
 }
