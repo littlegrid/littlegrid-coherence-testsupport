@@ -177,28 +177,33 @@ public interface ClusterMemberGroup {
     }
 
     /**
-     * Build and configure enum.
+     * Build and configure enum, defining what type of 'client' or environment to configure
+     * after the cluster member group has been built.
      *
      * @since 2.14
      */
     enum BuildAndConfigureEnum {
         /**
-         * Build type.
+         * Denotes that after the cluster member group has been built that the environment
+         * should be configured for a storage-disabled client to interact with Coherence.
          */
         STORAGE_DISABLED_CLIENT,
 
         /**
-         * Build type.
+         * Denotes that after the cluster member group has been built that the environment
+         * should be configured for a Extend client to interact with Coherence.
          */
         EXTEND_CLIENT,
 
         /**
-         * Build type.
+         * Denotes that after the cluster member group has been built then no special
+         * configuration should be applied.
          */
         NO_CLIENT,
 
         /**
-         * Build type.
+         * Denotes that after the cluster member group has been built that the environment
+         * should be configured for a storage enabled member to interact with Coherence.
          */
         STORAGE_ENABLED_MEMBER
     }
@@ -294,6 +299,15 @@ public interface ClusterMemberGroup {
          * @since 2.14
          */
         ClusterMemberGroup buildAndConfigureFor(BuildAndConfigureEnum buildAndConfigureEnum);
+
+        /**
+         * Sets build and configure enum name, used in-conjunction with buildAndConfigureFor();  .
+         *
+         * @param buildAndConfigureForEnumName Build and configure enum name.
+         * @return builder.
+         * @since 2.14
+         */
+        Builder setBuildAndConfigureForEnumName(String buildAndConfigureForEnumName);
 
         /**
          * Builds and returns a <em>running cluster member group</em>, based upon the default
@@ -839,13 +853,13 @@ public interface ClusterMemberGroup {
         String getAppConsoleClassName();
 
         /**
-         * Sets build and configure enum name, used in-conjunction with buildAndConfigureFor();  .
+         * Sets the re-usability strategy of the cluster member group.
          *
-         * @param buildAndConfigureEnumName Build and configure enum name.
+         * @param reuseStrategyInstanceClassName Reusable strategy instance class name.
          * @return builder.
-         * @since 2.14
+         * @since 2.15
          */
-        Builder setBuildAndConfigureForEnumName(String buildAndConfigureEnumName);
+        Builder setReuseStrategyInstanceClassName(String reuseStrategyInstanceClassName);
     }
 
     /**
@@ -891,5 +905,20 @@ public interface ClusterMemberGroup {
          * Performs any necessary actions after the cluster member has been shutdown.
          */
         void doAfterShutdown();
+    }
+
+    /**
+     * Reuse manager, helps with registration and reuse of cluster member groups,
+     * along with advising if final shutdown is advised.
+     *
+     * @since 2.15
+     */
+    interface ReuseManager {
+        ClusterMemberGroup getRegisteredInstance(Object builderKey);
+
+        void registerInstanceUse(Object builderKeyUsedToConstructMemberGroup,
+                                 ClusterMemberGroup constructedMemberGroup);
+
+        boolean isFinalShutdownAllAdvised();
     }
 }

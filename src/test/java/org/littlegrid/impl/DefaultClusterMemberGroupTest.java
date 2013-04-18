@@ -144,6 +144,14 @@ public final class DefaultClusterMemberGroupTest {
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.7f), is(expectedDurationDefault));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void startAllInvokedWhenNoReuseManagerSpecified() {
+        final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(new DefaultCallbackHandler(),
+                0, 0, 0, 0, 0);
+
+        memberGroup.startAll();
+    }
+
     @Test
     public void startAllInvokedTwiceOnlyPerformsDoAfterOnce() {
         final DoAfterCounterCallbackHandler handler = new DoAfterCounterCallbackHandler();
@@ -151,6 +159,7 @@ public final class DefaultClusterMemberGroupTest {
         assertThat(handler.getDoAfterCounter(), is(0));
 
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(handler, 0, 0, 0, 0, 0);
+        memberGroup.setReuseManager(new DefaultNoReuseManager());
 
         memberGroup.startAll();
 

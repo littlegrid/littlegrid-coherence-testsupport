@@ -66,6 +66,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             new ArrayList<Future<DelegatingClusterMemberWrapper>>();
 
     private CallbackHandler callbackHandler;
+    private ReuseManager reuseManager;
     private boolean startInvoked;
     private Properties systemPropertiesBeforeStartInvoked;
     private int sleepAfterStopDuration35x;
@@ -91,6 +92,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
                                      final int sleepAfterStopDurationDefault,
                                      final int wkaPort,
                                      final int extendPort) {
+
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
 
@@ -106,6 +108,15 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
 
         callbackHandler.doBeforeStart();
+    }
+
+    /**
+     * Set the reuse strategy handler.
+     *
+     * @param reuseManager Reuse strategy handler.
+     */
+    public void setReuseManager(final ReuseManager reuseManager) {
+        this.reuseManager = reuseManager;
     }
 
     /**
@@ -179,6 +190,10 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @return member group.
      */
     public ClusterMemberGroup startAll() {
+        if (reuseManager == null) {
+            throw new IllegalStateException("No reuse strategy handler has been configured");
+        }
+
         if (startInvoked) {
             return this;
         }
@@ -441,6 +456,12 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public ClusterMemberGroup shutdownAll() {
+        if (reuseManager != null && !reuseManager.isFinalShutdownAllAdvised()) {
+            LOGGER.info("Shutdown deferred based upon reuse strategy");
+
+            return this;
+        }
+
         LOGGER.info("Restoring system properties back to their original state before member group started");
 
         System.setProperties(systemPropertiesBeforeStartInvoked);

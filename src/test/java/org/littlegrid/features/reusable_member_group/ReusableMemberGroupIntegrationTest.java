@@ -33,7 +33,6 @@ package org.littlegrid.features.reusable_member_group;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -41,7 +40,6 @@ import org.littlegrid.ClusterMemberGroupUtils;
 /**
  * Reusable member group integration tests.
  */
-@Ignore
 public class ReusableMemberGroupIntegrationTest {
     private ClusterMemberGroup memberGroup;
 
@@ -49,11 +47,7 @@ public class ReusableMemberGroupIntegrationTest {
     public void beforeTest() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(2)
-                .setFastStartJoinTimeoutMilliseconds(0)
-//                .setReuseAndShutdown(NOT_REUSABLE)
-//                .setReuseAndShutdown(CACHE_REUSE_WITH_SHUTDOWN_HOOK
-//                .setReuseAndShutdown(REUSABLE_WITH_REFERENCE_COUNTING_SHUTDOWN)
-//                .setReuseAndShutdown(REUSABLE_WITH_REFERENCE_COUNTING_SHUTDOWN)
+//                .setReuseStrategyInstanceClassName(null)
                 .buildAndConfigureForStorageDisabledClient();
     }
 

@@ -57,6 +57,7 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
 import static org.littlegrid.ClusterMemberGroup.Builder;
+import static org.littlegrid.ClusterMemberGroup.ReuseManager;
 
 /**
  * Default cluster member group builder implementation.
@@ -327,7 +328,16 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
-        final ClusterMemberGroup memberGroup = buildClusterMembers();
+        final ReuseManager reuseManager = new DefaultNoReuseManager();
+        final Object builderKey = this.toString();
+
+        ClusterMemberGroup memberGroup = reuseManager.getRegisteredInstance(builderKey);
+
+        if (memberGroup == null) {
+            memberGroup = buildClusterMembers();
+        }
+
+        reuseManager.registerInstanceUse(builderKey, memberGroup);
 
         final Properties systemProperties;
 
@@ -353,7 +363,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         LOGGER.info(format("System properties set for client/member: %s", new TreeMap(systemProperties)));
 
-        ((DefaultClusterMemberGroup) memberGroup).startAll();
+        final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
+        defaultClusterMemberGroup.setReuseManager(reuseManager);
+        defaultClusterMemberGroup.startAll();
 
         return memberGroup;
     }
@@ -1162,8 +1174,16 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
-    public Builder setBuildAndConfigureForEnumName(final String buildAndConfigureEnumName) {
-        setBuilderValue(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY, buildAndConfigureEnumName);
+    public Builder setReuseStrategyInstanceClassName(final String reuseStrategyInstanceClassName) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setBuildAndConfigureForEnumName(final String buildAndConfigureForEnumName) {
+        setBuilderValue(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY, buildAndConfigureForEnumName);
 
         return this;
     }
