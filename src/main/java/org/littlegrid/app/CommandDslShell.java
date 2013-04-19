@@ -40,14 +40,16 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
 
 /**
- * Command DSL shell.
+ * Command DSL shell - purposely reduced scope to keep visible 'surface-area' small.
  *
  * @since 2.15
  */
@@ -57,6 +59,7 @@ class CommandDslShell {
     private static final String COMMANDS_ARGUMENT = "commands=";
     private static final String COMMAND_DELIMITER = ";";
     private static final String NUMBER_DELIMITER = " ";
+    private static final String TIME_DELIMITER = ":";
 
     private static final String COMMAND_PROMPT = "lg> ";
 
@@ -67,6 +70,7 @@ class CommandDslShell {
     private static final String SHUTDOWN_ALL_COMMAND = "shutdown all";
     private static final String STOP_ALL_COMMAND = "stop all";
     private static final String SLEEP_COMMAND = "sleep";
+    private static final String SLEEP_UNTIL_COMMAND = "sleep until";
     private static final String SHUTDOWN_MEMBER_COMMAND = "shutdown member";
     private static final String START_STORAGE_ENABLED_COMMAND = "start storage enabled";
     private static final String START_MULTIPLE_STORAGE_ENABLED_COMMAND = "start storage enabled * ";
@@ -99,13 +103,14 @@ class CommandDslShell {
      *
      * @param args Commands passed for execution.
      */
-    public void start(final String[] args) {
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder().buildAndConfigure();
+    public Response start(final String[] args) {
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .buildAndConfigure();
 
         final String commands = parseCommandsString(args);
-        final boolean exit = processCommandsString(memberGroup, commands);
+        final Response response = processCommandsString(memberGroup, commands);
 
-        if (!exit) {
+        if (!response.isExitRequested()) {
             final Scanner scanner = new Scanner(in);
 
             processCommandsStream(memberGroup, scanner);
@@ -113,6 +118,8 @@ class CommandDslShell {
 
         System.out.println("Exiting");
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+
+        return response;
     }
 
     private String parseCommandsString(final String[] args) {
@@ -127,25 +134,28 @@ class CommandDslShell {
         return commands;
     }
 
-    private void processCommandsStream(final ClusterMemberGroup memberGroup,
-                                       final Scanner scanner) {
+    private Response processCommandsStream(final ClusterMemberGroup memberGroup,
+                                           final Scanner scanner) {
 
-        boolean exit;
+        final Response totalResponse = new Response();
 
         do {
             out.println();
             out.print(COMMAND_PROMPT);
 
             final String stringEntered = scanner.nextLine();
+            final Response response = processCommandsString(memberGroup, stringEntered);
 
-            exit = processCommandsString(memberGroup, stringEntered);
-        } while (!exit);
+            totalResponse.merge(response);
+        } while (!totalResponse.isExitRequested());
+
+        return totalResponse;
     }
 
-    private boolean processCommandsString(final ClusterMemberGroup memberGroup,
-                                          final String stringEntered) {
+    private Response processCommandsString(final ClusterMemberGroup memberGroup,
+                                           final String stringEntered) {
 
-        boolean exit = false;
+        final Response response = new Response();
         final String[] commands = stringEntered.split(COMMAND_DELIMITER);
 
         for (String command : commands) {
@@ -154,64 +164,107 @@ class CommandDslShell {
             try {
                 if (command.startsWith(STOP_MEMBER_COMMAND)) {
                     stopMember(memberGroup, command);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(SHUTDOWN_MEMBER_COMMAND)) {
                     shutdownMember(memberGroup, command);
+                    response.incrementValidCommandsExecuted();
+
+                } else if (command.startsWith(SLEEP_UNTIL_COMMAND)) {
+                    sleepUntil(command);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(SLEEP_COMMAND)) {
                     sleep(command);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(STOP_ALL_COMMAND)) {
                     stopAll(memberGroup);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(SHUTDOWN_ALL_COMMAND)) {
                     shutdownAll(memberGroup);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(GET_STARTED_MEMBER_IDS_COMMAND)) {
                     outputStartedMemberIds(memberGroup);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(START_STORAGE_ENABLED_COMMAND)) {
                     startStorageEnabledMember(memberGroup);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(START_MULTIPLE_STORAGE_ENABLED_COMMAND)) {
                     startMultipleStorageEnabledMembers(memberGroup, command);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(START_EXTEND_PROXY_COMMAND)) {
                     startExtendProxyMember(memberGroup, command);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(START_JMX_MONITOR_COMMAND)) {
                     startJmxMonitorMember(memberGroup);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(HELP_COMMAND)) {
                     outputHelp();
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(BYE_COMMAND) || command.equals(QUIT_COMMAND)) {
-                    exit = true;
+                    response.exitRequested();
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(COMMENT_COMMAND)) {
                     out.println(command);
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(CONSOLE_COMMAND)) {
                     console();
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(COHQL_COMMAND)) {
                     cohQl();
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(DATE_COMMAND)) {
                     outputDate();
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals("")) {
                     out.println();
 
                 } else {
                     out.println(format("'%s' is an unknown command", command));
+                    response.incrementUnknownCommandsExecuted();
                 }
             } catch (Exception e) {
                 out.println(format("Exception when executing command: '%s' due to: %s", command, e));
+                response.incrementInvalidCommandsExecuted();
             }
         }
 
-        return exit;
+        return response;
+    }
+
+    private void sleepUntil(final String command) throws InterruptedException {
+        final int[] timeParts = parseTime(SLEEP_UNTIL_COMMAND, command);
+
+        final Date now = new Date();
+        final GregorianCalendar dateToWaitUntil = new GregorianCalendar();
+
+        dateToWaitUntil.setTime(now);
+        dateToWaitUntil.set(Calendar.HOUR_OF_DAY, timeParts[0]);
+        dateToWaitUntil.set(Calendar.MINUTE, timeParts[1]);
+        dateToWaitUntil.set(Calendar.SECOND, timeParts[2]);
+
+        final long sleepTime = dateToWaitUntil.getTimeInMillis() - now.getTime();
+
+        out.println(format("Current time %s, now about to sleep for %d milliseconds (%s)",
+                now, sleepTime, dateToWaitUntil.getTime()));
+
+        TimeUnit.MILLISECONDS.sleep(sleepTime);
+        out.println(format("Finished sleeping, time now: %s", new Date()));
+
     }
 
     private void outputDate() {
@@ -224,11 +277,11 @@ class CommandDslShell {
 
         CacheFactory.main(new String[]{});
 
-        Class coherenceConsole = Class.forName("com.tangosol.coherence.component.application.console.Coherence",
+        final Class coherenceConsole = Class.forName("com.tangosol.coherence.component.application.console.Coherence",
                 true, Thread.currentThread().getContextClassLoader());
 
-        Object component = ClassHelper.invokeStatic(coherenceConsole, "get_Instance", null);
-        Method stopMethod = coherenceConsole.getDeclaredMethod("setStop", boolean.class);
+        final Object component = ClassHelper.invokeStatic(coherenceConsole, "get_Instance", null);
+        final Method stopMethod = coherenceConsole.getDeclaredMethod("setStop", boolean.class);
 
         stopMethod.setAccessible(true);
         stopMethod.invoke(component, false);
@@ -350,7 +403,7 @@ class CommandDslShell {
     private void shutdownMember(final ClusterMemberGroup memberGroup,
                                 final String command) {
 
-        final int[] memberId = parseIntegers(SHUTDOWN_MEMBER_COMMAND, command);
+        final int[] memberId = parseIntegers(SHUTDOWN_MEMBER_COMMAND, NUMBER_DELIMITER, command);
 
         memberGroup.shutdownMember(memberId);
 
@@ -361,7 +414,7 @@ class CommandDslShell {
                             final String command)
             throws InterruptedException {
 
-        final int[] memberId = parseIntegers(STOP_MEMBER_COMMAND, command);
+        final int[] memberId = parseIntegers(STOP_MEMBER_COMMAND, NUMBER_DELIMITER, command);
 
         memberGroup.stopMember(memberId);
 
@@ -377,25 +430,83 @@ class CommandDslShell {
     private static int parseInteger(final String command,
                                     final String commandAndNumber) {
 
-        return parseIntegers(command, commandAndNumber)[0];
+        return parseIntegers(command, NUMBER_DELIMITER, commandAndNumber)[0];
+    }
+
+    private static int[] parseTime(final String command,
+                                   final String commandAndTime) {
+
+        final int[] timeParts = parseIntegers(command, TIME_DELIMITER, commandAndTime);
+
+        if (timeParts.length != 3) {
+            throw new IllegalArgumentException("Time cannot be parsed");
+        }
+
+        return timeParts;
     }
 
     private static int[] parseIntegers(final String command,
+                                       final String delimiter,
                                        final String commandAndDelimitedNumbers) {
 
         final String delimitedNumbers = commandAndDelimitedNumbers.replaceAll(command, "").replace("*", "");
-        final String[] stringNumbers = delimitedNumbers.trim().split(NUMBER_DELIMITER);
+        final String[] stringNumbers = delimitedNumbers.trim().split(delimiter);
 
         final int[] numbers = new int[stringNumbers.length];
 
         for (int i = 0; i < numbers.length; i++) {
-            final String value = stringNumbers[i].trim();
-
-            if (value.length() > 0) {
-                numbers[i] = Integer.parseInt(value);
-            }
+            numbers[i] = Integer.parseInt(stringNumbers[i].trim());
         }
 
         return numbers;
+    }
+
+    public static class Response {
+        private int validCommandsExecuted;
+        private int invalidCommandsExecuted;
+        private int unknownCommandsExecuted;
+        private boolean exitRequested;
+
+        public void incrementValidCommandsExecuted() {
+            validCommandsExecuted++;
+        }
+
+        public void incrementInvalidCommandsExecuted() {
+            invalidCommandsExecuted++;
+        }
+
+        public void incrementUnknownCommandsExecuted() {
+            unknownCommandsExecuted++;
+        }
+
+        public void exitRequested() {
+            exitRequested = true;
+        }
+
+        public int getValidCommandsExecuted() {
+            return validCommandsExecuted;
+        }
+
+        public int getInvalidCommandsExecuted() {
+            return invalidCommandsExecuted;
+        }
+
+        public int getUnknownCommandsExecuted() {
+            return unknownCommandsExecuted;
+        }
+
+        public boolean isExitRequested() {
+            return exitRequested;
+        }
+
+        public void merge(final Response response) {
+            validCommandsExecuted += response.validCommandsExecuted;
+            invalidCommandsExecuted += response.invalidCommandsExecuted;
+            unknownCommandsExecuted += response.unknownCommandsExecuted;
+
+            if (response.isExitRequested()) {
+                exitRequested();
+            }
+        }
     }
 }

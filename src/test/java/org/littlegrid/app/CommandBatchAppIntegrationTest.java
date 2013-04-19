@@ -31,7 +31,6 @@
 
 package org.littlegrid.app;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -47,7 +46,7 @@ public class CommandBatchAppIntegrationTest {
     }
 
     @Test
-    public void startWithCommandsArgumentOnly()
+    public void runMainWithCommandsArgumentOnly()
             throws IOException {
 
         CommandBatchApp.main(new String[]{
@@ -58,7 +57,7 @@ public class CommandBatchAppIntegrationTest {
     }
 
     @Test
-    public void startWithCommandFileAndNoCommandsArgument()
+    public void runMainWithCommandFileAndNoCommandsArgument()
             throws IOException {
 
         CommandBatchApp.main(new String[]{
@@ -69,14 +68,14 @@ public class CommandBatchAppIntegrationTest {
     }
 
     @Test
-    public void startWithCommandsArgumentAndCommandFile()
+    public void runMainWithCommandsArgumentAndCommandFile()
             throws IOException {
 
         CommandBatchApp.main(new String[]{"commands=members", "commandFile=command-file.txt"});
     }
 
     @Test(expected = FileNotFoundException.class)
-    public void startWithCommandFileThatDoesNotExist()
+    public void runMainWithCommandFileThatDoesNotExist()
             throws IOException {
 
         CommandBatchApp.main(new String[]{"commandFile=file-that-does-not-exist.xml"});

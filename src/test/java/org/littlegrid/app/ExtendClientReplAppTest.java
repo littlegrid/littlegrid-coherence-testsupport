@@ -69,7 +69,7 @@ public class ExtendClientReplAppTest {
     }
 
     @Test
-    public void start() {
+    public void runMain() {
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "ClientCacheConfiguration", "some-file.xml");
 
         ExtendClientReplApp.main(new String[]{"commands=# Extend client REPL test; bye"});

@@ -31,109 +31,259 @@
 
 package org.littlegrid.app;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.GregorianCalendar;
+
+import static java.lang.String.format;
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.MINUTE;
+import static java.util.Calendar.SECOND;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.littlegrid.app.CommandDslShell.Response;
 
 /**
- * Command DSL shell tests.
+ * Command DSL shell integration tests.
  */
 public class CommandDslShellIntegrationTest {
     @Test
     public void stopMember() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=stop member 1; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=stop member 1; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void stopMembers() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=stop member 1 2 3; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=stop member 1 2 3; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void shutdownMember() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=shutdown member 1; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=shutdown member 1; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void stopAll() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=stop all; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=stop all; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void shutdownAll() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=shutdown all; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=shutdown all; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void bye() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void emptyString() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=;;bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=;;bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void quit() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=quit"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=quit"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void members() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=members; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=members; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void unknownCommand() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=this is unknown; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=this is unknown; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(1));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void invalidExtendPortCommand() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=start extend proxy ABC; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=start extend proxy ABC; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(1));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void sleep() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=sleep 1; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=sleep 1; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
+    }
+
+    @Test
+    public void sleepUntilWithValidTime() {
+        final GregorianCalendar now = new GregorianCalendar();
+        final int hour = now.get(HOUR_OF_DAY);
+        final int minutes = now.get(MINUTE);
+        final int seconds = now.get(SECOND);
+
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{format("commands=sleep until %d:%d:%d; bye",
+                        hour, minutes, seconds)});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
+    }
+
+    @Test
+    public void sleepUntilWithInvalidTime() {
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=sleep until 2a:0b:00; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(1));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void startStorageEnabled() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=start storage enabled; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=start storage enabled; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void startMultipleStorageEnabled() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=start storage enabled * 2; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=start storage enabled * 2; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void startExtendProxy() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=start extend proxy 25001; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=start extend proxy 25001; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void startJmxMonitor() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=start jmx monitor; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=start jmx monitor; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void help() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=help; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=help; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void comment() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=# comment; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=# comment; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void outputDate() {
-        new CommandDslShell(System.in, System.out).start(new String[]{"commands=date; bye"});
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=date; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
@@ -143,7 +293,13 @@ public class CommandDslShellIntegrationTest {
         try {
             System.setIn(new ByteArrayInputStream(new byte[]{}));
 
-            new CommandDslShell(System.in, System.out).start(new String[]{"commands=cohql; bye"});
+            final Response response = new CommandDslShell(System.in, System.out)
+                    .start(new String[]{"commands=cohql; bye"});
+
+            assertThat(response.getValidCommandsExecuted(), is(2));
+            assertThat(response.getInvalidCommandsExecuted(), is(0));
+            assertThat(response.getUnknownCommandsExecuted(), is(0));
+            assertThat(response.isExitRequested(), is(true));
         } finally {
             System.setIn(originalInput);
         }
@@ -156,7 +312,13 @@ public class CommandDslShellIntegrationTest {
         try {
             System.setIn(new ByteArrayInputStream("bye".getBytes()));
 
-            new CommandDslShell(System.in, System.out).start(new String[]{"commands=console; bye"});
+            final Response response = new CommandDslShell(System.in, System.out)
+                    .start(new String[]{"commands=console; bye"});
+
+            assertThat(response.getValidCommandsExecuted(), is(2));
+            assertThat(response.getInvalidCommandsExecuted(), is(0));
+            assertThat(response.getUnknownCommandsExecuted(), is(0));
+            assertThat(response.isExitRequested(), is(true));
         } finally {
             System.setIn(originalInput);
         }

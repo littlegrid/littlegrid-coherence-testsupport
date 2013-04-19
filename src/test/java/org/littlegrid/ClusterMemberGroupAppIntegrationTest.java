@@ -103,7 +103,7 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
     }
 
     @Test
-    public void start() {
+    public void runMain() {
         ClusterMemberGroupApp.main(new String[]{"properties/memberGroup1.properties"});
     }
 

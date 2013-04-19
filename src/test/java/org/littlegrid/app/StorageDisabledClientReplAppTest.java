@@ -43,7 +43,7 @@ public class StorageDisabledClientReplAppTest {
     }
 
     @Test
-    public void start() {
+    public void runMain() {
         StorageDisabledClientReplApp.main(new String[]{"commands=# Storage disabled client test; bye"});
     }
 }

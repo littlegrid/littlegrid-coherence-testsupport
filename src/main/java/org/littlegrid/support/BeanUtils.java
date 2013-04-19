@@ -106,6 +106,8 @@ public final class BeanUtils {
 
         for (final Object key : properties.keySet()) {
             final String value = properties.getProperty((String) key);
+
+            // Use the mapped real method name rather than the property name
             final String methodName = methodNameMapping.get(SET_PREFIX.toUpperCase() + key.toString().toUpperCase());
 
             try {
@@ -125,7 +127,8 @@ public final class BeanUtils {
                             ClassHelper.invoke(bean, methodName, new Object[]{new String[]{value}});
                         } catch (Exception e4) {
                             throw new IdentifiableException(
-                                    format("Unable to invoke '%s' to set value to: '%s' due to: %s",
+                                    format("Unable to invoke '%s' to set value to: '%s' due to: %s "
+                                            + "- parameter type not supported",
                                             methodName, value, e),
                                     UNABLE_TO_SET_BEAN_PROPERTY);
                         }

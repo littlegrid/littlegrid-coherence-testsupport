@@ -158,6 +158,34 @@ public final class BeanUtilsTest {
     }
 
     @Test
+    public void setWhenPropertyCaseDoesNotMatch() {
+        final Properties properties = new Properties();
+        properties.setProperty(AGE_PROPERTY.toLowerCase(), Integer.toString(EXPECTED_AGE));
+
+        final Person person = new Person();
+
+        final int propertiesSetCount = BeanUtils.multiSetter(person, properties);
+
+        assertThat(propertiesSetCount, is(1));
+        assertThat(person.getName(), nullValue());
+        assertThat(person.getAge(), is(EXPECTED_AGE));
+        assertThat(person.getBirthDateMillis(), is(0L));
+        assertThat(person.getHobbies(), nullValue());
+    }
+
+    @Test
+    public void setWhenPropertyTypeNotSettable() {
+        final Properties properties = new Properties();
+        properties.setProperty(AGE_PROPERTY, "123.3");
+
+        try {
+            BeanUtils.multiSetter(new Person(), properties);
+        } catch (IdentifiableException e) {
+            assertThat(e.getReasonEnum(), is(UNABLE_TO_SET_BEAN_PROPERTY));
+        }
+    }
+
+    @Test
     public void setWhenPropertyDoesNotExist() {
         final Properties properties = new Properties();
         properties.setProperty("NonExistentProperty", "DoesNotMatterPropertyDoesNotExist");
