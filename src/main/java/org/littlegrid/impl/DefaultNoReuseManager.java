@@ -2,7 +2,7 @@ package org.littlegrid.impl;
 
 import org.littlegrid.ClusterMemberGroup;
 
-import static org.littlegrid.ClusterMemberGroup.ReuseManager;
+import static org.littlegrid.impl.DefaultClusterMemberGroup.ReuseManager;
 
 /**
  * Default no re-use strategy handler.

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroup.ReuseManager;
+import static org.littlegrid.impl.DefaultClusterMemberGroup.ReuseManager;
 
 /**
  * Reference counting re-use strategy handler

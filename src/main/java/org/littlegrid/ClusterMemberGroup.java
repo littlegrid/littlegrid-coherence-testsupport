@@ -790,7 +790,10 @@ public interface ClusterMemberGroup {
         /**
          * Sets the duration that Coherence will wait before starting a new cluster, this
          * setting must be used in conjunction with the littlegrid-fast-start-coherence-override.xml
-         * which defines the appropriate system property to control the join timeout.
+         * which defines the appropriate system property to control the join timeout - note: for
+         * Coherence 3.7.1 and newer a setting 100 will typically suffice - however, if
+         * performing a merge of one cluster member group into another then a large value
+         * will often be required for the new member group being built.
          *
          * @param joinTimeoutMilliseconds Join timeout milliseconds.
          * @return builder.
@@ -905,20 +908,5 @@ public interface ClusterMemberGroup {
          * Performs any necessary actions after the cluster member has been shutdown.
          */
         void doAfterShutdown();
-    }
-
-    /**
-     * Reuse manager, helps with registration and reuse of cluster member groups,
-     * along with advising if final shutdown is advised.
-     *
-     * @since 2.15
-     */
-    interface ReuseManager {
-        ClusterMemberGroup getRegisteredInstance(Object builderKey);
-
-        void registerInstanceUse(Object builderKeyUsedToConstructMemberGroup,
-                                 ClusterMemberGroup constructedMemberGroup);
-
-        boolean isFinalShutdownAllAdvised();
     }
 }

@@ -34,7 +34,12 @@ package org.littlegrid.support;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.IdentifiableException;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.littlegrid.IdentifiableException.ReasonEnum.UNABLE_TO_SET_BEAN_PROPERTY;
@@ -43,6 +48,8 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.UNABLE_TO_SET_BEAN
  * Bean utilities class.
  */
 public final class BeanUtils {
+    private static final String SET_PREFIX = "set";
+
     /**
      * Default scope to enable test coverage.
      */
@@ -61,11 +68,45 @@ public final class BeanUtils {
     public static int multiSetter(final Object bean,
                                   final Properties properties) {
 
+        final Map<String, String> methodNameMapping = new HashMap<String, String>();
+
+        final Method[] methods = bean.getClass().getDeclaredMethods();
+
+        for (final Method method : methods) {
+            final String methodName = method.getName();
+
+            methodNameMapping.put(methodName.toUpperCase(), methodName);
+        }
+
+        final Map<String, String> propertyNameMapping = new HashMap<String, String>(properties.size());
+
+        for (final Object key : properties.keySet()) {
+            final String methodName = SET_PREFIX + key.toString();
+
+            propertyNameMapping.put(methodName.toUpperCase(), methodName);
+        }
+
+        final Set<String> upperCasePropertyNamesNotMatched = new HashSet<String>(propertyNameMapping.keySet());
+        upperCasePropertyNamesNotMatched.removeAll(methodNameMapping.keySet());
+
+        if (upperCasePropertyNamesNotMatched.size() > 0) {
+            final Set<String> mixedCasePropertyNamesNotMatched =
+                    new HashSet<String>(upperCasePropertyNamesNotMatched.size());
+
+            for (final String key : upperCasePropertyNamesNotMatched) {
+                mixedCasePropertyNamesNotMatched.add(propertyNameMapping.get(key));
+            }
+
+            throw new IdentifiableException(
+                    format("Following methods could not be found on the bean: %s", mixedCasePropertyNamesNotMatched),
+                    UNABLE_TO_SET_BEAN_PROPERTY);
+        }
+
         int propertiesSetCounter = 0;
 
         for (final Object key : properties.keySet()) {
             final String value = properties.getProperty((String) key);
-            final String methodName = "set" + key;
+            final String methodName = methodNameMapping.get(SET_PREFIX.toUpperCase() + key.toString().toUpperCase());
 
             try {
                 // Try invoking with string as parameter

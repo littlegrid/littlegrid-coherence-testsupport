@@ -57,7 +57,7 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
 import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.ClusterMemberGroup.ReuseManager;
+import static org.littlegrid.impl.DefaultClusterMemberGroup.ReuseManager;
 
 /**
  * Default cluster member group builder implementation.
@@ -186,6 +186,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         loadAndSetBuilderKeysAndValuesUsingPropertiesFiles();
 
         loadAndSetBuilderKeysAndValues("environment variables", BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY,
+                SystemUtils.getEnvironmentVariables());
+
+        loadAndSetBuilderKeysAndValues("environment variables", BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY.toUpperCase(),
                 SystemUtils.getEnvironmentVariables());
 
         loadAndSetBuilderKeysAndValues("system properties", BUILDER_SYSTEM_PROPERTY_PREFIX_KEY,

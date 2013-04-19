@@ -551,4 +551,22 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         return this;
     }
+
+    /**
+     * Reuse manager, helps with registration and reuse of cluster member groups,
+     * along with advising if final shutdown is advised.
+     *
+     * THIS IS AN INITIAL WORKING VERSION AND IS SUBJECT TO CHANGE - HENCE IT ISN'T
+     * MADE PUBLIC WITHIN THE org.littlegrid PACKAGE.
+     *
+     * @since 2.15
+     */
+    interface ReuseManager {
+        ClusterMemberGroup getRegisteredInstance(Object builderKey);
+
+        void registerInstanceUse(Object builderKeyUsedToConstructMemberGroup,
+                                 ClusterMemberGroup constructedMemberGroup);
+
+        boolean isFinalShutdownAllAdvised();
+    }
 }
