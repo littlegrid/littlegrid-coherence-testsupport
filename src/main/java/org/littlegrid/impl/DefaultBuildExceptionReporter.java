@@ -109,9 +109,22 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
     private void outputSuggestedExceptionReason(final PrintStream out,
                                                 final Throwable cause) {
 
-        if (cause instanceof IdentifiableException) {
+        Throwable identifiableException = null;
+        Throwable originalCause = cause;
+
+        while (originalCause.getCause() != null) {
+            originalCause = originalCause.getCause();
+
+            if (originalCause instanceof IdentifiableException) {
+                identifiableException = originalCause;
+
+                break;
+            }
+        }
+
+        if (identifiableException != null) {
             out.println(SECTION_DIVIDER);
-            out.println("Possible exception reason: " + cause);
+            out.println("Possible exception reason: " + identifiableException);
         }
     }
 

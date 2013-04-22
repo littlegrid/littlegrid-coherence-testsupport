@@ -31,6 +31,7 @@
 
 package org.littlegrid.app;
 
+import com.tangosol.net.CacheFactory;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -296,8 +297,14 @@ public class CommandDslShellIntegrationTest {
             final Response response = new CommandDslShell(System.in, System.out)
                     .start(new String[]{"commands=cohql; bye"});
 
-            assertThat(response.getValidCommandsExecuted(), is(2));
-            assertThat(response.getInvalidCommandsExecuted(), is(0));
+            if (CacheFactory.VERSION.startsWith("3.5")) {
+                assertThat(response.getValidCommandsExecuted(), is(1));
+                assertThat(response.getInvalidCommandsExecuted(), is(1));
+            } else {
+                assertThat(response.getValidCommandsExecuted(), is(2));
+                assertThat(response.getInvalidCommandsExecuted(), is(0));
+            }
+
             assertThat(response.getUnknownCommandsExecuted(), is(0));
             assertThat(response.isExitRequested(), is(true));
         } finally {

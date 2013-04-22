@@ -158,7 +158,8 @@ class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember
                     exception, SUSPECTED_AUTOSTART_EXCEPTION);
 
         } else if (message.contains(VALUE_OUT_OF_RANGE_1000)) {
-            return new IdentifiableException("Join timeout is too small",
+            return new IdentifiableException("Join timeout is too small, check if the littlegrid fast-start value "
+                    + "is too small for the version of Coherence (3.5 and 3.6 require 1000 or more)",
                     exception, JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL);
         }
 
