@@ -29,46 +29,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.reusable_member_group;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.littlegrid.ClusterMemberGroup;
-import org.littlegrid.ClusterMemberGroupUtils;
+package org.littlegrid.impl;
 
 /**
- * Reusable member group integration tests.
+ * Default local process cluster member group implementation.
  */
-public class ReusableMemberGroupIntegrationTest {
-    private ClusterMemberGroup memberGroup;
+public final class ReferenceCountingClusterMemberGroup extends DefaultClusterMemberGroup {
+    /**
+     * Constructor.
+     *
+     * @param callbackHandler               Callback handler.
+     * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
+     * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
+     * @param sleepAfterStopDurationDefault Default sleep duration.
+     * @param wkaPort                       WKA port.
+     * @param extendPort                    Extend port.
+     */
+    public ReferenceCountingClusterMemberGroup(final CallbackHandler callbackHandler,
+                                               final int sleepAfterStopDuration35x,
+                                               final int sleepAfterStopDuration36x,
+                                               final int sleepAfterStopDurationDefault,
+                                               final int wkaPort, final int extendPort) {
 
-    @Before
-    public void beforeTest() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(2)
-//                .setClusterMemberGroupInstanceClassName(null)
-                .buildAndConfigureForStorageDisabledClient();
-    }
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
-    @Test
-    public void test1() {
-
-
-    }
-
-    @Test
-    public void test2() {
-
-    }
-
-    @Test
-    public void test3() {
-
+        super(callbackHandler,
+                sleepAfterStopDuration35x, sleepAfterStopDuration36x, sleepAfterStopDurationDefault,
+                wkaPort, extendPort);
     }
 }

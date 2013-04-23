@@ -29,46 +29,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.reusable_member_group;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.littlegrid.ClusterMemberGroup;
-import org.littlegrid.ClusterMemberGroupUtils;
+package org.littlegrid.impl;
 
 /**
- * Reusable member group integration tests.
+ * Marker interface to denote that the cluster member group may be re-used.
+ *
+ * @since 2.15.
  */
-public class ReusableMemberGroupIntegrationTest {
-    private ClusterMemberGroup memberGroup;
-
-    @Before
-    public void beforeTest() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(2)
-//                .setClusterMemberGroupInstanceClassName(null)
-                .buildAndConfigureForStorageDisabledClient();
-    }
-
-    @After
-    public void afterTest() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
-    @Test
-    public void test1() {
-
-
-    }
-
-    @Test
-    public void test2() {
-
-    }
-
-    @Test
-    public void test3() {
-
-    }
+public interface ReusableClusterMemberGroup {
 }

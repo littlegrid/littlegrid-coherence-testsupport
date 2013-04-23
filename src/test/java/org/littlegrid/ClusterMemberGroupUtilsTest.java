@@ -92,6 +92,11 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
+        public boolean isRunning() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public ClusterMemberGroup stopMember(final int... memberIds) {
             throw new UnsupportedOperationException();
         }

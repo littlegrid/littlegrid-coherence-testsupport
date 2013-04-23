@@ -58,7 +58,7 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_
 /**
  * Default local process cluster member group implementation.
  */
-public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
+public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private static final int ONE_MB = 1024 * 1024;
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroup.class.getName());
 
@@ -66,14 +66,14 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
             new ArrayList<Future<DelegatingClusterMemberWrapper>>();
 
     private CallbackHandler callbackHandler;
-    private ReuseManager reuseManager;
-    private boolean startInvoked;
-    private Properties systemPropertiesBeforeStartInvoked;
+    private boolean startAllInvoked;
+    private Properties systemPropertiesBeforeStartAllInvoked;
     private int sleepAfterStopDuration35x;
     private int sleepAfterStopDuration36x;
     private int sleepAfterStopDurationDefault;
     private final int wkaPort;
     private final int extendPort;
+    private boolean shutdownAllInvoked;
 
 
     /**
@@ -105,18 +105,9 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         this.sleepAfterStopDuration36x = sleepAfterStopDuration36x;
         this.sleepAfterStopDurationDefault = sleepAfterStopDurationDefault;
 
-        systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
+        systemPropertiesBeforeStartAllInvoked = SystemUtils.snapshotSystemProperties();
 
         callbackHandler.doBeforeStart();
-    }
-
-    /**
-     * Set the reuse strategy handler.
-     *
-     * @param reuseManager Reuse strategy handler.
-     */
-    public void setReuseManager(final ReuseManager reuseManager) {
-        this.reuseManager = reuseManager;
     }
 
     /**
@@ -189,16 +180,13 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      *
      * @return member group.
      */
-    public ClusterMemberGroup startAll() {
-        if (reuseManager == null) {
-            throw new IllegalStateException("No reuse strategy handler has been configured");
-        }
-
-        if (startInvoked) {
+    ClusterMemberGroup startAll() {
+        if (startAllInvoked) {
             return this;
         }
 
-        startInvoked = true;
+        startAllInvoked = true;
+        shutdownAllInvoked = false;
 
         callbackHandler.doAfterStart();
 
@@ -322,7 +310,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
     }
 
     DelegatingClusterMemberWrapper getClusterMemberWrapper(final int memberId) {
-        if (!startInvoked) {
+        if (!startAllInvoked) {
             throw new IllegalStateException("Cluster member group never started");
         }
 
@@ -414,7 +402,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public ClusterMember getClusterMember(final int memberId) {
-        if (!startInvoked) {
+        if (!startAllInvoked) {
             LOGGER.warning(format("Cluster member group never started - cannot get member %s", memberId));
 
             return null;
@@ -430,7 +418,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public ClusterMemberGroup shutdownMember(final int... memberIds) {
-        if (!startInvoked) {
+        if (!startAllInvoked) {
             LOGGER.warning("Cluster member group never started - nothing to shutdown");
 
             return this;
@@ -456,17 +444,11 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public ClusterMemberGroup shutdownAll() {
-        if (reuseManager != null && !reuseManager.isFinalShutdownAllAdvised()) {
-            LOGGER.info("Shutdown deferred based upon reuse strategy");
-
-            return this;
-        }
-
         LOGGER.info("Restoring system properties back to their original state before member group started");
 
-        System.setProperties(systemPropertiesBeforeStartInvoked);
+        System.setProperties(systemPropertiesBeforeStartAllInvoked);
 
-        if (!startInvoked) {
+        if (!startAllInvoked) {
             LOGGER.warning("Cluster member group never started - nothing to shutdown");
 
             return this;
@@ -497,6 +479,8 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         callbackHandler.doAfterShutdown();
 
+        shutdownAllInvoked = true;
+
         return this;
     }
 
@@ -504,8 +488,16 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
+    public boolean isRunning() {
+        return !shutdownAllInvoked;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ClusterMemberGroup stopMember(final int... memberIds) {
-        if (!startInvoked) {
+        if (!startAllInvoked) {
             LOGGER.warning("Cluster member group never started - nothing to do");
 
             return this;
@@ -531,7 +523,7 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public ClusterMemberGroup stopAll() {
-        if (!startInvoked) {
+        if (!startAllInvoked) {
             LOGGER.warning("Cluster member group never started - nothing to stop");
 
             return this;
@@ -550,23 +542,5 @@ public final class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         return this;
-    }
-
-    /**
-     * Reuse manager, helps with registration and reuse of cluster member groups,
-     * along with advising if final shutdown is advised.
-     *
-     * THIS IS AN INITIAL WORKING VERSION AND IS SUBJECT TO CHANGE - HENCE IT ISN'T
-     * MADE PUBLIC WITHIN THE org.littlegrid PACKAGE.
-     *
-     * @since 2.15
-     */
-    interface ReuseManager {
-        ClusterMemberGroup getRegisteredInstance(Object builderKey);
-
-        void registerInstanceUse(Object builderKeyUsedToConstructMemberGroup,
-                                 ClusterMemberGroup constructedMemberGroup);
-
-        boolean isFinalShutdownAllAdvised();
     }
 }

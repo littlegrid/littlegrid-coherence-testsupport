@@ -43,16 +43,18 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.Builder;
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.Registry;
 
 /**
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 40;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 41;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
     private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
@@ -65,6 +67,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     private static final String NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
+    private static final String CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME_KEY = "ClusterMemberGroupInstanceClassName";
     private static final String CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
             "CustomConfiguredClusterMemberInstanceClassName";
 
@@ -155,6 +158,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final int expectedNumberOfThreads = 18;
         final String expectedInstanceClassName = "com.a.b.c.ClusterMember";
+        final String expectedGroupInstanceClassName = "com.a.b.c.ClusterMemberGroup";
         final String expectedCustomConfiguredInstanceClassName = "com.d.e.f.ClusterMember";
 
         final int expectedSleepDuration35x = 22;
@@ -180,6 +184,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         builder.setNumberOfThreadsInStartUpPool(expectedNumberOfThreads);
         builder.setClusterMemberInstanceClassName(expectedInstanceClassName);
+        builder.setClusterMemberGroupInstanceClassName(expectedGroupInstanceClassName);
         builder.setCustomConfiguredClusterMemberInstanceClassName(expectedCustomConfiguredInstanceClassName);
 
         builder.setSuggestedSleepAfterStopDuration35x(expectedSleepDuration35x);
@@ -218,6 +223,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
                 is(Integer.toString(expectedNumberOfThreads)));
 
         assertThat(builderSettings.get(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY), is(expectedInstanceClassName));
+        assertThat(builderSettings.get(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME_KEY),
+                is(expectedGroupInstanceClassName));
+
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY),
                 is(expectedCustomConfiguredInstanceClassName));
 
@@ -584,5 +592,73 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
         assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
+    }
+
+    @Test
+    public void registryGetWhenEntryDoesNotExist() {
+        final Registry registry = getRegistryAndClearContents();
+
+        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
+
+        assertThat(registry.clusterMemberGroupMap.size(), is(0));
+        assertThat(registry.getClusterMemberGroup(key), nullValue());
+    }
+
+    private Registry getRegistryAndClearContents() {
+        final Registry registry = Registry.getInstance();
+        registry.clusterMemberGroupMap.clear();
+        return registry;
+    }
+
+    @Test
+    public void registryGetWhenEntryDoesExist() {
+        final Registry registry = getRegistryAndClearContents();
+
+        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
+
+        registry.clusterMemberGroupMap.put(key, getClusterMemberGroup());
+
+        assertThat(registry.clusterMemberGroupMap.size(), is(1));
+        assertThat(registry.getClusterMemberGroup(key), notNullValue());
+    }
+
+    @Test
+    public void registryRegisterWhenEntryDoesNotExist() {
+        final Registry registry = getRegistryAndClearContents();
+
+        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
+
+        registry.registerClusterMemberGroup(key, getClusterMemberGroup());
+        assertThat(registry.clusterMemberGroupMap.size(), is(1));
+        assertThat(registry.getClusterMemberGroup(key), notNullValue());
+    }
+
+    @Test
+    public void registryRegisterWhenEntryDoesExist() {
+        final Registry registry = getRegistryAndClearContents();
+
+        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
+
+        {
+            final ClusterMemberGroup memberGroup = getClusterMemberGroup();
+
+            registry.registerClusterMemberGroup(key, memberGroup);
+            assertThat(registry.clusterMemberGroupMap.size(), is(1));
+            assertThat(registry.getClusterMemberGroup(key), notNullValue());
+            assertThat(registry.getClusterMemberGroup(key), is(memberGroup));
+        }
+
+        {
+            final ClusterMemberGroup memberGroup = getClusterMemberGroup();
+
+            registry.registerClusterMemberGroup(key, memberGroup);
+            assertThat(registry.clusterMemberGroupMap.size(), is(1));
+            assertThat(registry.getClusterMemberGroup(key), notNullValue());
+            assertThat(registry.getClusterMemberGroup(key), is(memberGroup));
+        }
+    }
+
+    private DefaultClusterMemberGroup getClusterMemberGroup() {
+        return new DefaultClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
     }
 }

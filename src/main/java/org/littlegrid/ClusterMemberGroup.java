@@ -57,6 +57,15 @@ public interface ClusterMemberGroup {
     ClusterMemberGroup shutdownAll();
 
     /**
+     * Returns <b>true</b> if the cluster member group hasn't had shutdownAll invoked on it.  Once
+     * shutdownAll has been called, then the cluster member group is deemed to be no-longer running.
+     *
+     * @return true if still running.
+     * @since 2.15
+     */
+    boolean isRunning();
+
+    /**
      * Stops specific cluster members immediately - this is typically used in-conjunction
      * getSuggestedSleepAfterStopDuration and TimeUnit.SECONDS, the members leave without notifying
      * other members.  An example of usage might be:
@@ -856,13 +865,14 @@ public interface ClusterMemberGroup {
         String getAppConsoleClassName();
 
         /**
-         * Sets the re-usability strategy of the cluster member group.
+         * Sets the cluster member group instance, some types are able to pool member groups.
          *
-         * @param reuseStrategyInstanceClassName Reusable strategy instance class name.
+         * @param clusterMemberGroupInstanceClassName
+         *         Cluster member group instance class name.
          * @return builder.
          * @since 2.15
          */
-        Builder setReuseStrategyInstanceClassName(String reuseStrategyInstanceClassName);
+        Builder setClusterMemberGroupInstanceClassName(String clusterMemberGroupInstanceClassName);
     }
 
     /**

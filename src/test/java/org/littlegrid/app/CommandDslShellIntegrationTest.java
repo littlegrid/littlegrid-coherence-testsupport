@@ -211,6 +211,17 @@ public class CommandDslShellIntegrationTest {
     }
 
     @Test
+    public void sleepUntilWithInvalidTimeThatHasTooManyDelimiters() {
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=sleep until 20:00:00:00; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(1));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
+    }
+
+    @Test
     public void startStorageEnabled() {
         final Response response = new CommandDslShell(System.in, System.out)
                 .start(new String[]{"commands=start storage enabled; bye"});

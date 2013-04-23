@@ -57,7 +57,6 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
 import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.impl.DefaultClusterMemberGroup.ReuseManager;
 
 /**
  * Default cluster member group builder implementation.
@@ -95,6 +94,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     private static final String CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
     private static final String CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
             "CustomConfiguredClusterMemberInstanceClassName";
+    private static final String CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME = "ClusterMemberGroupInstanceClassName";
 
     private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
     private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
@@ -331,16 +331,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
-        final ReuseManager reuseManager = new DefaultNoReuseManager();
-        final Object builderKey = this.toString();
-
-        ClusterMemberGroup memberGroup = reuseManager.getRegisteredInstance(builderKey);
-
-        if (memberGroup == null) {
-            memberGroup = buildClusterMembers();
-        }
-
-        reuseManager.registerInstanceUse(builderKey, memberGroup);
+        ClusterMemberGroup memberGroup = getClusterMemberGroupInstance(this.toString());
 
         final Properties systemProperties;
 
@@ -367,9 +358,51 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         LOGGER.info(format("System properties set for client/member: %s", new TreeMap(systemProperties)));
 
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
-        defaultClusterMemberGroup.setReuseManager(reuseManager);
         defaultClusterMemberGroup.startAll();
 
+        return memberGroup;
+    }
+
+    private ClusterMemberGroup getClusterMemberGroupInstance(final Object clusterMemberGroupKey) {
+        final Registry registry = Registry.getInstance();
+        ClusterMemberGroup memberGroup = null;
+
+        try {
+            final Class clusterMemberGroupClass = this.getClass().getClassLoader().loadClass(
+                    getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME));
+
+            if (ReusableClusterMemberGroup.class.isAssignableFrom(clusterMemberGroupClass)) {
+                // It is re-usable
+                memberGroup = registry.getClusterMemberGroup(clusterMemberGroupKey);
+
+                if (memberGroup == null) {
+                    // Whilst it is re-usable no instance already exists - create one
+                    // Build and add to map
+
+                    memberGroup = buildClusterMembers();
+
+                    registry.registerClusterMemberGroup(clusterMemberGroupKey, memberGroup);
+                } else {
+                    // An existing re-usable instance has been found, check if it has been shutdown
+
+                    if (!memberGroup.isRunning()) {
+                        // Whilst it is re-usable and an instance exists, it has been shutdown
+                        // and so can't be used.  Build a new one and add it to the map
+
+                        memberGroup = buildClusterMembers();
+
+                        registry.registerClusterMemberGroup(clusterMemberGroupKey, memberGroup);
+                    }
+                }
+            } else {
+                // It is not re-usable, so create a new one
+                memberGroup = buildClusterMembers();
+            }
+        } catch (ClassNotFoundException e) {
+            //TODO:
+
+            throw new UnsupportedOperationException();
+        }
         return memberGroup;
     }
 
@@ -483,6 +516,20 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             final Constructor constructor = clazz.getConstructor();
 
             return (ClusterMemberGroup.CallbackHandler) constructor.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(format("Cannot create instance of '%s", className));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private ClusterMemberGroup createClusterMemberGroup() {
+        final String className = getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
+
+        try {
+            final Class clazz = this.getClass().getClassLoader().loadClass(className);
+            final Constructor constructor = clazz.getConstructor();
+
+            return (ClusterMemberGroup) constructor.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(format("Cannot create instance of '%s", className));
         }
@@ -1177,8 +1224,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
-    public Builder setReuseStrategyInstanceClassName(final String reuseStrategyInstanceClassName) {
-        throw new UnsupportedOperationException();
+    public Builder setClusterMemberGroupInstanceClassName(final String clusterMemberGroupInstanceClassName) {
+        setBuilderValue(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME, clusterMemberGroupInstanceClassName);
+        return this;
     }
 
     /**
@@ -1419,7 +1467,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         if (fastStartJoinTimeout > 0 && (overrideConfiguration == null
                 || overrideConfiguration.trim().length() == 0)) {
 
-            LOGGER.warning("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
+            LOGGER.warning("Fast-start join timeout specified.  Note: the fast-runMain Coherence override file will "
                     + "now be configured to be used");
 
             setBuilderValue(OVERRIDE_CONFIGURATION_KEY, FAST_START_OVERRIDE_CONFIGURATION_FILENAME);
@@ -1521,6 +1569,35 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         if (value != null && value.trim().length() > 0) {
             properties.setProperty(key, value);
+        }
+    }
+
+    /**
+     * Registry containing registered cluster member groups that can be re-used.
+     *
+     * @since 2.15
+     */
+    public static class Registry {
+        private static final Registry INSTANCE = new Registry();
+
+        /**
+         * Default scope to facilitate testing.
+         */
+        final Map<Object, ClusterMemberGroup> clusterMemberGroupMap =
+                new HashMap<Object, ClusterMemberGroup>();
+
+        public static Registry getInstance() {
+            return INSTANCE;
+        }
+
+        ClusterMemberGroup getClusterMemberGroup(final Object key) {
+            return clusterMemberGroupMap.get(key);
+        }
+
+        void registerClusterMemberGroup(final Object key,
+                                        final ClusterMemberGroup clusterMemberGroup) {
+
+            clusterMemberGroupMap.put(key, clusterMemberGroup);
         }
     }
 }
