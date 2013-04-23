@@ -86,6 +86,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
             outputSortedSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
             outputNumberOfMembers(out, buildException.getNumberOfMembers());
             outputClusterMemberInstanceClassName(out, buildException.getClusterMemberInstanceClassName());
+            outputClusterMemberGroupInstanceClassName(out, buildException.getClusterMemberGroupInstanceClassName());
             outputNumberOfThreadThreadsInStartUpPool(out, buildException.getNumberOfThreadsInStartUpPool());
             outputMemory(out);
             outputNetwork(out);
@@ -273,6 +274,13 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
 
         out.println(SECTION_DIVIDER);
         out.println("Cluster member class name: " + clusterMemberInstanceClassName);
+    }
+
+    private void outputClusterMemberGroupInstanceClassName(final PrintStream out,
+                                                      final String clusterMemberGroupInstanceClassName) {
+
+        out.println(SECTION_DIVIDER);
+        out.println("Cluster member group name: " + clusterMemberGroupInstanceClassName);
     }
 
     private void outputNumberOfMembers(final PrintStream out,

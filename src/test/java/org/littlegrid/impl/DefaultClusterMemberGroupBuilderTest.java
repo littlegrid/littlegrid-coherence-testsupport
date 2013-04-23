@@ -35,7 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.SystemUtils;
 
@@ -49,6 +48,7 @@ import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.Registry;
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.ReusableClusterMemberGroup;
 
 /**
  * Default cluster member group builder tests.
@@ -600,13 +600,13 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final Object key = ClusterMemberGroupUtils.newBuilder().toString();
 
-        assertThat(registry.clusterMemberGroupMap.size(), is(0));
+        assertThat(registry.reusableClusterMemberGroupMap.size(), is(0));
         assertThat(registry.getClusterMemberGroup(key), nullValue());
     }
 
     private Registry getRegistryAndClearContents() {
         final Registry registry = Registry.getInstance();
-        registry.clusterMemberGroupMap.clear();
+        registry.reusableClusterMemberGroupMap.clear();
         return registry;
     }
 
@@ -616,9 +616,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final Object key = ClusterMemberGroupUtils.newBuilder().toString();
 
-        registry.clusterMemberGroupMap.put(key, getClusterMemberGroup());
+        registry.reusableClusterMemberGroupMap.put(key, getClusterMemberGroup());
 
-        assertThat(registry.clusterMemberGroupMap.size(), is(1));
+        assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
         assertThat(registry.getClusterMemberGroup(key), notNullValue());
     }
 
@@ -629,7 +629,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Object key = ClusterMemberGroupUtils.newBuilder().toString();
 
         registry.registerClusterMemberGroup(key, getClusterMemberGroup());
-        assertThat(registry.clusterMemberGroupMap.size(), is(1));
+        assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
         assertThat(registry.getClusterMemberGroup(key), notNullValue());
     }
 
@@ -640,25 +640,25 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Object key = ClusterMemberGroupUtils.newBuilder().toString();
 
         {
-            final ClusterMemberGroup memberGroup = getClusterMemberGroup();
+            final ReusableClusterMemberGroup memberGroup = getClusterMemberGroup();
 
             registry.registerClusterMemberGroup(key, memberGroup);
-            assertThat(registry.clusterMemberGroupMap.size(), is(1));
+            assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
             assertThat(registry.getClusterMemberGroup(key), notNullValue());
             assertThat(registry.getClusterMemberGroup(key), is(memberGroup));
         }
 
         {
-            final ClusterMemberGroup memberGroup = getClusterMemberGroup();
+            final ReusableClusterMemberGroup memberGroup = getClusterMemberGroup();
 
             registry.registerClusterMemberGroup(key, memberGroup);
-            assertThat(registry.clusterMemberGroupMap.size(), is(1));
+            assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
             assertThat(registry.getClusterMemberGroup(key), notNullValue());
             assertThat(registry.getClusterMemberGroup(key), is(memberGroup));
         }
     }
 
-    private DefaultClusterMemberGroup getClusterMemberGroup() {
-        return new DefaultClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
+    private ReusableClusterMemberGroup getClusterMemberGroup() {
+        return new KeepAliveClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
     }
 }

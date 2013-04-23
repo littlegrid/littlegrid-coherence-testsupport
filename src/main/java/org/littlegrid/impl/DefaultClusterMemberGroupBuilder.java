@@ -365,7 +365,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     private ClusterMemberGroup getClusterMemberGroupInstance(final Object clusterMemberGroupKey) {
         final Registry registry = Registry.getInstance();
-        ClusterMemberGroup memberGroup = null;
 
         try {
             final Class clusterMemberGroupClass = this.getClass().getClassLoader().loadClass(
@@ -373,37 +372,40 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
             if (ReusableClusterMemberGroup.class.isAssignableFrom(clusterMemberGroupClass)) {
                 // It is re-usable
-                memberGroup = registry.getClusterMemberGroup(clusterMemberGroupKey);
+                ReusableClusterMemberGroup reusableMemberGroup =
+                        registry.getClusterMemberGroup(clusterMemberGroupKey);
 
-                if (memberGroup == null) {
+                if (reusableMemberGroup == null) {
                     // Whilst it is re-usable no instance already exists - create one
-                    // Build and add to map
+                    // Build and register it for later re-use
 
-                    memberGroup = buildClusterMembers();
+                    reusableMemberGroup = (ReusableClusterMemberGroup) buildClusterMembers(clusterMemberGroupClass);
 
-                    registry.registerClusterMemberGroup(clusterMemberGroupKey, memberGroup);
+                    registry.registerClusterMemberGroup(clusterMemberGroupKey, reusableMemberGroup);
                 } else {
                     // An existing re-usable instance has been found, check if it has been shutdown
 
-                    if (!memberGroup.isRunning()) {
+                    if (!reusableMemberGroup.isRunning()) {
                         // Whilst it is re-usable and an instance exists, it has been shutdown
-                        // and so can't be used.  Build a new one and add it to the map
+                        // and so can't be used.  Build a new one and register it for later re-use
 
-                        memberGroup = buildClusterMembers();
+                        reusableMemberGroup = (ReusableClusterMemberGroup)
+                                buildClusterMembers(clusterMemberGroupClass);
 
-                        registry.registerClusterMemberGroup(clusterMemberGroupKey, memberGroup);
+                        registry.registerClusterMemberGroup(clusterMemberGroupKey, reusableMemberGroup);
                     }
                 }
+
+                return reusableMemberGroup;
             } else {
                 // It is not re-usable, so create a new one
-                memberGroup = buildClusterMembers();
+                return buildClusterMembers(clusterMemberGroupClass);
             }
         } catch (ClassNotFoundException e) {
             //TODO:
 
             throw new UnsupportedOperationException();
         }
-        return memberGroup;
     }
 
     /**
@@ -415,7 +417,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 getBuilderValueAsString(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY)));
     }
 
-    private DefaultClusterMemberGroup buildClusterMembers() {
+    private DefaultClusterMemberGroup buildClusterMembers(final Class clusterMemberGroupClass) {
         final int storageEnabledCount = getBuilderValueAsInt(STORAGE_ENABLED_COUNT_KEY);
         final int customConfiguredCount = getBuilderValueAsInt(CUSTOM_CONFIGURED_COUNT_KEY);
         final int storageEnabledExtendProxyCount = getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
@@ -446,7 +448,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     getBuilderValueAsString(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
                             + ", " + getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
 
-            containerGroup = createDefaultClusterMemberGroupWithCallbackAndSleepDurations();
+            containerGroup = createClusterMemberGroupWithCallbackAndSleepDurations(clusterMemberGroupClass);
 
             buildStorageEnabledMembers(storageEnabledCount, containerGroup, classPathUrls,
                     numberOfThreadsInStartUpPool);
@@ -521,20 +523,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private ClusterMemberGroup createClusterMemberGroup() {
-        final String className = getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
-
-        try {
-            final Class clazz = this.getClass().getClassLoader().loadClass(className);
-            final Constructor constructor = clazz.getConstructor();
-
-            return (ClusterMemberGroup) constructor.newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException(format("Cannot create instance of '%s", className));
-        }
-    }
-
     private void buildJmxMonitorMembers(final int jmxMonitorCount,
                                         final DefaultClusterMemberGroup containerGroup,
                                         final URL[] classPathUrls,
@@ -550,6 +538,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                             getSystemPropertiesForJmxMonitor(),
                             classPathUrls,
                             clusterMemberInstanceClassName,
+                            containerGroup.getClass().getName(),
                             numberOfThreadsInStartUpPool);
 
             containerGroup.merge(memberFutures);
@@ -571,6 +560,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                             getSystemPropertiesForCustomConfigured(),
                             classPathUrls,
                             customConfiguredClusterMemberInstanceClassName,
+                            containerGroup.getClass().getName(),
                             numberOfThreadsInStartUpPool);
 
             containerGroup.merge(memberFutures);
@@ -596,6 +586,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                 getSystemPropertiesForStorageEnabledExtendProxy(extendStartingPort + i),
                                 classPathUrls,
                                 clusterMemberInstanceClassName,
+                                containerGroup.getClass().getName(),
                                 numberOfThreadsInStartUpPool);
 
                 containerGroup.merge(memberFutures);
@@ -622,6 +613,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                 getSystemPropertiesForExtendProxy(extendStartingPort + i),
                                 classPathUrls,
                                 clusterMemberInstanceClassName,
+                                containerGroup.getClass().getName(),
                                 numberOfThreadsInStartUpPool);
 
                 containerGroup.merge(memberFutures);
@@ -644,21 +636,35 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                             getSystemPropertiesForStorageEnabled(),
                             classPathUrls,
                             clusterMemberInstanceClassName,
+                            containerGroup.getClass().getName(),
                             numberOfThreadsInStartUpPool);
 
             containerGroup.merge(memberFutures);
         }
     }
 
-    private DefaultClusterMemberGroup createDefaultClusterMemberGroupWithCallbackAndSleepDurations() {
+    @SuppressWarnings("unchecked")
+    private DefaultClusterMemberGroup createClusterMemberGroupWithCallbackAndSleepDurations(
+            final Class clusterMemberGroupClass) {
+
         final int duration35x = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_35X_KEY);
         final int duration36x = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_36X_KEY);
         final int durationDefault = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
         final int wkaPort = getBuilderValueAsInt(WKA_PORT_KEY);
         final int extendPort = getBuilderValueAsInt(EXTEND_PORT_KEY);
 
-        return new DefaultClusterMemberGroup(createCallbackHandler(), duration35x, duration36x,
-                durationDefault, wkaPort, extendPort);
+        try {
+            final Constructor constructor = clusterMemberGroupClass.getDeclaredConstructor(
+                    ClusterMemberGroup.CallbackHandler.class,
+                    int.class, int.class, int.class, int.class, int.class);
+
+            return (DefaultClusterMemberGroup) constructor.newInstance(createCallbackHandler(),
+                    duration35x, duration36x, durationDefault, wkaPort, extendPort);
+        } catch (Exception e) {
+            //TODO:
+
+            throw new UnsupportedOperationException(e);
+        }
     }
 
     /**
@@ -1573,31 +1579,45 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     }
 
     /**
+     * Marker interface to denote that the cluster member group may be re-used.
+     *
+     * @since 2.15.
+     */
+    interface ReusableClusterMemberGroup extends ClusterMemberGroup {
+    }
+
+    /**
      * Registry containing registered cluster member groups that can be re-used.
      *
      * @since 2.15
      */
-    public static class Registry {
+    static class Registry {
+        private static final Logger LOGGER = Logger.getLogger(Registry.class.getName());
+
         private static final Registry INSTANCE = new Registry();
 
         /**
          * Default scope to facilitate testing.
          */
-        final Map<Object, ClusterMemberGroup> clusterMemberGroupMap =
-                new HashMap<Object, ClusterMemberGroup>();
+        final Map<Object, ReusableClusterMemberGroup> reusableClusterMemberGroupMap =
+                new HashMap<Object, ReusableClusterMemberGroup>();
 
-        public static Registry getInstance() {
+        static Registry getInstance() {
             return INSTANCE;
         }
 
-        ClusterMemberGroup getClusterMemberGroup(final Object key) {
-            return clusterMemberGroupMap.get(key);
+        ReusableClusterMemberGroup getClusterMemberGroup(final Object key) {
+            final ReusableClusterMemberGroup memberGroup = reusableClusterMemberGroupMap.get(key);
+
+            LOGGER.info("Member group get: " + memberGroup);
+
+            return memberGroup;
         }
 
         void registerClusterMemberGroup(final Object key,
-                                        final ClusterMemberGroup clusterMemberGroup) {
+                                        final ReusableClusterMemberGroup clusterMemberGroup) {
 
-            clusterMemberGroupMap.put(key, clusterMemberGroup);
+            reusableClusterMemberGroupMap.put(key, clusterMemberGroup);
         }
     }
 }

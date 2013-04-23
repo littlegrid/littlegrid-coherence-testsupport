@@ -198,6 +198,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
             final Properties systemPropertiesToBeApplied,
             final URL[] classPathUrls,
             final String clusterMemberInstanceClassName,
+            final String clusterMemberGroupInstanceClassName,
             final int numberOfThreadsInStartUpPool) {
 
         if (numberOfMembers < 1) {
@@ -265,7 +266,8 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
                     systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
-                    clusterMemberInstanceClassName, numberOfThreadsInStartUpPool);
+                    clusterMemberInstanceClassName, clusterMemberGroupInstanceClassName,
+                    numberOfThreadsInStartUpPool);
         } finally {
             System.setProperties(systemPropertiesBeforeStartInvoked);
         }

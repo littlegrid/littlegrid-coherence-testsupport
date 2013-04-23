@@ -31,10 +31,24 @@
 
 package org.littlegrid.impl;
 
+import org.littlegrid.ClusterMemberGroup;
+
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.ReusableClusterMemberGroup;
+
 /**
- * Default local process cluster member group implementation.
+ * Counting usage local process cluster member group implementation, performs its
+ * shutdown all only once its usage counter is zero.
  */
-public final class ReferenceCountingClusterMemberGroup extends DefaultClusterMemberGroup {
+public class CountingUsageClusterMemberGroup extends DefaultClusterMemberGroup
+        implements ReusableClusterMemberGroup {
+
+    private static final Logger LOGGER = Logger.getLogger(CountingUsageClusterMemberGroup.class.getName());
+
+    private int usageCount = 0;
+
     /**
      * Constructor.
      *
@@ -45,14 +59,47 @@ public final class ReferenceCountingClusterMemberGroup extends DefaultClusterMem
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
      */
-    public ReferenceCountingClusterMemberGroup(final CallbackHandler callbackHandler,
-                                               final int sleepAfterStopDuration35x,
-                                               final int sleepAfterStopDuration36x,
-                                               final int sleepAfterStopDurationDefault,
-                                               final int wkaPort, final int extendPort) {
+    public CountingUsageClusterMemberGroup(final CallbackHandler callbackHandler,
+                                           final int sleepAfterStopDuration35x,
+                                           final int sleepAfterStopDuration36x,
+                                           final int sleepAfterStopDurationDefault,
+                                           final int wkaPort,
+                                           final int extendPort) {
 
         super(callbackHandler,
                 sleepAfterStopDuration35x, sleepAfterStopDuration36x, sleepAfterStopDurationDefault,
                 wkaPort, extendPort);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    ClusterMemberGroup startAll() {
+        usageCount++;
+
+        super.startAll();
+
+        LOGGER.info(format("Start all invoked - current usage count is now: %d", usageCount));
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup shutdownAll() {
+        usageCount--;
+
+        LOGGER.info(format("Shutdown all invoked - current usage count is now: %d", usageCount));
+
+        if (usageCount == 0) {
+            super.shutdownAll();
+        } else {
+            LOGGER.info("Deferring shutdown");
+        }
+
+        return this;
     }
 }

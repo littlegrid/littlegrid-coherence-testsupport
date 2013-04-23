@@ -31,10 +31,21 @@
 
 package org.littlegrid.impl;
 
+import org.littlegrid.ClusterMemberGroup;
+
+import java.util.logging.Logger;
+
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.ReusableClusterMemberGroup;
+
 /**
- * Default local process cluster member group implementation.
+ * Keep-alive local process cluster member group implementation that doesn't perform its
+ * shutdown all when requested.
  */
-public final class KeepAliveClusterMemberGroup extends DefaultClusterMemberGroup {
+public class KeepAliveClusterMemberGroup extends DefaultClusterMemberGroup
+        implements ReusableClusterMemberGroup {
+
+    private static final Logger LOGGER = Logger.getLogger(KeepAliveClusterMemberGroup.class.getName());
+
     /**
      * Constructor.
      *
@@ -49,10 +60,21 @@ public final class KeepAliveClusterMemberGroup extends DefaultClusterMemberGroup
                                        final int sleepAfterStopDuration35x,
                                        final int sleepAfterStopDuration36x,
                                        final int sleepAfterStopDurationDefault,
-                                       final int wkaPort, final int extendPort) {
+                                       final int wkaPort,
+                                       final int extendPort) {
 
         super(callbackHandler,
                 sleepAfterStopDuration35x, sleepAfterStopDuration36x, sleepAfterStopDurationDefault,
                 wkaPort, extendPort);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroup shutdownAll() {
+        LOGGER.info("Shutdown all invoked, but will be ignored in order to keep this member group running");
+
+        return this;
     }
 }
