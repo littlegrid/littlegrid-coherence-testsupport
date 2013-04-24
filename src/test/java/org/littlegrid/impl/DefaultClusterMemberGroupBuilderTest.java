@@ -54,12 +54,11 @@ import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.ReusableClust
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 41;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 48;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
     private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
 
-    private static final String CUSTOM_CONFIGURED_MEMBER_COUNT_KEY = "CustomConfiguredCount";
     private static final String STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
     private static final String STORAGE_ENABLED_PROXY_COUNT_KEY = "StorageEnabledExtendProxyCount";
     private static final String EXTEND_PROXY_COUNT_KEY = "ExtendProxyCount";
@@ -68,8 +67,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
     private static final String CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME_KEY = "ClusterMemberGroupInstanceClassName";
-    private static final String CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
-            "CustomConfiguredClusterMemberInstanceClassName";
 
     private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
     private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
@@ -79,22 +76,38 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String CORE_JARS_TO_EXCLUE_FROM_CLASS_PATH_KEY = "CoreJarsToExcludeFromClassPath";
 
     private static final String CACHE_CONFIGURATION_KEY = "CacheConfiguration";
-    private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
     private static final String OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
+
+    private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
     private static final String CLIENT_OVERRIDE_CONFIGURATION_KEY = "ClientOverrideConfiguration";
+    private static final String CLIENT_LOG_LEVEL_KEY = "ClientLogLevel";
+    private static final String STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
+    private static final String EXTEND_CLIENT_ROLE_NAME_KEY = "ExtendClientRoleName";
+
+    private static final String CUSTOM_CONFIGURED_MEMBER_COUNT_KEY = "CustomConfiguredCount";
     private static final String CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY = "CustomConfiguredCacheConfiguration";
+    private static final String CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY = "CustomConfiguredRoleName";
+    private static final String CUSTOM_CONFIGURED_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
+            "CustomConfiguredClusterMemberInstanceClassName";
 
     private static final String CLUSTER_NAME_KEY = "ClusterName";
     private static final String SITE_NAME_KEY = "SiteName";
     private static final String RACK_NAME_KEY = "RackName";
     private static final String MACHINE_NAME_KEY = "MachineName";
-    private static final String CUSTOM_CONFIGURED_MEMBER_ROLE_NAME_KEY = "CustomConfiguredRoleName";
+
     private static final String STORAGE_ENABLED_ROLE_NAME_KEY = "StorageEnabledRoleName";
+    private static final String STORAGE_ENABLED_CACHE_CONFIGURATION_KEY = "StorageEnabledCacheConfiguration";
+    private static final String STORAGE_ENABLED_LOG_LEVEL_KEY = "StorageEnabledLogLevel";
+
     private static final String STORAGE_ENABLED_PROXY_ROLE_NAME_KEY = "StorageEnabledExtendProxyRoleName";
+
     private static final String EXTEND_PROXY_ROLE_NAME_KEY = "ExtendProxyRoleName";
+    private static final String EXTEND_PROXY_CACHE_CONFIGURATION_KEY = "ExtendProxyCacheConfiguration";
+    private static final String EXTEND_PROXY_LOG_LEVEL_KEY = "ExtendProxyLogLevel";
+
     private static final String JMX_MONITOR_ROLE_NAME_KEY = "JmxMonitorRoleName";
-    private static final String STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
-    private static final String EXTEND_CLIENT_ROLE_NAME_KEY = "ExtendClientRoleName";
+    private static final String JMX_MONITOR_CACHE_CONFIGURATION_KEY = "JmxMonitorCacheConfiguration";
+    private static final String JMX_MONITOR_LOG_LEVEL_KEY = "JmxMonitorLogLevel";
 
     private static final String WKA_PORT_KEY = "WkaPort";
     private static final String WKA_ADDRESS_KEY = "WkaAddress";
@@ -131,18 +144,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
     @After
     public void afterTest() {
         System.setProperties(systemPropertiesBeforeTest);
-    }
-
-    @Test
-    @Ignore
-    public void equalsWhenShouldBeEqual() {
-
-    }
-
-    @Test
-    @Ignore
-    public void equalsWhenShouldNotBeEquals() {
-
     }
 
     @Test
@@ -249,6 +250,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void coherenceSystemPropertyBuilderSettings() {
         final String expectedCacheConfiguration = "cache-configuration.xml";
         final String expectedClientCacheConfiguration = "client-cache-configuration.xml";
+        final String expectedStorageEnabledCacheConfiguration = "storage-enabled-cache-configuration.xml";
+        final String expectedExtendProxyCacheConfiguration = "extend-proxy-cache-configuration.xml";
+        final String expectedJmxMonitorCacheConfiguration = "jmx-monitor-cache-configuration.xml";
+
         final String expectedOverrideConfiguration = "override-configuration.xml";
         final String expectedClientOverrideConfiguration = "client-override-configuration.xml";
         final String expectedCustomConfiguredCacheConfiguration = "custom-configured-cache-configuration.xml";
@@ -272,6 +277,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final String expectedLogDestination = "log4j";
         final int expectedLogLevel = 8;
+        final int expectedClientLogLevel = 7;
+        final int expectedStorageEnabledLogLevel = 6;
+        final int expectedExtendProxyLogLevel = 5;
+        final int expectedJmxMonitorLogLevel = 4;
 
         final int expectedFastStartJoinTimeoutMilliseconds = 231;
 
@@ -279,6 +288,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         builder.setCacheConfiguration(expectedCacheConfiguration);
         builder.setClientCacheConfiguration(expectedClientCacheConfiguration);
+        builder.setStorageEnabledCacheConfiguration(expectedStorageEnabledCacheConfiguration);
+        builder.setExtendProxyCacheConfiguration(expectedExtendProxyCacheConfiguration);
+        builder.setJmxMonitorCacheConfiguration(expectedJmxMonitorCacheConfiguration);
         builder.setOverrideConfiguration(expectedOverrideConfiguration);
         builder.setClientOverrideConfiguration(expectedClientOverrideConfiguration);
         builder.setCustomConfiguredCacheConfiguration(expectedCustomConfiguredCacheConfiguration);
@@ -302,6 +314,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         builder.setLogDestination(expectedLogDestination);
         builder.setLogLevel(expectedLogLevel);
+        builder.setClientLogLevel(expectedClientLogLevel);
+        builder.setStorageEnabledLogLevel(expectedStorageEnabledLogLevel);
+        builder.setExtendProxyLogLevel(expectedExtendProxyLogLevel);
+        builder.setJmxMonitorLogLevel(expectedJmxMonitorLogLevel);
 
         builder.setFastStartJoinTimeoutMilliseconds(expectedFastStartJoinTimeoutMilliseconds);
 
@@ -320,6 +336,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(OVERRIDE_CONFIGURATION_KEY), is(expectedOverrideConfiguration));
         assertThat(builderSettings.get(CLIENT_OVERRIDE_CONFIGURATION_KEY), is(expectedClientOverrideConfiguration));
         assertThat(builderSettings.get(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY), is(expectedCustomConfiguredCacheConfiguration));
+        assertThat(builderSettings.get(STORAGE_ENABLED_CACHE_CONFIGURATION_KEY), is(expectedStorageEnabledCacheConfiguration));
+        assertThat(builderSettings.get(EXTEND_PROXY_CACHE_CONFIGURATION_KEY), is(expectedExtendProxyCacheConfiguration));
+        assertThat(builderSettings.get(JMX_MONITOR_CACHE_CONFIGURATION_KEY), is(expectedJmxMonitorCacheConfiguration));
 
         assertThat(builderSettings.get(CLUSTER_NAME_KEY), is(expectedClusterName));
         assertThat(builderSettings.get(SITE_NAME_KEY), is(expectedSiteName));
@@ -346,8 +365,12 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         assertThat(builderSettings.get(TTL_KEY), is(Integer.toString(expectedTtl)));
 
-        assertThat(builderSettings.get(LOG_LEVEL_KEY), is(Integer.toString(expectedLogLevel)));
         assertThat(builderSettings.get(LOG_DESTINATION_KEY), is(expectedLogDestination));
+        assertThat(builderSettings.get(LOG_LEVEL_KEY), is(Integer.toString(expectedLogLevel)));
+        assertThat(builderSettings.get(CLIENT_LOG_LEVEL_KEY), is(Integer.toString(expectedClientLogLevel)));
+        assertThat(builderSettings.get(STORAGE_ENABLED_LOG_LEVEL_KEY), is(Integer.toString(expectedStorageEnabledLogLevel)));
+        assertThat(builderSettings.get(EXTEND_PROXY_LOG_LEVEL_KEY), is(Integer.toString(expectedExtendProxyLogLevel)));
+        assertThat(builderSettings.get(JMX_MONITOR_LOG_LEVEL_KEY), is(Integer.toString(expectedJmxMonitorLogLevel)));
 
         assertThat(builderSettings.get(FAST_START_JOIN_TIMEOUT_MILLISECONDS),
                 is(Integer.toString(expectedFastStartJoinTimeoutMilliseconds)));
@@ -478,14 +501,18 @@ public final class DefaultClusterMemberGroupBuilderTest {
     @Test
     public void defaultMappingSystemPropertiesForStorageEnabledWhenSpecificSettings() {
         final String expectedCacheConfiguration = "cache-config.xml";
+        final String expectedLogLevel = "-1";
+
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setStorageEnabledCacheConfiguration(expectedCacheConfiguration);
+        builder.setStorageEnabledLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
     }
 
     @Test
@@ -501,14 +528,18 @@ public final class DefaultClusterMemberGroupBuilderTest {
     @Test
     public void defaultMappingSystemPropertiesForExtendProxyWhenSpecificSettings() {
         final String expectedCacheConfiguration = "cache-config.xml";
+        final String expectedLogLevel = "-1";
+
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setExtendProxyCacheConfiguration(expectedCacheConfiguration);
+        builder.setExtendProxyLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
     }
 
     @Test
@@ -531,17 +562,20 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void defaultMappingSystemPropertiesForStorageDisabledClientSpecificSettings() {
         final String expectedCacheConfiguration = "cache-config.xml";
         final String expectedOverrideConfiguration = "override-config.xml";
+        final String expectedLogLevel = "-1";
 
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setClientCacheConfiguration(expectedCacheConfiguration);
         builder.setClientOverrideConfiguration(expectedOverrideConfiguration);
+        builder.setClientLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
         assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
+        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
     }
 
     @Test
@@ -557,14 +591,18 @@ public final class DefaultClusterMemberGroupBuilderTest {
     @Test
     public void defaultMappingSystemPropertiesForJmxMonitorClientWhenSpecificSettings() {
         final String expectedCacheConfiguration = "cache-config.xml";
+        final String expectedLogLevel = "-1";
+
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setJmxMonitorCacheConfiguration(expectedCacheConfiguration);
+        builder.setJmxMonitorLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
     }
 
     @Test
@@ -581,17 +619,20 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void defaultMappingSystemPropertiesForExtendProxyClientWhenSpecificSettings() {
         final String expectedCacheConfiguration = "cache-config.xml";
         final String expectedOverrideConfiguration = "override-config.xml";
+        final String expectedLogLevel = "-1";
 
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setClientCacheConfiguration(expectedCacheConfiguration);
         builder.setClientOverrideConfiguration(expectedOverrideConfiguration);
+        builder.setClientLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
 
         assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
         assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
+        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
     }
 
     @Test

@@ -80,7 +80,7 @@ public class CountingUsageClusterMemberGroup extends DefaultClusterMemberGroup
 
         super.startAll();
 
-        LOGGER.info(format("Start all invoked - current usage count is now: %d", usageCount));
+        LOGGER.info(format("Start all invoked - current usage count is now: %d for '%s'", usageCount, this));
 
         return this;
     }
@@ -92,7 +92,7 @@ public class CountingUsageClusterMemberGroup extends DefaultClusterMemberGroup
     public ClusterMemberGroup shutdownAll() {
         usageCount--;
 
-        LOGGER.info(format("Shutdown all invoked - current usage count is now: %d", usageCount));
+        LOGGER.info(format("Shutdown all invoked - current usage count is now: %d for '%s'", usageCount, this));
 
         if (usageCount == 0) {
             super.shutdownAll();

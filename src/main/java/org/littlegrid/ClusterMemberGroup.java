@@ -548,6 +548,46 @@ public interface ClusterMemberGroup {
         Builder setLogLevel(int logLevel);
 
         /**
+         * Sets the log level specifically just for the cluster/Extend client,
+         * this setting if used takes precedence over the general setLogLevel.
+         *
+         * @param logLevel Log level (standard Coherence: 0-9).
+         * @return builder.
+         * @since 2.15
+         */
+        Builder setClientLogLevel(int logLevel);
+
+        /**
+         * Sets the log level specifically just for the storage enabled cluster members,
+         * this setting if used takes precedence over the general setLogLevel.
+         *
+         * @param logLevel Log level (standard Coherence: 0-9).
+         * @return builder.
+         * @since 2.15
+         */
+        Builder setStorageEnabledLogLevel(int logLevel);
+
+        /**
+         * Sets the log level specifically just for the Extend proxy cluster members,
+         * this setting if used takes precedence over the general setLogLevel.
+         *
+         * @param logLevel Log level (standard Coherence: 0-9).
+         * @return builder.
+         * @since 2.15
+         */
+        Builder setExtendProxyLogLevel(int logLevel);
+
+        /**
+         * Sets the log level specifically just for the JMX monitor members,
+         * this setting if used takes precedence over the general setLogLevel.
+         *
+         * @param logLevel Log level (standard Coherence: 0-9).
+         * @return builder.
+         * @since 2.15
+         */
+        Builder setJmxMonitorLogLevel(int logLevel);
+
+        /**
          * Sets the custom configured member's role name.
          *
          * @param roleName Role name.

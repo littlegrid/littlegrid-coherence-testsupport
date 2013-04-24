@@ -138,6 +138,11 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     private static final String LOG_DESTINATION_KEY = "LogDestination";
 
     private static final String LOG_LEVEL_KEY = "LogLevel";
+    private static final String CLIENT_LOG_LEVEL_KEY = "ClientLogLevel";
+    private static final String STORAGE_ENABLED_LOG_LEVEL_KEY = "StorageEnabledLogLevel";
+    private static final String EXTEND_PROXY_LOG_LEVEL_KEY = "ExtendProxyLogLevel";
+    private static final String JMX_MONITOR_LOG_LEVEL_KEY = "JmxMonitorLogLevel";
+
     private static final String JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "JarsToExcludeFromClassPath";
 
     private static final String CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "CoreJarsToExcludeFromClassPath";
@@ -331,7 +336,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
-        ClusterMemberGroup memberGroup = getClusterMemberGroupInstance(this.toString());
+        ClusterMemberGroup memberGroup = getClusterMemberGroupInstance(this.hashCode());
 
         final Properties systemProperties;
 
@@ -892,6 +897,46 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
+    public Builder setClientLogLevel(final int logLevel) {
+        setBuilderValue(CLIENT_LOG_LEVEL_KEY, logLevel);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setStorageEnabledLogLevel(final int logLevel) {
+        setBuilderValue(STORAGE_ENABLED_LOG_LEVEL_KEY, logLevel);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setExtendProxyLogLevel(final int logLevel) {
+        setBuilderValue(EXTEND_PROXY_LOG_LEVEL_KEY, logLevel);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setJmxMonitorLogLevel(final int logLevel) {
+        setBuilderValue(JMX_MONITOR_LOG_LEVEL_KEY, logLevel);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Builder setCustomConfiguredRoleName(final String roleName) {
         setBuilderValue(CUSTOM_CONFIGURED_ROLE_NAME_KEY, roleName);
 
@@ -1266,14 +1311,22 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, true);
 
-        final String storageEnabledCacheConfigurationKey = STORAGE_ENABLED_CACHE_CONFIGURATION_KEY;
-        final String storageEnabledCacheConfiguration =
-                getBuilderValueAsString(storageEnabledCacheConfigurationKey);
+        final String cacheConfigurationKey = STORAGE_ENABLED_CACHE_CONFIGURATION_KEY;
+        final String cacheConfiguration = getBuilderValueAsString(cacheConfigurationKey);
 
-        if (stringHasValue(storageEnabledCacheConfiguration)) {
-            setPropertyUsingNameMappingAndBuilderValue(properties, storageEnabledCacheConfigurationKey);
+        if (stringHasValue(cacheConfiguration)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, cacheConfigurationKey);
         } else {
             setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+        }
+
+        final String logLevelKey = STORAGE_ENABLED_LOG_LEVEL_KEY;
+        final String storageEnabledLogLevel = getBuilderValueAsString(logLevelKey);
+
+        if (stringHasValue(storageEnabledLogLevel)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, logLevelKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
         }
 
         setPropertyUsingNameMappingAndBuilderValue(properties, OVERRIDE_CONFIGURATION_KEY);
@@ -1295,14 +1348,22 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
 
-        final String jmxMonitorCacheConfigurationKey = JMX_MONITOR_CACHE_CONFIGURATION_KEY;
-        final String jmxMonitorCacheConfiguration =
-                getBuilderValueAsString(jmxMonitorCacheConfigurationKey);
+        final String cacheConfigurationKey = JMX_MONITOR_CACHE_CONFIGURATION_KEY;
+        final String cacheConfiguration = getBuilderValueAsString(cacheConfigurationKey);
 
-        if (stringHasValue(jmxMonitorCacheConfiguration)) {
-            setPropertyUsingNameMappingAndBuilderValue(properties, jmxMonitorCacheConfigurationKey);
+        if (stringHasValue(cacheConfiguration)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, cacheConfigurationKey);
         } else {
             setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+        }
+
+        final String logLevelKey = JMX_MONITOR_LOG_LEVEL_KEY;
+        final String logLevel = getBuilderValueAsString(logLevelKey);
+
+        if (stringHasValue(logLevel)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, logLevelKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
         }
 
         setPropertyUsingNameMappingAndBuilderValue(properties, OVERRIDE_CONFIGURATION_KEY);
@@ -1359,14 +1420,22 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
 
-        final String extendProxyCacheConfigurationKey = EXTEND_PROXY_CACHE_CONFIGURATION_KEY;
-        final String extendProxyCacheConfiguration =
-                getBuilderValueAsString(extendProxyCacheConfigurationKey);
+        final String cacheConfigurationKey = EXTEND_PROXY_CACHE_CONFIGURATION_KEY;
+        final String cacheConfiguration = getBuilderValueAsString(cacheConfigurationKey);
 
-        if (stringHasValue(extendProxyCacheConfiguration)) {
-            setPropertyUsingNameMappingAndBuilderValue(properties, extendProxyCacheConfigurationKey);
+        if (stringHasValue(cacheConfiguration)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, cacheConfigurationKey);
         } else {
             setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
+        }
+
+        final String logLevelKey = EXTEND_PROXY_LOG_LEVEL_KEY;
+        final String logLevel = getBuilderValueAsString(logLevelKey);
+
+        if (stringHasValue(logLevel)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, logLevelKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
         }
 
         setPropertyUsingNameMappingAndBuilderValue(properties, OVERRIDE_CONFIGURATION_KEY);
@@ -1424,6 +1493,15 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             setPropertyUsingNameMappingAndBuilderValue(properties, CLIENT_OVERRIDE_CONFIGURATION_KEY);
         } else {
             setPropertyUsingNameMappingAndBuilderValue(properties, OVERRIDE_CONFIGURATION_KEY);
+        }
+
+        final String logLevelKey = CLIENT_LOG_LEVEL_KEY;
+        final String logLevel = getBuilderValueAsString(logLevelKey);
+
+        if (stringHasValue(logLevel)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, logLevelKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
         }
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
@@ -1508,6 +1586,15 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             setPropertyUsingNameMappingAndBuilderValue(properties, CLIENT_OVERRIDE_CONFIGURATION_KEY);
         }
 
+        final String logLevelKey = CLIENT_LOG_LEVEL_KEY;
+        final String logLevel = getBuilderValueAsString(logLevelKey);
+
+        if (stringHasValue(logLevel)) {
+            setPropertyUsingNameMappingAndBuilderValue(properties, logLevelKey);
+        } else {
+            setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
+        }
+
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
         setPropertyUsingNameMappingAndSuppliedValue(properties, TCMP_ENABLED_KEY, false);
         setPropertyUsingNameMappingAndBuilderValue(properties, EXTEND_CLIENT_ROLE_NAME_KEY);
@@ -1517,7 +1604,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         setPropertyUsingNameMappingAndBuilderValue(properties, EXTEND_PORT_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, LOG_DESTINATION_KEY);
-        setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
 
         properties.putAll(additionalSystemProperties);
 
@@ -1609,7 +1695,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         ReusableClusterMemberGroup getClusterMemberGroup(final Object key) {
             final ReusableClusterMemberGroup memberGroup = reusableClusterMemberGroupMap.get(key);
 
-            LOGGER.info("Member group get: " + memberGroup);
+            LOGGER.info(format("Member group get: %s for key: '%s'", memberGroup, key));
 
             return memberGroup;
         }
@@ -1617,6 +1703,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         void registerClusterMemberGroup(final Object key,
                                         final ReusableClusterMemberGroup clusterMemberGroup) {
 
+            LOGGER.info(format("Member group registered for key: '%s'", key));
             reusableClusterMemberGroupMap.put(key, clusterMemberGroup);
         }
     }

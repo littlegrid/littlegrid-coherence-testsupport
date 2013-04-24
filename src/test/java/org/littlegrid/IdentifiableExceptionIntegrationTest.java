@@ -60,38 +60,4 @@ public class IdentifiableExceptionIntegrationTest
             assertThat(identifiableException.getReasonEnum(), is(CHECK_CHILD_FIRST_CLASS_PATH_IN_USE));
         }
     }
-
-    @Test
-    @Ignore
-    public void exceptionDueToNoAutoStartedServicesThisTestIsForCoherence371AndAbove() {
-        try {
-            memberGroup = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(1)
-                    .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-autostart.xml")
-                    .buildAndConfigureForStorageDisabledClient();
-
-            fail("Note: this test is for Coherence 3.7.1.x and above - it will fail with older versions");
-        } catch (ClusterMemberGroupBuildException e) {
-            final IdentifiableException identifiableException = (IdentifiableException) e.getCause();
-
-            assertThat(identifiableException.getReasonEnum(), is(SUSPECTED_AUTOSTART_EXCEPTION));
-        }
-    }
-
-    @Test
-    @Ignore
-    public void exceptionDueToJoinTimeoutMillisTooSmall() {
-        try {
-            memberGroup = ClusterMemberGroupUtils.newBuilder()
-                    .setStorageEnabledCount(1)
-                    .setFastStartJoinTimeoutMilliseconds(1)
-                    .buildAndConfigureForStorageDisabledClient();
-
-            fail("Note: this test is for Coherence 3.7.1.x and above - it will fail with older versions");
-        } catch (ClusterMemberGroupBuildException e) {
-            final IdentifiableException identifiableException = (IdentifiableException) e.getCause();
-
-            assertThat(identifiableException.getReasonEnum(), is(JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL));
-        }
-    }
 }
