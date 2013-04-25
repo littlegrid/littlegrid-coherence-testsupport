@@ -39,15 +39,17 @@ import static java.lang.String.format;
 import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.ReusableClusterMemberGroup;
 
 /**
- * Counting usage local process cluster member group implementation, performs its
+ * Usage counting local process cluster member group implementation, performs its
  * shutdown all only once its usage counter is zero.
  */
-public class CountingUsageClusterMemberGroup extends DefaultClusterMemberGroup
+public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
         implements ReusableClusterMemberGroup {
 
-    private static final Logger LOGGER = Logger.getLogger(CountingUsageClusterMemberGroup.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UsageCountingClusterMemberGroup.class.getName());
 
-    private int usageCount = 0;
+    private int currentUsageCount = 0;
+    private int maximumUsageCount = 0;
+    private int reuseUsageCount = 0;
 
     /**
      * Constructor.
@@ -59,7 +61,7 @@ public class CountingUsageClusterMemberGroup extends DefaultClusterMemberGroup
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
      */
-    public CountingUsageClusterMemberGroup(final CallbackHandler callbackHandler,
+    public UsageCountingClusterMemberGroup(final CallbackHandler callbackHandler,
                                            final int sleepAfterStopDuration35x,
                                            final int sleepAfterStopDuration36x,
                                            final int sleepAfterStopDurationDefault,
@@ -76,11 +78,19 @@ public class CountingUsageClusterMemberGroup extends DefaultClusterMemberGroup
      */
     @Override
     ClusterMemberGroup startAll() {
-        usageCount++;
+        if (currentUsageCount > 0) {
+            reuseUsageCount++;
+        }
+
+        currentUsageCount++;
+
+        if (currentUsageCount > maximumUsageCount) {
+            maximumUsageCount = currentUsageCount;
+        }
 
         super.startAll();
 
-        LOGGER.info(format("Start all invoked - current usage count is now: %d for '%s'", usageCount, this));
+        LOGGER.info(format("Start all invoked - current usage count is now: %d for '%s'", currentUsageCount, this));
 
         return this;
     }
@@ -90,16 +100,43 @@ public class CountingUsageClusterMemberGroup extends DefaultClusterMemberGroup
      */
     @Override
     public ClusterMemberGroup shutdownAll() {
-        usageCount--;
+        currentUsageCount--;
 
-        LOGGER.info(format("Shutdown all invoked - current usage count is now: %d for '%s'", usageCount, this));
+        LOGGER.info(format("Shutdown all invoked - current usage count is now: %d for '%s'", currentUsageCount, this));
 
-        if (usageCount == 0) {
+        if (currentUsageCount == 0) {
             super.shutdownAll();
         } else {
             LOGGER.info("Deferring shutdown");
         }
 
         return this;
+    }
+
+    /**
+     * Returns the current usage counter value.
+     *
+     * @return current count.
+     */
+    public int getCount() {
+        return currentUsageCount;
+    }
+
+    /**
+     * Returns the highest usage counter value.
+     *
+     * @return maximum count.
+     */
+    public int getMaximumCount() {
+        return maximumUsageCount;
+    }
+
+    /**
+     * Returns the total number of times the instance has been used.
+     *
+     * @return reuse count.
+     */
+    public int getReuseCount() {
+        return reuseUsageCount;
     }
 }

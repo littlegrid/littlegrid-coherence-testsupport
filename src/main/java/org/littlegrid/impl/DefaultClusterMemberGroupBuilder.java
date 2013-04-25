@@ -336,7 +336,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     @Override
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
-        ClusterMemberGroup memberGroup = getClusterMemberGroupInstance(this.hashCode());
+        ClusterMemberGroup memberGroup = getClusterMemberGroupInstance(this);
 
         final Properties systemProperties;
 
@@ -368,7 +368,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         return memberGroup;
     }
 
-    private ClusterMemberGroup getClusterMemberGroupInstance(final Object clusterMemberGroupKey) {
+    private ClusterMemberGroup getClusterMemberGroupInstance(final Builder builder) {
         final Registry registry = Registry.getInstance();
 
         try {
@@ -378,7 +378,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             if (ReusableClusterMemberGroup.class.isAssignableFrom(clusterMemberGroupClass)) {
                 // It is re-usable
                 ReusableClusterMemberGroup reusableMemberGroup =
-                        registry.getClusterMemberGroup(clusterMemberGroupKey);
+                        registry.getClusterMemberGroup(builder);
 
                 if (reusableMemberGroup == null) {
                     // Whilst it is re-usable no instance already exists - create one
@@ -386,7 +386,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
                     reusableMemberGroup = (ReusableClusterMemberGroup) buildClusterMembers(clusterMemberGroupClass);
 
-                    registry.registerClusterMemberGroup(clusterMemberGroupKey, reusableMemberGroup);
+                    registry.registerClusterMemberGroup(builder, reusableMemberGroup);
                 } else {
                     // An existing re-usable instance has been found, check if it has been shutdown
 
@@ -397,7 +397,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                         reusableMemberGroup = (ReusableClusterMemberGroup)
                                 buildClusterMembers(clusterMemberGroupClass);
 
-                        registry.registerClusterMemberGroup(clusterMemberGroupKey, reusableMemberGroup);
+                        registry.registerClusterMemberGroup(builder, reusableMemberGroup);
                     }
                 }
 
@@ -1551,7 +1551,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         if (fastStartJoinTimeout > 0 && (overrideConfiguration == null
                 || overrideConfiguration.trim().length() == 0)) {
 
-            LOGGER.warning("Fast-start join timeout specified.  Note: the fast-runMain Coherence override file will "
+            LOGGER.warning("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
                     + "now be configured to be used");
 
             setBuilderValue(OVERRIDE_CONFIGURATION_KEY, FAST_START_OVERRIDE_CONFIGURATION_FILENAME);
@@ -1692,7 +1692,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             return INSTANCE;
         }
 
-        ReusableClusterMemberGroup getClusterMemberGroup(final Object key) {
+        ReusableClusterMemberGroup getClusterMemberGroup(final Builder builder) {
+            final Object key = getKey(builder);
             final ReusableClusterMemberGroup memberGroup = reusableClusterMemberGroupMap.get(key);
 
             LOGGER.info(format("Member group get: %s for key: '%s'", memberGroup, key));
@@ -1700,11 +1701,17 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             return memberGroup;
         }
 
-        void registerClusterMemberGroup(final Object key,
+        void registerClusterMemberGroup(final Builder builder,
                                         final ReusableClusterMemberGroup clusterMemberGroup) {
+
+            final Object key = getKey(builder);
 
             LOGGER.info(format("Member group registered for key: '%s'", key));
             reusableClusterMemberGroupMap.put(key, clusterMemberGroup);
+        }
+
+        private Object getKey(Builder builder) {
+            return builder.toString();
         }
     }
 }

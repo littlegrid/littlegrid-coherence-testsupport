@@ -639,15 +639,17 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void registryGetWhenEntryDoesNotExist() {
         final Registry registry = getRegistryAndClearContents();
 
-        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         assertThat(registry.reusableClusterMemberGroupMap.size(), is(0));
-        assertThat(registry.getClusterMemberGroup(key), nullValue());
+        assertThat(registry.getClusterMemberGroup(builder), nullValue());
     }
 
     private Registry getRegistryAndClearContents() {
         final Registry registry = Registry.getInstance();
+
         registry.reusableClusterMemberGroupMap.clear();
+
         return registry;
     }
 
@@ -655,47 +657,51 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void registryGetWhenEntryDoesExist() {
         final Registry registry = getRegistryAndClearContents();
 
-        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
-        registry.reusableClusterMemberGroupMap.put(key, getClusterMemberGroup());
+        registry.registerClusterMemberGroup(builder, getClusterMemberGroup());
 
         assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
-        assertThat(registry.getClusterMemberGroup(key), notNullValue());
+        assertThat(registry.getClusterMemberGroup(builder), notNullValue());
     }
 
     @Test
     public void registryRegisterWhenEntryDoesNotExist() {
         final Registry registry = getRegistryAndClearContents();
 
-        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
+        final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
-        registry.registerClusterMemberGroup(key, getClusterMemberGroup());
+        registry.registerClusterMemberGroup(builder, getClusterMemberGroup());
         assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
-        assertThat(registry.getClusterMemberGroup(key), notNullValue());
+        assertThat(registry.getClusterMemberGroup(builder), notNullValue());
     }
 
     @Test
     public void registryRegisterWhenEntryDoesExist() {
         final Registry registry = getRegistryAndClearContents();
 
-        final Object key = ClusterMemberGroupUtils.newBuilder().toString();
-
         {
+            final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
             final ReusableClusterMemberGroup memberGroup = getClusterMemberGroup();
 
-            registry.registerClusterMemberGroup(key, memberGroup);
+            registry.registerClusterMemberGroup(builder, memberGroup);
+
             assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
-            assertThat(registry.getClusterMemberGroup(key), notNullValue());
-            assertThat(registry.getClusterMemberGroup(key), is(memberGroup));
+            assertThat(registry.getClusterMemberGroup(builder), notNullValue());
+            assertThat(registry.getClusterMemberGroup(builder), is(memberGroup));
         }
 
         {
+            final Builder builder = ClusterMemberGroupUtils.newBuilder();
+
             final ReusableClusterMemberGroup memberGroup = getClusterMemberGroup();
 
-            registry.registerClusterMemberGroup(key, memberGroup);
+            registry.registerClusterMemberGroup(builder, memberGroup);
+
             assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
-            assertThat(registry.getClusterMemberGroup(key), notNullValue());
-            assertThat(registry.getClusterMemberGroup(key), is(memberGroup));
+            assertThat(registry.getClusterMemberGroup(builder), notNullValue());
+            assertThat(registry.getClusterMemberGroup(builder), is(memberGroup));
         }
     }
 
