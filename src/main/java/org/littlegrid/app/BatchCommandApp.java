@@ -39,21 +39,15 @@ import java.io.InputStream;
 import java.net.URL;
 
 import static java.lang.String.format;
+import static org.littlegrid.app.CommandDslShell.Response;
 
 /**
  * Batch command execution application.
  *
  * @since 2.15
  */
-public class CommandBatchApp {
+public class BatchCommandApp {
     private static final String COMMAND_FILE_ARGUMENT = "commandFile=";
-
-    /**
-     * Default scope to enable test coverage.
-     */
-    CommandBatchApp() {
-        throw new UnsupportedOperationException();
-    }
 
     /**
      * Launches the application.
@@ -64,13 +58,20 @@ public class CommandBatchApp {
     public static void main(final String[] args)
             throws IOException {
 
+        new BatchCommandApp().start(args);
+    }
+
+    Response start(final String[] args)
+            throws IOException {
+
         final String commandFile = parseCommandFile(args);
         final InputStream in;
 
         if (commandFile.trim().length() == 0) {
+            // No command file specified
             in = System.in;
         } else {
-            final URL url = Resources.findFileOrResource(commandFile, CommandBatchApp.class.getClassLoader());
+            final URL url = Resources.findFileOrResource(commandFile, BatchCommandApp.class.getClassLoader());
 
             if (url == null) {
                 throw new FileNotFoundException(format("'%s' not found", commandFile));
@@ -79,8 +80,7 @@ public class CommandBatchApp {
             in = url.openStream();
         }
 
-        final CommandDslShell shell = new CommandDslShell(in, System.out);
-        shell.start(args);
+        return new CommandDslShell(in, System.out).start(args);
     }
 
     private static String parseCommandFile(final String[] args) {

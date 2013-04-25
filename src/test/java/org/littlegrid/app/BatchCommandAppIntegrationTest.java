@@ -36,20 +36,48 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.littlegrid.app.CommandDslShell.Response;
+
 /**
- * Command batch application integration tests.
+ * Batch command application integration tests.
  */
-public class CommandBatchAppIntegrationTest {
-    @Test(expected = UnsupportedOperationException.class)
-    public void construct() {
-        new CommandBatchApp();
+public class BatchCommandAppIntegrationTest {
+    @Test
+    public void startCommandFileCommandsOnly()
+            throws IOException {
+
+        final Response response = new BatchCommandApp()
+                .start(new String[]{"commandFile=command-file.txt"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(1));
+        assertThat(response.isExitRequested(), is(true));
     }
+
+    @Test
+    public void startCommandsAndCommandFile()
+            throws IOException {
+
+        final Response response = new BatchCommandApp()
+                .start(new String[]{"commands=stop member 1; # about to process file", "commandFile=command-file.txt"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(2));
+        assertThat(response.isExitRequested(), is(true));
+    }
+
 
     @Test
     public void runMainWithCommandsArgumentOnly()
             throws IOException {
 
-        CommandBatchApp.main(new String[]{
+        BatchCommandApp.main(new String[]{
                 "some-string-before",
                 "commands=start storage enabled; start jmx monitor; # ; bye",
                 "some-string-after"
@@ -60,7 +88,7 @@ public class CommandBatchAppIntegrationTest {
     public void runMainWithCommandFileAndNoCommandsArgument()
             throws IOException {
 
-        CommandBatchApp.main(new String[]{
+        BatchCommandApp.main(new String[]{
                 "some-string-before",
                 "commandFile=command-file.txt",
                 "some-string-after"
@@ -71,13 +99,13 @@ public class CommandBatchAppIntegrationTest {
     public void runMainWithCommandsArgumentAndCommandFile()
             throws IOException {
 
-        CommandBatchApp.main(new String[]{"commands=members", "commandFile=command-file.txt"});
+        BatchCommandApp.main(new String[]{"commands=members", "commandFile=command-file.txt"});
     }
 
     @Test(expected = FileNotFoundException.class)
     public void runMainWithCommandFileThatDoesNotExist()
             throws IOException {
 
-        CommandBatchApp.main(new String[]{"commandFile=file-that-does-not-exist.xml"});
+        BatchCommandApp.main(new String[]{"commandFile=file-that-does-not-exist.xml"});
     }
 }

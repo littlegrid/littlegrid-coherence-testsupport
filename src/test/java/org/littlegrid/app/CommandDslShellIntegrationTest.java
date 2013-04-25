@@ -58,6 +58,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -69,6 +70,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -80,6 +82,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -91,6 +94,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -102,6 +106,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -113,6 +118,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -124,6 +130,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -135,6 +142,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -146,6 +154,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -157,6 +166,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(1));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -168,6 +178,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(1));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -179,6 +190,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -196,6 +208,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -207,6 +220,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(1));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -218,6 +232,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(1));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -229,6 +244,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -240,6 +256,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -251,6 +268,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -262,6 +280,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -273,17 +292,19 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
     @Test
     public void comment() {
         final Response response = new CommandDslShell(System.in, System.out)
-                .start(new String[]{"commands=# comment; bye"});
+                .start(new String[]{"commands=# comment; # this is another comment; bye"});
 
-        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getValidCommandsExecuted(), is(1));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(2));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -295,6 +316,7 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getValidCommandsExecuted(), is(2));
         assertThat(response.getInvalidCommandsExecuted(), is(0));
         assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
 
@@ -317,6 +339,7 @@ public class CommandDslShellIntegrationTest {
             }
 
             assertThat(response.getUnknownCommandsExecuted(), is(0));
+            assertThat(response.getCommentCommandsExecuted(), is(0));
             assertThat(response.isExitRequested(), is(true));
         } finally {
             System.setIn(originalInput);
@@ -336,6 +359,7 @@ public class CommandDslShellIntegrationTest {
             assertThat(response.getValidCommandsExecuted(), is(2));
             assertThat(response.getInvalidCommandsExecuted(), is(0));
             assertThat(response.getUnknownCommandsExecuted(), is(0));
+            assertThat(response.getCommentCommandsExecuted(), is(0));
             assertThat(response.isExitRequested(), is(true));
         } finally {
             System.setIn(originalInput);

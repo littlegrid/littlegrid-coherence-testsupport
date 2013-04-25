@@ -45,15 +45,18 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
 /**
- * Command DSL shell - purposely reduced scope to keep visible 'surface-area' small.
+ * Command DSL shell - purposely reduced scope to keep visible 'surface-area' small for
+ * now.
  *
  * @since 2.15
  */
 class CommandDslShell {
+    private static final Logger LOGGER = Logger.getLogger(CommandDslShell.class.getName());
     private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 750;
 
     private static final String COMMANDS_ARGUMENT = "commands=";
@@ -107,19 +110,24 @@ class CommandDslShell {
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .buildAndConfigure();
 
+        final Response totalResponse = new Response();
         final String commands = parseCommandsString(args);
-        final Response response = processCommandsString(memberGroup, commands);
+        final Response commandStringResponse = processCommandsString(memberGroup, commands);
+        totalResponse.merge(commandStringResponse);
 
-        if (!response.isExitRequested()) {
+        if (!commandStringResponse.isExitRequested()) {
             final Scanner scanner = new Scanner(in);
 
-            processCommandsStream(memberGroup, scanner);
+            final Response commandStreamResponse = processCommandsStream(memberGroup, scanner);
+            totalResponse.merge(commandStreamResponse);
         }
 
+        LOGGER.info(format("Processed: %s", totalResponse));
         System.out.println("Exiting");
+
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
 
-        return response;
+        return totalResponse;
     }
 
     private String parseCommandsString(final String[] args) {
@@ -211,12 +219,12 @@ class CommandDslShell {
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(BYE_COMMAND) || command.equals(QUIT_COMMAND)) {
-                    response.exitRequested();
+                    response.requestExit();
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(COMMENT_COMMAND)) {
                     out.println(command);
-                    response.incrementValidCommandsExecuted();
+                    response.incrementCommentCommandsExecuted();
 
                 } else if (command.equals(CONSOLE_COMMAND)) {
                     console();
@@ -259,7 +267,7 @@ class CommandDslShell {
 
         final long sleepTime = dateToWaitUntil.getTimeInMillis() - now.getTime();
 
-        out.println(format("Current time %s, now about to sleep for %d milliseconds (%s)",
+        out.println(format("Current time %s, now about to sleep for %d milliseconds - which is: %s",
                 now, sleepTime, dateToWaitUntil.getTime()));
 
         TimeUnit.MILLISECONDS.sleep(sleepTime);
@@ -461,52 +469,128 @@ class CommandDslShell {
         return numbers;
     }
 
+    /**
+     * Response object.
+     *
+     * @since 2.15
+     */
     public static class Response {
         private int validCommandsExecuted;
         private int invalidCommandsExecuted;
         private int unknownCommandsExecuted;
+        private int commentCommandsExecuted;
         private boolean exitRequested;
 
+        /**
+         * Increments the number of valid commands executed.
+         */
         public void incrementValidCommandsExecuted() {
             validCommandsExecuted++;
         }
 
+        /**
+         * Increments the number of invalid commands executed.
+         */
         public void incrementInvalidCommandsExecuted() {
             invalidCommandsExecuted++;
         }
 
+        /**
+         * Increments the number of unknown commands executed.
+         */
         public void incrementUnknownCommandsExecuted() {
             unknownCommandsExecuted++;
         }
 
-        public void exitRequested() {
+        /**
+         * Increments the number of unknown commands executed.
+         */
+        public void incrementCommentCommandsExecuted() {
+            commentCommandsExecuted++;
+        }
+
+        /**
+         * Indicates that exit is being requested.
+         */
+        public void requestExit() {
             exitRequested = true;
         }
 
+        /**
+         * Number of valid commands executed.
+         *
+         * @return number of valid commands executed.
+         */
         public int getValidCommandsExecuted() {
             return validCommandsExecuted;
         }
 
+        /**
+         * Number of invalid commands executed, these are commands where the instruction
+         * has been recognised, but the syntax is incorrect, for instance a string is
+         * provided instead of an expected number argument.
+         *
+         * @return number of invalid commands executed.
+         */
         public int getInvalidCommandsExecuted() {
             return invalidCommandsExecuted;
         }
 
+        /**
+         * Number of unknown commands executed, these are commands where the instruction
+         * has not been recognised and is not one of the supported commands.
+         *
+         * @return number of unknown commands executed.
+         */
         public int getUnknownCommandsExecuted() {
             return unknownCommandsExecuted;
         }
 
+        /**
+         * Number of comments executed.
+         *
+         * @return number of comments executed.
+         */
+        public int getCommentCommandsExecuted() {
+            return commentCommandsExecuted;
+        }
+
+        /**
+         * Has exit been requested, this is where one of the instructions to quit
+         * has been specified and the shell should exit.
+         *
+         * @return true if exit requested.
+         */
         public boolean isExitRequested() {
             return exitRequested;
         }
 
-        public void merge(final Response response) {
-            validCommandsExecuted += response.validCommandsExecuted;
-            invalidCommandsExecuted += response.invalidCommandsExecuted;
-            unknownCommandsExecuted += response.unknownCommandsExecuted;
+        /**
+         * Merges another response with this response to combine the totals commands
+         * executed.
+         *
+         * @param otherResponse other response.
+         */
+        public void merge(final Response otherResponse) {
+            validCommandsExecuted += otherResponse.validCommandsExecuted;
+            invalidCommandsExecuted += otherResponse.invalidCommandsExecuted;
+            unknownCommandsExecuted += otherResponse.unknownCommandsExecuted;
+            commentCommandsExecuted += otherResponse.commentCommandsExecuted;
 
-            if (response.isExitRequested()) {
-                exitRequested();
+            if (otherResponse.isExitRequested()) {
+                exitRequested = true;
             }
+        }
+
+        /**
+         * String representation of this object.
+         *
+         * @return string.
+         */
+        public String toString() {
+            return format("Commands executed - valid: %d, invalid: %d, unknown: %d, comments: %d, exit: %s",
+                    validCommandsExecuted, invalidCommandsExecuted, unknownCommandsExecuted, commentCommandsExecuted,
+                    exitRequested);
         }
     }
 }
