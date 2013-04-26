@@ -122,7 +122,7 @@ class CommandDslShell {
             totalResponse.merge(commandStreamResponse);
         }
 
-        LOGGER.info(format("Processed: %s", totalResponse));
+        LOGGER.info(totalResponse.toString());
         System.out.println("Exiting");
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);

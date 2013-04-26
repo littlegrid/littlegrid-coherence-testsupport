@@ -37,6 +37,7 @@ import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.Builder;
+import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
  * Cluster member group utilities, used for the creation of {@link ClusterMemberGroup.Builder}
@@ -98,8 +99,27 @@ public final class ClusterMemberGroupUtils {
      * @param memberGroups Member groups.
      */
     public static void shutdownCacheFactoryThenClusterMemberGroups(final ClusterMemberGroup... memberGroups) {
+        boolean shutdownCacheFactory = true;
+
+        for (final ClusterMemberGroup memberGroup : memberGroups) {
+            if (memberGroup instanceof ReusableClusterMemberGroup) {
+                final ReusableClusterMemberGroup reusableMemberGroup = (ReusableClusterMemberGroup) memberGroup;
+
+                if (!reusableMemberGroup.isAllShutdown() && reusableMemberGroup.getCurrentUsageCount() > 1) {
+                    shutdownCacheFactory = false;
+
+                    break;
+                }
+            }
+        }
+
         try {
-            CacheFactory.shutdown();
+            if (shutdownCacheFactory) {
+                System.out.println("About to shutdown cache factory");
+                CacheFactory.shutdown();
+            } else {
+                System.out.println("Deferring shutdown as reusable cluster member group is being used");
+            }
         } finally {
             shutdownClusterMemberGroups(memberGroups);
         }

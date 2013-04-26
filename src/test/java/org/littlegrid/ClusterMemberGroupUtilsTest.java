@@ -31,7 +31,10 @@
 
 package org.littlegrid;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.impl.DefaultCallbackHandler;
+import org.littlegrid.impl.UsageCountingClusterMemberGroup;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -76,6 +79,24 @@ public class ClusterMemberGroupUtilsTest {
         assertThat(StubExceptionThrowingClusterMemberGroup.getShutdownAllInvokedCounter(), is(memberGroups.length));
     }
 
+    @Test
+    public void shutdownMemberGroupWhenActiveReusableMemberIsNotShutdown() {
+
+    }
+
+    @Test
+    @Ignore
+    public void shutdownMemberGroupWhenActiveReusableMemberIsShutdown() {
+        ClusterMemberGroup.ReusableClusterMemberGroup memberGroup =
+                new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
+
+        memberGroup.shutdownAll();
+
+        assertThat(memberGroup.isAllShutdown(), is(true));
+
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
     public static class StubExceptionThrowingClusterMemberGroup implements ClusterMemberGroup {
         private static int shutdownAllInvokedCounter;
 
@@ -92,7 +113,7 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
-        public boolean isRunning() {
+        public boolean isAllShutdown() {
             throw new UnsupportedOperationException();
         }
 

@@ -32,7 +32,6 @@
 package org.littlegrid.impl;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -50,11 +49,17 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
  */
 public class UsageCountingClusterMemberGroupIntegrationTest {
     private static ClusterMemberGroup testClassMemberGroup;
-    private static ClusterMemberGroup testMemberGroup;
+    private static int testInvokedCounter;
+
+    private ClusterMemberGroup testMemberGroup;
 
     @BeforeClass
     public static void beforeTests() {
         testClassMemberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setFastStartJoinTimeoutMilliseconds(100)
+                .setStorageEnabledCount(1)
+                .setLogLevel(0)
+                .setOverrideConfiguration("littlegrid/littlegrid-fast-start-coherence-override.xml")
                 .setClusterMemberGroupInstanceClassName(UsageCountingClusterMemberGroup.class.getName())
                 .buildAndConfigureForStorageDisabledClient();
     }
@@ -63,24 +68,35 @@ public class UsageCountingClusterMemberGroupIntegrationTest {
     public static void afterTests() {
         final UsageCountingClusterMemberGroup instance = (UsageCountingClusterMemberGroup) testClassMemberGroup;
 
-        assertThat(instance.getCount(), is(1));
-        assertThat(instance.getMaximumCount(), is(2));
-        assertThat(instance.getReuseCount(), is(4));
+        assertThat(instance.getCurrentUsageCount(), is(1));
+        assertThat(instance.getPeakUsageCount(), is(2));
+        assertThat(instance.getTotalUsageCount(), is(testInvokedCounter + 1)); // Number of tests + the BeforeClass
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(testClassMemberGroup);
+
+        assertThat(instance.isAllShutdown(), is(true));
     }
 
     @Before
     public void beforeTest() {
         testMemberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setClusterMemberGroupInstanceClassName(UsageCountingClusterMemberGroup.class.getName())
+                .setStorageEnabledCount(1)
+                .setLogLevel(0)
+                .setFastStartJoinTimeoutMilliseconds(100)
+                .setOverrideConfiguration("littlegrid/littlegrid-fast-start-coherence-override.xml")
                 .buildAndConfigureForStorageDisabledClient();
 
-//        CacheFactory.getCache(KNOWN_TEST_CACHE);
+        CacheFactory.getCache(KNOWN_TEST_CACHE);
+
+        testInvokedCounter++;
     }
 
     @After
     public void afterTest() {
+        final UsageCountingClusterMemberGroup instance = (UsageCountingClusterMemberGroup) testMemberGroup;
+        assertThat(instance.getCurrentUsageCount(), is(2));
+
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(testMemberGroup);
     }
 

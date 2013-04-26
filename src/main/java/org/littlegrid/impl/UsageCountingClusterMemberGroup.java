@@ -36,7 +36,7 @@ import org.littlegrid.ClusterMemberGroup;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.ReusableClusterMemberGroup;
+import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
  * Usage counting local process cluster member group implementation, performs its
@@ -48,8 +48,8 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
     private static final Logger LOGGER = Logger.getLogger(UsageCountingClusterMemberGroup.class.getName());
 
     private int currentUsageCount = 0;
-    private int maximumUsageCount = 0;
-    private int reuseUsageCount = 0;
+    private int peakUsageCount = 0;
+    private int totalUsageCount = 0;
 
     /**
      * Constructor.
@@ -78,14 +78,12 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
      */
     @Override
     ClusterMemberGroup startAll() {
-        if (currentUsageCount > 0) {
-            reuseUsageCount++;
-        }
+        totalUsageCount++;
 
         currentUsageCount++;
 
-        if (currentUsageCount > maximumUsageCount) {
-            maximumUsageCount = currentUsageCount;
+        if (currentUsageCount > peakUsageCount) {
+            peakUsageCount = currentUsageCount;
         }
 
         super.startAll();
@@ -118,17 +116,18 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
      *
      * @return current count.
      */
-    public int getCount() {
+    @Override
+    public int getCurrentUsageCount() {
         return currentUsageCount;
     }
 
     /**
-     * Returns the highest usage counter value.
+     * Returns the highest peak usage counter value.
      *
      * @return maximum count.
      */
-    public int getMaximumCount() {
-        return maximumUsageCount;
+    public int getPeakUsageCount() {
+        return peakUsageCount;
     }
 
     /**
@@ -136,7 +135,7 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
      *
      * @return reuse count.
      */
-    public int getReuseCount() {
-        return reuseUsageCount;
+    public int getTotalUsageCount() {
+        return totalUsageCount;
     }
 }

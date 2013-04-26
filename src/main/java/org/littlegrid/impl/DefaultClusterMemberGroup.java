@@ -115,6 +115,10 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public int merge(final ClusterMemberGroup otherMemberGroup) {
+        if (shutdownAllInvoked) {
+            throw new UnsupportedOperationException("Shutdown all has been called");
+        }
+
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) otherMemberGroup;
 
         LOGGER.info(format("About to merge - current members started: %s, members started to merge in: %s",
@@ -490,8 +494,8 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
-    public boolean isRunning() {
-        return !shutdownAllInvoked;
+    public boolean isAllShutdown() {
+        return shutdownAllInvoked;
     }
 
     /**

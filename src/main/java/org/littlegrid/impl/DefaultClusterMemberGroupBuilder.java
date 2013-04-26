@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +58,7 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
 import static org.littlegrid.ClusterMemberGroup.Builder;
+import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
  * Default cluster member group builder implementation.
@@ -390,7 +392,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 } else {
                     // An existing re-usable instance has been found, check if it has been shutdown
 
-                    if (!reusableMemberGroup.isRunning()) {
+                    if (reusableMemberGroup.isAllShutdown()) {
                         // Whilst it is re-usable and an instance exists, it has been shutdown
                         // and so can't be used.  Build a new one and register it for later re-use
 
@@ -1301,6 +1303,48 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+
+        final DefaultClusterMemberGroupBuilder otherBuilder = (DefaultClusterMemberGroupBuilder) other;
+
+        if (!additionalSystemProperties.equals(otherBuilder.additionalSystemProperties)) {
+            return false;
+        }
+
+        if (!builderKeyToSystemPropertyNameMapping.equals(otherBuilder.builderKeyToSystemPropertyNameMapping)) {
+            return false;
+        }
+
+        if (!builderKeysAndValues.equals(otherBuilder.builderKeysAndValues)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int result = builderKeysAndValues.hashCode();
+        result = 31 * result + additionalSystemProperties.hashCode();
+        result = 31 * result + builderKeyToSystemPropertyNameMapping.hashCode();
+
+        return result;
+    }
+
+    /**
      * Returns the system properties that have been configured and will be used for a storage
      * enabled member.
      *
@@ -1665,14 +1709,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     }
 
     /**
-     * Marker interface to denote that the cluster member group may be re-used.
-     *
-     * @since 2.15.
-     */
-    interface ReusableClusterMemberGroup extends ClusterMemberGroup {
-    }
-
-    /**
      * Registry containing registered cluster member groups that can be re-used.
      *
      * @since 2.15
@@ -1711,7 +1747,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         }
 
         private Object getKey(Builder builder) {
-            return builder.toString();
+//            return builder.toString();
+            return builder;
         }
     }
 }

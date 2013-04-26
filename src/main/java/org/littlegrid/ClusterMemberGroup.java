@@ -57,13 +57,13 @@ public interface ClusterMemberGroup {
     ClusterMemberGroup shutdownAll();
 
     /**
-     * Returns <b>true</b> if the cluster member group hasn't had shutdownAll invoked on it.  Once
-     * shutdownAll has been called, then the cluster member group is deemed to be no-longer running.
+     * Returns <b>true</b> if the cluster member group has had shutdownAll invoked on it.  Once
+     * shutdownAll has been called, then the cluster member group is deemed to be all shutdown.
      *
-     * @return true if still running.
+     * @return true if all shutdown.
      * @since 2.15
      */
-    boolean isRunning();
+    boolean isAllShutdown();
 
     /**
      * Stops specific cluster members immediately - this is typically used in-conjunction
@@ -152,6 +152,15 @@ public interface ClusterMemberGroup {
      * @since 2.14
      */
     int getExtendPort();
+
+    /**
+     * Interface to denote that the cluster member group may be re-used.
+     *
+     * @since 2.15.
+     */
+    interface ReusableClusterMemberGroup extends ClusterMemberGroup {
+        int getCurrentUsageCount();
+    }
 
     /**
      * Cluster member interface - implementations of this class need to provide basic functionality,

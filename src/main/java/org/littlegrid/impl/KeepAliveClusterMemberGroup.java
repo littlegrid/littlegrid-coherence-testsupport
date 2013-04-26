@@ -35,7 +35,7 @@ import org.littlegrid.ClusterMemberGroup;
 
 import java.util.logging.Logger;
 
-import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.ReusableClusterMemberGroup;
+import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
  * Keep-alive local process cluster member group implementation that doesn't perform its
@@ -76,5 +76,10 @@ public class KeepAliveClusterMemberGroup extends DefaultClusterMemberGroup
         LOGGER.info("Shutdown all invoked, but will be ignored in order to keep this member group running");
 
         return this;
+    }
+
+    @Override
+    public int getCurrentUsageCount() {
+        throw new UnsupportedOperationException();
     }
 }

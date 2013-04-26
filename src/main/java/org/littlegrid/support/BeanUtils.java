@@ -69,7 +69,6 @@ public final class BeanUtils {
                                   final Properties properties) {
 
         final Map<String, String> methodNameMapping = new HashMap<String, String>();
-
         final Method[] methods = bean.getClass().getDeclaredMethods();
 
         for (final Method method : methods) {
@@ -114,23 +113,26 @@ public final class BeanUtils {
                 // Try invoking with string as parameter
                 ClassHelper.invoke(bean, methodName, new Object[]{value});
             } catch (Exception e) {
-                try {
-                    // Try invoking with an int as a parameter
-                    ClassHelper.invoke(bean, methodName, new Object[]{Integer.parseInt(value)});
-                } catch (Exception e2) {
+                // If there is a value, then try to brute-force it into another parameter type
+                if (value.length() > 0) {
                     try {
-                        // Try invoking with a long as a parameter
-                        ClassHelper.invoke(bean, methodName, new Object[]{Long.parseLong(value)});
-                    } catch (Exception e3) {
+                        // Try invoking with an int as a parameter
+                        ClassHelper.invoke(bean, methodName, new Object[]{Integer.parseInt(value)});
+                    } catch (Exception e2) {
                         try {
-                            // Try invoking with a string array as a parameter
-                            ClassHelper.invoke(bean, methodName, new Object[]{new String[]{value}});
-                        } catch (Exception e4) {
-                            throw new IdentifiableException(
-                                    format("Unable to invoke '%s' to set value to: '%s' due to: %s "
-                                            + "- parameter type not supported",
-                                            methodName, value, e),
-                                    UNABLE_TO_SET_BEAN_PROPERTY);
+                            // Try invoking with a long as a parameter
+                            ClassHelper.invoke(bean, methodName, new Object[]{Long.parseLong(value)});
+                        } catch (Exception e3) {
+                            try {
+                                // Try invoking with a string array as a parameter
+                                ClassHelper.invoke(bean, methodName, new Object[]{new String[]{value}});
+                            } catch (Exception e4) {
+                                throw new IdentifiableException(
+                                        format("Unable to invoke '%s' to set value to: '%s' due to: %s "
+                                                + "- parameter type not supported",
+                                                methodName, value, e),
+                                        UNABLE_TO_SET_BEAN_PROPERTY);
+                            }
                         }
                     }
                 }

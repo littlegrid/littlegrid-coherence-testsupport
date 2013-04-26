@@ -156,24 +156,24 @@ public final class DefaultClusterMemberGroupTest {
     }
 
     @Test
-    public void isRunningBeforeShutdownAll() {
+    public void isAllShutdownWhenNotShutdownAll() {
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(new DefaultCallbackHandler(),
                 0, 0, 0, 0, 0);
 
         memberGroup.startAll();
 
-        assertThat(memberGroup.isRunning(), is(true));
+        assertThat(memberGroup.isAllShutdown(), is(false));
     }
 
     @Test
-    public void isRunningAfterShutdownAll() {
+    public void isAllShutdwonAfterShutdownAll() {
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(new DefaultCallbackHandler(),
                 0, 0, 0, 0, 0);
 
         memberGroup.startAll();
         memberGroup.shutdownAll();
 
-        assertThat(memberGroup.isRunning(), is(false));
+        assertThat(memberGroup.isAllShutdown(), is(true));
     }
 
     @Test
