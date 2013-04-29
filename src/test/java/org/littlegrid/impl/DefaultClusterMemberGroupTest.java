@@ -109,15 +109,6 @@ public final class DefaultClusterMemberGroupTest {
     }
 
     @Test
-    @Ignore
-    public void startWhenNullClusterMemberGroupPassedWhichIsOk()
-            throws MalformedURLException {
-
-        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(),
-                getPopulatedUrls(), DefaultClusterMemberGroup.class.getName(), null, 1);
-    }
-
-    @Test
     public void shutdownAllRestoreOfSystemProperties()
             throws MalformedURLException {
 

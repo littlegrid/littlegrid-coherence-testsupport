@@ -116,7 +116,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public int merge(final ClusterMemberGroup otherMemberGroup) {
         if (shutdownAllInvoked) {
-            throw new UnsupportedOperationException("Shutdown all has been called");
+            throw new UnsupportedOperationException("Shutdown all has been called - cannot now accept groups to merge");
         }
 
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) otherMemberGroup;

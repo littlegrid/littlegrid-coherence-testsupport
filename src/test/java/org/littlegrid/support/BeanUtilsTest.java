@@ -139,6 +139,22 @@ public final class BeanUtilsTest {
     }
 
     @Test
+    public void setWhenValueIsStringArrayAsEmptyString() {
+        final Properties properties = new Properties();
+        properties.put(HOBBIES_PROPERTY, "");
+
+        final Person person = new Person();
+
+        final int propertiesSetCount = BeanUtils.multiSetter(person, properties);
+
+        assertThat(propertiesSetCount, is(1));
+        assertThat(person.getName(), nullValue());
+        assertThat(person.getAge(), is(0));
+        assertThat(person.getBirthDateMillis(), is(0L));
+        assertThat(person.getHobbies(), nullValue());
+    }
+
+    @Test
     public void setAll() {
         final Properties properties = new Properties();
         properties.setProperty(NAME_PROPERTY, EXPECTED_NAME);

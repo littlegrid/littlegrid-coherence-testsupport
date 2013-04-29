@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.SystemUtils;
 
@@ -49,8 +50,8 @@ import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
-import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.Registry;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.Registry;
 
 /**
  * Default cluster member group builder tests.
@@ -130,6 +131,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     private static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
+
+    private static final String COHERENCE_CACHE_CONFIG_KEY = "tangosol.coherence.cacheconfig";
+    private static final String COHERENCE_LOG_LEVEL_KEY = "tangosol.coherence.log.level";
+    private static final String COHERENCE_OVERRIDE_KEY = "tangosol.coherence.override";
 
     private Properties systemPropertiesBeforeTest;
 
@@ -276,10 +281,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Map<String, String> builderSettings = defaultBuilder.getBuilderKeysAndValues();
 
-        final int numberOfSpecificLogLevelsNotSet = 4;
+        final int numberOfSpecificLogLevelsNotSetAndSoOmitted = 4;
 
-        assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE
-                - numberOfSpecificLogLevelsNotSet));
+        assertThat(builderSettings.size(), is(
+                EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE - numberOfSpecificLogLevelsNotSetAndSoOmitted));
 
         assertThat(builderSettings.get(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY),
                 is(expectedExceptionReportInstanceClassName));
@@ -324,7 +329,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     @Test
-    @Ignore
     public void coherenceSystemPropertyBuilderSettings() {
         final String expectedCacheConfiguration = "cache-configuration.xml";
         final String expectedClientCacheConfiguration = "client-cache-configuration.xml";
@@ -403,7 +407,10 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Map<String, String> builderSettings = defaultBuilder.getBuilderKeysAndValues();
 
-        assertThat(builderSettings.size(), is(EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE));
+        final int numberOfNonCoherencePropertiesNotSet = 1; // Presently only JARs to exclude
+
+        assertThat(builderSettings.size(), is(
+                EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE - numberOfNonCoherencePropertiesNotSet));
 
 
         assertThat(builderSettings.get(CACHE_CONFIGURATION_KEY), is(expectedCacheConfiguration));
@@ -573,7 +580,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
 
     @Test
@@ -589,8 +596,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
     }
 
     @Test
@@ -600,7 +607,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
 
     @Test
@@ -616,8 +623,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
     }
 
     @Test
@@ -633,7 +640,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
 
     @Test
@@ -651,9 +658,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-        assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
-        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty(COHERENCE_OVERRIDE_KEY), is(expectedOverrideConfiguration));
+        assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
     }
 
     @Test
@@ -663,7 +670,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
 
     @Test
@@ -679,8 +686,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
     }
 
     @Test
@@ -690,7 +697,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), nullValue());
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
 
     @Test
@@ -708,9 +715,19 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
 
-        assertThat(properties.getProperty("tangosol.coherence.cacheconfig"), is(expectedCacheConfiguration));
-        assertThat(properties.getProperty("tangosol.coherence.override"), is(expectedOverrideConfiguration));
-        assertThat(properties.getProperty("tangosol.coherence.log.level"), is(expectedLogLevel));
+        assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
+        assertThat(properties.getProperty(COHERENCE_OVERRIDE_KEY), is(expectedOverrideConfiguration));
+        assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void mergeWhenAllShutdown() {
+        final ClusterMemberGroup memberGroup = getClusterMemberGroup();
+
+        ((DefaultClusterMemberGroup) memberGroup).startAll();
+        memberGroup.shutdownAll();
+
+        memberGroup.merge(getClusterMemberGroup());
     }
 
     @Test
@@ -784,6 +801,6 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     private ReusableClusterMemberGroup getClusterMemberGroup() {
-        return new KeepAliveClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
+        return new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
     }
 }
