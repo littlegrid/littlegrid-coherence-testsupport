@@ -105,7 +105,7 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
         if (currentUsageCount == 0) {
             super.shutdownAll();
         } else {
-            LOGGER.info("Deferring shutdown");
+            LOGGER.info(format("Deferring shutdown of this member group %s", this));
         }
 
         return this;

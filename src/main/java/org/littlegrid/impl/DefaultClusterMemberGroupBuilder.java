@@ -42,11 +42,11 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -173,11 +173,16 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        LOGGER.info(format("___ %s %s (%s) - initialising builder ___",
-                Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org"));
+        final Map<String, Integer> builderKeysAndValuesLoadedSummary = new LinkedHashMap<String, Integer>();
+        final Map<String, Integer> systemPropertyNameMappingLoadedSummary = new LinkedHashMap<String, Integer>();
 
-        loadAndSetBuilderKeysAndValues();
-        loadBuilderKeyToSystemPropertyNameMapping();
+        loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary);
+        loadBuilderKeyToSystemPropertyNameMapping(systemPropertyNameMappingLoadedSummary);
+
+        LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  System property naming values: %s ___",
+                Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org",
+                builderKeysAndValuesLoadedSummary, systemPropertyNameMappingLoadedSummary));
+
     }
 
     /**
@@ -189,20 +194,21 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         return builderKeysAndValues;
     }
 
-    private void loadAndSetBuilderKeysAndValues() {
-        loadAndSetBuilderKeysAndValuesUsingPropertiesFiles();
+    private void loadAndSetBuilderKeysAndValues(final Map<String, Integer> builderKeysAndValuesLoadedSummary) {
+        loadAndSetBuilderKeysAndValuesUsingPropertiesFiles(builderKeysAndValuesLoadedSummary);
 
-        loadAndSetBuilderKeysAndValues("environment variables", BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY,
-                SystemUtils.getEnvironmentVariables());
+        loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary, "environment variables",
+                BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY, SystemUtils.getEnvironmentVariables());
 
-        loadAndSetBuilderKeysAndValues("environment variables", BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY.toUpperCase(),
-                SystemUtils.getEnvironmentVariables());
+        loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary, "environment variables",
+                BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY.toUpperCase(), SystemUtils.getEnvironmentVariables());
 
-        loadAndSetBuilderKeysAndValues("system properties", BUILDER_SYSTEM_PROPERTY_PREFIX_KEY,
-                System.getProperties());
+        loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary, "system properties",
+                BUILDER_SYSTEM_PROPERTY_PREFIX_KEY, System.getProperties());
     }
 
-    private void loadAndSetBuilderKeysAndValues(final String propertiesDescription,
+    private void loadAndSetBuilderKeysAndValues(final Map<String, Integer> builderKeysAndValuesLoadedSummary,
+                                                final String propertiesDescription,
                                                 final String preferredPrefix,
                                                 final Properties environmentVariablesOrSystemProperties) {
 
@@ -229,41 +235,60 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY));
         }
 
-        LOGGER.info(format("Prefixed '%s' %s found: %d", prefixUsed, propertiesDescription, builderOverrides.size()));
+        LOGGER.fine(format("Prefixed '%s' %s found: %d", prefixUsed, propertiesDescription, builderOverrides.size()));
+        builderKeysAndValuesLoadedSummary.put(format("'%s' %s", preferredPrefix, propertiesDescription),
+                builderOverrides.size());
 
         BeanUtils.multiSetter(this, builderOverrides);
     }
 
-    private void loadAndSetBuilderKeysAndValuesUsingPropertiesFiles() {
-        BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.FINE, DEFAULT_PROPERTIES_FILENAME));
+    private void loadAndSetBuilderKeysAndValuesUsingPropertiesFiles(
+            final Map<String, Integer> builderKeysAndValuesLoadedSummary) {
+
+        final Properties defaultProperties = PropertiesUtils.loadProperties(Level.FINE, DEFAULT_PROPERTIES_FILENAME);
+
+        BeanUtils.multiSetter(this, defaultProperties);
+        builderKeysAndValuesLoadedSummary.put("default file", defaultProperties.size());
 
         final String alternativePropertiesFilename = System.getProperty(BUILDER_OVERRIDE_KEY);
+        final Properties overrideProperties;
 
         // Check if an alternative properties file should be used, otherwise use standard named override file
         if (stringHasValue(alternativePropertiesFilename)) {
-            BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFilename));
+            overrideProperties = PropertiesUtils.loadProperties(Level.FINE, alternativePropertiesFilename);
         } else {
-            BeanUtils.multiSetter(this, PropertiesUtils.loadProperties(Level.INFO,
+            overrideProperties = PropertiesUtils.loadProperties(Level.FINE,
                     OVERRIDE_PROPERTIES_FILENAME,
-                    LITTLEGRID_DIRECTORY_SLASH + OVERRIDE_PROPERTIES_FILENAME));
+                    LITTLEGRID_DIRECTORY_SLASH + OVERRIDE_PROPERTIES_FILENAME);
         }
+
+        BeanUtils.multiSetter(this, overrideProperties);
+        builderKeysAndValuesLoadedSummary.put("override file", overrideProperties.size());
     }
 
-    private void loadBuilderKeyToSystemPropertyNameMapping() {
-        builderKeyToSystemPropertyNameMapping.putAll(
-                PropertiesUtils.loadProperties(Level.FINE, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME));
+    private void loadBuilderKeyToSystemPropertyNameMapping(
+            final Map<String, Integer> systemPropertyNameMappingLoadedSummary) {
+
+        final Properties defaultMappingProperties =
+                PropertiesUtils.loadProperties(Level.FINE, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME);
+        systemPropertyNameMappingLoadedSummary.put("default file", defaultMappingProperties.size());
+
+        builderKeyToSystemPropertyNameMapping.putAll(defaultMappingProperties);
 
         final String alternativePropertiesFile = System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
+        final Properties overrideMappingProperties;
 
         // Check if an alternative property file should be used, otherwise use standard named override file
         if (stringHasValue(alternativePropertiesFile)) {
-            builderKeyToSystemPropertyNameMapping.putAll(
-                    PropertiesUtils.loadProperties(Level.INFO, alternativePropertiesFile));
+            overrideMappingProperties = PropertiesUtils.loadProperties(Level.FINE, alternativePropertiesFile);
         } else {
-            builderKeyToSystemPropertyNameMapping.putAll(PropertiesUtils.loadProperties(Level.INFO,
+            overrideMappingProperties = PropertiesUtils.loadProperties(Level.FINE,
                     SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME,
-                    LITTLEGRID_DIRECTORY_SLASH + SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME));
+                    LITTLEGRID_DIRECTORY_SLASH + SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME);
         }
+
+        builderKeyToSystemPropertyNameMapping.putAll(overrideMappingProperties);
+        systemPropertyNameMappingLoadedSummary.put("override file", overrideMappingProperties.size());
     }
 
     private static boolean stringHasValue(final String stringToCheckForValue) {
@@ -379,8 +404,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
             if (ReusableClusterMemberGroup.class.isAssignableFrom(clusterMemberGroupClass)) {
                 // It is re-usable
-                ReusableClusterMemberGroup reusableMemberGroup =
-                        registry.getClusterMemberGroup(builder);
+                ReusableClusterMemberGroup reusableMemberGroup = registry.getClusterMemberGroup(builder);
 
                 if (reusableMemberGroup == null) {
                     // Whilst it is re-usable no instance already exists - create one
@@ -1732,7 +1756,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             final Object key = getKey(builder);
             final ReusableClusterMemberGroup memberGroup = reusableClusterMemberGroupMap.get(key);
 
-            LOGGER.info(format("Member group get: %s for key: '%s'", memberGroup, key));
+            LOGGER.info(format("Member group get using key: '%s' returned group: %s", key, memberGroup));
 
             return memberGroup;
         }
@@ -1742,13 +1766,12 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
             final Object key = getKey(builder);
 
-            LOGGER.info(format("Member group registered for key: '%s'", key));
+            LOGGER.info(format("Member group registered using key: '%s' with group of: %s", key, clusterMemberGroup));
             reusableClusterMemberGroupMap.put(key, clusterMemberGroup);
         }
 
         private Object getKey(Builder builder) {
-//            return builder.toString();
-            return builder;
+            return builder.hashCode();
         }
     }
 }

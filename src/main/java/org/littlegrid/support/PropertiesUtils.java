@@ -3,6 +3,8 @@ package org.littlegrid.support;
 import com.tangosol.util.Resources;
 
 import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +50,7 @@ public final class PropertiesUtils {
     public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
                                             final String... propertiesFilenames) {
 
-        final StringBuilder sb = new StringBuilder();
+        final Map<String, String> loadedSummary = new LinkedHashMap<String, String>();
         final Properties properties = new Properties();
 
         for (String propertiesFilename : propertiesFilenames) {
@@ -58,9 +60,7 @@ public final class PropertiesUtils {
                     PropertiesUtils.class.getClass().getClassLoader());
 
             if (url == null) {
-                sb.append(" '");
-                sb.append(propertiesFilename);
-                sb.append("'");
+                loadedSummary.put(propertiesFilename, "not found");
 
                 continue;
             }
@@ -69,20 +69,15 @@ public final class PropertiesUtils {
                 final Properties currentProperties = new Properties();
                 currentProperties.load(url.openStream());
 
-                LOGGER.log(loadedPropertyFileLogLevel,
-                        format("File '%s' found and %d properties loaded", propertiesFilename,
-                                currentProperties.size()));
-
                 properties.putAll(currentProperties);
+                loadedSummary.put(propertiesFilename, Integer.toString(currentProperties.size()));
             } catch (Exception e) {
                 throw new IllegalArgumentException(format(
                         "Cannot load properties file: '%s' due to: %s", propertiesFilename, e));
             }
         }
 
-        if (sb.length() > 0) {
-            LOGGER.info("Properties file(s) not found, no properties loaded:" + sb);
-        }
+        LOGGER.log(loadedPropertyFileLogLevel, loadedSummary.toString());
 
         return properties;
     }

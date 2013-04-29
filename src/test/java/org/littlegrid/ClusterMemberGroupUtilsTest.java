@@ -85,6 +85,7 @@ public class ClusterMemberGroupUtilsTest {
     }
 
     @Test
+    @Ignore
     public void shutdownMemberGroupWhenActiveReusableMemberIsShutdown() {
         ClusterMemberGroup.ReusableClusterMemberGroup memberGroup =
                 new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);

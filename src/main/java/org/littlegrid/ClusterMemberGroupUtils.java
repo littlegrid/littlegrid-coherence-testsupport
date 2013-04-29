@@ -35,6 +35,8 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
+import java.util.logging.Logger;
+
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
@@ -44,6 +46,8 @@ import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
  * and for shutting down {@link ClusterMemberGroup}(s).
  */
 public final class ClusterMemberGroupUtils {
+    private static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupUtils.class.getName());
+
     /**
      * Default scope to enable test coverage.
      */
@@ -99,14 +103,14 @@ public final class ClusterMemberGroupUtils {
      * @param memberGroups Member groups.
      */
     public static void shutdownCacheFactoryThenClusterMemberGroups(final ClusterMemberGroup... memberGroups) {
-        boolean shutdownCacheFactory = true;
+        boolean shouldShutdownCacheFactory = true;
 
         for (final ClusterMemberGroup memberGroup : memberGroups) {
             if (memberGroup instanceof ReusableClusterMemberGroup) {
                 final ReusableClusterMemberGroup reusableMemberGroup = (ReusableClusterMemberGroup) memberGroup;
 
                 if (!reusableMemberGroup.isAllShutdown() && reusableMemberGroup.getCurrentUsageCount() > 1) {
-                    shutdownCacheFactory = false;
+                    shouldShutdownCacheFactory = false;
 
                     break;
                 }
@@ -114,11 +118,11 @@ public final class ClusterMemberGroupUtils {
         }
 
         try {
-            if (shutdownCacheFactory) {
-                System.out.println("About to shutdown cache factory");
+            if (shouldShutdownCacheFactory) {
+                LOGGER.info("About to shutdown cache factory");
                 CacheFactory.shutdown();
             } else {
-                System.out.println("Deferring shutdown as reusable cluster member group is being used");
+                LOGGER.info("Deferring cache factory shutdown as reusable cluster member group is being used");
             }
         } finally {
             shutdownClusterMemberGroups(memberGroups);

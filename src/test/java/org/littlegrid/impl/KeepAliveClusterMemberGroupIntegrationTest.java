@@ -31,46 +31,59 @@
 
 package org.littlegrid.impl;
 
+import com.tangosol.net.CacheFactory;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
 
-import java.util.logging.Logger;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
- * Keep-alive local process cluster member group implementation that doesn't perform its
- * shutdown all when requested.
+ * Keep-alive cluster member group integration tests.
  */
-public class KeepAliveClusterMemberGroup extends UsageCountingClusterMemberGroup {
-    private static final Logger LOGGER = Logger.getLogger(KeepAliveClusterMemberGroup.class.getName());
+public class KeepAliveClusterMemberGroupIntegrationTest {
+    private ClusterMemberGroup testMemberGroup;
 
-    /**
-     * Constructor.
-     *
-     * @param callbackHandler               Callback handler.
-     * @param sleepAfterStopDuration35x     Sleep duration for 3.5.x.
-     * @param sleepAfterStopDuration36x     Sleep duration for 3.6.x.
-     * @param sleepAfterStopDurationDefault Default sleep duration.
-     * @param wkaPort                       WKA port.
-     * @param extendPort                    Extend port.
-     */
-    public KeepAliveClusterMemberGroup(final CallbackHandler callbackHandler,
-                                       final int sleepAfterStopDuration35x,
-                                       final int sleepAfterStopDuration36x,
-                                       final int sleepAfterStopDurationDefault,
-                                       final int wkaPort,
-                                       final int extendPort) {
+    @Before
+    public void beforeTest() {
+        testMemberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setClusterMemberGroupInstanceClassName(KeepAliveClusterMemberGroup.class.getName())
+                .setStorageEnabledCount(1)
+                .setLogLevel(0)
+                .setFastStartJoinTimeoutMilliseconds(100)
+                .setOverrideConfiguration("littlegrid/littlegrid-fast-start-coherence-override.xml")
+                .buildAndConfigureForStorageDisabledClient();
 
-        super(callbackHandler,
-                sleepAfterStopDuration35x, sleepAfterStopDuration36x, sleepAfterStopDurationDefault,
-                wkaPort, extendPort);
+        CacheFactory.getCache(KNOWN_TEST_CACHE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ClusterMemberGroup shutdownAll() {
-        LOGGER.info("Shutdown all invoked, but will be ignored in order to keep this member group running");
+    @After
+    public void afterTest() {
+//        final UsageCountingClusterMemberGroup instance = (UsageCountingClusterMemberGroup) testMemberGroup;
+//        assertThat(instance.getCurrentUsageCount(), is(2));
 
-        return this;
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(testMemberGroup);
+    }
+
+    @Test
+    public void test1() {
+    }
+
+    @Test
+    public void test2() {
+    }
+
+    @Test
+    public void test3() {
+    }
+
+    @Test
+    public void test4() {
     }
 }
