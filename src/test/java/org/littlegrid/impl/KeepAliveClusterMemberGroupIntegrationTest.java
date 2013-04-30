@@ -48,6 +48,8 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
  * Keep-alive cluster member group integration tests.
  */
 public class KeepAliveClusterMemberGroupIntegrationTest {
+    private static int testInvokedCounter;
+
     private ClusterMemberGroup testMemberGroup;
 
     @Before
@@ -61,12 +63,17 @@ public class KeepAliveClusterMemberGroupIntegrationTest {
                 .buildAndConfigureForStorageDisabledClient();
 
         CacheFactory.getCache(KNOWN_TEST_CACHE);
+
+        testInvokedCounter++;
     }
 
     @After
     public void afterTest() {
-//        final UsageCountingClusterMemberGroup instance = (UsageCountingClusterMemberGroup) testMemberGroup;
-//        assertThat(instance.getCurrentUsageCount(), is(2));
+        final KeepAliveClusterMemberGroup instance = (KeepAliveClusterMemberGroup) testMemberGroup;
+
+        assertThat(instance.getTotalUsageCount(), is(testInvokedCounter));
+        assertThat(instance.getCurrentUsageCount(), is(testInvokedCounter));
+        assertThat(instance.getPeakUsageCount(), is(testInvokedCounter));
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(testMemberGroup);
     }

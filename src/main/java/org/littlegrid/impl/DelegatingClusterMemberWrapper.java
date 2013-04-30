@@ -32,7 +32,6 @@
 package org.littlegrid.impl;
 
 import com.tangosol.util.ClassHelper;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
@@ -40,16 +39,17 @@ import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
  * Delegating cluster member wrapper, loads a class that implements
- * {@link org.littlegrid.ClusterMemberGroup.ClusterMember}
+ * {@link ClusterMember}
  * into a separate class loader and then delegates requests (start, stop, shutdown etc.) to
  * the instance of the wrapped class.
  */
-class DelegatingClusterMemberWrapper implements ClusterMemberGroup.ClusterMember {
+class DelegatingClusterMemberWrapper implements ClusterMember {
     static final String ERROR_INSTANTIATING_FILTER_WITH_NAME_GZIP = "Error instantiating Filter with name: gzip";
     static final String VALUE_OUT_OF_RANGE_1000 = "Value out of range [1000,";
 

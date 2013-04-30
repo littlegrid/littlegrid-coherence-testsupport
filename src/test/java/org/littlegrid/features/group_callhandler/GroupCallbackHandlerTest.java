@@ -36,12 +36,12 @@ import com.tangosol.net.NamedCache;
 import com.tangosol.util.extractor.ReflectionExtractor;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.impl.DefaultCallbackHandler;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
@@ -104,7 +104,7 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
         final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
 
         assertThat(cache.size(), is(1));
-        
+
         memberGroup.shutdownAll();
     }
 
@@ -123,7 +123,7 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
         }
     }
 
-    public static class NumberAddCallbackHandler implements ClusterMemberGroup.CallbackHandler {
+    public static class NumberAddCallbackHandler implements CallbackHandler {
         private static int counter;
 
         public NumberAddCallbackHandler() {

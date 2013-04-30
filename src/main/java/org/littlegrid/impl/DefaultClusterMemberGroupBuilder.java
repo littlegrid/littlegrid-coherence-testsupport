@@ -57,7 +57,9 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLI
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
+import static org.littlegrid.ClusterMemberGroup.BuildExceptionReporter;
 import static org.littlegrid.ClusterMemberGroup.Builder;
+import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
@@ -179,7 +181,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary);
         loadBuilderKeyToSystemPropertyNameMapping(systemPropertyNameMappingLoadedSummary);
 
-        LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  System property naming values: %s ___",
+        LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  "
+                + "Builder to Coherence system property mapping values: %s ___",
                 Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org",
                 builderKeysAndValuesLoadedSummary, systemPropertyNameMappingLoadedSummary));
 
@@ -456,7 +459,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final int jmxMonitorCount = getBuilderValueAsInt(JMX_MONITOR_COUNT_KEY);
 
         final long startTime = System.currentTimeMillis();
-        final ClusterMemberGroup.BuildExceptionReporter exceptionReporter = createExceptionReporter();
+        final BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
         LOGGER.info(format(
                 "___ %s %s starting - Storage-enabled: %d, Extend proxy: %d, Storage-enabled proxy: %d, "
@@ -527,28 +530,28 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     }
 
     @SuppressWarnings("unchecked")
-    private ClusterMemberGroup.BuildExceptionReporter createExceptionReporter() {
+    private BuildExceptionReporter createExceptionReporter() {
         final String className = getBuilderValueAsString(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
 
         try {
             final Class clazz = this.getClass().getClassLoader().loadClass(className);
             final Constructor constructor = clazz.getConstructor();
 
-            return (ClusterMemberGroup.BuildExceptionReporter) constructor.newInstance();
+            return (BuildExceptionReporter) constructor.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(format("Cannot create instance of '%s", className));
         }
     }
 
     @SuppressWarnings("unchecked")
-    private ClusterMemberGroup.CallbackHandler createCallbackHandler() {
+    private CallbackHandler createCallbackHandler() {
         final String className = getBuilderValueAsString(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY);
 
         try {
             final Class clazz = this.getClass().getClassLoader().loadClass(className);
             final Constructor constructor = clazz.getConstructor();
 
-            return (ClusterMemberGroup.CallbackHandler) constructor.newInstance();
+            return (CallbackHandler) constructor.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException(format("Cannot create instance of '%s", className));
         }
@@ -686,7 +689,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         try {
             final Constructor constructor = clusterMemberGroupClass.getDeclaredConstructor(
-                    ClusterMemberGroup.CallbackHandler.class,
+                    CallbackHandler.class,
                     int.class, int.class, int.class, int.class, int.class);
 
             return (DefaultClusterMemberGroup) constructor.newInstance(createCallbackHandler(),

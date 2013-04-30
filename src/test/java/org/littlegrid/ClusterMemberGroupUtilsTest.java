@@ -38,6 +38,7 @@ import org.littlegrid.impl.UsageCountingClusterMemberGroup;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
  * Cluster member group utilities tests.
@@ -87,7 +88,7 @@ public class ClusterMemberGroupUtilsTest {
     @Test
     @Ignore
     public void shutdownMemberGroupWhenActiveReusableMemberIsShutdown() {
-        ClusterMemberGroup.ReusableClusterMemberGroup memberGroup =
+        final ReusableClusterMemberGroup memberGroup =
                 new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
 
         memberGroup.shutdownAll();
