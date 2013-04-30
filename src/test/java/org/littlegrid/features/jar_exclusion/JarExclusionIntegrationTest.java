@@ -68,4 +68,12 @@ public class JarExclusionIntegrationTest extends AbstractAfterTestShutdownIntegr
                 .setJarsToExcludeFromClassPath(jarToExclude)
                 .buildAndConfigureForStorageDisabledClient();
     }
+
+    @Test(expected = ClusterMemberGroupBuildException.class)
+    public void startAndShutdownSeveralJarsBeingExcludedIncludingCoherence() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(2)
+                .setJarsToExcludeFromClassPath("another.jar", "coherence", "third-one.jar")
+                .buildAndConfigureForStorageDisabledClient();
+    }
 }

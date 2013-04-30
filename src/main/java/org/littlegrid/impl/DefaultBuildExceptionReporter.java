@@ -76,7 +76,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
 
             out.println("Build exception");
             outputHeading(out);
-            outputSuggestedExceptionReason(out, buildException.getCause());
+            outputSuggestedExceptionReason(out, buildException);
             outputJavaHome(out);
             outputClassPath(out);
             outputClassPathInUse(out, buildException.getClassPathUrls());
@@ -94,7 +94,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
             outputBuilderKeysAndValues(out, builderKeysAndValues);
             outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMapping);
             outputException(out, throwable.getCause());
-            outputSuggestedExceptionReason(out, buildException.getCause());
+            outputSuggestedExceptionReason(out, buildException);
         } else {
             out.println("Exception");
             outputHeading(out);

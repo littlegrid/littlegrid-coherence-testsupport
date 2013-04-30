@@ -214,7 +214,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         if (classPathUrls == null || classPathUrls.length == 0) {
-            throw new IllegalArgumentException("No class path URLs specified - will not be able to necessary classes");
+            throw new IllegalArgumentException("No class path URLs specified - will not be able to load classes");
         }
 
         if (clusterMemberInstanceClassName == null || clusterMemberInstanceClassName.trim().length() == 0) {
