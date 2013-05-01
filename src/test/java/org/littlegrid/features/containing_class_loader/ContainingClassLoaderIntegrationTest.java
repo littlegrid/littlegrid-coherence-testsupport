@@ -32,6 +32,7 @@
 package org.littlegrid.features.containing_class_loader;
 
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.Cluster;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.cache.AbstractCacheStore;
 import com.tangosol.util.ClassHelper;
@@ -45,6 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
@@ -127,6 +129,28 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 
     }
 */
+
+    @Test
+    public void whatever() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)
+                .buildAndConfigureForStorageDisabledClient();
+
+        final Object result = memberGroup.getClusterMember(1).invoke(ToStringCallable.class.getName());
+
+        System.out.println(result);
+    }
+
+    public static class ToStringCallable implements Callable {
+        @Override
+        public Object call()
+                throws Exception {
+
+            final Cluster cluster = CacheFactory.ensureCluster();
+
+            return cluster.getLocalMember().getRackName();
+        }
+    }
 
     @Test
     public void containingClassLoaderWhenNonStartedMemberIdsSpecified() {

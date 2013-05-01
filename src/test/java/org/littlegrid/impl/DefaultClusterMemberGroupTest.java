@@ -31,7 +31,6 @@
 
 package org.littlegrid.impl;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
@@ -55,41 +54,41 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_
 public final class DefaultClusterMemberGroupTest {
     @Test(expected = IllegalArgumentException.class)
     public void startWithInvalidNumberOfMembers() {
-        DefaultClusterMemberGroup.startClusterMembers(0, null, null, null, null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(0, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void startWithNullSystemProperties() {
-        DefaultClusterMemberGroup.startClusterMembers(1, null, null, null, null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void startWithNoSystemProperties() {
-        DefaultClusterMemberGroup.startClusterMembers(1, new Properties(), null, null, null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, new Properties(), null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void startWithNullClassPath() {
-        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), null, null, null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void startWithNoClassPath() {
-        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), new URL[]{}, null, null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), new URL[]{}, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void startWithNullInstanceClassName()
             throws MalformedURLException {
 
-        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), getPopulatedUrls(), null, null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), getPopulatedUrls(), null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void startWithEmptyInstanceClassName()
             throws MalformedURLException {
 
-        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), getPopulatedUrls(), " ", null, 0);
+        DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(), getPopulatedUrls(), " ", 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -97,7 +96,7 @@ public final class DefaultClusterMemberGroupTest {
             throws MalformedURLException {
 
         DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(),
-                getPopulatedUrls(), "SomeClass", null, 0);
+                getPopulatedUrls(), "SomeClass", 0);
     }
 
     @Test(expected = ClusterMemberGroupBuildException.class)
@@ -105,7 +104,7 @@ public final class DefaultClusterMemberGroupTest {
             throws MalformedURLException {
 
         DefaultClusterMemberGroup.startClusterMembers(1, getPopulatedProperties(),
-                getPopulatedUrls(), "SomeClass", null, 1);
+                getPopulatedUrls(), "SomeClass", 1);
     }
 
     @Test

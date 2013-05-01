@@ -132,11 +132,26 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
         return (ClassLoader) invokeMethod(clusterMemberInstance, "getActualContainingClassLoader");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object invoke(final String callableInstanceClassName) {
+        return invokeMethod(clusterMemberInstance, "invoke", new Object[]{callableInstanceClassName});
+    }
+
     static Object invokeMethod(final Object objectToInvokeMethodOn,
                                final String methodName) {
 
+        return invokeMethod(objectToInvokeMethodOn, methodName, new Object[]{});
+    }
+
+    static Object invokeMethod(final Object objectToInvokeMethodOn,
+                               final String methodName,
+                               final Object[] parameters) {
+
         try {
-            return ClassHelper.invoke(objectToInvokeMethodOn, methodName, new Object[]{});
+            return ClassHelper.invoke(objectToInvokeMethodOn, methodName, parameters);
         } catch (Exception e) {
             throw exceptionAfterAttemptedIdentification(e);
         }

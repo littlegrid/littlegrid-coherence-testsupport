@@ -45,7 +45,6 @@ public class ClusterMemberGroupBuildException extends RuntimeException {
     private int numberOfMembers;
     private URL[] classPathUrls;
     private String clusterMemberInstanceClassName;
-    private String clusterMemberGroupInstanceClassName;
     private int numberOfThreadsInStartUpPool;
 
     /**
@@ -67,33 +66,6 @@ public class ClusterMemberGroupBuildException extends RuntimeException {
                                             final String clusterMemberInstanceClassName,
                                             final int numberOfThreadsInStartUpPool) {
 
-        this(cause, systemPropertiesBeforeStart, systemPropertiesToBeApplied,
-                numberOfMembers, classPathUrls,
-                clusterMemberInstanceClassName, null,
-                numberOfThreadsInStartUpPool);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param cause                          Original exception.
-     * @param systemPropertiesBeforeStart    System properties before being changed.
-     * @param systemPropertiesToBeApplied    System properties to be applied.
-     * @param numberOfMembers                Number of members to start.
-     * @param classPathUrls                  Class paths defined for use.
-     * @param clusterMemberInstanceClassName Cluster member instance class name.
-     * @param numberOfThreadsInStartUpPool   Number of threads in start-up pool.
-     * @since 2.15
-     */
-    public ClusterMemberGroupBuildException(final Throwable cause,
-                                            final Properties systemPropertiesBeforeStart,
-                                            final Properties systemPropertiesToBeApplied,
-                                            final int numberOfMembers,
-                                            final URL[] classPathUrls,
-                                            final String clusterMemberInstanceClassName,
-                                            final String clusterMemberGroupInstanceClassName,
-                                            final int numberOfThreadsInStartUpPool) {
-
         super(cause);
 
         this.systemPropertiesBeforeStartInvoked = systemPropertiesBeforeStart;
@@ -101,7 +73,6 @@ public class ClusterMemberGroupBuildException extends RuntimeException {
         this.numberOfMembers = numberOfMembers;
         this.classPathUrls = classPathUrls;
         this.clusterMemberInstanceClassName = clusterMemberInstanceClassName;
-        this.clusterMemberGroupInstanceClassName = clusterMemberGroupInstanceClassName;
         this.numberOfThreadsInStartUpPool = numberOfThreadsInStartUpPool;
     }
 
@@ -148,16 +119,6 @@ public class ClusterMemberGroupBuildException extends RuntimeException {
      */
     public String getClusterMemberInstanceClassName() {
         return clusterMemberInstanceClassName;
-    }
-
-    /**
-     * Returns cluster member group instance class name.
-     *
-     * @return class name.
-     * @since 2.15
-     */
-    public String getClusterMemberGroupInstanceClassName() {
-        return clusterMemberGroupInstanceClassName;
     }
 
     /**

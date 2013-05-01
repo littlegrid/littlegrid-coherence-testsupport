@@ -192,6 +192,8 @@ public interface ClusterMemberGroup {
          * @return class loader.
          */
         ClassLoader getActualContainingClassLoader();
+
+        Object invoke(String callableInstanceClassName);
     }
 
     /**
@@ -940,6 +942,25 @@ public interface ClusterMemberGroup {
         void report(Throwable throwable,
                     Map<String, String> builderKeysAndValues,
                     Properties builderKeyToSystemPropertyNameMapping);
+
+        /**
+         * Report on the exception.
+         *
+         * @param throwable            Throwable.
+         * @param builderKeysAndValues Builder keys and values.
+         * @param builderKeyToSystemPropertyNameMapping
+         *                             Builder key to system property name mapping.
+         * @param clusterMemberGroupInstanceClassName
+         *                             Cluster member group instance class name.
+         * @param otherInformation     Other information that may be builder specific and useful
+         *                             to help identify the problem.
+         * @since 2.15
+         */
+        void report(Throwable throwable,
+                    Map<String, String> builderKeysAndValues,
+                    Properties builderKeyToSystemPropertyNameMapping,
+                    String clusterMemberGroupInstanceClassName,
+                    String otherInformation);
     }
 
     /**

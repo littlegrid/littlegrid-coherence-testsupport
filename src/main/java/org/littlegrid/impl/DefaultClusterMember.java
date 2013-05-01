@@ -34,6 +34,8 @@ package org.littlegrid.impl;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultCacheServer;
 
+import java.util.concurrent.Callable;
+
 import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 
@@ -114,5 +116,24 @@ public class DefaultClusterMember implements ClusterMember, CallbackHandler {
     @Override
     public ClassLoader getActualContainingClassLoader() {
         return this.getClass().getClassLoader();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object invoke(final String callableInstanceClassName) {
+        try {
+            final Class clazz = this.getClass().getClassLoader().loadClass(callableInstanceClassName);
+
+            final Callable instance = (Callable) clazz.newInstance();
+
+            return instance.call();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+
+            throw new RuntimeException(e);
+        }
+//        throw new UnsupportedOperationException();
     }
 }

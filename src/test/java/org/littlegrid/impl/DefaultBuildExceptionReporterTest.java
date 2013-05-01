@@ -38,7 +38,17 @@ import org.junit.Test;
  */
 public class DefaultBuildExceptionReporterTest {
     @Test
-    public void nonBuilderException() {
+    public void standardExceptionWithoutMemberGroupClassName() {
         new DefaultBuildExceptionReporter().report(new RuntimeException(), null, null);
+    }
+
+    @Test
+    public void standardExceptionWithMemberGroupClassName() {
+        new DefaultBuildExceptionReporter().report(new RuntimeException(), null, null, null, null);
+    }
+
+    @Test
+    public void standardExceptionWithMemberGroupClassNameAndOtherInformation() {
+        new DefaultBuildExceptionReporter().report(new RuntimeException(), null, null, null, "This is other info.");
     }
 }

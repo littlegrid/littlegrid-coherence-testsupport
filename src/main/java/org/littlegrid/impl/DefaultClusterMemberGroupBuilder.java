@@ -473,6 +473,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final String pathSeparator = ClassPathUtils.getPathSeparator(systemProperties);
         final String classPath = ClassPathUtils.getClassPath(systemProperties);
         final String javaHome = ClassPathUtils.getJavaHome(systemProperties);
+        final String clusterMemberGroupInstanceClassName =
+                getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
 
         DefaultClusterMemberGroup containerGroup = null;
 
@@ -505,11 +507,13 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     containerGroup.getStartedMemberIds().length, startDuration,
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (ClusterMemberGroupBuildException e) {
-            exceptionReporter.report(e, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
+            exceptionReporter.report(e, builderKeysAndValues, builderKeyToSystemPropertyNameMapping,
+                    clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw e;
         } catch (Throwable throwable) {
-            exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping);
+            exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping,
+                    clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw new IllegalStateException(throwable);
         }
@@ -572,7 +576,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                             getSystemPropertiesForJmxMonitor(),
                             classPathUrls,
                             clusterMemberInstanceClassName,
-                            containerGroup.getClass().getName(),
                             numberOfThreadsInStartUpPool);
 
             containerGroup.merge(memberFutures);
@@ -594,7 +597,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                             getSystemPropertiesForCustomConfigured(),
                             classPathUrls,
                             customConfiguredClusterMemberInstanceClassName,
-                            containerGroup.getClass().getName(),
                             numberOfThreadsInStartUpPool);
 
             containerGroup.merge(memberFutures);
@@ -620,7 +622,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                 getSystemPropertiesForStorageEnabledExtendProxy(extendStartingPort + i),
                                 classPathUrls,
                                 clusterMemberInstanceClassName,
-                                containerGroup.getClass().getName(),
                                 numberOfThreadsInStartUpPool);
 
                 containerGroup.merge(memberFutures);
@@ -647,7 +648,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                 getSystemPropertiesForExtendProxy(extendStartingPort + i),
                                 classPathUrls,
                                 clusterMemberInstanceClassName,
-                                containerGroup.getClass().getName(),
                                 numberOfThreadsInStartUpPool);
 
                 containerGroup.merge(memberFutures);
@@ -670,7 +670,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                             getSystemPropertiesForStorageEnabled(),
                             classPathUrls,
                             clusterMemberInstanceClassName,
-                            containerGroup.getClass().getName(),
                             numberOfThreadsInStartUpPool);
 
             containerGroup.merge(memberFutures);
@@ -1775,6 +1774,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         private Object getKey(Builder builder) {
             return builder.hashCode();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return format("Registry: %s", reusableClusterMemberGroupMap);
         }
     }
 }

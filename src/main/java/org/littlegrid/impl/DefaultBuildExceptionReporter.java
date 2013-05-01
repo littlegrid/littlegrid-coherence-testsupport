@@ -67,6 +67,19 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
                        final Map<String, String> builderKeysAndValues,
                        final Properties builderKeyToSystemPropertyNameMapping) {
 
+        report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping, null, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void report(final Throwable throwable,
+                       final Map<String, String> builderKeysAndValues,
+                       final Properties builderKeyToSystemPropertyNameMapping,
+                       final String clusterMemberGroupInstanceClassName,
+                       final String otherInformation) {
+
         final PrintStream out = System.out;
 
         out.print("http://littlegrid.bitbucket.org - ");
@@ -86,7 +99,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
             outputSortedSystemPropertiesApplied(out, buildException.getSystemPropertiesToBeApplied());
             outputNumberOfMembers(out, buildException.getNumberOfMembers());
             outputClusterMemberInstanceClassName(out, buildException.getClusterMemberInstanceClassName());
-            outputClusterMemberGroupInstanceClassName(out, buildException.getClusterMemberGroupInstanceClassName());
+            outputClusterMemberGroupInstanceClassName(out, clusterMemberGroupInstanceClassName);
             outputNumberOfThreadThreadsInStartUpPool(out, buildException.getNumberOfThreadsInStartUpPool());
             outputMemory(out);
             outputNetwork(out);
@@ -94,6 +107,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
             outputBuilderKeysAndValues(out, builderKeysAndValues);
             outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMapping);
             outputException(out, throwable.getCause());
+            outputOtherInformation(out, otherInformation);
             outputSuggestedExceptionReason(out, buildException);
         } else {
             out.println("Exception");
@@ -104,6 +118,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
             outputMemory(out);
             outputNetwork(out);
             outputException(out, throwable);
+            outputOtherInformation(out, otherInformation);
         }
     }
 
@@ -296,5 +311,15 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
         out.println(SECTION_DIVIDER);
         out.println("Full exception...........: detailed below");
         cause.printStackTrace(out);
+    }
+
+    private void outputOtherInformation(final PrintStream out,
+                                        final String otherInformation) {
+
+        if (otherInformation != null) {
+            out.println(SECTION_DIVIDER);
+            out.println("Other information........: detailed below");
+            out.println(otherInformation);
+        }
     }
 }
