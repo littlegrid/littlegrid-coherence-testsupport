@@ -36,11 +36,13 @@ import org.littlegrid.ClusterMemberGroup;
 import java.util.logging.Logger;
 
 /**
- * Keep-alive local process cluster member group implementation that doesn't perform its
- * shutdown all when requested.
+ * Simple keep-alive local process cluster member group implementation that doesn't perform
+ * its shutdown all when requested.
+ *
+ * @since 2.15
  */
-public class KeepAliveClusterMemberGroup extends UsageCountingClusterMemberGroup {
-    private static final Logger LOGGER = Logger.getLogger(KeepAliveClusterMemberGroup.class.getName());
+public class SimpleKeepAliveClusterMemberGroup extends UsageCountingClusterMemberGroup {
+    private static final Logger LOGGER = Logger.getLogger(SimpleKeepAliveClusterMemberGroup.class.getName());
 
     /**
      * Constructor.
@@ -52,12 +54,12 @@ public class KeepAliveClusterMemberGroup extends UsageCountingClusterMemberGroup
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
      */
-    public KeepAliveClusterMemberGroup(final CallbackHandler callbackHandler,
-                                       final int sleepAfterStopDuration35x,
-                                       final int sleepAfterStopDuration36x,
-                                       final int sleepAfterStopDurationDefault,
-                                       final int wkaPort,
-                                       final int extendPort) {
+    public SimpleKeepAliveClusterMemberGroup(final CallbackHandler callbackHandler,
+                                             final int sleepAfterStopDuration35x,
+                                             final int sleepAfterStopDuration36x,
+                                             final int sleepAfterStopDurationDefault,
+                                             final int wkaPort,
+                                             final int extendPort) {
 
         super(callbackHandler,
                 sleepAfterStopDuration35x, sleepAfterStopDuration36x, sleepAfterStopDurationDefault,

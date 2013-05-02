@@ -41,6 +41,8 @@ import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 /**
  * Usage counting local process cluster member group implementation, performs its
  * shutdown all only once its usage counter is zero.
+ *
+ * @since 2.15
  */
 public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
         implements ReusableClusterMemberGroup {
@@ -98,7 +100,11 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
      */
     @Override
     public ClusterMemberGroup shutdownAll() {
-        currentUsageCount--;
+        if (currentUsageCount > 0) {
+            currentUsageCount--;
+        } else {
+            LOGGER.warning("Shutdown all called more times than this group has been started - check your usage");
+        }
 
         LOGGER.info(format("Shutdown all invoked - current usage count is now: %d for '%s'", currentUsageCount, this));
 
@@ -137,5 +143,14 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
      */
     public int getTotalUsageCount() {
         return totalUsageCount;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return format("%s usage - current: %d, peak: %d, total: %d",
+                this.getClass().getName(), currentUsageCount, peakUsageCount, totalUsageCount);
     }
 }

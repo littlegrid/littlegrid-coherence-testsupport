@@ -84,9 +84,14 @@ class CommandDslShell {
     private static final String COMMENT_COMMAND = "#";
     private static final String CONSOLE_COMMAND = "console";
     private static final String COHQL_COMMAND = "cohql";
+    private static final String RACK_COMMAND = "rack =";
 
     private final InputStream in;
     private final PrintStream out;
+
+    private String site;
+    private String rack;
+    private String machine;
 
     /**
      * Constructor.
@@ -238,6 +243,10 @@ class CommandDslShell {
                     outputDate();
                     response.incrementValidCommandsExecuted();
 
+                } else if (command.startsWith(RACK_COMMAND)) {
+                    setRack(command);
+                    response.incrementValidCommandsExecuted();
+
                 } else if (command.equals("")) {
                     out.println();
 
@@ -252,6 +261,10 @@ class CommandDslShell {
         }
 
         return response;
+    }
+
+    private void setRack(final String command) {
+        this.rack = command.replaceAll(RACK_COMMAND, "").trim();
     }
 
     private void sleepUntil(final String command) throws InterruptedException {
@@ -366,6 +379,7 @@ class CommandDslShell {
     private void startStorageEnabledMember(final ClusterMemberGroup memberGroup) {
         memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(1)
+                .setRackName(rack)
                 .setExtendProxyCount(0)
                 .setStorageEnabledExtendProxyCount(0)
                 .setJmxMonitorCount(0)

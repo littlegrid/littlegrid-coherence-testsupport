@@ -399,28 +399,28 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     }
 
     private ClusterMemberGroup getClusterMemberGroupInstance(final Builder builder) {
+        final String className = getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
         final Registry registry = Registry.getInstance();
 
         try {
-            final Class clusterMemberGroupClass = this.getClass().getClassLoader().loadClass(
-                    getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME));
+            final Class clusterMemberGroupClass = this.getClass().getClassLoader().loadClass(className);
 
             if (ReusableClusterMemberGroup.class.isAssignableFrom(clusterMemberGroupClass)) {
-                // It is re-usable
+                // It is reusable
                 ReusableClusterMemberGroup reusableMemberGroup = registry.getClusterMemberGroup(builder);
 
                 if (reusableMemberGroup == null) {
-                    // Whilst it is re-usable no instance already exists - create one
+                    // Whilst it is reusable no instance already exists - create one
                     // Build and register it for later re-use
 
                     reusableMemberGroup = (ReusableClusterMemberGroup) buildClusterMembers(clusterMemberGroupClass);
 
                     registry.registerClusterMemberGroup(builder, reusableMemberGroup);
                 } else {
-                    // An existing re-usable instance has been found, check if it has been shutdown
+                    // An existing reusable instance has been found, check if it has been shutdown
 
                     if (reusableMemberGroup.isAllShutdown()) {
-                        // Whilst it is re-usable and an instance exists, it has been shutdown
+                        // Whilst it is reusable and an instance exists, it has been shutdown
                         // and so can't be used.  Build a new one and register it for later re-use
 
                         reusableMemberGroup = (ReusableClusterMemberGroup)
@@ -432,13 +432,11 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
                 return reusableMemberGroup;
             } else {
-                // It is not re-usable, so create a new one
+                // It is not reusable, so create a new one
                 return buildClusterMembers(clusterMemberGroupClass);
             }
         } catch (ClassNotFoundException e) {
-            //TODO:
-
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(format("Cannot load class '%s", className));
         }
     }
 

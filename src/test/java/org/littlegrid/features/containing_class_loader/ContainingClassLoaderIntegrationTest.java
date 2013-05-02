@@ -32,7 +32,8 @@
 package org.littlegrid.features.containing_class_loader;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.Cluster;
+import com.tangosol.net.DistributedCacheService;
+import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.cache.AbstractCacheStore;
 import com.tangosol.util.ClassHelper;
@@ -52,6 +53,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -131,24 +133,53 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 */
 
     @Test
-    public void whatever() {
+    public void experimentalInvokeIdea() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)
+                .setStorageEnabledCount(2)
                 .buildAndConfigureForStorageDisabledClient();
 
-        final Object result = memberGroup.getClusterMember(1).invoke(ToStringCallable.class.getName());
+        // Populate cache
+        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
 
-        System.out.println(result);
+        for (int i = 0; i < 10; i++) {
+            cache.putAll(singletonMap(i, "value-" + i));
+        }
+
+
+        // Rummage around in a specific cache server
+        final Object[] result = (Object[]) memberGroup.getClusterMember(1).
+                invoke(MyCallable.class.getName());
+
+        assertThat(result.length, is(3));
+        System.out.println(Arrays.toString(result));
     }
 
-    public static class ToStringCallable implements Callable {
+    public static class MyCallable implements Callable {
         @Override
         public Object call()
                 throws Exception {
 
-            final Cluster cluster = CacheFactory.ensureCluster();
+            /*
+                All this code executes within the child-first class-loader
+                that is running the cache server in this example
+             */
 
-            return cluster.getLocalMember().getRackName();
+            final DistributedCacheService distributedCacheService =
+                    (DistributedCacheService) CacheFactory.ensureCluster().
+                            getService("DistributedCache");
+
+            // Get the size of this member's backing map for the known cache
+            final int size = distributedCacheService.getBackingMapManager().
+                    getContext().getBackingMapContext(KNOWN_TEST_CACHE).
+                    getBackingMap().size();
+
+            final Member member = CacheFactory.ensureCluster().getLocalMember();
+
+            return new Object[]{
+                    member.getRackName(),
+                    member.getMachineName(),
+                    size
+            };
         }
     }
 

@@ -225,6 +225,13 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(otherBuilder.hashCode(), is(thisBuilder.hashCode()));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void unknownMemberGroupInstanceClassName() {
+        ClusterMemberGroupUtils.newBuilder()
+                .setClusterMemberGroupInstanceClassName("com.a.b.MemberGroup")
+                .buildAndConfigure();
+    }
+
     @Test
     public void nonCoherenceBuilderSettings() {
         final String expectedExceptionReportInstanceClassName = "com.g.h.i.BuildExceptionReporter";
