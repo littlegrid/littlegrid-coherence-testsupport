@@ -192,8 +192,6 @@ public interface ClusterMemberGroup {
          * @return class loader.
          */
         ClassLoader getActualContainingClassLoader();
-
-        Object invoke(String callableInstanceClassName);
     }
 
     /**

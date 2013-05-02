@@ -132,14 +132,6 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
         return (ClassLoader) invokeMethod(clusterMemberInstance, "getActualContainingClassLoader");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object invoke(final String callableInstanceClassName) {
-        return invokeMethod(clusterMemberInstance, "invoke", new Object[]{callableInstanceClassName});
-    }
-
     static Object invokeMethod(final Object objectToInvokeMethodOn,
                                final String methodName) {
 
@@ -187,7 +179,6 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
      *
      * @return true if running.
      */
-
     boolean isRunning() {
         return running;
     }

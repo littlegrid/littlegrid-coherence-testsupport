@@ -133,57 +133,6 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
 */
 
     @Test
-    public void experimentalInvokeIdea() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(2)
-                .buildAndConfigureForStorageDisabledClient();
-
-        // Populate cache
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
-
-        for (int i = 0; i < 10; i++) {
-            cache.putAll(singletonMap(i, "value-" + i));
-        }
-
-
-        // Rummage around in a specific cache server
-        final Object[] result = (Object[]) memberGroup.getClusterMember(1).
-                invoke(MyCallable.class.getName());
-
-        assertThat(result.length, is(3));
-        System.out.println(Arrays.toString(result));
-    }
-
-    public static class MyCallable implements Callable {
-        @Override
-        public Object call()
-                throws Exception {
-
-            /*
-                All this code executes within the child-first class-loader
-                that is running the cache server in this example
-             */
-
-            final DistributedCacheService distributedCacheService =
-                    (DistributedCacheService) CacheFactory.ensureCluster().
-                            getService("DistributedCache");
-
-            // Get the size of this member's backing map for the known cache
-            final int size = distributedCacheService.getBackingMapManager().
-                    getContext().getBackingMapContext(KNOWN_TEST_CACHE).
-                    getBackingMap().size();
-
-            final Member member = CacheFactory.ensureCluster().getLocalMember();
-
-            return new Object[]{
-                    member.getRackName(),
-                    member.getMachineName(),
-                    size
-            };
-        }
-    }
-
-    @Test
     public void containingClassLoaderWhenNonStartedMemberIdsSpecified() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(SMALL_TEST_CLUSTER_SIZE)

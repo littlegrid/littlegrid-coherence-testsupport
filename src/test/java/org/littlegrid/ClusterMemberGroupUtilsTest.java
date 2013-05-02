@@ -31,10 +31,7 @@
 
 package org.littlegrid;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.littlegrid.impl.DefaultCallbackHandler;
-import org.littlegrid.impl.UsageCountingClusterMemberGroup;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -86,16 +83,33 @@ public class ClusterMemberGroupUtilsTest {
     }
 
     @Test
-    @Ignore
-    public void shutdownMemberGroupWhenActiveReusableMemberIsShutdown() {
-        final ReusableClusterMemberGroup memberGroup =
-                new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
+    public void shutdownMemberGroupWhenReusableMemberIsShutdown() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
+                new StubReusableClusterMemberGroup(10, false));
+    }
 
-        memberGroup.shutdownAll();
+    @Test
+    public void shutdownMemberGroupWhenReusableMemberIsNotShutdown() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
+                new StubReusableClusterMemberGroup(0, false));
+    }
 
-        assertThat(memberGroup.isAllShutdown(), is(true));
+    @Test
+    public void shutdownMemberGroupWhenReusableMemberIsNotShutdownAndCurrentUsageIsOverZero() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
+                new StubReusableClusterMemberGroup(1, false));
+    }
 
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    @Test
+    public void shutdownMemberGroupWhenReusableMemberIsShutdownAndCurrentUsageIsZero() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
+                new StubReusableClusterMemberGroup(1, true));
+    }
+
+    @Test
+    public void shutdownMemberGroupWhenReusableMemberIsShutdownAndCurrentUsageOverOne() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
+                new StubReusableClusterMemberGroup(10, false));
     }
 
     public static class StubExceptionThrowingClusterMemberGroup implements ClusterMemberGroup {
@@ -165,6 +179,35 @@ public class ClusterMemberGroupUtilsTest {
 
         public static int getShutdownAllInvokedCounter() {
             return shutdownAllInvokedCounter;
+        }
+    }
+
+    public static class StubReusableClusterMemberGroup extends StubExceptionThrowingClusterMemberGroup
+            implements ReusableClusterMemberGroup {
+
+        private int currentUsageCount;
+        private boolean shutdownAllInvoked;
+
+        public StubReusableClusterMemberGroup(final int currentUsageCount,
+                                              boolean shutdownAllInvoked) {
+
+            this.currentUsageCount = currentUsageCount;
+            this.shutdownAllInvoked = shutdownAllInvoked;
+        }
+
+        @Override
+        public int getCurrentUsageCount() {
+            return currentUsageCount;
+        }
+
+        @Override
+        public boolean isAllShutdown() {
+            return shutdownAllInvoked;
+        }
+
+        @Override
+        public ClusterMemberGroup shutdownAll() {
+            return this;
         }
     }
 }

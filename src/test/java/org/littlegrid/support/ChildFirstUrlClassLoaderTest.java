@@ -33,12 +33,15 @@ package org.littlegrid.support;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.IdentifiableException;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -49,6 +52,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.littlegrid.IdentifiableException.ReasonEnum.SECURITY_EXCEPTION;
 
 /**
  * Child first URL class loader tests.
@@ -79,16 +84,24 @@ public final class ChildFirstUrlClassLoaderTest {
     public void delegateWhenLoadingCoreClass()
             throws Throwable {
 
-        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(
-                ClassPathUtils.getClassPathUrlsExcludingJavaHome("made-up-java-home-so-real-one-will-not-be-excluded",
-                        ClassPathUtils.getClassPath(System.getProperties()),
-                        ClassPathUtils.getPathSeparator(System.getProperties()),
-                        null),
+        final Properties systemProperties = System.getProperties();
+
+        final URL[] urls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
+                "made-up-java-home-so-real-one-will-not-be-excluded",
+                ClassPathUtils.getClassPath(systemProperties),
+                ClassPathUtils.getPathSeparator(systemProperties),
+                null);
+
+        final ClassLoader childFirstLoader = new ChildFirstUrlClassLoader(urls,
                 this.getClass().getClassLoader());
 
-        //TODO: Review this, need to think through the assertions
-        childFirstLoader.loadClass(String.class.getName());
-        childFirstLoader.loadClass(Map.class.getName());
+        try {
+            childFirstLoader.loadClass(String.class.getName());
+
+            fail("An identifiable exception was expected");
+        } catch (IdentifiableException e) {
+            assertThat(e.getReasonEnum(), is(SECURITY_EXCEPTION));
+        }
     }
 
     @Test
@@ -102,11 +115,13 @@ public final class ChildFirstUrlClassLoaderTest {
                 this.getClass().getClassLoader());
 
         final Class clazz = childFirstLoader.loadClass(Dummy.class.getName());
-
         final Object objectFromClassLoadedByChildFirst = clazz.newInstance();
+
         final Dummy dummy = new Dummy();
 
-        assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(), not(childFirstLoader));
+        assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(),
+                not(childFirstLoader));
+
         assertThat(objectFromClassLoadedByChildFirst.getClass().getClassLoader(),
                 is(dummy.getClass().getClassLoader()));
     }
@@ -114,6 +129,7 @@ public final class ChildFirstUrlClassLoaderTest {
     @Test
     public void loadAndResolve()
             throws Throwable {
+
         final LoadWithResolveExposedClassLoader classLoader =
                 new LoadWithResolveExposedClassLoader(new URL[]{}, this.getClass().getClassLoader());
 
