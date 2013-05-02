@@ -32,8 +32,6 @@
 package org.littlegrid.features.containing_class_loader;
 
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.DistributedCacheService;
-import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.cache.AbstractCacheStore;
 import com.tangosol.util.ClassHelper;
@@ -47,13 +45,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
