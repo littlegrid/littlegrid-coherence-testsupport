@@ -15,8 +15,8 @@ public final class PropertiesUtilsTest {
     public static final int EXPECTED_SIZE_OF_TWO_PROPERTIES_FILE_COMBINED = 7;
     public static final int EXPECTED_SIZE_OF_SINGLE_PROPERTIES_FILE = 6;
     public static final String FILE_THAT_DOES_NOT_EXIST = "this-file-does-not-exist.properties";
-    public static final String FILE_THAT_DOES_EXIST = "properties/memberGroup1.properties";
-    public static final String ANOTHER_FILE_THAT_DOES_EXIST = "properties/memberGroup2.properties";
+    public static final String FILE_THAT_DOES_EXIST = "littlegrid/member-group-1-littlegrid-builder.properties";
+    public static final String ANOTHER_FILE_THAT_DOES_EXIST = "littlegrid/member-group-2-littlegrid-properties.properties";
 
     @Test(expected = UnsupportedOperationException.class)
     public void construct() {

@@ -68,7 +68,7 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
     @Test
     public void launchAndStartConsoleWithArguments() {
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(
-                new String[]{"properties/memberGroup1.properties"});
+                new String[]{"littlegrid/member-group-1-littlegrid-builder.properties"});
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), 3 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
 
@@ -104,7 +104,7 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
 
     @Test
     public void runMain() {
-        ClusterMemberGroupApp.main(new String[]{"properties/memberGroup1.properties"});
+        ClusterMemberGroupApp.main(new String[]{"littlegrid/member-group-1-littlegrid-builder.properties"});
     }
 
     public static class NoWaitConsole {

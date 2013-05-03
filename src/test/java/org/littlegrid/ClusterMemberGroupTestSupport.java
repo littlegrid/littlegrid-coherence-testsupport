@@ -35,6 +35,7 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.Member;
 
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
@@ -72,6 +73,7 @@ public final class ClusterMemberGroupTestSupport {
     public static final int MEDIUM_TEST_CLUSTER_SIZE = 3;
     public static final int LARGE_TEST_CLUSTER_SIZE = 6;
 
+    private static final int NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP = 2;
 
     /**
      * Private constructor to prevent creation.
@@ -108,6 +110,33 @@ public final class ClusterMemberGroupTestSupport {
     public static void assertThatClusterIsExpectedSize(final Cluster cluster,
                                                        final int expectedClusterSize) {
 
-        assertThat(cluster.getMemberSet().size(), is(expectedClusterSize));
+        int currentClusterSize = cluster.getMemberSet().size();
+        boolean expectedSizeOrTimedOutWaiting = (currentClusterSize == expectedClusterSize);
+        int counter = 0;
+
+        while (!expectedSizeOrTimedOutWaiting) {
+            counter++;
+
+            if (counter == (NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP + 1)) {
+                expectedSizeOrTimedOutWaiting = true;
+            } else {
+                LOGGER.warning(format("Cluster size is presently %d, but was expected to be %d - will check again "
+                        + "after sleeping, the cluster could be stabilising after a failover.  Number of attempts "
+                        + "%d out of %d before giving up",
+                        currentClusterSize, expectedClusterSize,
+                        counter, NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP));
+
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                currentClusterSize = cluster.getMemberSet().size();
+                expectedSizeOrTimedOutWaiting = (currentClusterSize == expectedClusterSize);
+            }
+        }
+
+        assertThat("Cluster is not the expected size", cluster.getMemberSet().size(), is(expectedClusterSize));
     }
 }

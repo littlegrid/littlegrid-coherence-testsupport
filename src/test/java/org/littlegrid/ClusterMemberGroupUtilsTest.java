@@ -85,31 +85,19 @@ public class ClusterMemberGroupUtilsTest {
     @Test
     public void shutdownMemberGroupWhenReusableMemberIsShutdown() {
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
-                new StubReusableClusterMemberGroup(10, false));
+                new StubReusableClusterMemberGroup(true, 10));
     }
 
     @Test
-    public void shutdownMemberGroupWhenReusableMemberIsNotShutdown() {
+    public void shutdownMemberGroupWhenReusableMemberIsNotShutdownButCurrentUsageIsOne() {
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
-                new StubReusableClusterMemberGroup(0, false));
+                new StubReusableClusterMemberGroup(false, 1));
     }
 
     @Test
-    public void shutdownMemberGroupWhenReusableMemberIsNotShutdownAndCurrentUsageIsOverZero() {
+    public void shutdownMemberGroupWhenReusableMemberIsNotShutdownButCurrentUsageOverOne() {
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
-                new StubReusableClusterMemberGroup(1, false));
-    }
-
-    @Test
-    public void shutdownMemberGroupWhenReusableMemberIsShutdownAndCurrentUsageIsZero() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
-                new StubReusableClusterMemberGroup(1, true));
-    }
-
-    @Test
-    public void shutdownMemberGroupWhenReusableMemberIsShutdownAndCurrentUsageOverOne() {
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(
-                new StubReusableClusterMemberGroup(10, false));
+                new StubReusableClusterMemberGroup(false, 2));
     }
 
     public static class StubExceptionThrowingClusterMemberGroup implements ClusterMemberGroup {
@@ -188,11 +176,11 @@ public class ClusterMemberGroupUtilsTest {
         private int currentUsageCount;
         private boolean shutdownAllInvoked;
 
-        public StubReusableClusterMemberGroup(final int currentUsageCount,
-                                              boolean shutdownAllInvoked) {
+        public StubReusableClusterMemberGroup(final boolean isShutdownAll,
+                                              final int currentUsageCount) {
 
             this.currentUsageCount = currentUsageCount;
-            this.shutdownAllInvoked = shutdownAllInvoked;
+            this.shutdownAllInvoked = isShutdownAll;
         }
 
         @Override

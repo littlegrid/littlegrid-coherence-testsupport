@@ -160,7 +160,9 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
                 .setStorageEnabledCount(numberOfMembers)
                 .buildAndConfigureForStorageDisabledClient();
 
-        memberGroup.stopMember(1, 2);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSizeBeforeStop);
+
+        memberGroup.stopMember(memberIdsToStop);
 
         sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
 

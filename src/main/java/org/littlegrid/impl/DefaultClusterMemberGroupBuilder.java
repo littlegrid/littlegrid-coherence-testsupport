@@ -1622,7 +1622,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             LOGGER.warning("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
                     + "now be configured to be used");
 
-            setBuilderValue(OVERRIDE_CONFIGURATION_KEY, FAST_START_OVERRIDE_CONFIGURATION_FILENAME);
+            setPropertyUsingNameMappingAndSuppliedValue(properties, OVERRIDE_CONFIGURATION_KEY,
+                    FAST_START_OVERRIDE_CONFIGURATION_FILENAME);
 
             setPropertyUsingNameMappingAndBuilderValue(properties, FAST_START_JOIN_TIMEOUT_MILLISECONDS);
         }

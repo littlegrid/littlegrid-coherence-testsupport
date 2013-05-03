@@ -9,8 +9,7 @@ to establishing a cluster.
 <coherence>
     <cluster-config>
         <multicast-listener>
-            <join-timeout-milliseconds system-property="littlegrid.join.timeout.milliseconds">1500
-            </join-timeout-milliseconds>
+            <join-timeout-milliseconds system-property="littlegrid.join.timeout.milliseconds">1500</join-timeout-milliseconds>
         </multicast-listener>
     </cluster-config>
 </coherence>

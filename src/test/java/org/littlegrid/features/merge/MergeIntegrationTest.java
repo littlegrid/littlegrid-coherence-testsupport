@@ -101,7 +101,9 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
 
         for (int i = 1; i <= numberOfTimesToPerformMerge; i++) {
             // Roll new member(s) in
-            memberGroup.merge(builder.buildAndConfigureForNoClient());
+            memberGroup.merge(builder
+                    .setFastStartJoinTimeoutMilliseconds(1000) // Ensure Coherence waits long enough before trying to create a new cluster
+                    .buildAndConfigureForNoClient());
 
             assertThatClusterIsExpectedSize(cluster, numberOfMembersToStartWith + numberOfMembersToAddEachTime
                     + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
@@ -111,11 +113,10 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
             // Roll the oldest member out
             memberGroup.shutdownMember(idOfNextMemberToRollOutOfCluster);
 
-            TimeUnit.SECONDS.sleep(1);
-            assertThat(doesMemberExist(cluster, idOfNextMemberToRollOutOfCluster), is(false));
-
             assertThatClusterIsExpectedSize(cluster, numberOfMembersToStartWith
                     + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
+
+            assertThat(doesMemberExist(cluster, idOfNextMemberToRollOutOfCluster), is(false));
         }
     }
 }

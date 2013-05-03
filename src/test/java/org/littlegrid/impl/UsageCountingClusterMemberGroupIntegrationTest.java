@@ -56,11 +56,7 @@ public class UsageCountingClusterMemberGroupIntegrationTest {
     @BeforeClass
     public static void beforeTests() {
         testClassMemberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setFastStartJoinTimeoutMilliseconds(100)
-                .setStorageEnabledCount(1)
-                .setLogLevel(0)
-                .setOverrideConfiguration("littlegrid/littlegrid-fast-start-coherence-override.xml")
-                .setClusterMemberGroupInstanceClassName(UsageCountingClusterMemberGroup.class.getName())
+                .setBuilderProperties("littlegrid/usage-counting-littlegrid-builder.properties")
                 .buildAndConfigureForStorageDisabledClient();
     }
 
@@ -80,11 +76,7 @@ public class UsageCountingClusterMemberGroupIntegrationTest {
     @Before
     public void beforeTest() {
         testMemberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setClusterMemberGroupInstanceClassName(UsageCountingClusterMemberGroup.class.getName())
-                .setStorageEnabledCount(1)
-                .setLogLevel(0)
-                .setFastStartJoinTimeoutMilliseconds(100)
-                .setOverrideConfiguration("littlegrid/littlegrid-fast-start-coherence-override.xml")
+                .setBuilderProperties("littlegrid/usage-counting-littlegrid-builder.properties")
                 .buildAndConfigureForStorageDisabledClient();
 
         CacheFactory.getCache(KNOWN_TEST_CACHE);

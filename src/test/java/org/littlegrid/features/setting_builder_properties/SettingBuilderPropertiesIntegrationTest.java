@@ -72,7 +72,7 @@ public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestSh
         final int expectedClusterSize = 3 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setBuilderProperties("properties/memberGroup1.properties")
+                .setBuilderProperties("littlegrid/member-group-1-littlegrid-builder.properties")
                 .buildAndConfigureForStorageDisabledClient();
 
 
@@ -85,7 +85,7 @@ public class SettingBuilderPropertiesIntegrationTest extends AbstractAfterTestSh
                 + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setBuilderProperties("properties/memberGroup1.properties", "properties/memberGroup2.properties")
+                .setBuilderProperties("littlegrid/member-group-1-littlegrid-builder.properties", "littlegrid/member-group-2-littlegrid-properties.properties")
                 .buildAndConfigureForStorageDisabledClient();
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSize);

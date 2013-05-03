@@ -38,6 +38,8 @@ import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
@@ -134,7 +136,9 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
     }
 
     @Test
-    public void startAndShutdownSeveralMembersOfGroup() {
+    public void startAndShutdownSeveralMembersOfGroup()
+            throws InterruptedException {
+
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int[] memberIdsToShutdown = {1, 2};
         final int expectedClusterSizeBeforeShutdown = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
@@ -144,7 +148,9 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
                 .setStorageEnabledCount(MEDIUM_TEST_CLUSTER_SIZE)
                 .buildAndConfigureForStorageDisabledClient();
 
-        memberGroup.shutdownMember(1, 3);
+        assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSizeBeforeShutdown);
+
+        memberGroup.shutdownMember(memberIdsToShutdown);
 
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), expectedClusterSizeAfterShutdown);
     }

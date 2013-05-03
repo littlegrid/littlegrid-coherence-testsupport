@@ -53,7 +53,7 @@ import static java.lang.String.format;
  */
 public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     private static final String REFLECTION_DELEGATING_PROPERTIES_FILENAME =
-            "littlegrid-reflection-delegating.properties";
+            "littlegrid/littlegrid-reflection-delegating.properties";
 
     private static final String DELEGATE_INSTANCE_CLASS_NAME = "DelegateInstanceClassName";
     private static final String START_METHOD_NAME_KEY = "StartMethodName";

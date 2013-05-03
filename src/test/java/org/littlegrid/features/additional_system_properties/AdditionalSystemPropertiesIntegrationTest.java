@@ -46,7 +46,7 @@ public class AdditionalSystemPropertiesIntegrationTest extends AbstractAfterTest
     @Test
     public void additionalSystemProperties() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setAdditionalSystemProperties("properties/additionalSystemProperties.properties")
+                .setAdditionalSystemProperties("littlegrid/additional-system.properties")
                 .buildAndConfigureForStorageDisabledClient();
 
         assertThat(System.getProperty("SystemPropertyThatShouldHaveBeenSet"), notNullValue());
