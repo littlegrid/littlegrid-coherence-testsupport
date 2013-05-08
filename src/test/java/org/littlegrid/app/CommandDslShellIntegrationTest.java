@@ -33,6 +33,7 @@ package org.littlegrid.app;
 
 import com.tangosol.net.CacheFactory;
 import org.junit.Test;
+import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -43,6 +44,7 @@ import static java.util.Calendar.HOUR_OF_DAY;
 import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.SECOND;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.app.CommandDslShell.Response;
 
@@ -319,6 +321,61 @@ public class CommandDslShellIntegrationTest {
         assertThat(response.getCommentCommandsExecuted(), is(0));
         assertThat(response.isExitRequested(), is(true));
     }
+
+    @Test
+    public void setSite() {
+        final String site = "mysite";
+
+        final CommandDslShell shell = new CommandDslShell(System.in, System.out);
+        final Response response = shell.start(new String[]{format("commands=site = %s; bye", site)});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
+
+        assertThat(shell.getSite(), is(site));
+        assertThat(shell.getRack(), nullValue());
+        assertThat(shell.getMachine(), nullValue());
+    }
+
+    @Test
+    public void setRack() {
+        final String rack = "myrack";
+
+        final CommandDslShell shell = new CommandDslShell(System.in, System.out);
+        final Response response = shell.start(new String[]{format("commands=rack = %s; bye", rack)});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
+
+        assertThat(shell.getSite(), nullValue());
+        assertThat(shell.getRack(), is(rack));
+        assertThat(shell.getMachine(), nullValue());
+    }
+
+    @Test
+    public void setMachine() {
+        final String machine = "mymachine";
+
+        final CommandDslShell shell = new CommandDslShell(System.in, System.out);
+        final Response response = shell.start(new String[]{format("commands=machine = %s; bye", machine)});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
+
+        assertThat(shell.getSite(), nullValue());
+        assertThat(shell.getRack(), nullValue());
+        assertThat(shell.getMachine(), is(machine));
+    }
+
 
     @Test
     public void cohQl() {

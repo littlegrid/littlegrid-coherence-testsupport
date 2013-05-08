@@ -48,10 +48,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
- * Command DSL shell - purposely reduced scope to keep visible 'surface-area' small for
- * now.
+ * Command DSL shell - purposely reduced scope for the class and methods to keep visible
+ * 'surface-area' small for now and not expose internals that may change in future versions.
  *
  * @since 2.15
  */
@@ -84,7 +85,9 @@ class CommandDslShell {
     private static final String COMMENT_COMMAND = "#";
     private static final String CONSOLE_COMMAND = "console";
     private static final String COHQL_COMMAND = "cohql";
+    private static final String SITE_COMMAND = "site =";
     private static final String RACK_COMMAND = "rack =";
+    private static final String MACHINE_COMMAND = "machine =";
 
     private final InputStream in;
     private final PrintStream out;
@@ -243,8 +246,16 @@ class CommandDslShell {
                     outputDate();
                     response.incrementValidCommandsExecuted();
 
+                } else if (command.startsWith(SITE_COMMAND)) {
+                    setSite(command);
+                    response.incrementValidCommandsExecuted();
+
                 } else if (command.startsWith(RACK_COMMAND)) {
                     setRack(command);
+                    response.incrementValidCommandsExecuted();
+
+                } else if (command.startsWith(MACHINE_COMMAND)) {
+                    setMachine(command);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals("")) {
@@ -263,11 +274,21 @@ class CommandDslShell {
         return response;
     }
 
+    private void setSite(final String command) {
+        this.site = command.replaceAll(SITE_COMMAND, "").trim();
+    }
+
     private void setRack(final String command) {
         this.rack = command.replaceAll(RACK_COMMAND, "").trim();
     }
 
-    private void sleepUntil(final String command) throws InterruptedException {
+    private void setMachine(final String command) {
+        this.machine = command.replaceAll(MACHINE_COMMAND, "").trim();
+    }
+
+    private void sleepUntil(final String command)
+            throws InterruptedException {
+
         final int[] timeParts = parseTime(SLEEP_UNTIL_COMMAND, command);
 
         final Date now = new Date();
@@ -278,12 +299,12 @@ class CommandDslShell {
         dateToWaitUntil.set(Calendar.MINUTE, timeParts[1]);
         dateToWaitUntil.set(Calendar.SECOND, timeParts[2]);
 
-        final long sleepTime = dateToWaitUntil.getTimeInMillis() - now.getTime();
+        final long sleepTime = (dateToWaitUntil.getTimeInMillis() - now.getTime()) / 1000;
 
-        out.println(format("Current time %s, now about to sleep for %d milliseconds - which is: %s",
+        out.println(format("Current time %s, now about to sleep for %d seconds - which is: %s",
                 now, sleepTime, dateToWaitUntil.getTime()));
 
-        TimeUnit.MILLISECONDS.sleep(sleepTime);
+        TimeUnit.SECONDS.sleep(sleepTime);
         out.println(format("Finished sleeping, time now: %s", new Date()));
 
     }
@@ -318,42 +339,54 @@ class CommandDslShell {
     }
 
     private void outputHelp() {
-        out.println(format("%s memberId1 memberIdX - stops the specified cluster member(s) using their member id",
-                STOP_MEMBER_COMMAND));
-
-        out.println(format("%s memberId1 memberIdX - shuts down the specified cluster member(s) using their member id",
-                SHUTDOWN_MEMBER_COMMAND));
-
-        out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
-        out.println(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
-        out.println(format("%s - exits this application - same as %s", BYE_COMMAND, QUIT_COMMAND));
-        out.println(format("%s - quits this application - same as %s", QUIT_COMMAND, BYE_COMMAND));
-        out.println(format("%s - displays member Ids known to this process", GET_STARTED_MEMBER_IDS_COMMAND));
-        out.println(format("%s n - sleeps for the specified time in milliseconds", SLEEP_COMMAND));
         out.println(format("%s - starts a storage enabled member in this process", START_STORAGE_ENABLED_COMMAND));
-        out.println(format("%sn - starts the specified number storage enabled member in this process",
+        out.println(format("%sn - starts the specified number of storage enabled members in this process",
                 START_MULTIPLE_STORAGE_ENABLED_COMMAND));
 
         out.println(format("%s n - starts an Extend proxy member with specified port in this process",
                 START_EXTEND_PROXY_COMMAND));
 
         out.println(format("%s - starts a JMX monitor member in this process", START_JMX_MONITOR_COMMAND));
+
+        out.println(format("%s - displays member Ids known to this process (note: these are only for this process)",
+                GET_STARTED_MEMBER_IDS_COMMAND));
+
+        out.println(format("%s member_id_1 member_id_X - stops the specified cluster member(s) using their member id",
+                STOP_MEMBER_COMMAND));
+
+        out.println(format("%s member_id_1 member_id_X - shuts down the specified cluster member(s) using their id",
+                SHUTDOWN_MEMBER_COMMAND));
+
+        out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
+        out.println(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
+
+        out.println(format("%s - exits this application - same as %s", BYE_COMMAND, QUIT_COMMAND));
+        out.println(format("%s - quits this application - same as %s", QUIT_COMMAND, BYE_COMMAND));
+
+        out.println(format("%s duration_X - sleeps for the specified time in milliseconds, e.g. 1000", SLEEP_COMMAND));
+        out.println(format("%s HH:MI:SS - sleeps until the specified time, e.g. 18:01:02", SLEEP_UNTIL_COMMAND));
+
         out.println(format("%s - displays this help", HELP_COMMAND));
         out.println(format("%s - displays the current date and time", DATE_COMMAND));
         out.println(format("%s - a comment line, useful when scripting and wanting to comment scripts",
                 COMMENT_COMMAND));
+
+        out.println(format("%s siteName - sets site name, this will be used by all future started members",
+                SITE_COMMAND));
+
+        out.println(format("%s rackName - sets rack name, this will be used by all future started members",
+                RACK_COMMAND));
+
+        out.println(format("%s machineName - sets machine name, this will be used by all future started members",
+                MACHINE_COMMAND));
 
         out.println(format("%s - launches CohQL console", COHQL_COMMAND));
         out.println(format("%s - launches Coherence console (not for Extend clients)", CONSOLE_COMMAND));
     }
 
     private void startJmxMonitorMember(final ClusterMemberGroup memberGroup) {
-        memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(0)
-                .setExtendProxyCount(0)
-                .setStorageEnabledExtendProxyCount(0)
+        memberGroup.merge(getNewBuilder()
                 .setJmxMonitorCount(1)
-                .setCustomConfiguredCount(0)
                 .buildAndConfigure());
 
         outputStartedMemberIds(memberGroup);
@@ -364,26 +397,17 @@ class CommandDslShell {
 
         final int extendPort = parseInteger(START_EXTEND_PROXY_COMMAND, command);
 
-        memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(0)
+        memberGroup.merge(getNewBuilder()
                 .setExtendProxyCount(1)
                 .setExtendPort(extendPort)
-                .setStorageEnabledExtendProxyCount(0)
-                .setJmxMonitorCount(0)
-                .setCustomConfiguredCount(0)
                 .buildAndConfigure());
 
         outputStartedMemberIds(memberGroup);
     }
 
     private void startStorageEnabledMember(final ClusterMemberGroup memberGroup) {
-        memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
+        memberGroup.merge(getNewBuilder()
                 .setStorageEnabledCount(1)
-                .setRackName(rack)
-                .setExtendProxyCount(0)
-                .setStorageEnabledExtendProxyCount(0)
-                .setJmxMonitorCount(0)
-                .setCustomConfiguredCount(0)
                 .buildAndConfigure());
 
         outputStartedMemberIds(memberGroup);
@@ -394,15 +418,23 @@ class CommandDslShell {
 
         final int numberOfMembers = parseInteger(START_MULTIPLE_STORAGE_ENABLED_COMMAND, command);
 
-        memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
+        memberGroup.merge(getNewBuilder()
                 .setStorageEnabledCount(numberOfMembers)
-                .setExtendProxyCount(0)
-                .setStorageEnabledExtendProxyCount(0)
-                .setJmxMonitorCount(0)
-                .setCustomConfiguredCount(0)
                 .buildAndConfigure());
 
         outputStartedMemberIds(memberGroup);
+    }
+
+    private Builder getNewBuilder() {
+        return ClusterMemberGroupUtils.newBuilder()
+                .setSiteName(site)
+                .setRackName(rack)
+                .setMachineName(machine)
+                .setStorageEnabledCount(0)
+                .setExtendProxyCount(0)
+                .setStorageEnabledExtendProxyCount(0)
+                .setJmxMonitorCount(0)
+                .setCustomConfiguredCount(0);
     }
 
     private void shutdownAll(final ClusterMemberGroup memberGroup) {
@@ -606,5 +638,32 @@ class CommandDslShell {
                     validCommandsExecuted, invalidCommandsExecuted, unknownCommandsExecuted, commentCommandsExecuted,
                     exitRequested);
         }
+    }
+
+    /**
+     * Default scope to facilitate testing.
+     *
+     * @return site.
+     */
+    public String getSite() {
+        return site;
+    }
+
+    /**
+     * Default scope to facilitate testing.
+     *
+     * @return rack.
+     */
+    public String getRack() {
+        return rack;
+    }
+
+    /**
+     * Default scope to facilitate testing.
+     *
+     * @return machine.
+     */
+    public String getMachine() {
+        return machine;
     }
 }
