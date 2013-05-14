@@ -101,8 +101,9 @@ public final class ClusterMemberGroupUtils {
      * Shutdown the cache factory and then the cluster member groups.
      *
      * @param memberGroups Member groups.
+     * @return true if cache factory shutdown called, otherwise false.
      */
-    public static void shutdownCacheFactoryThenClusterMemberGroups(final ClusterMemberGroup... memberGroups) {
+    public static boolean shutdownCacheFactoryThenClusterMemberGroups(final ClusterMemberGroup... memberGroups) {
         boolean shouldShutdownCacheFactory = true;
 
         for (final ClusterMemberGroup memberGroup : memberGroups) {
@@ -127,6 +128,8 @@ public final class ClusterMemberGroupUtils {
         } finally {
             shutdownClusterMemberGroups(memberGroups);
         }
+
+        return shouldShutdownCacheFactory;
     }
 
     /**

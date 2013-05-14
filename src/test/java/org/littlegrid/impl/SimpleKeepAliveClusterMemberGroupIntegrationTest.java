@@ -70,11 +70,14 @@ public class SimpleKeepAliveClusterMemberGroupIntegrationTest {
     public void afterTest() {
         final SimpleKeepAliveClusterMemberGroup instance = (SimpleKeepAliveClusterMemberGroup) memberGroup;
 
-        assertThat(instance.getCurrentUsageCount(), is(testInvokedCounter));
+        assertThat(instance.getCurrentUsageCount(), is(Integer.MAX_VALUE));
         assertThat(instance.getPeakUsageCount(), is(testInvokedCounter));
         assertThat(instance.getTotalUsageCount(), is(testInvokedCounter));
 
-        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+        final boolean shutdownInvoked =
+                ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+
+        assertThat(shutdownInvoked, is(false));
     }
 
     @Test

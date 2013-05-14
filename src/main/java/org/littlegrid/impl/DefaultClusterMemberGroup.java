@@ -461,7 +461,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         callbackHandler.doBeforeShutdown();
         final int memberCount = memberFutures.size();
 
-        LOGGER.info(format("Shutting down %d cluster member(s) in group", memberCount));
+        LOGGER.fine(format("Shutting down %d cluster member(s) in group", memberCount));
 
         try {
             final long startTime = System.currentTimeMillis();

@@ -35,6 +35,8 @@ import org.littlegrid.ClusterMemberGroup;
 
 import java.util.logging.Logger;
 
+import static java.lang.String.format;
+
 /**
  * Simple keep-alive local process cluster member group implementation that doesn't perform
  * its shutdown all when requested.
@@ -70,9 +72,34 @@ public class SimpleKeepAliveClusterMemberGroup extends UsageCountingClusterMembe
      * {@inheritDoc}
      */
     @Override
+    public int getCurrentUsageCount() {
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPeakUsageCount() {
+        return getTotalUsageCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ClusterMemberGroup shutdownAll() {
         LOGGER.info("Shutdown all invoked, but will be ignored in order to keep this member group running");
 
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return format("%s total usage: %d",
+                this.getClass().getName(), getTotalUsageCount());
     }
 }
