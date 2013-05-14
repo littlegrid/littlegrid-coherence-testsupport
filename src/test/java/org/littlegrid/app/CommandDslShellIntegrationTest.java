@@ -32,12 +32,15 @@
 package org.littlegrid.app;
 
 import com.tangosol.net.CacheFactory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
+import org.littlegrid.support.SystemUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.GregorianCalendar;
+import java.util.Properties;
 
 import static java.lang.String.format;
 import static java.util.Calendar.HOUR_OF_DAY;
@@ -46,12 +49,29 @@ import static java.util.Calendar.SECOND;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 import static org.littlegrid.app.CommandDslShell.Response;
 
 /**
  * Command DSL shell integration tests.
  */
 public class CommandDslShellIntegrationTest {
+    private Properties systemProperties;
+
+    @Before
+    public void beforeTest() {
+        systemProperties = SystemUtils.snapshotSystemProperties();
+
+        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
+                STORAGE_DISABLED_CLIENT.name());
+    }
+
+    @After
+    public void afterTest() {
+        System.setProperties(systemProperties);
+    }
+
     @Test
     public void stopMember() {
         final Response response = new CommandDslShell(System.in, System.out)
