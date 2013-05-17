@@ -56,9 +56,7 @@ public class SimpleKeepAliveClusterMemberGroupIntegrationTest {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setClusterMemberGroupInstanceClassName(SimpleKeepAliveClusterMemberGroup.class.getName())
                 .setStorageEnabledCount(1)
-                .setLogLevel(0)
                 .setFastStartJoinTimeoutMilliseconds(100)
-                .setOverrideConfiguration("littlegrid/littlegrid-fast-start-coherence-override.xml")
                 .buildAndConfigureForStorageDisabledClient();
 
         CacheFactory.getCache(KNOWN_TEST_CACHE);

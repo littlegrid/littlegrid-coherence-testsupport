@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -161,6 +162,22 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public int getExtendPort() {
         return extendPort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getExtendAddress() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configurer getConfigurer() {
+        throw new UnsupportedOperationException();
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
@@ -298,6 +315,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
                                                final Properties systemPropertiesToBeApplied,
                                                final URL[] classPathUrls,
                                                final int numberOfThreadsInStartUpPool) {
+
         LOGGER.fine(format("About to start %d cluster member(s) in group, using %d threads in pool",
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
@@ -339,6 +357,23 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public int[] getStartedMemberIds() {
         return getStartedMemberIds(memberFutures);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int[] getStartedMemberIds(final MemberAttributeEnum memberAttributeEnum,
+                                     final String attributeValue) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
+        throw new UnsupportedOperationException();
     }
 
     static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {

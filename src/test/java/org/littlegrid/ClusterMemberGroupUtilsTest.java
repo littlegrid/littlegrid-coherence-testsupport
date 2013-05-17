@@ -33,6 +33,8 @@ package org.littlegrid;
 
 import org.junit.Test;
 
+import java.util.Map;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
@@ -141,6 +143,18 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
+        public int[] getStartedMemberIds(final MemberAttributeEnum memberAttributeEnum,
+                                         final String attributeValue) {
+
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public int getSuggestedSleepAfterStopDuration() {
             throw new UnsupportedOperationException();
         }
@@ -162,6 +176,16 @@ public class ClusterMemberGroupUtilsTest {
 
         @Override
         public int getExtendPort() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getExtendAddress() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Configurer getConfigurer() {
             throw new UnsupportedOperationException();
         }
 
@@ -191,6 +215,23 @@ public class ClusterMemberGroupUtilsTest {
         @Override
         public boolean isAllShutdown() {
             return shutdownAllInvoked;
+        }
+
+        @Override
+        public int[] getStartedMemberIds(final MemberAttributeEnum memberAttributeEnum,
+                                         final String attributeValue) {
+
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getExtendAddress() {
+            throw new UnsupportedOperationException();
         }
 
         @Override

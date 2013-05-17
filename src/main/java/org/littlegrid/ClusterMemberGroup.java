@@ -40,6 +40,19 @@ import java.util.Properties;
  */
 public interface ClusterMemberGroup {
     /**
+     * Cluster member attribute enum.
+     *
+     * @since 2.16
+     */
+    enum MemberAttributeEnum {
+        SITE_NAME,
+        RACK_NAME,
+        MACHINE_NAME,
+        ROLE_NAME
+    }
+
+
+    /**
      * Shuts down specific cluster members in the group, the members shutdown politely and notify
      * the other members as they leave..
      *
@@ -103,6 +116,18 @@ public interface ClusterMemberGroup {
     int[] getStartedMemberIds();
 
     /**
+     * Returns the members Ids of the started cluster members matching the specified
+     * criteria.
+     *
+     * @return member Ids.
+     * @since 2.16
+     */
+    int[] getStartedMemberIds(MemberAttributeEnum memberAttributeEnum,
+                              String attributeValue);
+
+    int[] getStartedMemberIds(Map<MemberAttributeEnum, String> attributeAndValueMap);
+
+    /**
      * Returns the suggested seconds to sleep after performing a member stop, the sleep
      * time is dependent upon the version of Coherence - this is typically used in-conjunction
      * stop and TimeUnit.SECONDS.  An example of usage might be:
@@ -154,6 +179,24 @@ public interface ClusterMemberGroup {
     int getExtendPort();
 
     /**
+     * Returns the address that has been configured as the WKA/Extend address.
+     *
+     * @return address.
+     * @since 2.16
+     */
+    String getExtendAddress();
+
+    /**
+     * Returns a configurer for later use when switching or toggling between different
+     * clusters or Extend proxies.
+     *
+     * @return configurer.
+     * @since 2.16
+     */
+    Configurer getConfigurer();
+
+
+    /**
      * Interface to denote that the cluster member group may be re-used.
      *
      * @since 2.15.
@@ -162,13 +205,14 @@ public interface ClusterMemberGroup {
         int getCurrentUsageCount();
     }
 
+
     /**
      * Cluster member interface - implementations of this class need to provide basic functionality,
      * so they may be controlled by the {@link ClusterMemberGroup}
      * implementations - typically the default implementation of this class should suffice for most
      * uses.
      */
-    public interface ClusterMember {
+    interface ClusterMember {
         /**
          * Shutdown the member, it leaves the cluster politely and notifies other members.
          */
@@ -924,6 +968,7 @@ public interface ClusterMemberGroup {
         Builder setClusterMemberGroupInstanceClassName(String clusterMemberGroupInstanceClassName);
     }
 
+
     /**
      * Build exception reporter, reports useful exception information in a form to help with
      * trouble-shooting.
@@ -961,6 +1006,7 @@ public interface ClusterMemberGroup {
                     String otherInformation);
     }
 
+
     /**
      * Callback handler interface, enabling callbacks to be registered for certain lifecycle events.
      *
@@ -986,5 +1032,20 @@ public interface ClusterMemberGroup {
          * Performs any necessary actions after the cluster member has been shutdown.
          */
         void doAfterShutdown();
+    }
+
+    /**
+     * Configurer interface, applies the necessary system properties and context for
+     * the client.
+     *
+     * @since 2.16
+     */
+    interface Configurer {
+        /**
+         * Builds for the client.
+         */
+        void configureForExtendClient();
+
+        void configureForStorageDisabledClient();
     }
 }
