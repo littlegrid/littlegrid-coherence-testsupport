@@ -56,7 +56,6 @@ public class SimpleKeepAliveClusterMemberGroupIntegrationTest {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setClusterMemberGroupInstanceClassName(SimpleKeepAliveClusterMemberGroup.class.getName())
                 .setStorageEnabledCount(1)
-                .setFastStartJoinTimeoutMilliseconds(100)
                 .buildAndConfigureForStorageDisabledClient();
 
         CacheFactory.getCache(KNOWN_TEST_CACHE);
