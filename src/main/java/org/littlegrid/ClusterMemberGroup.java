@@ -179,22 +179,13 @@ public interface ClusterMemberGroup {
     int getExtendPort();
 
     /**
-     * Returns the address that has been configured as the WKA/Extend address.
-     *
-     * @return address.
-     * @since 2.16
-     */
-    String getExtendAddress();
-
-    /**
-     * Returns a configurer for later use when switching or toggling between different
+     * Returns a configuration for later use when switching or toggling between different
      * clusters or Extend proxies.
      *
-     * @return configurer.
+     * @return configuration context.
      * @since 2.16
      */
-    Configurer getConfigurer();
-
+    ConfigurationContext getConfigurationContext();
 
     /**
      * Interface to denote that the cluster member group may be re-used.
@@ -966,6 +957,15 @@ public interface ClusterMemberGroup {
          * @since 2.15
          */
         Builder setClusterMemberGroupInstanceClassName(String clusterMemberGroupInstanceClassName);
+
+        /**
+         * Set the POF configuration filename.
+         *
+         * @param pofConfiguration  POF configuration filename.
+         * @return builder.
+         * @since 2.16
+         */
+        Builder setPofConfiguration(String pofConfiguration);
     }
 
 
@@ -1035,17 +1035,31 @@ public interface ClusterMemberGroup {
     }
 
     /**
-     * Configurer interface, applies the necessary system properties and context for
+     * ConfigurationContext interface, applies the necessary system properties and context for
      * the client.
      *
      * @since 2.16
      */
-    interface Configurer {
+    interface ConfigurationContext {
+        String getClusterName();
+
+        int getWkaPort();
+
+        String getWkaAddress();
+
+        int getExtendPort();
+
+        String getExtendAddress();
+
         /**
          * Builds for the client.
          */
         void configureForExtendClient();
 
         void configureForStorageDisabledClient();
+
+        void configureForStorageEnabledMember();
+
+        void configureFor(BuildAndConfigureEnum buildAndConfigureEnum);
     }
 }

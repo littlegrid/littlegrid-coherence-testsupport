@@ -180,12 +180,7 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
-        public String getExtendAddress() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Configurer getConfigurer() {
+        public ConfigurationContext getConfigurationContext() {
             throw new UnsupportedOperationException();
         }
 
@@ -226,11 +221,6 @@ public class ClusterMemberGroupUtilsTest {
 
         @Override
         public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getExtendAddress() {
             throw new UnsupportedOperationException();
         }
 

@@ -75,6 +75,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final int wkaPort;
     private final int extendPort;
     private boolean shutdownAllInvoked;
+    private final ConfigurationContext configurationContext;
 
 
     /**
@@ -96,6 +97,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
+        this.configurationContext = new DefaultConfigurationContext();
 
         if (callbackHandler == null) {
             throw new IllegalArgumentException("Callback handler cannot be null");
@@ -168,16 +170,8 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
-    public String getExtendAddress() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Configurer getConfigurer() {
-        throw new UnsupportedOperationException();
+    public ConfigurationContext getConfigurationContext() {
+        return configurationContext;
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
