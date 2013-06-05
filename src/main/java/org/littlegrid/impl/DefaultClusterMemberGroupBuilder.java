@@ -184,7 +184,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 PropertiesUtils.loadProperties(Level.FINE, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME);
         systemPropertyNameMappingLoadedSummary.put("default file", defaultMappingProperties.size());
 
-        context.builderKeyToSystemPropertyNameMapping.putAll(defaultMappingProperties);
+        context.getBuilderKeyToSystemPropertyNameMapping().putAll(defaultMappingProperties);
 
         final String alternativePropertiesFile = System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
         final Properties overrideMappingProperties;
@@ -198,7 +198,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     LITTLEGRID_DIRECTORY_SLASH + SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME);
         }
 
-        context.builderKeyToSystemPropertyNameMapping.putAll(overrideMappingProperties);
+        context.getBuilderKeyToSystemPropertyNameMapping().putAll(overrideMappingProperties);
         systemPropertyNameMappingLoadedSummary.put("override file", overrideMappingProperties.size());
     }
 
@@ -379,12 +379,12 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     containerGroup.getStartedMemberIds().length, startDuration,
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (ClusterMemberGroupBuildException e) {
-            exceptionReporter.report(e, context.builderKeysAndValues, context.builderKeyToSystemPropertyNameMapping,
+            exceptionReporter.report(e, context.getBuilderKeysAndValues(), context.getBuilderKeyToSystemPropertyNameMapping(),
                     clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw e;
         } catch (Throwable throwable) {
-            exceptionReporter.report(throwable, context.builderKeysAndValues, context.builderKeyToSystemPropertyNameMapping,
+            exceptionReporter.report(throwable, context.getBuilderKeysAndValues(), context.getBuilderKeyToSystemPropertyNameMapping(),
                     clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw new IllegalStateException(throwable);
@@ -565,7 +565,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExceptionReporterInstanceClassName(final String exceptionReportInstanceClassName) {
-        context.setExceptionReporterInstanceClassName(exceptionReportInstanceClassName);
+        context.setBuilderValue(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
 
         return this;
     }
@@ -575,7 +575,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setCacheConfiguration(final String cacheConfiguration) {
-        context.setCacheConfiguration(cacheConfiguration);
+        context.setBuilderValue(CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -585,7 +585,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClientCacheConfiguration(final String cacheConfiguration) {
-        context.setClientCacheConfiguration(cacheConfiguration);
+        context.setBuilderValue(CLIENT_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -603,7 +603,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClientOverrideConfiguration(final String overrideConfiguration) {
-        context.setClientOverrideConfiguration(overrideConfiguration);
+        context.setBuilderValue(CLIENT_OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
         return this;
     }
@@ -613,7 +613,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setCustomConfiguredCacheConfiguration(final String cacheConfiguration) {
-        context.setCustomConfiguredCacheConfiguration(cacheConfiguration);
+        context.setBuilderValue(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -623,7 +623,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setOverrideConfiguration(final String overrideConfiguration) {
-        context.setOverrideConfiguration(overrideConfiguration);
+        context.setBuilderValue(OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
         return this;
     }
@@ -1187,7 +1187,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
                 + "builderKeyToSystemPropertyNameMapping=%s}",
-                context.builderKeysAndValues, context.additionalSystemProperties, context.builderKeyToSystemPropertyNameMapping);
+                context.getBuilderKeysAndValues(), context.getAdditionalSystemProperties(), context.getBuilderKeyToSystemPropertyNameMapping());
     }
 
     /**
@@ -1205,15 +1205,15 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         final DefaultClusterMemberGroupBuilder otherBuilder = (DefaultClusterMemberGroupBuilder) other;
 
-        if (!context.additionalSystemProperties.equals(otherBuilder.context.additionalSystemProperties)) {
+        if (!context.getAdditionalSystemProperties().equals(otherBuilder.context.getAdditionalSystemProperties())) {
             return false;
         }
 
-        if (!context.builderKeyToSystemPropertyNameMapping.equals(otherBuilder.context.builderKeyToSystemPropertyNameMapping)) {
+        if (!context.getBuilderKeyToSystemPropertyNameMapping().equals(otherBuilder.context.getBuilderKeyToSystemPropertyNameMapping())) {
             return false;
         }
 
-        if (!context.builderKeysAndValues.equals(otherBuilder.context.builderKeysAndValues)) {
+        if (!context.getBuilderKeysAndValues().equals(otherBuilder.context.getBuilderKeysAndValues())) {
             return false;
         }
 
@@ -1225,9 +1225,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public int hashCode() {
-        int result = context.builderKeysAndValues.hashCode();
-        result = 31 * result + context.additionalSystemProperties.hashCode();
-        result = 31 * result + context.builderKeyToSystemPropertyNameMapping.hashCode();
+        int result = context.getBuilderKeysAndValues().hashCode();
+        result = 31 * result + context.getAdditionalSystemProperties().hashCode();
+        result = 31 * result + context.getBuilderKeyToSystemPropertyNameMapping().hashCode();
 
         return result;
     }
