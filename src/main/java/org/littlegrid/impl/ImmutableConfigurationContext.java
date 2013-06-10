@@ -31,17 +31,19 @@
 
 package org.littlegrid.impl;
 
-import org.littlegrid.support.BeanUtils;
-import org.littlegrid.support.PropertiesUtils;
+import org.littlegrid.support.SystemUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
 import static org.littlegrid.ClusterMemberGroup.ConfigurationContext;
 
 /**
@@ -140,9 +142,9 @@ class ImmutableConfigurationContext implements ConfigurationContext {
     static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
 
-    private final Map<String, String> builderKeysAndValues;
-    private final Properties additionalSystemProperties;
-    private final Properties builderKeyToSystemPropertyNameMapping;
+    protected final Map<String, String> builderKeysAndValues;
+    protected final Properties additionalSystemProperties;
+    protected final Properties builderKeyToSystemPropertyNameMapping;
 
     private static final Logger LOGGER = Logger.getLogger(ImmutableConfigurationContext.class.getName());
 
@@ -154,9 +156,9 @@ class ImmutableConfigurationContext implements ConfigurationContext {
      * @param builderKeyToSystemPropertyNameMapping
      *                                   Builder key to system property name mapping.
      */
-    public ImmutableConfigurationContext(final Map<String, String> builderKeysAndValues,
-                                         final Properties additionalSystemProperties,
-                                         final Properties builderKeyToSystemPropertyNameMapping) {
+    ImmutableConfigurationContext(final Map<String, String> builderKeysAndValues,
+                                  final Properties additionalSystemProperties,
+                                  final Properties builderKeyToSystemPropertyNameMapping) {
 
         this.builderKeysAndValues = new HashMap<String, String>(builderKeysAndValues);
         this.additionalSystemProperties = new Properties(additionalSystemProperties);
@@ -165,31 +167,86 @@ class ImmutableConfigurationContext implements ConfigurationContext {
 
     @Override
     public String getClusterName() {
-        throw new UnsupportedOperationException();
+        return getBuilderValueAsString(CLUSTER_NAME_KEY);
     }
 
     @Override
     public String getExtendAddress() {
-        throw new UnsupportedOperationException();
+        return getBuilderValueAsString(EXTEND_ADDRESS_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getClientCacheConfiguration() {
+        return getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getWkaAddress() {
+        return getBuilderValueAsString(WKA_ADDRESS_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getWkaPort() {
+        return getBuilderValueAsInt(WKA_PORT_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getExtendPort() {
+        return getBuilderValueAsInt(EXTEND_PORT_KEY);
     }
 
     @Override
     public void configureForExtendClient() {
-//        builder.buildAndConfigureForExtendClient();
+        configureFor(EXTEND_CLIENT);
     }
 
     @Override
     public void configureForStorageDisabledClient() {
-//        builder.buildAndConfigureForStorageDisabledClient();
+        configureFor(STORAGE_DISABLED_CLIENT);
     }
 
     @Override
     public void configureForStorageEnabledMember() {
-//        builder.buildAndConfigureForStorageEnabledMember();
+        configureFor(STORAGE_ENABLED_MEMBER);
     }
 
     @Override
     public void configureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
+        final Properties systemProperties;
+
+        switch (buildAndConfigureEnum) {
+            case STORAGE_DISABLED_CLIENT:
+                systemProperties = getSystemPropertiesForStorageDisabledClient();
+                break;
+
+            case EXTEND_CLIENT:
+                systemProperties = getSystemPropertiesForExtendProxyClient();
+                break;
+
+            case STORAGE_ENABLED_MEMBER:
+                systemProperties = getSystemPropertiesForStorageEnabled();
+                break;
+
+            default:
+                systemProperties = new Properties();
+                break;
+        }
+
+        SystemUtils.applyToSystemProperties(systemProperties);
+
+        LOGGER.info(format("System properties set for client/member: %s", new TreeMap(systemProperties)));
+
 //        builder.buildAndConfigureFor(buildAndConfigureEnum);
     }
 
@@ -569,65 +626,16 @@ class ImmutableConfigurationContext implements ConfigurationContext {
     }
 
     @Deprecated
+        //TODO: not really deprecated, but scope is wider than preferred and so will be reduced later
     long getBuilderValueAsLong(final String builderKey) {
         return Long.parseLong(builderKeysAndValues.get(builderKey));
     }
 
     @Deprecated
+        //TODO: not really deprecated, but scope is wider than preferred and so will be reduced later
     String getBuilderValueAsString(final String builderKey) {
         return builderKeysAndValues.get(builderKey);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getClientCacheConfiguration() {
-        return getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWkaAddress() {
-        return getBuilderValueAsString(WKA_ADDRESS_KEY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getWkaPort() {
-        return getBuilderValueAsInt(WKA_PORT_KEY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getExtendPort() {
-        return getBuilderValueAsInt(EXTEND_PORT_KEY);
-    }
-
-    public ConfigurationContext setBuilderProperties(final Properties properties) {
-        BeanUtils.multiSetter(this, properties);
-
-        return this;
-    }
-
-    public ConfigurationContext setBuilderProperties(final String commaDelimitedPropertiesFilenames) {
-        setBuilderProperties(PropertiesUtils.loadProperties(Level.INFO, commaDelimitedPropertiesFilenames));
-
-        return this;
-    }
-
-    public ConfigurationContext setBuilderProperties(final String... propertiesFilenames) {
-        setBuilderProperties(PropertiesUtils.loadProperties(Level.INFO, propertiesFilenames));
-
-        return this;
-    }
-
 
     public String getAppConsoleClassName() {
         return getBuilderValueAsString(APP_CONSOLE_CLASS_NAME_KEY);
@@ -702,23 +710,15 @@ class ImmutableConfigurationContext implements ConfigurationContext {
         return sb.toString();
     }
 
-    /**
-     * Returns the current builder keys and values with their internal builder keys.
-     *
-     * @return builder keys and values.
-     */
-    @Deprecated
     Map<String, String> getBuilderKeysAndValues() {
-        return builderKeysAndValues;
+        return new HashMap<String, String>(builderKeysAndValues);
     }
 
-    @Deprecated
     Properties getAdditionalSystemProperties() {
-        return additionalSystemProperties;
+        return new Properties(additionalSystemProperties);
     }
 
-    @Deprecated
     Properties getBuilderKeyToSystemPropertyNameMapping() {
-        return builderKeyToSystemPropertyNameMapping;
+        return new Properties(builderKeyToSystemPropertyNameMapping);
     }
 }

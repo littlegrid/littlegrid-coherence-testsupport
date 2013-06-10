@@ -40,6 +40,7 @@ import org.littlegrid.support.SystemUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,8 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
-        this.configurationContext = new DefaultConfigurationContext();
+        this.configurationContext = new ImmutableConfigurationContext(new HashMap<String, String>(),
+                new Properties(), new Properties());
 
         if (callbackHandler == null) {
             throw new IllegalArgumentException("Callback handler cannot be null");
