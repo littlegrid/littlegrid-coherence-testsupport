@@ -51,6 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static java.util.Map.Entry;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
@@ -338,7 +339,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     private DefaultClusterMemberGroup buildClusterMembers(final Class clusterMemberGroupClass) {
         final int storageEnabledCount = configurationContext.getBuilderValueAsInt(STORAGE_ENABLED_COUNT_KEY);
         final int customConfiguredCount = configurationContext.getBuilderValueAsInt(CUSTOM_CONFIGURED_COUNT_KEY);
-        final int storageEnabledExtendProxyCount = configurationContext.getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
+        final int storageEnabledExtendProxyCount =
+                configurationContext.getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
+
         final int extendProxyCount = configurationContext.getBuilderValueAsInt(EXTEND_PROXY_COUNT_KEY);
         final int jmxMonitorCount = configurationContext.getBuilderValueAsInt(JMX_MONITOR_COUNT_KEY);
 
@@ -352,7 +355,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 storageEnabledCount, extendProxyCount, storageEnabledExtendProxyCount,
                 jmxMonitorCount, customConfiguredCount));
 
-        final int numberOfThreadsInStartUpPool = configurationContext.getBuilderValueAsInt(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
+        final int numberOfThreadsInStartUpPool =
+                configurationContext.getBuilderValueAsInt(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
+
         final Properties systemProperties = System.getProperties();
         final String pathSeparator = ClassPathUtils.getPathSeparator(systemProperties);
         final String classPath = ClassPathUtils.getClassPath(systemProperties);
@@ -366,7 +371,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
                     javaHome, classPath, pathSeparator,
                     configurationContext.getBuilderValueAsString(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
-                            + ", " + configurationContext.getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
+                            + ", "
+                            + configurationContext.getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
 
             containerGroup = createClusterMemberGroupWithCallbackAndSleepDurations(clusterMemberGroupClass);
 
@@ -391,12 +397,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     containerGroup.getStartedMemberIds().length, startDuration,
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (ClusterMemberGroupBuildException e) {
-            exceptionReporter.report(e, configurationContext.getBuilderKeysAndValues(), configurationContext.getBuilderKeyToSystemPropertyNameMapping(),
+            exceptionReporter.report(e, configurationContext.getBuilderKeysAndValues(),
+                    configurationContext.getBuilderKeyToSystemPropertyNameMapping(),
                     clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw e;
         } catch (Throwable throwable) {
-            exceptionReporter.report(throwable, configurationContext.getBuilderKeysAndValues(), configurationContext.getBuilderKeyToSystemPropertyNameMapping(),
+            exceptionReporter.report(throwable, configurationContext.getBuilderKeysAndValues(),
+                    configurationContext.getBuilderKeyToSystemPropertyNameMapping(),
                     clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw new IllegalStateException(throwable);
@@ -407,7 +415,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     @SuppressWarnings("unchecked")
     private BuildExceptionReporter createExceptionReporter() {
-        final String className = configurationContext.getBuilderValueAsString(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
+        final String className =
+                configurationContext.getBuilderValueAsString(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
 
         try {
             final Class clazz = this.getClass().getClassLoader().loadClass(className);
@@ -421,7 +430,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     @SuppressWarnings("unchecked")
     private CallbackHandler createCallbackHandler() {
-        final String className = configurationContext.getBuilderValueAsString(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY);
+        final String className =
+                configurationContext.getBuilderValueAsString(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY);
 
         try {
             final Class clazz = this.getClass().getClassLoader().loadClass(className);
@@ -460,7 +470,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                               final int numberOfThreadsInStartUpPool) {
 
         final String customConfiguredClusterMemberInstanceClassName =
-                configurationContext.getBuilderValueAsString(CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+                configurationContext.getBuilderValueAsString(
+                        CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (customConfiguredCount > 0) {
             final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
@@ -491,7 +502,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
                         DefaultClusterMemberGroup.startClusterMembers(
                                 singleMember,
-                                configurationContext.getSystemPropertiesForStorageEnabledExtendProxy(extendStartingPort + i),
+                                configurationContext.getSystemPropertiesForStorageEnabledExtendProxy(
+                                        extendStartingPort + i),
                                 classPathUrls,
                                 clusterMemberInstanceClassName,
                                 numberOfThreadsInStartUpPool);
@@ -566,9 +578,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             return (DefaultClusterMemberGroup) constructor.newInstance(createCallbackHandler(),
                     duration35x, duration36x, durationDefault, wkaPort, extendPort);
         } catch (Exception e) {
-            //TODO:
-
-            throw new UnsupportedOperationException(e);
+            throw new IllegalStateException(format("Cannot create instance of '%s", clusterMemberGroupClass));
         }
     }
 
@@ -577,7 +587,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExceptionReporterInstanceClassName(final String exceptionReportInstanceClassName) {
-        configurationContext.setBuilderValue(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
+        configurationContext.setBuilderValue(
+                EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
 
         return this;
     }
@@ -1108,10 +1119,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
-    public Builder setCallbackHandlerInstanceClassName(
-            final String callbackHandlerInstanceClassName) {
-
-        configurationContext.setBuilderValue(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY, callbackHandlerInstanceClassName);
+    public Builder setCallbackHandlerInstanceClassName(final String callbackHandlerInstanceClassName) {
+        configurationContext.setBuilderValue(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY,
+                callbackHandlerInstanceClassName);
 
         return this;
     }
@@ -1169,7 +1179,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClusterMemberGroupInstanceClassName(final String clusterMemberGroupInstanceClassName) {
-        configurationContext.setBuilderValue(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME, clusterMemberGroupInstanceClassName);
+        configurationContext.setBuilderValue(
+                CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME, clusterMemberGroupInstanceClassName);
 
         return this;
     }
@@ -1199,7 +1210,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
                 + "builderKeyToSystemPropertyNameMapping=%s}",
-                configurationContext.getBuilderKeysAndValues(), configurationContext.getAdditionalSystemProperties(), configurationContext.getBuilderKeyToSystemPropertyNameMapping());
+                configurationContext.getBuilderKeysAndValues(),
+                configurationContext.getAdditionalSystemProperties(),
+                configurationContext.getBuilderKeyToSystemPropertyNameMapping());
     }
 
     /**
@@ -1246,10 +1259,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         private static final Registry INSTANCE = new Registry();
 
-        /**
-         * Default scope to facilitate testing.
-         */
-        final Map<Object, ReusableClusterMemberGroup> reusableClusterMemberGroupMap =
+        private final Map<Object, ReusableClusterMemberGroup> reusableClusterMemberGroupMap =
                 new HashMap<Object, ReusableClusterMemberGroup>();
 
         static Registry getInstance() {
@@ -1274,7 +1284,11 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
             reusableClusterMemberGroupMap.put(key, clusterMemberGroup);
         }
 
-        private Object getKey(Builder builder) {
+        Map<Object, ReusableClusterMemberGroup> getReusableClusterMemberGroupMap() {
+            return reusableClusterMemberGroupMap;
+        }
+
+        private Object getKey(final Builder builder) {
             return builder.hashCode();
         }
 
@@ -1287,8 +1301,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         }
     }
 
-    @Deprecated
-        //TODO: not really deprecated, but scope is wider than preferred and so will be reduced later
     ConfigurationContext getConfigurationContext() {
         return configurationContext;
     }
@@ -1309,33 +1321,61 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         void setBuilderValue(final String key,
                              final int value) {
 
-            builderKeysAndValues.put(key, Integer.toString(value));
+            getDirectMutableAccessToBuilderKeysAndValues().put(key, Integer.toString(value));
         }
 
         void setBuilderValue(final String key,
                              final long value) {
 
-            builderKeysAndValues.put(key, Long.toString(value));
+            getDirectMutableAccessToBuilderKeysAndValues().put(key, Long.toString(value));
         }
 
         void setBuilderValue(final String key,
                              final String value) {
 
-            builderKeysAndValues.put(key, value);
+            getDirectMutableAccessToBuilderKeysAndValues().put(key, value);
         }
 
         public void setAdditionalSystemProperties(final Properties additionalSystemProperties) {
-            super.additionalSystemProperties.putAll(additionalSystemProperties);
+            // Pass them through individually so any bad key/values are identified
+            for (final Entry entry : additionalSystemProperties.entrySet()) {
+                setAdditionalSystemProperty((String) entry.getKey(), (String) entry.getValue());
+            }
         }
 
         public void setAdditionalSystemProperty(final String key,
                                                 final String value) {
 
-            additionalSystemProperties.put(key, value);
+            if (key == null) {
+                throw new IllegalArgumentException(format("Key cannot be null, supplied value was: '%s'", value));
+            }
+
+            if (value == null) {
+                throw new IllegalArgumentException(format("Value cannot be null, supplied key was: '%s'", key));
+            }
+
+            getDirectMutableAccessToAdditionalSystemProperties().put(key, value);
         }
 
         public void setBuilderKeyToSystemPropertyNameMapping(final Properties builderKeyToSystemPropertyNameMapping) {
-            super.builderKeyToSystemPropertyNameMapping.putAll(builderKeyToSystemPropertyNameMapping);
+            // Pass them through individually so any bad key/values are identified
+            for (final Entry entry : builderKeyToSystemPropertyNameMapping.entrySet()) {
+                setBuilderKeyToSystemPropertyNameMapping((String) entry.getKey(), (String) entry.getValue());
+            }
+        }
+
+        public void setBuilderKeyToSystemPropertyNameMapping(final String key,
+                                                             final String value) {
+
+            if (key == null) {
+                throw new IllegalArgumentException(format("Key cannot be null, supplied value was: '%s'", value));
+            }
+
+            if (value == null) {
+                throw new IllegalArgumentException(format("Value cannot be null, supplied key was: '%s'", key));
+            }
+
+            getDirectMutableAccessToBuilderKeyToSystemPropertyNameMapping().put(key, value);
         }
     }
 }

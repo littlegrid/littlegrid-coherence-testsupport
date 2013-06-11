@@ -34,8 +34,6 @@ package org.littlegrid.impl;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultCacheServer;
 
-import java.util.concurrent.Callable;
-
 import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 

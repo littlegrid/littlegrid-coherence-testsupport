@@ -88,6 +88,7 @@ class CommandDslShell {
     private static final String SITE_COMMAND = "site =";
     private static final String RACK_COMMAND = "rack =";
     private static final String MACHINE_COMMAND = "machine =";
+    public static final int MILLISECONDS_IN_SECOND = 1000;
 
     private final InputStream in;
     private final PrintStream out;
@@ -299,7 +300,7 @@ class CommandDslShell {
         dateToWaitUntil.set(Calendar.MINUTE, timeParts[1]);
         dateToWaitUntil.set(Calendar.SECOND, timeParts[2]);
 
-        final long sleepTime = (dateToWaitUntil.getTimeInMillis() - now.getTime()) / 1000;
+        final long sleepTime = (dateToWaitUntil.getTimeInMillis() - now.getTime()) / MILLISECONDS_IN_SECOND;
 
         out.println(format("Current time %s, now about to sleep for %d seconds - which is: %s",
                 now, sleepTime, dateToWaitUntil.getTime()));

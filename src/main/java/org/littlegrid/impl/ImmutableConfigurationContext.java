@@ -81,7 +81,6 @@ class ImmutableConfigurationContext implements ConfigurationContext {
     static final String JMX_MONITOR_ROLE_NAME_KEY = "JmxMonitorRoleName";
     static final String STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY = "StorageDisabledClientRoleName";
 
-
     static final String EXTEND_CLIENT_ROLE_NAME_KEY = "ExtendClientRoleName";
     static final String WKA_PORT_KEY = "WkaPort";
     static final String LOCAL_ADDRESS_KEY = "LocalAddress";
@@ -138,13 +137,12 @@ class ImmutableConfigurationContext implements ConfigurationContext {
 
     static final String CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY = "CoreJarsToExcludeFromClassPath";
 
-
     static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
 
-    protected final Map<String, String> builderKeysAndValues;
-    protected final Properties additionalSystemProperties;
-    protected final Properties builderKeyToSystemPropertyNameMapping;
+    private final Map<String, String> builderKeysAndValues;
+    private final Properties additionalSystemProperties;
+    private final Properties builderKeyToSystemPropertyNameMapping;
 
     private static final Logger LOGGER = Logger.getLogger(ImmutableConfigurationContext.class.getName());
 
@@ -206,21 +204,33 @@ class ImmutableConfigurationContext implements ConfigurationContext {
         return getBuilderValueAsInt(EXTEND_PORT_KEY);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void configureForExtendClient() {
         configureFor(EXTEND_CLIENT);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void configureForStorageDisabledClient() {
         configureFor(STORAGE_DISABLED_CLIENT);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void configureForStorageEnabledMember() {
         configureFor(STORAGE_ENABLED_MEMBER);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void configureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
         final Properties systemProperties;
@@ -246,8 +256,6 @@ class ImmutableConfigurationContext implements ConfigurationContext {
         SystemUtils.applyToSystemProperties(systemProperties);
 
         LOGGER.info(format("System properties set for client/member: %s", new TreeMap(systemProperties)));
-
-//        builder.buildAndConfigureFor(buildAndConfigureEnum);
     }
 
     /**
@@ -615,24 +623,19 @@ class ImmutableConfigurationContext implements ConfigurationContext {
         }
     }
 
-    @Deprecated
+    @Deprecated //TODO: move this somewhere else
     static boolean stringHasValue(final String stringToCheckForValue) {
         return stringToCheckForValue != null && stringToCheckForValue.trim().length() > 0;
     }
 
-    @Deprecated
     int getBuilderValueAsInt(final String builderKey) {
         return Integer.parseInt(builderKeysAndValues.get(builderKey));
     }
 
-    @Deprecated
-        //TODO: not really deprecated, but scope is wider than preferred and so will be reduced later
     long getBuilderValueAsLong(final String builderKey) {
         return Long.parseLong(builderKeysAndValues.get(builderKey));
     }
 
-    @Deprecated
-        //TODO: not really deprecated, but scope is wider than preferred and so will be reduced later
     String getBuilderValueAsString(final String builderKey) {
         return builderKeysAndValues.get(builderKey);
     }
@@ -693,6 +696,7 @@ class ImmutableConfigurationContext implements ConfigurationContext {
         return result;
     }
 
+    @Deprecated //TODO: not really deprecated but needs to move somewhere else
     static String stringArrayToCommaDelimitedString(final String[] jarsToExcludeFromClassPath) {
         final StringBuilder sb = new StringBuilder();
 
@@ -720,5 +724,17 @@ class ImmutableConfigurationContext implements ConfigurationContext {
 
     Properties getBuilderKeyToSystemPropertyNameMapping() {
         return new Properties(builderKeyToSystemPropertyNameMapping);
+    }
+
+    protected Properties getDirectMutableAccessToAdditionalSystemProperties() {
+        return additionalSystemProperties;
+    }
+
+    protected Map<String, String> getDirectMutableAccessToBuilderKeysAndValues() {
+        return builderKeysAndValues;
+    }
+
+    protected Properties getDirectMutableAccessToBuilderKeyToSystemPropertyNameMapping() {
+        return builderKeyToSystemPropertyNameMapping;
     }
 }

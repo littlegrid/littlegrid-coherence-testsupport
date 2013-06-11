@@ -119,12 +119,21 @@ public interface ClusterMemberGroup {
      * Returns the members Ids of the started cluster members matching the specified
      * criteria.
      *
+     * @param memberAttributeEnum Member attribute enum.
+     * @param attributeValue      Attribute value.
      * @return member Ids.
      * @since 2.16
      */
     int[] getStartedMemberIds(MemberAttributeEnum memberAttributeEnum,
                               String attributeValue);
 
+    /**
+     * Returns the member Ids of the started cluster members matching the specified
+     * critiera.
+     *
+     * @param attributeAndValueMap Attribute and value map.
+     * @return member Ids.
+     */
     int[] getStartedMemberIds(Map<MemberAttributeEnum, String> attributeAndValueMap);
 
     /**
@@ -961,7 +970,7 @@ public interface ClusterMemberGroup {
         /**
          * Set the POF configuration filename.
          *
-         * @param pofConfiguration  POF configuration filename.
+         * @param pofConfiguration POF configuration filename.
          * @return builder.
          * @since 2.16
          */
