@@ -91,6 +91,8 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
 
         final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
         cache.put("any key", "separate extend proxy and stored enabled members, so this will be cached");
+
+        assertThat(cache.size(), is(1));
     }
 
     @Test

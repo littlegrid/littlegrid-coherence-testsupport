@@ -51,6 +51,7 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DI
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.DefaultConfigurationContext;
 import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.Registry;
 
 /**
@@ -736,7 +737,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     private ReusableClusterMemberGroup getClusterMemberGroup() {
-        return new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0);
+        return new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0,
+                new DefaultConfigurationContext());
     }
 
     private ImmutableConfigurationContext getImmutableConfigurationContext(

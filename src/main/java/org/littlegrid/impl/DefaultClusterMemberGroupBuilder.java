@@ -573,10 +573,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         try {
             final Constructor constructor = clusterMemberGroupClass.getDeclaredConstructor(
                     CallbackHandler.class,
-                    int.class, int.class, int.class, int.class, int.class);
+                    int.class, int.class, int.class, int.class, int.class, ImmutableConfigurationContext.class);
 
             return (DefaultClusterMemberGroup) constructor.newInstance(createCallbackHandler(),
-                    duration35x, duration36x, durationDefault, wkaPort, extendPort);
+                    duration35x, duration36x, durationDefault, wkaPort, extendPort, configurationContext);
         } catch (Exception e) {
             throw new IllegalStateException(format("Cannot create instance of '%s", clusterMemberGroupClass));
         }

@@ -40,7 +40,6 @@ import org.littlegrid.support.SystemUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,18 +87,19 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param sleepAfterStopDurationDefault Default sleep duration.
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
+     * @param sourceConfigurationContext    Configuration context from which to take point-in-time
+     *                                      source configuration.
      */
     public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
                                      final int sleepAfterStopDuration35x,
                                      final int sleepAfterStopDuration36x,
                                      final int sleepAfterStopDurationDefault,
                                      final int wkaPort,
-                                     final int extendPort) {
+                                     final int extendPort,
+                                     final ImmutableConfigurationContext sourceConfigurationContext) {
 
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
-        this.configurationContext = new ImmutableConfigurationContext(new HashMap<String, String>(),
-                new Properties(), new Properties());
 
         if (callbackHandler == null) {
             throw new IllegalArgumentException("Callback handler cannot be null");
@@ -109,6 +109,15 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         this.sleepAfterStopDuration35x = sleepAfterStopDuration35x;
         this.sleepAfterStopDuration36x = sleepAfterStopDuration36x;
         this.sleepAfterStopDurationDefault = sleepAfterStopDurationDefault;
+
+        if (sourceConfigurationContext == null) {
+            throw new IllegalArgumentException("Source configuration context cannot be null");
+        }
+
+        this.configurationContext = new ImmutableConfigurationContext(
+                sourceConfigurationContext.getBuilderKeysAndValues(),
+                sourceConfigurationContext.getAdditionalSystemProperties(),
+                sourceConfigurationContext.getBuilderKeyToSystemPropertyNameMapping());
 
         systemPropertiesBeforeStartAllInvoked = SystemUtils.snapshotSystemProperties();
 

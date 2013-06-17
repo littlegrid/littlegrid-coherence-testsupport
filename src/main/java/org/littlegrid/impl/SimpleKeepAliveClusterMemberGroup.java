@@ -55,17 +55,20 @@ public class SimpleKeepAliveClusterMemberGroup extends UsageCountingClusterMembe
      * @param sleepAfterStopDurationDefault Default sleep duration.
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
+     * @param sourceConfigurationContext    Configuration context from which to take point-in-time
+     *                                      source configuration.
      */
     public SimpleKeepAliveClusterMemberGroup(final CallbackHandler callbackHandler,
                                              final int sleepAfterStopDuration35x,
                                              final int sleepAfterStopDuration36x,
                                              final int sleepAfterStopDurationDefault,
                                              final int wkaPort,
-                                             final int extendPort) {
+                                             final int extendPort,
+                                             final ImmutableConfigurationContext sourceConfigurationContext) {
 
         super(callbackHandler,
                 sleepAfterStopDuration35x, sleepAfterStopDuration36x, sleepAfterStopDurationDefault,
-                wkaPort, extendPort);
+                wkaPort, extendPort, sourceConfigurationContext);
     }
 
     /**

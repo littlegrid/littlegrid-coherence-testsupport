@@ -170,7 +170,8 @@ class ImmutableConfigurationContext implements ConfigurationContext {
 
     @Override
     public String getExtendAddress() {
-        return getBuilderValueAsString(EXTEND_ADDRESS_KEY);
+        // The Extend address is always the same as WKA address
+        return getBuilderValueAsString(WKA_ADDRESS_KEY);
     }
 
     /**
