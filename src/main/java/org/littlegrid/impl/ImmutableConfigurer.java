@@ -44,14 +44,14 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
-import static org.littlegrid.ClusterMemberGroup.ConfigurationContext;
+import static org.littlegrid.ClusterMemberGroup.Configuer;
 
 /**
- * Immutable configuration context.
+ * Immutable configurer.
  *
  * @since 2.16
  */
-class ImmutableConfigurationContext implements ConfigurationContext {
+class ImmutableConfigurer implements Configuer {
     static final String FAST_START_OVERRIDE_CONFIGURATION_FILENAME =
             "littlegrid/littlegrid-fast-start-coherence-override.xml";
 
@@ -144,7 +144,7 @@ class ImmutableConfigurationContext implements ConfigurationContext {
     private final Properties additionalSystemProperties;
     private final Properties builderKeyToSystemPropertyNameMapping;
 
-    private static final Logger LOGGER = Logger.getLogger(ImmutableConfigurationContext.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ImmutableConfigurer.class.getName());
 
     /**
      * Constructor.
@@ -154,13 +154,17 @@ class ImmutableConfigurationContext implements ConfigurationContext {
      * @param builderKeyToSystemPropertyNameMapping
      *                                   Builder key to system property name mapping.
      */
-    ImmutableConfigurationContext(final Map<String, String> builderKeysAndValues,
-                                  final Properties additionalSystemProperties,
-                                  final Properties builderKeyToSystemPropertyNameMapping) {
+    ImmutableConfigurer(final Map<String, String> builderKeysAndValues,
+                        final Properties additionalSystemProperties,
+                        final Properties builderKeyToSystemPropertyNameMapping) {
 
         this.builderKeysAndValues = new HashMap<String, String>(builderKeysAndValues);
+
         this.additionalSystemProperties = new Properties(additionalSystemProperties);
-        this.builderKeyToSystemPropertyNameMapping = new Properties(builderKeyToSystemPropertyNameMapping);
+        this.additionalSystemProperties.putAll(additionalSystemProperties);
+
+        this.builderKeyToSystemPropertyNameMapping = new Properties();
+        this.builderKeyToSystemPropertyNameMapping.putAll(builderKeyToSystemPropertyNameMapping);
     }
 
     @Override
@@ -668,7 +672,7 @@ class ImmutableConfigurationContext implements ConfigurationContext {
             return false;
         }
 
-        final ImmutableConfigurationContext otherContext = (ImmutableConfigurationContext) other;
+        final ImmutableConfigurer otherContext = (ImmutableConfigurer) other;
 
         if (!additionalSystemProperties.equals(otherContext.additionalSystemProperties)) {
             return false;
@@ -720,11 +724,17 @@ class ImmutableConfigurationContext implements ConfigurationContext {
     }
 
     Properties getAdditionalSystemProperties() {
-        return new Properties(additionalSystemProperties);
+        final Properties properties = new Properties();
+        properties.putAll(additionalSystemProperties);
+
+        return properties;
     }
 
     Properties getBuilderKeyToSystemPropertyNameMapping() {
-        return new Properties(builderKeyToSystemPropertyNameMapping);
+        final Properties properties = new Properties();
+        properties.putAll(builderKeyToSystemPropertyNameMapping);
+
+        return properties;
     }
 
     protected Properties getDirectMutableAccessToAdditionalSystemProperties() {

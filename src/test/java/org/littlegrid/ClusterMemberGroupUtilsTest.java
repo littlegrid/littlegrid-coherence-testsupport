@@ -180,7 +180,7 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
-        public ConfigurationContext getConfigurationContext() {
+        public Configuer getConfigurer() {
             throw new UnsupportedOperationException();
         }
 

@@ -88,7 +88,10 @@ class CommandDslShell {
     private static final String SITE_COMMAND = "site =";
     private static final String RACK_COMMAND = "rack =";
     private static final String MACHINE_COMMAND = "machine =";
-    public static final int MILLISECONDS_IN_SECOND = 1000;
+    private static final int MILLISECONDS_IN_SECOND = 1000;
+    private static final String QUERY_PLUS_CLASS_NAME = "com.tangosol.coherence.dslquery.QueryPlus";
+    private static final String COHERENCE_CONSOLE_CLASS_NAME =
+            "com.tangosol.coherence.component.application.console.Coherence";
 
     private final InputStream in;
     private final PrintStream out;
@@ -125,6 +128,7 @@ class CommandDslShell {
         totalResponse.merge(commandStringResponse);
 
         if (!commandStringResponse.isExitRequested()) {
+            out.println("littlegrid DSL shell ready");
             final Scanner scanner = new Scanner(in);
 
             final Response commandStreamResponse = processCommandsStream(memberGroup, scanner);
@@ -132,7 +136,7 @@ class CommandDslShell {
         }
 
         LOGGER.info(totalResponse.toString());
-        System.out.println("Exiting");
+        out.println("Exiting");
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
 
@@ -158,7 +162,7 @@ class CommandDslShell {
 
         do {
             out.println();
-            out.print(COMMAND_PROMPT);
+//            out.print(COMMAND_PROMPT);
 
             final String stringEntered = scanner.nextLine();
             final Response response = processCommandsString(memberGroup, stringEntered);
@@ -263,11 +267,11 @@ class CommandDslShell {
                     out.println();
 
                 } else {
-                    out.println(format("'%s' is an unknown command", command));
+                    out.println(format("COMMAND_UNKNOWN: '%s'", command));
                     response.incrementUnknownCommandsExecuted();
                 }
             } catch (Exception e) {
-                out.println(format("Exception when executing command: '%s' due to: %s", command, e));
+                out.println(format("COMMAND_EXCEPTION: '%s' due to: %s", command, e));
                 response.incrementInvalidCommandsExecuted();
             }
         }
@@ -320,7 +324,7 @@ class CommandDslShell {
 
         CacheFactory.main(new String[]{});
 
-        final Class coherenceConsole = Class.forName("com.tangosol.coherence.component.application.console.Coherence",
+        final Class coherenceConsole = Class.forName(COHERENCE_CONSOLE_CLASS_NAME,
                 true, Thread.currentThread().getContextClassLoader());
 
         final Object component = ClassHelper.invokeStatic(coherenceConsole, "get_Instance", null);
@@ -334,7 +338,7 @@ class CommandDslShell {
             throws Exception {
 
         final Class cohqlConsole =
-                this.getClass().getClassLoader().loadClass("com.tangosol.coherence.dslquery.QueryPlus");
+                this.getClass().getClassLoader().loadClass(QUERY_PLUS_CLASS_NAME);
 
         ClassHelper.invokeStatic(cohqlConsole, "main", new Object[]{new String[]{}});
     }
@@ -646,7 +650,7 @@ class CommandDslShell {
      *
      * @return site.
      */
-    public String getSite() {
+    String getSite() {
         return site;
     }
 
@@ -655,7 +659,7 @@ class CommandDslShell {
      *
      * @return rack.
      */
-    public String getRack() {
+    String getRack() {
         return rack;
     }
 
@@ -664,7 +668,7 @@ class CommandDslShell {
      *
      * @return machine.
      */
-    public String getMachine() {
+    String getMachine() {
         return machine;
     }
 }

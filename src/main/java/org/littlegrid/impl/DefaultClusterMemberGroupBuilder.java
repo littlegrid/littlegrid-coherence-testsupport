@@ -60,58 +60,58 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_EN
 import static org.littlegrid.ClusterMemberGroup.BuildExceptionReporter;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
-import static org.littlegrid.ClusterMemberGroup.ConfigurationContext;
+import static org.littlegrid.ClusterMemberGroup.Configuer;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
-import static org.littlegrid.impl.ImmutableConfigurationContext.APP_CONSOLE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CLIENT_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CLIENT_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CLIENT_OVERRIDE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CLUSTER_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CUSTOM_CONFIGURED_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CUSTOM_CONFIGURED_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.EXTEND_CLIENT_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.EXTEND_PORT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.EXTEND_PROXY_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.EXTEND_PROXY_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.EXTEND_PROXY_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.EXTEND_PROXY_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.FAST_START_JOIN_TIMEOUT_MILLISECONDS;
-import static org.littlegrid.impl.ImmutableConfigurationContext.JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.JMX_MONITOR_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.JMX_MONITOR_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.JMX_MONITOR_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.JMX_MONITOR_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.LOG_DESTINATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.MACHINE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.NUMBER_OF_THREADS_IN_START_UP_POOL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.OVERRIDE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.RACK_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.SITE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.SLEEP_AFTER_STOP_DURATION_35X_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.SLEEP_AFTER_STOP_DURATION_36X_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.STORAGE_ENABLED_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.STORAGE_ENABLED_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.STORAGE_ENABLED_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.STORAGE_ENABLED_PROXY_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.STORAGE_ENABLED_PROXY_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.STORAGE_ENABLED_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.TTL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.WKA_ADDRESS_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.WKA_PORT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurationContext.stringArrayToCommaDelimitedString;
-import static org.littlegrid.impl.ImmutableConfigurationContext.stringHasValue;
+import static org.littlegrid.impl.ImmutableConfigurer.APP_CONSOLE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CLIENT_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CLIENT_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CLIENT_OVERRIDE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME;
+import static org.littlegrid.impl.ImmutableConfigurer.CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CLUSTER_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURED_COUNT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURED_ROLE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_CLIENT_ROLE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PORT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_COUNT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_ROLE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.FAST_START_JOIN_TIMEOUT_MILLISECONDS;
+import static org.littlegrid.impl.ImmutableConfigurer.JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_COUNT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_ROLE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.LOG_DESTINATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.LOG_LEVEL_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.MACHINE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.NUMBER_OF_THREADS_IN_START_UP_POOL_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.OVERRIDE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.RACK_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.SITE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.SLEEP_AFTER_STOP_DURATION_35X_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.SLEEP_AFTER_STOP_DURATION_36X_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_COUNT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_PROXY_COUNT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_PROXY_ROLE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_ROLE_NAME_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.TTL_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.WKA_ADDRESS_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.WKA_PORT_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.stringArrayToCommaDelimitedString;
+import static org.littlegrid.impl.ImmutableConfigurer.stringHasValue;
 
 /**
  * Default cluster member group builder implementation.
@@ -133,7 +133,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
 
-    private final DefaultConfigurationContext configurationContext = new DefaultConfigurationContext();
+    private final DefaultConfigurer configurer = new DefaultConfigurer();
 
     /**
      * Default constructor.
@@ -232,7 +232,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         mappingProperties.putAll(defaultMappingProperties);
         mappingProperties.putAll(overrideMappingProperties);
 
-        configurationContext.setBuilderKeyToSystemPropertyNameMapping(mappingProperties);
+        configurer.setBuilderKeyToSystemPropertyNameMapping(mappingProperties);
 
         systemPropertyNameMappingLoadedSummary.put("override file", overrideMappingProperties.size());
     }
@@ -277,7 +277,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     public ClusterMemberGroup buildAndConfigureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
         ClusterMemberGroup memberGroup = getClusterMemberGroupInstance(this);
 
-        configurationContext.configureFor(buildAndConfigureEnum);
+        configurer.configureFor(buildAndConfigureEnum);
 
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
         defaultClusterMemberGroup.startAll();
@@ -286,7 +286,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     }
 
     private ClusterMemberGroup getClusterMemberGroupInstance(final Builder builder) {
-        final String className = configurationContext.getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
+        final String className = configurer.getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
         final Registry registry = Registry.getInstance();
 
         try {
@@ -333,17 +333,17 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public ClusterMemberGroup buildAndConfigure() {
         return buildAndConfigureFor(Enum.valueOf(BuildAndConfigureEnum.class,
-                configurationContext.getBuilderValueAsString(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY)));
+                configurer.getBuilderValueAsString(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY)));
     }
 
     private DefaultClusterMemberGroup buildClusterMembers(final Class clusterMemberGroupClass) {
-        final int storageEnabledCount = configurationContext.getBuilderValueAsInt(STORAGE_ENABLED_COUNT_KEY);
-        final int customConfiguredCount = configurationContext.getBuilderValueAsInt(CUSTOM_CONFIGURED_COUNT_KEY);
+        final int storageEnabledCount = configurer.getBuilderValueAsInt(STORAGE_ENABLED_COUNT_KEY);
+        final int customConfiguredCount = configurer.getBuilderValueAsInt(CUSTOM_CONFIGURED_COUNT_KEY);
         final int storageEnabledExtendProxyCount =
-                configurationContext.getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
+                configurer.getBuilderValueAsInt(STORAGE_ENABLED_PROXY_COUNT_KEY);
 
-        final int extendProxyCount = configurationContext.getBuilderValueAsInt(EXTEND_PROXY_COUNT_KEY);
-        final int jmxMonitorCount = configurationContext.getBuilderValueAsInt(JMX_MONITOR_COUNT_KEY);
+        final int extendProxyCount = configurer.getBuilderValueAsInt(EXTEND_PROXY_COUNT_KEY);
+        final int jmxMonitorCount = configurer.getBuilderValueAsInt(JMX_MONITOR_COUNT_KEY);
 
         final long startTime = System.currentTimeMillis();
         final BuildExceptionReporter exceptionReporter = createExceptionReporter();
@@ -356,23 +356,23 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                 jmxMonitorCount, customConfiguredCount));
 
         final int numberOfThreadsInStartUpPool =
-                configurationContext.getBuilderValueAsInt(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
+                configurer.getBuilderValueAsInt(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
 
         final Properties systemProperties = System.getProperties();
         final String pathSeparator = ClassPathUtils.getPathSeparator(systemProperties);
         final String classPath = ClassPathUtils.getClassPath(systemProperties);
         final String javaHome = ClassPathUtils.getJavaHome(systemProperties);
         final String clusterMemberGroupInstanceClassName =
-                configurationContext.getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
+                configurer.getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
 
         DefaultClusterMemberGroup containerGroup = null;
 
         try {
             final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
                     javaHome, classPath, pathSeparator,
-                    configurationContext.getBuilderValueAsString(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
+                    configurer.getBuilderValueAsString(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY)
                             + ", "
-                            + configurationContext.getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
+                            + configurer.getBuilderValueAsString(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY));
 
             containerGroup = createClusterMemberGroupWithCallbackAndSleepDurations(clusterMemberGroupClass);
 
@@ -397,14 +397,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     containerGroup.getStartedMemberIds().length, startDuration,
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (ClusterMemberGroupBuildException e) {
-            exceptionReporter.report(e, configurationContext.getBuilderKeysAndValues(),
-                    configurationContext.getBuilderKeyToSystemPropertyNameMapping(),
+            exceptionReporter.report(e, configurer.getBuilderKeysAndValues(),
+                    configurer.getBuilderKeyToSystemPropertyNameMapping(),
                     clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw e;
         } catch (Throwable throwable) {
-            exceptionReporter.report(throwable, configurationContext.getBuilderKeysAndValues(),
-                    configurationContext.getBuilderKeyToSystemPropertyNameMapping(),
+            exceptionReporter.report(throwable, configurer.getBuilderKeysAndValues(),
+                    configurer.getBuilderKeyToSystemPropertyNameMapping(),
                     clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
 
             throw new IllegalStateException(throwable);
@@ -416,7 +416,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     private BuildExceptionReporter createExceptionReporter() {
         final String className =
-                configurationContext.getBuilderValueAsString(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
+                configurer.getBuilderValueAsString(EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY);
 
         try {
             final Class clazz = this.getClass().getClassLoader().loadClass(className);
@@ -431,7 +431,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @SuppressWarnings("unchecked")
     private CallbackHandler createCallbackHandler() {
         final String className =
-                configurationContext.getBuilderValueAsString(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY);
+                configurer.getBuilderValueAsString(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY);
 
         try {
             final Class clazz = this.getClass().getClassLoader().loadClass(className);
@@ -449,13 +449,13 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                         final int numberOfThreadsInStartUpPool) {
 
         final String clusterMemberInstanceClassName =
-                configurationContext.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+                configurer.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (jmxMonitorCount > 0) {
             final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
                     DefaultClusterMemberGroup.startClusterMembers(
                             jmxMonitorCount,
-                            configurationContext.getSystemPropertiesForJmxMonitor(),
+                            configurer.getSystemPropertiesForJmxMonitor(),
                             classPathUrls,
                             clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool);
@@ -470,14 +470,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                               final int numberOfThreadsInStartUpPool) {
 
         final String customConfiguredClusterMemberInstanceClassName =
-                configurationContext.getBuilderValueAsString(
+                configurer.getBuilderValueAsString(
                         CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (customConfiguredCount > 0) {
             final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
                     DefaultClusterMemberGroup.startClusterMembers(
                             customConfiguredCount,
-                            configurationContext.getSystemPropertiesForCustomConfigured(),
+                            configurer.getSystemPropertiesForCustomConfigured(),
                             classPathUrls,
                             customConfiguredClusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool);
@@ -493,16 +493,16 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         final int singleMember = 1;
         final String clusterMemberInstanceClassName =
-                configurationContext.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+                configurer.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (storageEnabledExtendProxyCount > 0) {
-            final int extendStartingPort = configurationContext.getBuilderValueAsInt(EXTEND_PORT_KEY);
+            final int extendStartingPort = configurer.getBuilderValueAsInt(EXTEND_PORT_KEY);
 
             for (int i = 0; i < storageEnabledExtendProxyCount; i++) {
                 final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
                         DefaultClusterMemberGroup.startClusterMembers(
                                 singleMember,
-                                configurationContext.getSystemPropertiesForStorageEnabledExtendProxy(
+                                configurer.getSystemPropertiesForStorageEnabledExtendProxy(
                                         extendStartingPort + i),
                                 classPathUrls,
                                 clusterMemberInstanceClassName,
@@ -520,16 +520,16 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         final int singleMember = 1;
         final String clusterMemberInstanceClassName =
-                configurationContext.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+                configurer.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (extendProxyCount > 0) {
-            final int extendStartingPort = configurationContext.getBuilderValueAsInt(EXTEND_PORT_KEY);
+            final int extendStartingPort = configurer.getBuilderValueAsInt(EXTEND_PORT_KEY);
 
             for (int i = 0; i < extendProxyCount; i++) {
                 final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
                         DefaultClusterMemberGroup.startClusterMembers(
                                 singleMember,
-                                configurationContext.getSystemPropertiesForExtendProxy(extendStartingPort + i),
+                                configurer.getSystemPropertiesForExtendProxy(extendStartingPort + i),
                                 classPathUrls,
                                 clusterMemberInstanceClassName,
                                 numberOfThreadsInStartUpPool);
@@ -545,13 +545,13 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                                             final int numberOfThreadsInStartUpPool) {
 
         final String clusterMemberInstanceClassName =
-                configurationContext.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
+                configurer.getBuilderValueAsString(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY);
 
         if (storageEnabledCount > 0) {
             final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
                     DefaultClusterMemberGroup.startClusterMembers(
                             storageEnabledCount,
-                            configurationContext.getSystemPropertiesForStorageEnabled(),
+                            configurer.getSystemPropertiesForStorageEnabled(),
                             classPathUrls,
                             clusterMemberInstanceClassName,
                             numberOfThreadsInStartUpPool);
@@ -564,19 +564,19 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     private DefaultClusterMemberGroup createClusterMemberGroupWithCallbackAndSleepDurations(
             final Class clusterMemberGroupClass) {
 
-        final int duration35x = configurationContext.getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_35X_KEY);
-        final int duration36x = configurationContext.getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_36X_KEY);
-        final int durationDefault = configurationContext.getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
-        final int wkaPort = configurationContext.getBuilderValueAsInt(WKA_PORT_KEY);
-        final int extendPort = configurationContext.getBuilderValueAsInt(EXTEND_PORT_KEY);
+        final int duration35x = configurer.getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_35X_KEY);
+        final int duration36x = configurer.getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_36X_KEY);
+        final int durationDefault = configurer.getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
+        final int wkaPort = configurer.getBuilderValueAsInt(WKA_PORT_KEY);
+        final int extendPort = configurer.getBuilderValueAsInt(EXTEND_PORT_KEY);
 
         try {
             final Constructor constructor = clusterMemberGroupClass.getDeclaredConstructor(
                     CallbackHandler.class,
-                    int.class, int.class, int.class, int.class, int.class, ImmutableConfigurationContext.class);
+                    int.class, int.class, int.class, int.class, int.class, ImmutableConfigurer.class);
 
             return (DefaultClusterMemberGroup) constructor.newInstance(createCallbackHandler(),
-                    duration35x, duration36x, durationDefault, wkaPort, extendPort, configurationContext);
+                    duration35x, duration36x, durationDefault, wkaPort, extendPort, configurer);
         } catch (Exception e) {
             throw new IllegalStateException(format("Cannot create instance of '%s", clusterMemberGroupClass));
         }
@@ -587,7 +587,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExceptionReporterInstanceClassName(final String exceptionReportInstanceClassName) {
-        configurationContext.setBuilderValue(
+        configurer.setBuilderValue(
                 EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY, exceptionReportInstanceClassName);
 
         return this;
@@ -598,7 +598,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setCacheConfiguration(final String cacheConfiguration) {
-        configurationContext.setBuilderValue(CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        configurer.setBuilderValue(CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -608,7 +608,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClientCacheConfiguration(final String cacheConfiguration) {
-        configurationContext.setBuilderValue(CLIENT_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        configurer.setBuilderValue(CLIENT_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -618,7 +618,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public String getClientCacheConfiguration() {
-        return configurationContext.getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
+        return configurer.getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
     }
 
     /**
@@ -626,7 +626,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClientOverrideConfiguration(final String overrideConfiguration) {
-        configurationContext.setBuilderValue(CLIENT_OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
+        configurer.setBuilderValue(CLIENT_OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
         return this;
     }
@@ -636,7 +636,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setCustomConfiguredCacheConfiguration(final String cacheConfiguration) {
-        configurationContext.setBuilderValue(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        configurer.setBuilderValue(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -646,7 +646,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setOverrideConfiguration(final String overrideConfiguration) {
-        configurationContext.setBuilderValue(OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
+        configurer.setBuilderValue(OVERRIDE_CONFIGURATION_KEY, overrideConfiguration);
 
         return this;
     }
@@ -656,7 +656,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setAdditionalSystemProperties(final Properties properties) {
-        configurationContext.setAdditionalSystemProperties(properties);
+        configurer.setAdditionalSystemProperties(properties);
 
         return this;
     }
@@ -675,7 +675,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     public Builder setAdditionalSystemProperty(final String key,
                                                final String value) {
 
-        configurationContext.setAdditionalSystemProperty(key, value);
+        configurer.setAdditionalSystemProperty(key, value);
 
         return this;
     }
@@ -709,7 +709,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageEnabledCount(final int numberOfMembers) {
-        configurationContext.setBuilderValue(STORAGE_ENABLED_COUNT_KEY, numberOfMembers);
+        configurer.setBuilderValue(STORAGE_ENABLED_COUNT_KEY, numberOfMembers);
 
         return this;
     }
@@ -719,7 +719,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageEnabledCacheConfiguration(final String cacheConfiguration) {
-        configurationContext.setBuilderValue(STORAGE_ENABLED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        configurer.setBuilderValue(STORAGE_ENABLED_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -729,7 +729,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setCustomConfiguredCount(final int numberOfMembers) {
-        configurationContext.setBuilderValue(CUSTOM_CONFIGURED_COUNT_KEY, numberOfMembers);
+        configurer.setBuilderValue(CUSTOM_CONFIGURED_COUNT_KEY, numberOfMembers);
 
         return this;
     }
@@ -739,7 +739,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageEnabledExtendProxyCount(final int numberOfMembers) {
-        configurationContext.setBuilderValue(STORAGE_ENABLED_PROXY_COUNT_KEY, numberOfMembers);
+        configurer.setBuilderValue(STORAGE_ENABLED_PROXY_COUNT_KEY, numberOfMembers);
 
         return this;
     }
@@ -749,7 +749,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExtendProxyCount(final int numberOfMembers) {
-        configurationContext.setBuilderValue(EXTEND_PROXY_COUNT_KEY, numberOfMembers);
+        configurer.setBuilderValue(EXTEND_PROXY_COUNT_KEY, numberOfMembers);
 
         return this;
     }
@@ -759,7 +759,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExtendProxyCacheConfiguration(final String cacheConfiguration) {
-        configurationContext.setBuilderValue(EXTEND_PROXY_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        configurer.setBuilderValue(EXTEND_PROXY_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -769,7 +769,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setJmxMonitorCount(final int numberOfMembers) {
-        configurationContext.setBuilderValue(JMX_MONITOR_COUNT_KEY, numberOfMembers);
+        configurer.setBuilderValue(JMX_MONITOR_COUNT_KEY, numberOfMembers);
 
         return this;
     }
@@ -779,7 +779,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setJmxMonitorCacheConfiguration(final String cacheConfiguration) {
-        configurationContext.setBuilderValue(JMX_MONITOR_CACHE_CONFIGURATION_KEY, cacheConfiguration);
+        configurer.setBuilderValue(JMX_MONITOR_CACHE_CONFIGURATION_KEY, cacheConfiguration);
 
         return this;
     }
@@ -789,7 +789,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setLogDestination(final String logDestination) {
-        configurationContext.setBuilderValue(LOG_DESTINATION_KEY, logDestination);
+        configurer.setBuilderValue(LOG_DESTINATION_KEY, logDestination);
 
         return this;
     }
@@ -799,7 +799,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClusterName(final String clusterName) {
-        configurationContext.setBuilderValue(CLUSTER_NAME_KEY, clusterName);
+        configurer.setBuilderValue(CLUSTER_NAME_KEY, clusterName);
 
         return this;
     }
@@ -809,7 +809,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setLogLevel(final int logLevel) {
-        configurationContext.setBuilderValue(LOG_LEVEL_KEY, logLevel);
+        configurer.setBuilderValue(LOG_LEVEL_KEY, logLevel);
 
         return this;
     }
@@ -819,7 +819,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClientLogLevel(final int logLevel) {
-        configurationContext.setBuilderValue(CLIENT_LOG_LEVEL_KEY, logLevel);
+        configurer.setBuilderValue(CLIENT_LOG_LEVEL_KEY, logLevel);
 
         return this;
     }
@@ -829,7 +829,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageEnabledLogLevel(final int logLevel) {
-        configurationContext.setBuilderValue(STORAGE_ENABLED_LOG_LEVEL_KEY, logLevel);
+        configurer.setBuilderValue(STORAGE_ENABLED_LOG_LEVEL_KEY, logLevel);
 
         return this;
     }
@@ -839,7 +839,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExtendProxyLogLevel(final int logLevel) {
-        configurationContext.setBuilderValue(EXTEND_PROXY_LOG_LEVEL_KEY, logLevel);
+        configurer.setBuilderValue(EXTEND_PROXY_LOG_LEVEL_KEY, logLevel);
 
         return this;
     }
@@ -849,7 +849,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setJmxMonitorLogLevel(final int logLevel) {
-        configurationContext.setBuilderValue(JMX_MONITOR_LOG_LEVEL_KEY, logLevel);
+        configurer.setBuilderValue(JMX_MONITOR_LOG_LEVEL_KEY, logLevel);
 
         return this;
     }
@@ -859,7 +859,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setCustomConfiguredRoleName(final String roleName) {
-        configurationContext.setBuilderValue(CUSTOM_CONFIGURED_ROLE_NAME_KEY, roleName);
+        configurer.setBuilderValue(CUSTOM_CONFIGURED_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -869,7 +869,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageEnabledRoleName(final String roleName) {
-        configurationContext.setBuilderValue(STORAGE_ENABLED_ROLE_NAME_KEY, roleName);
+        configurer.setBuilderValue(STORAGE_ENABLED_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -879,7 +879,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageEnabledExtendProxyRoleName(final String roleName) {
-        configurationContext.setBuilderValue(STORAGE_ENABLED_PROXY_ROLE_NAME_KEY, roleName);
+        configurer.setBuilderValue(STORAGE_ENABLED_PROXY_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -889,7 +889,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExtendProxyRoleName(final String roleName) {
-        configurationContext.setBuilderValue(EXTEND_PROXY_ROLE_NAME_KEY, roleName);
+        configurer.setBuilderValue(EXTEND_PROXY_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -899,7 +899,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setJmxMonitorRoleName(final String roleName) {
-        configurationContext.setBuilderValue(JMX_MONITOR_ROLE_NAME_KEY, roleName);
+        configurer.setBuilderValue(JMX_MONITOR_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -909,7 +909,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setStorageDisabledClientRoleName(final String roleName) {
-        configurationContext.setBuilderValue(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY, roleName);
+        configurer.setBuilderValue(STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -919,7 +919,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExtendClientRoleName(final String roleName) {
-        configurationContext.setBuilderValue(EXTEND_CLIENT_ROLE_NAME_KEY, roleName);
+        configurer.setBuilderValue(EXTEND_CLIENT_ROLE_NAME_KEY, roleName);
 
         return this;
     }
@@ -929,7 +929,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClusterMemberInstanceClassName(final String clusterMemberInstanceClassName) {
-        configurationContext.setBuilderValue(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY, clusterMemberInstanceClassName);
+        configurer.setBuilderValue(CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY, clusterMemberInstanceClassName);
 
         return this;
     }
@@ -941,7 +941,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     public Builder setCustomConfiguredClusterMemberInstanceClassName(
             final String clusterMemberInstanceClassName) {
 
-        configurationContext.setBuilderValue(CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY,
+        configurer.setBuilderValue(CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY,
                 clusterMemberInstanceClassName);
 
         return this;
@@ -952,7 +952,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setJarsToExcludeFromClassPath(final String... jarsToExcludeFromClassPath) {
-        configurationContext.setBuilderValue(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
+        configurer.setBuilderValue(JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
                 stringArrayToCommaDelimitedString(jarsToExcludeFromClassPath));
 
         return this;
@@ -965,7 +965,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     public Builder setCoreJarsToExcludeFromClassPath(
             final String... coreJarsToExcludeFromClassPath) {
 
-        configurationContext.setBuilderValue(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
+        configurer.setBuilderValue(CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY,
                 stringArrayToCommaDelimitedString(coreJarsToExcludeFromClassPath));
 
         return this;
@@ -976,7 +976,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setWkaAddress(final String wkaAddress) {
-        configurationContext.setBuilderValue(WKA_ADDRESS_KEY, wkaAddress);
+        configurer.setBuilderValue(WKA_ADDRESS_KEY, wkaAddress);
 
         return this;
     }
@@ -986,7 +986,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public String getWkaAddress() {
-        return configurationContext.getBuilderValueAsString(WKA_ADDRESS_KEY);
+        return configurer.getBuilderValueAsString(WKA_ADDRESS_KEY);
     }
 
     /**
@@ -994,7 +994,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setWkaPort(final int wkaPort) {
-        configurationContext.setBuilderValue(WKA_PORT_KEY, wkaPort);
+        configurer.setBuilderValue(WKA_PORT_KEY, wkaPort);
 
         return this;
     }
@@ -1004,7 +1004,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public int getWkaPort() {
-        return configurationContext.getBuilderValueAsInt(WKA_PORT_KEY);
+        return configurer.getBuilderValueAsInt(WKA_PORT_KEY);
     }
 
     /**
@@ -1012,7 +1012,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setExtendPort(final int extendPort) {
-        configurationContext.setBuilderValue(EXTEND_PORT_KEY, extendPort);
+        configurer.setBuilderValue(EXTEND_PORT_KEY, extendPort);
 
         return this;
     }
@@ -1022,7 +1022,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public int getExtendPort() {
-        return configurationContext.getBuilderValueAsInt(EXTEND_PORT_KEY);
+        return configurer.getBuilderValueAsInt(EXTEND_PORT_KEY);
     }
 
     /**
@@ -1060,7 +1060,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setTtl(final int ttl) {
-        configurationContext.setBuilderValue(TTL_KEY, ttl);
+        configurer.setBuilderValue(TTL_KEY, ttl);
 
         return this;
     }
@@ -1070,7 +1070,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setNumberOfThreadsInStartUpPool(final int numberOfThreadsInStartUpPool) {
-        configurationContext.setBuilderValue(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY, numberOfThreadsInStartUpPool);
+        configurer.setBuilderValue(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY, numberOfThreadsInStartUpPool);
 
         return this;
     }
@@ -1080,7 +1080,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setSuggestedSleepAfterStopDuration35x(final int sleepAfterStopDuration) {
-        configurationContext.setBuilderValue(SLEEP_AFTER_STOP_DURATION_35X_KEY, sleepAfterStopDuration);
+        configurer.setBuilderValue(SLEEP_AFTER_STOP_DURATION_35X_KEY, sleepAfterStopDuration);
 
         return this;
     }
@@ -1090,7 +1090,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setSuggestedSleepAfterStopDuration36x(final int sleepAfterStopDuration) {
-        configurationContext.setBuilderValue(SLEEP_AFTER_STOP_DURATION_36X_KEY, sleepAfterStopDuration);
+        configurer.setBuilderValue(SLEEP_AFTER_STOP_DURATION_36X_KEY, sleepAfterStopDuration);
 
         return this;
     }
@@ -1100,7 +1100,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setSuggestedSleepAfterStopDurationDefault(final int sleepAfterStopDuration) {
-        configurationContext.setBuilderValue(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY, sleepAfterStopDuration);
+        configurer.setBuilderValue(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY, sleepAfterStopDuration);
 
         return this;
     }
@@ -1110,7 +1110,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setFastStartJoinTimeoutMilliseconds(final long joinTimeoutMilliseconds) {
-        configurationContext.setBuilderValue(FAST_START_JOIN_TIMEOUT_MILLISECONDS, joinTimeoutMilliseconds);
+        configurer.setBuilderValue(FAST_START_JOIN_TIMEOUT_MILLISECONDS, joinTimeoutMilliseconds);
 
         return this;
     }
@@ -1120,7 +1120,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setCallbackHandlerInstanceClassName(final String callbackHandlerInstanceClassName) {
-        configurationContext.setBuilderValue(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY,
+        configurer.setBuilderValue(CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY,
                 callbackHandlerInstanceClassName);
 
         return this;
@@ -1131,7 +1131,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setSiteName(final String siteName) {
-        configurationContext.setBuilderValue(SITE_NAME_KEY, siteName);
+        configurer.setBuilderValue(SITE_NAME_KEY, siteName);
 
         return this;
     }
@@ -1141,7 +1141,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setRackName(final String rackName) {
-        configurationContext.setBuilderValue(RACK_NAME_KEY, rackName);
+        configurer.setBuilderValue(RACK_NAME_KEY, rackName);
 
         return this;
     }
@@ -1151,7 +1151,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setMachineName(final String machineName) {
-        configurationContext.setBuilderValue(MACHINE_NAME_KEY, machineName);
+        configurer.setBuilderValue(MACHINE_NAME_KEY, machineName);
 
         return this;
     }
@@ -1161,7 +1161,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setAppConsoleClassName(final String appConsoleClassName) {
-        configurationContext.setBuilderValue(APP_CONSOLE_CLASS_NAME_KEY, appConsoleClassName);
+        configurer.setBuilderValue(APP_CONSOLE_CLASS_NAME_KEY, appConsoleClassName);
 
         return this;
     }
@@ -1171,7 +1171,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public String getAppConsoleClassName() {
-        return configurationContext.getBuilderValueAsString(APP_CONSOLE_CLASS_NAME_KEY);
+        return configurer.getBuilderValueAsString(APP_CONSOLE_CLASS_NAME_KEY);
     }
 
     /**
@@ -1179,7 +1179,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setClusterMemberGroupInstanceClassName(final String clusterMemberGroupInstanceClassName) {
-        configurationContext.setBuilderValue(
+        configurer.setBuilderValue(
                 CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME, clusterMemberGroupInstanceClassName);
 
         return this;
@@ -1190,7 +1190,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setBuildAndConfigureForEnumName(final String buildAndConfigureForEnumName) {
-        configurationContext.setBuilderValue(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY, buildAndConfigureForEnumName);
+        configurer.setBuilderValue(BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY, buildAndConfigureForEnumName);
 
         return this;
     }
@@ -1210,9 +1210,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
                 + "builderKeyToSystemPropertyNameMapping=%s}",
-                configurationContext.getBuilderKeysAndValues(),
-                configurationContext.getAdditionalSystemProperties(),
-                configurationContext.getBuilderKeyToSystemPropertyNameMapping());
+                configurer.getBuilderKeysAndValues(),
+                configurer.getAdditionalSystemProperties(),
+                configurer.getBuilderKeyToSystemPropertyNameMapping());
     }
 
     /**
@@ -1230,7 +1230,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         final DefaultClusterMemberGroupBuilder otherBuilder = (DefaultClusterMemberGroupBuilder) other;
 
-        if (!configurationContext.equals(otherBuilder.configurationContext)) {
+        if (!configurer.equals(otherBuilder.configurer)) {
             return false;
         }
 
@@ -1242,9 +1242,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public int hashCode() {
-        int result = configurationContext.getBuilderKeysAndValues().hashCode();
-        result = 31 * result + configurationContext.getAdditionalSystemProperties().hashCode();
-        result = 31 * result + configurationContext.getBuilderKeyToSystemPropertyNameMapping().hashCode();
+        int result = configurer.getBuilderKeysAndValues().hashCode();
+        result = 31 * result + configurer.getAdditionalSystemProperties().hashCode();
+        result = 31 * result + configurer.getBuilderKeyToSystemPropertyNameMapping().hashCode();
 
         return result;
     }
@@ -1301,20 +1301,20 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         }
     }
 
-    ConfigurationContext getConfigurationContext() {
-        return configurationContext;
+    Configuer getConfigurer() {
+        return configurer;
     }
 
     /**
-     * Default configuration context.
+     * Default configurer.
      *
      * @since 2.16
      */
-    static class DefaultConfigurationContext extends ImmutableConfigurationContext {
+    static class DefaultConfigurer extends ImmutableConfigurer {
         /**
-         * Default configuration context.
+         * Default configurer.
          */
-        public DefaultConfigurationContext() {
+        public DefaultConfigurer() {
             super(new HashMap<String, String>(), new Properties(), new Properties());
         }
 

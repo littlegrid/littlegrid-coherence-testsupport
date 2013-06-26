@@ -188,13 +188,13 @@ public interface ClusterMemberGroup {
     int getExtendPort();
 
     /**
-     * Returns a configuration for later use when switching or toggling between different
+     * Returns a configurer for later use when switching or toggling between different
      * clusters or Extend proxies.
      *
-     * @return configuration context.
+     * @return configurer.
      * @since 2.16
      */
-    ConfigurationContext getConfigurationContext();
+    Configuer getConfigurer();
 
     /**
      * Interface to denote that the cluster member group may be re-used.
@@ -1044,12 +1044,12 @@ public interface ClusterMemberGroup {
     }
 
     /**
-     * ConfigurationContext interface, applies the necessary system properties and context for
-     * the client.
+     * Configuer interface, applies the necessary system properties and context for
+     * the client..
      *
      * @since 2.16
      */
-    interface ConfigurationContext {
+    interface Configuer {
         String getClusterName();
 
         int getWkaPort();

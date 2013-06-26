@@ -47,7 +47,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
-import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.DefaultConfigurationContext;
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.DefaultConfigurer;
 
 /**
  * Direct starting of cluster members.
@@ -132,7 +132,7 @@ public final class DefaultClusterMemberGroupTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructWithNoConfigurationContext() {
+    public void constructWithNoConfigurer() {
         new DefaultClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0, null);
     }
 
@@ -145,7 +145,7 @@ public final class DefaultClusterMemberGroupTest {
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(
                 new DefaultCallbackHandler(),
                 expectedDuration35x, expectedDuration36x, expectedDurationDefault, 0, 0,
-                new DefaultConfigurationContext());
+                new DefaultClusterMemberGroupBuilder.DefaultConfigurer());
 
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.5f), is(expectedDuration35x));
         assertThat(memberGroup.getSuggestedSleepDurationBasedUponVersion(3.6f), is(expectedDuration36x));
@@ -155,7 +155,7 @@ public final class DefaultClusterMemberGroupTest {
     @Test
     public void isAllShutdownWhenNotShutdownAll() {
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(new DefaultCallbackHandler(),
-                0, 0, 0, 0, 0, new DefaultConfigurationContext());
+                0, 0, 0, 0, 0, new DefaultConfigurer());
 
         memberGroup.startAll();
 
@@ -165,7 +165,7 @@ public final class DefaultClusterMemberGroupTest {
     @Test
     public void isAllShutdwonAfterShutdownAll() {
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(new DefaultCallbackHandler(),
-                0, 0, 0, 0, 0, new DefaultConfigurationContext());
+                0, 0, 0, 0, 0, new DefaultClusterMemberGroupBuilder.DefaultConfigurer());
 
         memberGroup.startAll();
         memberGroup.shutdownAll();
@@ -180,7 +180,7 @@ public final class DefaultClusterMemberGroupTest {
         assertThat(handler.getDoAfterCounter(), is(0));
 
         final DefaultClusterMemberGroup memberGroup = new DefaultClusterMemberGroup(handler, 0, 0, 0, 0, 0,
-                new DefaultConfigurationContext());
+                new DefaultClusterMemberGroupBuilder.DefaultConfigurer());
 
         memberGroup.startAll();
 
@@ -243,7 +243,7 @@ public final class DefaultClusterMemberGroupTest {
 
     private DefaultClusterMemberGroup getConstructedMemberGroup() {
         return new DefaultClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0,
-                new DefaultConfigurationContext());
+                new DefaultClusterMemberGroupBuilder.DefaultConfigurer());
     }
 
     private static Properties getPopulatedProperties() {

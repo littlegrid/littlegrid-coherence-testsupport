@@ -38,19 +38,19 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.DefaultConfigurationContext;
-import static org.littlegrid.impl.ImmutableConfigurationContext.CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.DefaultConfigurer;
+import static org.littlegrid.impl.ImmutableConfigurer.CACHE_CONFIGURATION_KEY;
 
 /**
- * Default configuration context tests.
+ * Default configurer tests.
  */
-public class DefaultConfigurationContextTest {
+public class DefaultConfigurerContextTest {
     @Test
     public void setAndGetBuilderValueAsInt() {
         final String key = "key";
         final int value = 123;
 
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
         context.setBuilderValue(key, value);
 
         assertThat(context.getBuilderValueAsInt(key), is(value));
@@ -61,7 +61,7 @@ public class DefaultConfigurationContextTest {
         final String key = "key";
         final long value = 123L;
 
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultConfigurer();
         context.setBuilderValue(key, value);
 
         assertThat(context.getBuilderValueAsLong(key), is(value));
@@ -72,7 +72,7 @@ public class DefaultConfigurationContextTest {
         final String key = "key";
         final String value = "123";
 
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
         context.setBuilderValue(key, value);
 
         assertThat(context.getBuilderValueAsString(key), is(value));
@@ -80,7 +80,7 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void getBuilderValueAsStringWhenNoEntry() {
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
 
         assertThat(context.getBuilderValueAsString("no-entry"), nullValue());
     }
@@ -90,7 +90,7 @@ public class DefaultConfigurationContextTest {
         final String key = "key";
         final String value = "123";
 
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
         context.setBuilderValue(key, Integer.parseInt(value));
 
         assertThat(context.getBuilderValueAsString(key), is(value));
@@ -98,21 +98,21 @@ public class DefaultConfigurationContextTest {
 
     @Test(expected = IllegalStateException.class)
     public void getPropertyNameFromMappingWhenDoesNotExist() {
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
 
         context.getPropertyNameFromMapping("UnknownKey");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setPropertyWhenValidWhenKeyIsNull() {
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
 
         context.setPropertyWhenValid(new Properties(), null, null);
     }
 
     @Test
     public void setPropertyWhenValidWhenValueIsNull() {
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
         final Properties properties = new Properties();
 
         context.setPropertyWhenValid(properties, CACHE_CONFIGURATION_KEY, null);
@@ -122,7 +122,7 @@ public class DefaultConfigurationContextTest {
 
     @Test
     public void setPropertyWhenValidWhenValueIsSpaces() {
-        final DefaultConfigurationContext context = new DefaultConfigurationContext();
+        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
         final Properties properties = new Properties();
 
         context.setPropertyWhenValid(properties, CACHE_CONFIGURATION_KEY, "   ");

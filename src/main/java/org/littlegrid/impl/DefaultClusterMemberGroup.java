@@ -75,7 +75,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final int wkaPort;
     private final int extendPort;
     private boolean shutdownAllInvoked;
-    private final ConfigurationContext configurationContext;
+    private final Configuer configuer;
 
 
     /**
@@ -87,7 +87,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param sleepAfterStopDurationDefault Default sleep duration.
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
-     * @param sourceConfigurationContext    Configuration context from which to take point-in-time
+     * @param sourceConfigurer              Configurer from which to take point-in-time
      *                                      source configuration.
      */
     public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
@@ -96,7 +96,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
                                      final int sleepAfterStopDurationDefault,
                                      final int wkaPort,
                                      final int extendPort,
-                                     final ImmutableConfigurationContext sourceConfigurationContext) {
+                                     final ImmutableConfigurer sourceConfigurer) {
 
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
@@ -110,14 +110,14 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         this.sleepAfterStopDuration36x = sleepAfterStopDuration36x;
         this.sleepAfterStopDurationDefault = sleepAfterStopDurationDefault;
 
-        if (sourceConfigurationContext == null) {
-            throw new IllegalArgumentException("Source configuration context cannot be null");
+        if (sourceConfigurer == null) {
+            throw new IllegalArgumentException("Source configure cannot be null");
         }
 
-        this.configurationContext = new ImmutableConfigurationContext(
-                sourceConfigurationContext.getBuilderKeysAndValues(),
-                sourceConfigurationContext.getAdditionalSystemProperties(),
-                sourceConfigurationContext.getBuilderKeyToSystemPropertyNameMapping());
+        this.configuer = new ImmutableConfigurer(
+                sourceConfigurer.getBuilderKeysAndValues(),
+                sourceConfigurer.getAdditionalSystemProperties(),
+                sourceConfigurer.getBuilderKeyToSystemPropertyNameMapping());
 
         systemPropertiesBeforeStartAllInvoked = SystemUtils.snapshotSystemProperties();
 
@@ -181,8 +181,8 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
-    public ConfigurationContext getConfigurationContext() {
-        return configurationContext;
+    public Configuer getConfigurer() {
+        return configuer;
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
