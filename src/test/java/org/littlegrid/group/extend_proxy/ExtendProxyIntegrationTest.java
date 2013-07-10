@@ -39,6 +39,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.support.ExtendUtils;
 
@@ -161,5 +162,20 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
                 .buildAndConfigureForExtendClient();
 
         assertThat(CacheFactory.getCluster().getLocalMember().getMemberName(), is(KNOWN_MEMBER_NAME));
+    }
+
+    @Test(expected = ClusterMemberGroupBuildException.class)
+    public void extendExtendProxyWithSamePortTwice() {
+        //TODO: Move to identifiable exception once port in use is added as enum.
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setExtendProxyCount(1)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
+                .setClientOverrideConfiguration(CLIENT_OVERRIDE_CONFIGURATION_FILE)
+                .buildAndConfigureForExtendClient();
+
+        memberGroup.merge(ClusterMemberGroupUtils.newBuilder()
+                .setExtendProxyCount(1)
+                .setClientCacheConfiguration(EXTEND_CLIENT_CACHE_CONFIGURATION_FILE)
+                .buildAndConfigureForNoClient());
     }
 }

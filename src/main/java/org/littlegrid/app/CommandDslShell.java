@@ -162,7 +162,7 @@ class CommandDslShell {
 
         do {
             out.println();
-//            out.print(COMMAND_PROMPT);
+            out.print(COMMAND_PROMPT);
 
             final String stringEntered = scanner.nextLine();
             final Response response = processCommandsString(memberGroup, stringEntered);
