@@ -32,6 +32,7 @@
 package org.littlegrid;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -44,6 +45,7 @@ public class IdentifiableExceptionIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 
     @Test
+    @Ignore
     public void exceptionDueToCoherenceJarExcluded() {
         try {
             memberGroup = ClusterMemberGroupUtils.newBuilder()

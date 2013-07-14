@@ -83,7 +83,13 @@ public class DefaultClusterMember implements ClusterMember, CallbackHandler {
     @Override
     public void shutdown() {
         doBeforeShutdown();
-        DefaultCacheServer.shutdown();
+
+        if (CacheFactory.VERSION.startsWith("12.")) {
+            CacheFactory.shutdown();
+        } else {
+            DefaultCacheServer.shutdown();
+        }
+
         doAfterShutdown();
     }
 

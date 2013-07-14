@@ -84,6 +84,9 @@ public final class ClusterMemberGroupUtils {
             } catch (Exception e) {
                 exceptionDuringShutdownCounter++;
 
+                LOGGER.warning(
+                        format("Exception shutting down member group - suppressing for now, exception was: %s", e));
+
                 // Ignore for now and carry on looping to try and shutdown any other
                 // cluster member groups that may be running
             }
