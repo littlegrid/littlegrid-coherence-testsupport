@@ -75,7 +75,12 @@ public class IdentifiableException extends RuntimeException {
         /**
          * Exception reason.
          */
-        CHECK_CACHE_CONFIGURATION_FILE_BEING_USED
+        CHECK_CACHE_CONFIGURATION_FILE_BEING_USED,
+
+        /**
+         * Exception reason.
+         */
+        REUSABLE_MEMBER_GROUP_CANNOT_BE_MERGED
     }
 
     /**

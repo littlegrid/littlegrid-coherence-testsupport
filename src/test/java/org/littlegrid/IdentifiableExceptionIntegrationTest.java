@@ -31,6 +31,7 @@
 
 package org.littlegrid;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -44,6 +45,7 @@ public class IdentifiableExceptionIntegrationTest
         extends AbstractAfterTestShutdownIntegrationTest {
 
     @Test
+    @Ignore
     public void exceptionDueToCoherenceJarExcluded() {
         try {
             memberGroup = ClusterMemberGroupUtils.newBuilder()
