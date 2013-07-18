@@ -81,8 +81,7 @@ public class DefaultClusterMember implements ClusterMember, CallbackHandler {
     @Override
     public void shutdown() {
         doBeforeShutdown();
-//        CacheFactory.shutdown();
-        DefaultCacheServer.shutdown();
+        CacheFactory.shutdown();
         doAfterShutdown();
     }
 
