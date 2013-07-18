@@ -165,6 +165,7 @@ public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownI
     }
 
     @Test(expected = ClusterMemberGroupBuildException.class)
+    @Ignore
     public void extendExtendProxyWithSamePortTwice() {
         //TODO: Move to identifiable exception once port in use is added as enum.
         memberGroup = ClusterMemberGroupUtils.newBuilder()
