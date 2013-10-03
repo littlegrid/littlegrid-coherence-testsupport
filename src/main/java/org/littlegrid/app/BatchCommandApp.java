@@ -84,14 +84,12 @@ public class BatchCommandApp {
     }
 
     private static String parseCommandFile(final String[] args) {
-        final String commandFile = "";
-
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith(COMMAND_FILE_ARGUMENT)) {
-                return args[i].replaceAll(COMMAND_FILE_ARGUMENT, "");
+        for (final String argument : args) {
+            if (argument.startsWith(COMMAND_FILE_ARGUMENT)) {
+                return argument.replaceAll(COMMAND_FILE_ARGUMENT, "");
             }
         }
 
-        return commandFile;
+        return "";
     }
 }

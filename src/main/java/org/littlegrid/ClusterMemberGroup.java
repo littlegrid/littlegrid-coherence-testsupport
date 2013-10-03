@@ -194,7 +194,7 @@ public interface ClusterMemberGroup {
      * @return configurer.
      * @since 2.16
      */
-    Configuer getConfigurer();
+    Configurer getConfigurer();
 
     /**
      * Interface to denote that the cluster member group may be re-used.
@@ -1044,12 +1044,12 @@ public interface ClusterMemberGroup {
     }
 
     /**
-     * Configuer interface, applies the necessary system properties and context for
-     * the client..
+     * Configurer interface, applies the necessary system properties and context for
+     * the client.
      *
      * @since 2.16
      */
-    interface Configuer {
+    interface Configurer {
         String getClusterName();
 
         int getWkaPort();

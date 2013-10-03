@@ -164,7 +164,7 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
             cache.put(i, i);
         }
 
-        TimeUnit.SECONDS.sleep(writeDelaySeconds + 3); // wait a few extra seconds
+        TimeUnit.SECONDS.sleep(writeDelaySeconds + 5); // wait a few extra seconds
 
         int totalStoreCount = 0;
 

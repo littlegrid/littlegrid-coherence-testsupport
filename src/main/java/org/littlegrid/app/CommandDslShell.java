@@ -35,14 +35,17 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.impl.Info;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -51,12 +54,12 @@ import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
- * Command DSL shell - purposely reduced scope for the class and methods to keep visible
- * 'surface-area' small for now and not expose internals that may change in future versions.
+ * Command DSL shell - purposely reduced scope for the methods to keep visible 'surface-area'
+ * small for now and not expose internals that may change in future versions.
  *
  * @since 2.15
  */
-class CommandDslShell {
+public class CommandDslShell {
     private static final Logger LOGGER = Logger.getLogger(CommandDslShell.class.getName());
     private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 750;
 
@@ -70,6 +73,7 @@ class CommandDslShell {
     private static final String STOP_MEMBER_COMMAND = "stop member";
     private static final String BYE_COMMAND = "bye";
     private static final String QUIT_COMMAND = "quit";
+    private static final String EXIT_COMMAND = "exit";
     private static final String GET_STARTED_MEMBER_IDS_COMMAND = "members";
     private static final String SHUTDOWN_ALL_COMMAND = "shutdown all";
     private static final String STOP_ALL_COMMAND = "stop all";
@@ -93,8 +97,20 @@ class CommandDslShell {
     private static final String COHERENCE_CONSOLE_CLASS_NAME =
             "com.tangosol.coherence.component.application.console.Coherence";
 
+    /**
+     * Text to indicate an unknown command was used.
+     */
+    public static final String COMMAND_UNKNOWN = "COMMAND_UNKNOWN:";
+
+    /**
+     * Text to indicate that a command caused an exception.
+     */
+    public static final String COMMAND_EXCEPTION = "COMMAND_EXCEPTION:";
+
     private final InputStream in;
     private final PrintStream out;
+    private final List<String> commandsToIgnore;
+    private final boolean outputPrompts;
 
     private String site;
     private String rack;
@@ -109,14 +125,34 @@ class CommandDslShell {
     public CommandDslShell(final InputStream in,
                            final PrintStream out) {
 
+        this(in, out, new ArrayList<String>(), true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param in               Input stream.
+     * @param out              Output stream.
+     * @param commandsToIgnore Command that should be ignored based upon the context of the shell usage.
+     * @param outputPrompts    Indicates if user prompts should be output.
+     * @since 2.16
+     */
+    public CommandDslShell(final InputStream in,
+                           final PrintStream out,
+                           final List<String> commandsToIgnore,
+                           final boolean outputPrompts) {
+
         this.in = in;
         this.out = out;
+        this.commandsToIgnore = commandsToIgnore;
+        this.outputPrompts = outputPrompts;
     }
 
     /**
      * Starts the shell to process commands.
      *
      * @param args Commands passed for execution.
+     * @return response to commands.
      */
     public Response start(final String[] args) {
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
@@ -128,7 +164,11 @@ class CommandDslShell {
         totalResponse.merge(commandStringResponse);
 
         if (!commandStringResponse.isExitRequested()) {
-            out.println("littlegrid DSL shell ready");
+            if (outputPrompts) {
+                out.println(format("littlegrid (%s) DSL shell ready - for list of commands type: help",
+                        Info.getVersionNumber()));
+            }
+
             final Scanner scanner = new Scanner(in);
 
             final Response commandStreamResponse = processCommandsStream(memberGroup, scanner);
@@ -136,7 +176,6 @@ class CommandDslShell {
         }
 
         LOGGER.info(totalResponse.toString());
-        out.println("Exiting");
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
 
@@ -144,15 +183,13 @@ class CommandDslShell {
     }
 
     private String parseCommandsString(final String[] args) {
-        final String commands = "";
-
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith(COMMANDS_ARGUMENT)) {
-                return args[i].replaceAll(COMMANDS_ARGUMENT, "");
+        for (final String argument : args) {
+            if (argument.startsWith(COMMANDS_ARGUMENT)) {
+                return argument.replaceAll(COMMANDS_ARGUMENT, "");
             }
         }
 
-        return commands;
+        return "";
     }
 
     private Response processCommandsStream(final ClusterMemberGroup memberGroup,
@@ -161,13 +198,21 @@ class CommandDslShell {
         final Response totalResponse = new Response();
 
         do {
-            out.println();
-            out.print(COMMAND_PROMPT);
+            if (outputPrompts) {
+                out.println();
+                out.print(COMMAND_PROMPT);
+            }
 
-            final String stringEntered = scanner.nextLine();
-            final Response response = processCommandsString(memberGroup, stringEntered);
+            try {
+                final String stringEntered = scanner.nextLine();
+                final Response response = processCommandsString(memberGroup, stringEntered);
 
-            totalResponse.merge(response);
+                totalResponse.merge(response);
+            } catch (Exception e) {
+                out.println("No exit request made, but no more commands to process - exiting");
+
+                totalResponse.requestExit();
+            }
         } while (!totalResponse.isExitRequested());
 
         return totalResponse;
@@ -179,100 +224,115 @@ class CommandDslShell {
         final Response response = new Response();
         final String[] commands = stringEntered.split(COMMAND_DELIMITER);
 
-        for (String command : commands) {
-            command = command.trim();
+        for (String untrimmedCommand : commands) {
+            final String command = untrimmedCommand.trim();
+            String outputResponse;
 
             try {
                 if (command.startsWith(STOP_MEMBER_COMMAND)) {
-                    stopMember(memberGroup, command);
+                    outputResponse = stopMember(memberGroup, command);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(SHUTDOWN_MEMBER_COMMAND)) {
-                    shutdownMember(memberGroup, command);
+                    outputResponse = shutdownMember(memberGroup, command);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(SLEEP_UNTIL_COMMAND)) {
-                    sleepUntil(command);
+                    outputResponse = sleepUntil(command);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(SLEEP_COMMAND)) {
-                    sleep(command);
+                    outputResponse = sleep(command);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(STOP_ALL_COMMAND)) {
-                    stopAll(memberGroup);
+                    outputResponse = stopAll(memberGroup);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(SHUTDOWN_ALL_COMMAND)) {
-                    shutdownAll(memberGroup);
+                    outputResponse = shutdownAll(memberGroup);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(GET_STARTED_MEMBER_IDS_COMMAND)) {
-                    outputStartedMemberIds(memberGroup);
+                    outputResponse = getStartedMemberIds(memberGroup);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(START_STORAGE_ENABLED_COMMAND)) {
-                    startStorageEnabledMember(memberGroup);
+                    outputResponse = startStorageEnabledMember(memberGroup);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(START_MULTIPLE_STORAGE_ENABLED_COMMAND)) {
-                    startMultipleStorageEnabledMembers(memberGroup, command);
+                    outputResponse = startMultipleStorageEnabledMembers(memberGroup, command);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(START_EXTEND_PROXY_COMMAND)) {
-                    startExtendProxyMember(memberGroup, command);
+                    outputResponse = startExtendProxyMember(memberGroup, command);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(START_JMX_MONITOR_COMMAND)) {
-                    startJmxMonitorMember(memberGroup);
+                    outputResponse = startJmxMonitorMember(memberGroup);
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(HELP_COMMAND)) {
                     outputHelp();
+                    outputResponse = "";
                     response.incrementValidCommandsExecuted();
 
-                } else if (command.equals(BYE_COMMAND) || command.equals(QUIT_COMMAND)) {
+                } else if (command.equals(BYE_COMMAND)
+                        || command.equals(QUIT_COMMAND)
+                        || command.equals(EXIT_COMMAND)) {
+
+                    outputResponse = command;
                     response.requestExit();
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(COMMENT_COMMAND)) {
-                    out.println(command);
+                    outputResponse = command;
                     response.incrementCommentCommandsExecuted();
 
                 } else if (command.equals(CONSOLE_COMMAND)) {
                     console();
+                    outputResponse = "";
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(COHQL_COMMAND)) {
                     cohQl();
+                    outputResponse = "";
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals(DATE_COMMAND)) {
-                    outputDate();
+                    outputResponse = getDate();
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(SITE_COMMAND)) {
                     setSite(command);
+                    outputResponse = command;
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(RACK_COMMAND)) {
                     setRack(command);
+                    outputResponse = command;
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.startsWith(MACHINE_COMMAND)) {
                     setMachine(command);
+                    outputResponse = command;
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals("")) {
-                    out.println();
+                    outputResponse = "";
 
                 } else {
-                    out.println(format("COMMAND_UNKNOWN: '%s'", command));
+                    outputResponse = format(COMMAND_UNKNOWN + " '%s'", command);
                     response.incrementUnknownCommandsExecuted();
                 }
             } catch (Exception e) {
-                out.println(format("COMMAND_EXCEPTION: '%s' due to: %s", command, e));
+                outputResponse = format(COMMAND_EXCEPTION + " '%s' due to: %s", command, e);
                 response.incrementInvalidCommandsExecuted();
+            }
+
+            if (!outputResponse.isEmpty()) {
+                out.println(outputResponse);
             }
         }
 
@@ -291,7 +351,7 @@ class CommandDslShell {
         this.machine = command.replaceAll(MACHINE_COMMAND, "").trim();
     }
 
-    private void sleepUntil(final String command)
+    private String sleepUntil(final String command)
             throws InterruptedException {
 
         final int[] timeParts = parseTime(SLEEP_UNTIL_COMMAND, command);
@@ -306,16 +366,16 @@ class CommandDslShell {
 
         final long sleepTime = (dateToWaitUntil.getTimeInMillis() - now.getTime()) / MILLISECONDS_IN_SECOND;
 
-        out.println(format("Current time %s, now about to sleep for %d seconds - which is: %s",
+        out.print(format("Current time %s, now about to sleep for %d seconds - which is: %s",
                 now, sleepTime, dateToWaitUntil.getTime()));
 
         TimeUnit.SECONDS.sleep(sleepTime);
-        out.println(format("Finished sleeping, time now: %s", new Date()));
 
+        return format("Finished sleeping, time now: %s", new Date());
     }
 
-    private void outputDate() {
-        out.println(new Date());
+    private String getDate() {
+        return new Date().toString();
     }
 
     @SuppressWarnings("unchecked")
@@ -365,8 +425,9 @@ class CommandDslShell {
         out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
         out.println(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
 
-        out.println(format("%s - exits this application - same as %s", BYE_COMMAND, QUIT_COMMAND));
-        out.println(format("%s - quits this application - same as %s", QUIT_COMMAND, BYE_COMMAND));
+        out.println(format("%s - exits application - same as %s and %s", BYE_COMMAND, QUIT_COMMAND, EXIT_COMMAND));
+        out.println(format("%s - exits application - same as %s and %s", QUIT_COMMAND, BYE_COMMAND, EXIT_COMMAND));
+        out.println(format("%s - exits application - same as %s and %s", EXIT_COMMAND, QUIT_COMMAND, BYE_COMMAND));
 
         out.println(format("%s duration_X - sleeps for the specified time in milliseconds, e.g. 1000", SLEEP_COMMAND));
         out.println(format("%s HH:MI:SS - sleeps until the specified time, e.g. 18:01:02", SLEEP_UNTIL_COMMAND));
@@ -389,16 +450,16 @@ class CommandDslShell {
         out.println(format("%s - launches Coherence console (not for Extend clients)", CONSOLE_COMMAND));
     }
 
-    private void startJmxMonitorMember(final ClusterMemberGroup memberGroup) {
+    private String startJmxMonitorMember(final ClusterMemberGroup memberGroup) {
         memberGroup.merge(getNewBuilder()
                 .setJmxMonitorCount(1)
                 .buildAndConfigure());
 
-        outputStartedMemberIds(memberGroup);
+        return getStartedMemberIds(memberGroup);
     }
 
-    private void startExtendProxyMember(final ClusterMemberGroup memberGroup,
-                                        final String command) {
+    private String startExtendProxyMember(final ClusterMemberGroup memberGroup,
+                                          final String command) {
 
         final int extendPort = parseInteger(START_EXTEND_PROXY_COMMAND, command);
 
@@ -407,19 +468,19 @@ class CommandDslShell {
                 .setExtendPort(extendPort)
                 .buildAndConfigure());
 
-        outputStartedMemberIds(memberGroup);
+        return getStartedMemberIds(memberGroup);
     }
 
-    private void startStorageEnabledMember(final ClusterMemberGroup memberGroup) {
+    private String startStorageEnabledMember(final ClusterMemberGroup memberGroup) {
         memberGroup.merge(getNewBuilder()
                 .setStorageEnabledCount(1)
                 .buildAndConfigure());
 
-        outputStartedMemberIds(memberGroup);
+        return getStartedMemberIds(memberGroup);
     }
 
-    private void startMultipleStorageEnabledMembers(final ClusterMemberGroup memberGroup,
-                                                    final String command) {
+    private String startMultipleStorageEnabledMembers(final ClusterMemberGroup memberGroup,
+                                                      final String command) {
 
         final int numberOfMembers = parseInteger(START_MULTIPLE_STORAGE_ENABLED_COMMAND, command);
 
@@ -427,7 +488,7 @@ class CommandDslShell {
                 .setStorageEnabledCount(numberOfMembers)
                 .buildAndConfigure());
 
-        outputStartedMemberIds(memberGroup);
+        return getStartedMemberIds(memberGroup);
     }
 
     private Builder getNewBuilder() {
@@ -442,35 +503,41 @@ class CommandDslShell {
                 .setCustomConfiguredCount(0);
     }
 
-    private void shutdownAll(final ClusterMemberGroup memberGroup) {
+    private String shutdownAll(final ClusterMemberGroup memberGroup) {
         memberGroup.shutdownAll();
+
+        return getStartedMemberIds(memberGroup);
     }
 
-    private void stopAll(final ClusterMemberGroup memberGroup) {
+    private String stopAll(final ClusterMemberGroup memberGroup) {
         memberGroup.stopAll();
+
+        return getStartedMemberIds(memberGroup);
     }
 
-    private void sleep(final String command)
+    private String sleep(final String command)
             throws InterruptedException {
 
         final int sleepTime = parseInteger(SLEEP_COMMAND, command);
 
-        out.println(format("About to sleep for %d milliseconds", sleepTime));
+        out.print(format("About to sleep for %d milliseconds", sleepTime));
         TimeUnit.MILLISECONDS.sleep(sleepTime);
+
+        return "";
     }
 
-    private void shutdownMember(final ClusterMemberGroup memberGroup,
-                                final String command) {
+    private String shutdownMember(final ClusterMemberGroup memberGroup,
+                                  final String command) {
 
         final int[] memberId = parseIntegers(SHUTDOWN_MEMBER_COMMAND, NUMBER_DELIMITER, command);
 
         memberGroup.shutdownMember(memberId);
 
-        outputStartedMemberIds(memberGroup);
+        return getStartedMemberIds(memberGroup);
     }
 
-    private void stopMember(final ClusterMemberGroup memberGroup,
-                            final String command)
+    private String stopMember(final ClusterMemberGroup memberGroup,
+                              final String command)
             throws InterruptedException {
 
         final int[] memberId = parseIntegers(STOP_MEMBER_COMMAND, NUMBER_DELIMITER, command);
@@ -479,11 +546,11 @@ class CommandDslShell {
 
         TimeUnit.MILLISECONDS.sleep(WAIT_MILLISECONDS_AFTER_STOP_COMMAND);
 
-        outputStartedMemberIds(memberGroup);
+        return getStartedMemberIds(memberGroup);
     }
 
-    private void outputStartedMemberIds(final ClusterMemberGroup memberGroup) {
-        out.println("Started member ids: " + Arrays.toString(memberGroup.getStartedMemberIds()));
+    private String getStartedMemberIds(final ClusterMemberGroup memberGroup) {
+        return "Started member ids: " + Arrays.toString(memberGroup.getStartedMemberIds());
     }
 
     private static int parseInteger(final String command,

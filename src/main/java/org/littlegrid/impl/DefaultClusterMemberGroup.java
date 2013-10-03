@@ -75,7 +75,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final int wkaPort;
     private final int extendPort;
     private boolean shutdownAllInvoked;
-    private final Configuer configuer;
+    private final Configurer configurer;
 
 
     /**
@@ -114,7 +114,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
             throw new IllegalArgumentException("Source configure cannot be null");
         }
 
-        this.configuer = new ImmutableConfigurer(
+        this.configurer = new ImmutableConfigurer(
                 sourceConfigurer.getBuilderKeysAndValues(),
                 sourceConfigurer.getAdditionalSystemProperties(),
                 sourceConfigurer.getBuilderKeyToSystemPropertyNameMapping());
@@ -181,8 +181,8 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
-    public Configuer getConfigurer() {
-        return configuer;
+    public Configurer getConfigurer() {
+        return configurer;
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {
@@ -499,9 +499,10 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         callbackHandler.doBeforeShutdown();
-        final int memberCount = memberFutures.size();
 
-        LOGGER.fine(format("Shutting down %d cluster member(s) in group", memberCount));
+        LOGGER.fine("Shutting down cluster member(s) in group");
+
+        int memberCount = 0;
 
         try {
             final long startTime = System.currentTimeMillis();
@@ -509,7 +510,11 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
             for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
-                memberWrapper.shutdown();
+                if (memberWrapper.isRunning()) {
+                    memberCount++;
+
+                    memberWrapper.shutdown();
+                }
             }
 
             memberFutures.clear();
@@ -573,17 +578,24 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
             return this;
         }
 
-        LOGGER.info(format("Stopping %d cluster member(s) in this group", memberFutures.size()));
+        LOGGER.fine("Stopping cluster member(s) in this group");
+
+        int memberCount = 0;
 
         try {
             for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
 
-                memberWrapper.stop();
+                if (memberWrapper.isRunning()) {
+                    memberCount++;
+                    memberWrapper.stop();
+                }
             }
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+
+        LOGGER.info(format("Group of %d cluster member(s) stopped", memberCount));
 
         return this;
     }

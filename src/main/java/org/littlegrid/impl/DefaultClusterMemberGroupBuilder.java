@@ -60,7 +60,6 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_EN
 import static org.littlegrid.ClusterMemberGroup.BuildExceptionReporter;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
-import static org.littlegrid.ClusterMemberGroup.Configuer;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 import static org.littlegrid.impl.ImmutableConfigurer.APP_CONSOLE_CLASS_NAME_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY;
@@ -1301,7 +1300,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         }
     }
 
-    Configuer getConfigurer() {
+    ClusterMemberGroup.Configurer getConfigurer() {
         return configurer;
     }
 

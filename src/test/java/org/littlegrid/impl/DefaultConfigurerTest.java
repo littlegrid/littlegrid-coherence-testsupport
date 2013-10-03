@@ -44,7 +44,7 @@ import static org.littlegrid.impl.ImmutableConfigurer.CACHE_CONFIGURATION_KEY;
 /**
  * Default configurer tests.
  */
-public class DefaultConfigurerContextTest {
+public class DefaultConfigurerTest {
     @Test
     public void setAndGetBuilderValueAsInt() {
         final String key = "key";

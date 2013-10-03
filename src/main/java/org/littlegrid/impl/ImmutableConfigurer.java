@@ -44,14 +44,14 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
-import static org.littlegrid.ClusterMemberGroup.Configuer;
+import static org.littlegrid.ClusterMemberGroup.Configurer;
 
 /**
  * Immutable configurer.
  *
  * @since 2.16
  */
-class ImmutableConfigurer implements Configuer {
+class ImmutableConfigurer implements Configurer {
     static final String FAST_START_OVERRIDE_CONFIGURATION_FILENAME =
             "littlegrid/littlegrid-fast-start-coherence-override.xml";
 
