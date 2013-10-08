@@ -970,6 +970,16 @@ public interface ClusterMemberGroup {
         /**
          * Set the POF configuration filename.
          *
+         * @param pofEnabled Denotes if POF should be enabled..
+         * @return builder.
+         * @since 2.16
+         */
+
+        Builder setPofEnabled(boolean pofEnabled);
+
+        /**
+         * Set the POF configuration filename.
+         *
          * @param pofConfiguration POF configuration filename.
          * @return builder.
          * @since 2.16

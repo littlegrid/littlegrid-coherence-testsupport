@@ -38,7 +38,6 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.DefaultConfigurer;
 import static org.littlegrid.impl.ImmutableConfigurer.CACHE_CONFIGURATION_KEY;
 
 /**
@@ -50,7 +49,7 @@ public class DefaultConfigurerTest {
         final String key = "key";
         final int value = 123;
 
-        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
         context.setBuilderValue(key, value);
 
         assertThat(context.getBuilderValueAsInt(key), is(value));
@@ -61,7 +60,7 @@ public class DefaultConfigurerTest {
         final String key = "key";
         final long value = 123L;
 
-        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
         context.setBuilderValue(key, value);
 
         assertThat(context.getBuilderValueAsLong(key), is(value));
@@ -72,7 +71,7 @@ public class DefaultConfigurerTest {
         final String key = "key";
         final String value = "123";
 
-        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
         context.setBuilderValue(key, value);
 
         assertThat(context.getBuilderValueAsString(key), is(value));
@@ -80,7 +79,7 @@ public class DefaultConfigurerTest {
 
     @Test
     public void getBuilderValueAsStringWhenNoEntry() {
-        final DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
 
         assertThat(context.getBuilderValueAsString("no-entry"), nullValue());
     }
@@ -90,7 +89,7 @@ public class DefaultConfigurerTest {
         final String key = "key";
         final String value = "123";
 
-        final DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
         context.setBuilderValue(key, Integer.parseInt(value));
 
         assertThat(context.getBuilderValueAsString(key), is(value));
@@ -98,21 +97,21 @@ public class DefaultConfigurerTest {
 
     @Test(expected = IllegalStateException.class)
     public void getPropertyNameFromMappingWhenDoesNotExist() {
-        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
 
         context.getPropertyNameFromMapping("UnknownKey");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setPropertyWhenValidWhenKeyIsNull() {
-        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
 
         context.setPropertyWhenValid(new Properties(), null, null);
     }
 
     @Test
     public void setPropertyWhenValidWhenValueIsNull() {
-        final DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
         final Properties properties = new Properties();
 
         context.setPropertyWhenValid(properties, CACHE_CONFIGURATION_KEY, null);
@@ -122,7 +121,7 @@ public class DefaultConfigurerTest {
 
     @Test
     public void setPropertyWhenValidWhenValueIsSpaces() {
-        final DefaultClusterMemberGroupBuilder.DefaultConfigurer context = new DefaultClusterMemberGroupBuilder.DefaultConfigurer();
+        final DefaultConfigurer context = new DefaultConfigurer();
         final Properties properties = new Properties();
 
         context.setPropertyWhenValid(properties, CACHE_CONFIGURATION_KEY, "   ");

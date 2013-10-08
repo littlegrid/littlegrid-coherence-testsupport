@@ -51,7 +51,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static java.util.Map.Entry;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
@@ -1198,6 +1197,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
+    public Builder setPofEnabled(final boolean pofEnabled) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Builder setPofConfiguration(final String pofConfiguration) {
         throw new UnsupportedOperationException();
     }
@@ -1229,11 +1236,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         final DefaultClusterMemberGroupBuilder otherBuilder = (DefaultClusterMemberGroupBuilder) other;
 
-        if (!configurer.equals(otherBuilder.configurer)) {
-            return false;
-        }
-
-        return true;
+        return configurer.equals(otherBuilder.configurer);
     }
 
     /**
@@ -1241,11 +1244,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public int hashCode() {
-        int result = configurer.getBuilderKeysAndValues().hashCode();
-        result = 31 * result + configurer.getAdditionalSystemProperties().hashCode();
-        result = 31 * result + configurer.getBuilderKeyToSystemPropertyNameMapping().hashCode();
-
-        return result;
+        return configurer.hashCode();
     }
 
     /**
@@ -1302,79 +1301,5 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     ClusterMemberGroup.Configurer getConfigurer() {
         return configurer;
-    }
-
-    /**
-     * Default configurer.
-     *
-     * @since 2.16
-     */
-    static class DefaultConfigurer extends ImmutableConfigurer {
-        /**
-         * Default configurer.
-         */
-        public DefaultConfigurer() {
-            super(new HashMap<String, String>(), new Properties(), new Properties());
-        }
-
-        void setBuilderValue(final String key,
-                             final int value) {
-
-            getDirectMutableAccessToBuilderKeysAndValues().put(key, Integer.toString(value));
-        }
-
-        void setBuilderValue(final String key,
-                             final long value) {
-
-            getDirectMutableAccessToBuilderKeysAndValues().put(key, Long.toString(value));
-        }
-
-        void setBuilderValue(final String key,
-                             final String value) {
-
-            getDirectMutableAccessToBuilderKeysAndValues().put(key, value);
-        }
-
-        public void setAdditionalSystemProperties(final Properties additionalSystemProperties) {
-            // Pass them through individually so any bad key/values are identified
-            for (final Entry entry : additionalSystemProperties.entrySet()) {
-                setAdditionalSystemProperty((String) entry.getKey(), (String) entry.getValue());
-            }
-        }
-
-        public void setAdditionalSystemProperty(final String key,
-                                                final String value) {
-
-            if (key == null) {
-                throw new IllegalArgumentException(format("Key cannot be null, supplied value was: '%s'", value));
-            }
-
-            if (value == null) {
-                throw new IllegalArgumentException(format("Value cannot be null, supplied key was: '%s'", key));
-            }
-
-            getDirectMutableAccessToAdditionalSystemProperties().put(key, value);
-        }
-
-        public void setBuilderKeyToSystemPropertyNameMapping(final Properties builderKeyToSystemPropertyNameMapping) {
-            // Pass them through individually so any bad key/values are identified
-            for (final Entry entry : builderKeyToSystemPropertyNameMapping.entrySet()) {
-                setBuilderKeyToSystemPropertyNameMapping((String) entry.getKey(), (String) entry.getValue());
-            }
-        }
-
-        public void setBuilderKeyToSystemPropertyNameMapping(final String key,
-                                                             final String value) {
-
-            if (key == null) {
-                throw new IllegalArgumentException(format("Key cannot be null, supplied value was: '%s'", value));
-            }
-
-            if (value == null) {
-                throw new IllegalArgumentException(format("Value cannot be null, supplied key was: '%s'", key));
-            }
-
-            getDirectMutableAccessToBuilderKeyToSystemPropertyNameMapping().put(key, value);
-        }
     }
 }

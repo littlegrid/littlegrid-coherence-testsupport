@@ -672,17 +672,17 @@ class ImmutableConfigurer implements Configurer {
             return false;
         }
 
-        final ImmutableConfigurer otherContext = (ImmutableConfigurer) other;
+        final ImmutableConfigurer otherConfigurer = (ImmutableConfigurer) other;
 
-        if (!additionalSystemProperties.equals(otherContext.additionalSystemProperties)) {
+        if (!additionalSystemProperties.equals(otherConfigurer.additionalSystemProperties)) {
             return false;
         }
 
-        if (!builderKeyToSystemPropertyNameMapping.equals(otherContext.builderKeyToSystemPropertyNameMapping)) {
+        if (!builderKeyToSystemPropertyNameMapping.equals(otherConfigurer.builderKeyToSystemPropertyNameMapping)) {
             return false;
         }
 
-        if (!builderKeysAndValues.equals(otherContext.builderKeysAndValues)) {
+        if (!builderKeysAndValues.equals(otherConfigurer.builderKeysAndValues)) {
             return false;
         }
 

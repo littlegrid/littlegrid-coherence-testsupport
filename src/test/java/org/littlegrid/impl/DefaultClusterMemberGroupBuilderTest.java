@@ -51,7 +51,6 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DI
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
-import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.DefaultConfigurer;
 import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.Registry;
 
 /**
