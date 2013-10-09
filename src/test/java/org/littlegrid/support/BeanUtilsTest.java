@@ -49,10 +49,13 @@ public final class BeanUtilsTest {
     private static final String AGE_PROPERTY = "Age";
     private static final String BIRTH_DATE_MILLIS_PROPERTY = "BirthDateMillis";
     private static final String HOBBIES_PROPERTY = "Hobbies";
+    private static final String HOME_OWNER_PROPERTY = "HomeOwner";
+
     private static final String EXPECTED_NAME = "Fred Bloggs";
     private static final int EXPECTED_AGE = 30;
     private static final long EXPECTED_BIRTH_DATE_MILLIS = 1234567890;
-    private static final String HOBBIES = "Yoga,Ballroom dancing";
+    private static final String EXPECTED_HOBBIES = "Yoga,Ballroom dancing";
+    private static final boolean EXPECTED_HOME_OWNER = true;
 
 
     @Test(expected = UnsupportedOperationException.class)
@@ -72,6 +75,7 @@ public final class BeanUtilsTest {
         assertThat(person.getAge(), is(0));
         assertThat(person.getBirthDateMillis(), is(0L));
         assertThat(person.getHobbies(), nullValue());
+        assertThat(person.isHomeOwner(), is(false));
     }
 
     @Test
@@ -125,7 +129,7 @@ public final class BeanUtilsTest {
     @Test
     public void setWhenValueIsStringArray() {
         final Properties properties = new Properties();
-        properties.put(HOBBIES_PROPERTY, HOBBIES);
+        properties.put(HOBBIES_PROPERTY, EXPECTED_HOBBIES);
 
         final Person person = new Person();
 
@@ -135,7 +139,7 @@ public final class BeanUtilsTest {
         assertThat(person.getName(), nullValue());
         assertThat(person.getAge(), is(0));
         assertThat(person.getBirthDateMillis(), is(0L));
-        assertThat(person.getHobbies()[0], is(HOBBIES));
+        assertThat(person.getHobbies()[0], is(EXPECTED_HOBBIES));
     }
 
     @Test
@@ -155,22 +159,55 @@ public final class BeanUtilsTest {
     }
 
     @Test
+    public void setWhenValueIsBoolean() {
+        final Properties properties = new Properties();
+        properties.put(HOME_OWNER_PROPERTY, Boolean.toString(EXPECTED_HOME_OWNER));
+
+        final Person person = new Person();
+
+        final int propertiesSetCount = BeanUtils.multiSetter(person, properties);
+
+        assertThat(propertiesSetCount, is(1));
+        assertThat(person.getName(), nullValue());
+        assertThat(person.getAge(), is(0));
+        assertThat(person.getBirthDateMillis(), is(0L));
+        assertThat(person.getHobbies(), nullValue());
+        assertThat(person.isHomeOwner(), is(EXPECTED_HOME_OWNER));
+    }
+
+    @Test
+    public void setWhenValueIsNull() {
+        final Properties properties = new Properties();
+        properties.put(HOME_OWNER_PROPERTY, true);
+
+        final Person person = new Person();
+
+        try {
+            BeanUtils.multiSetter(new Person(), properties);
+        } catch (IdentifiableException e) {
+            assertThat(e.getReasonEnum(), is(UNABLE_TO_SET_BEAN_PROPERTY));
+        }
+    }
+
+    @Test
     public void setAll() {
         final Properties properties = new Properties();
         properties.setProperty(NAME_PROPERTY, EXPECTED_NAME);
         properties.setProperty(AGE_PROPERTY, Integer.toString(EXPECTED_AGE));
         properties.setProperty(BIRTH_DATE_MILLIS_PROPERTY, Long.toString(EXPECTED_BIRTH_DATE_MILLIS));
-        properties.put(HOBBIES_PROPERTY, HOBBIES);
+        properties.put(HOBBIES_PROPERTY, EXPECTED_HOBBIES);
+        properties.put(HOME_OWNER_PROPERTY, Boolean.toString(EXPECTED_HOME_OWNER));
 
         Person person = new Person();
 
         final int propertiesSetCount = BeanUtils.multiSetter(person, properties);
 
-        assertThat(propertiesSetCount, is(4));
+        assertThat(propertiesSetCount, is(5));
         assertThat(person.getName(), is(EXPECTED_NAME));
         assertThat(person.getAge(), is(EXPECTED_AGE));
         assertThat(person.getBirthDateMillis(), is(EXPECTED_BIRTH_DATE_MILLIS));
-        assertThat(person.getHobbies()[0], is(HOBBIES));
+        assertThat(person.getHobbies()[0], is(EXPECTED_HOBBIES));
+        assertThat(person.isHomeOwner(), is(EXPECTED_HOME_OWNER));
     }
 
     @Test
@@ -219,6 +256,7 @@ public final class BeanUtilsTest {
         private int age;
         private long birthDateMillis;
         private String[] hobbies;
+        private boolean homeOwner;
 
         public String getName() {
             return name;
@@ -244,11 +282,12 @@ public final class BeanUtilsTest {
             return birthDateMillis;
         }
 
-        /*
-           Required for older Coherence versions, such as 3.5.x
-        */
-        public void setAge(final String age) {
-            setAge(Integer.parseInt(age));
+        public boolean isHomeOwner() {
+            return homeOwner;
+        }
+
+        public void setHomeOwner(boolean homeOwner) {
+            this.homeOwner = homeOwner;
         }
 
         public String[] getHobbies() {

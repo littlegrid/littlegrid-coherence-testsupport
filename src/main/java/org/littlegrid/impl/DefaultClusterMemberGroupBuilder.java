@@ -41,7 +41,6 @@ import org.littlegrid.support.SystemUtils;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -285,7 +284,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     private ClusterMemberGroup getClusterMemberGroupInstance(final Builder builder) {
         final String className = configurer.getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
-        final Registry registry = Registry.getInstance();
+        final DefaultReusableClusterMemberGroupRegistry registry = DefaultReusableClusterMemberGroupRegistry.getInstance();
 
         try {
             final Class clusterMemberGroupClass = this.getClass().getClassLoader().loadClass(className);
@@ -397,13 +396,13 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         } catch (ClusterMemberGroupBuildException e) {
             exceptionReporter.report(e, configurer.getBuilderKeysAndValues(),
                     configurer.getBuilderKeyToSystemPropertyNameMapping(),
-                    clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
+                    clusterMemberGroupInstanceClassName, DefaultReusableClusterMemberGroupRegistry.getInstance().toString());
 
             throw e;
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable, configurer.getBuilderKeysAndValues(),
                     configurer.getBuilderKeyToSystemPropertyNameMapping(),
-                    clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
+                    clusterMemberGroupInstanceClassName, DefaultReusableClusterMemberGroupRegistry.getInstance().toString());
 
             throw new IllegalStateException(throwable);
         }
@@ -1198,7 +1197,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setPofEnabled(final boolean pofEnabled) {
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
+        return this;
     }
 
     /**
@@ -1245,58 +1245,6 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public int hashCode() {
         return configurer.hashCode();
-    }
-
-    /**
-     * Registry containing registered cluster member groups that can be re-used.
-     *
-     * @since 2.15
-     */
-    static class Registry {
-        private static final Logger LOGGER = Logger.getLogger(Registry.class.getName());
-
-        private static final Registry INSTANCE = new Registry();
-
-        private final Map<Object, ReusableClusterMemberGroup> reusableClusterMemberGroupMap =
-                new HashMap<Object, ReusableClusterMemberGroup>();
-
-        static Registry getInstance() {
-            return INSTANCE;
-        }
-
-        ReusableClusterMemberGroup getClusterMemberGroup(final Builder builder) {
-            final Object key = getKey(builder);
-            final ReusableClusterMemberGroup memberGroup = reusableClusterMemberGroupMap.get(key);
-
-            LOGGER.info(format("Member group get using key: '%s' returned group: %s", key, memberGroup));
-
-            return memberGroup;
-        }
-
-        void registerClusterMemberGroup(final Builder builder,
-                                        final ReusableClusterMemberGroup clusterMemberGroup) {
-
-            final Object key = getKey(builder);
-
-            LOGGER.info(format("Member group registered using key: '%s' with group of: %s", key, clusterMemberGroup));
-            reusableClusterMemberGroupMap.put(key, clusterMemberGroup);
-        }
-
-        Map<Object, ReusableClusterMemberGroup> getReusableClusterMemberGroupMap() {
-            return reusableClusterMemberGroupMap;
-        }
-
-        private Object getKey(final Builder builder) {
-            return builder.hashCode();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return format("Registry: %s", reusableClusterMemberGroupMap);
-        }
     }
 
     ClusterMemberGroup.Configurer getConfigurer() {

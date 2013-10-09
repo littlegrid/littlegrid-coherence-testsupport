@@ -109,11 +109,20 @@ public final class BeanUtils {
             // Use the mapped real method name rather than the property name
             final String methodName = methodNameMapping.get(SET_PREFIX.toUpperCase() + key.toString().toUpperCase());
 
+            if (value == null) {
+                throw new IdentifiableException(
+                        format("Unable to invoke '%s' as the value is null - properties passed for setting: %s",
+                                methodName, properties),
+                        UNABLE_TO_SET_BEAN_PROPERTY);
+            }
+
             try {
                 // Try invoking with string as parameter
                 ClassHelper.invoke(bean, methodName, new Object[]{value});
             } catch (Exception e) {
                 // If there is a value, then try to brute-force it into another parameter type
+                // when there isn't a value, then don't bother to try and force anything to be
+                // set.
                 if (value.length() > 0) {
                     try {
                         // Try invoking with an int as a parameter
@@ -127,11 +136,16 @@ public final class BeanUtils {
                                 // Try invoking with a string array as a parameter
                                 ClassHelper.invoke(bean, methodName, new Object[]{new String[]{value}});
                             } catch (Exception e4) {
-                                throw new IdentifiableException(
-                                        format("Unable to invoke '%s' to set value to: '%s' due to: %s "
-                                                + "- parameter type not supported",
-                                                methodName, value, e),
-                                        UNABLE_TO_SET_BEAN_PROPERTY);
+                                try {
+                                    // Try invoking with a string array as a parameter
+                                    ClassHelper.invoke(bean, methodName, new Object[]{Boolean.valueOf(value)});
+                                } catch (Exception e5) {
+                                    throw new IdentifiableException(
+                                            format("Unable to invoke '%s' to set value to: '%s' due to: %s, cause: %s "
+                                                    + "- parameter type not supported",
+                                                    methodName, value, e5, e5.getCause()),
+                                            UNABLE_TO_SET_BEAN_PROPERTY);
+                                }
                             }
                         }
                     }
