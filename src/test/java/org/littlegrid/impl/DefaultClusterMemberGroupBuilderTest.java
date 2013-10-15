@@ -55,7 +55,7 @@ import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
  * Default cluster member group builder tests.
  */
 public final class DefaultClusterMemberGroupBuilderTest {
-    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 48;
+    private static final int EXPECTED_BUILDER_DEFAULT_PROPERTIES_SIZE = 50;
 
     private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
     private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
@@ -126,6 +126,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String EXTEND_ENABLED_KEY = "ExtendEnabled";
 
     private static final String FAST_START_JOIN_TIMEOUT_MILLISECONDS = "FastStartJoinTimeoutMilliseconds";
+
+    private static final String POF_ENABLED = "PofEnabled";
+    private static final String POF_CONFIGURATION = "PofConfiguration";
 
     private static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
@@ -372,6 +375,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final int expectedFastStartJoinTimeoutMilliseconds = 231;
 
+        final boolean expectedPofEnabled = true;
+        final String expectedPofConfiguration = "application-pof-config.xml";
+
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setCacheConfiguration(expectedCacheConfiguration);
@@ -408,6 +414,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setJmxMonitorLogLevel(expectedJmxMonitorLogLevel);
 
         builder.setFastStartJoinTimeoutMilliseconds(expectedFastStartJoinTimeoutMilliseconds);
+
+        builder.setPofEnabled(expectedPofEnabled);
+        builder.setPofConfiguration(expectedPofConfiguration);
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
@@ -467,6 +476,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(FAST_START_JOIN_TIMEOUT_MILLISECONDS),
                 is(Integer.toString(expectedFastStartJoinTimeoutMilliseconds)));
 
+        assertThat(builderSettings.get(POF_ENABLED), is(Boolean.toString(expectedPofEnabled)));
+        assertThat(builderSettings.get(POF_CONFIGURATION), is(expectedPofConfiguration));
+
         // Values that are set at the point of the system properties being prepared using WKA values.
         assertThat(builderSettings.get(LOCAL_ADDRESS_KEY), nullValue());
         assertThat(builderSettings.get(LOCAL_PORT_KEY), nullValue());
@@ -476,6 +488,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         assertThat(builderSettings.get(DISTRIBUTED_LOCAL_STORAGE_KEY), nullValue());
         assertThat(builderSettings.get(TCMP_ENABLED_KEY), nullValue());
         assertThat(builderSettings.get(EXTEND_ENABLED_KEY), nullValue());
+
     }
 
     private DefaultClusterMemberGroupBuilder getDefaultClusterMemberGroupBuilder() {

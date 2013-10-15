@@ -92,6 +92,9 @@ class ImmutableConfigurer implements Configurer {
     static final String TTL_KEY = "Ttl";
     static final String LOG_DESTINATION_KEY = "LogDestination";
 
+    static final String POF_ENABLED = "PofEnabled";
+    static final String POF_CONFIGURATION = "PofConfiguration";
+
     static final String LOG_LEVEL_KEY = "LogLevel";
     static final String CLIENT_LOG_LEVEL_KEY = "ClientLogLevel";
     static final String STORAGE_ENABLED_LOG_LEVEL_KEY = "StorageEnabledLogLevel";
@@ -502,6 +505,9 @@ class ImmutableConfigurer implements Configurer {
         setPropertyUsingNameMappingAndBuilderValue(properties, LOG_DESTINATION_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
 
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_ENABLED);
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_CONFIGURATION);
+
         setPropertyUsingNameMappingAndSuppliedValue(properties, COHERENCE_MANAGEMENT,
                 COHERENCE_MANAGEMENT_NONE);
 
@@ -619,7 +625,7 @@ class ImmutableConfigurer implements Configurer {
                               final String key,
                               final String value) {
 
-        if (key == null) {
+        if (key == null || key.trim().length() == 0) {
             throw new IllegalArgumentException(format("System property key cannot be null for value of: '%s'", value));
         }
 

@@ -49,6 +49,12 @@ class DefaultConfigurer extends ImmutableConfigurer {
     }
 
     void setBuilderValue(final String key,
+                         final boolean value) {
+
+        getDirectMutableAccessToBuilderKeysAndValues().put(key, Boolean.toString(value));
+    }
+
+    void setBuilderValue(final String key,
                          final int value) {
 
         getDirectMutableAccessToBuilderKeysAndValues().put(key, Integer.toString(value));

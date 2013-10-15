@@ -92,6 +92,8 @@ import static org.littlegrid.impl.ImmutableConfigurer.LOG_LEVEL_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.MACHINE_NAME_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.NUMBER_OF_THREADS_IN_START_UP_POOL_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.OVERRIDE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.ImmutableConfigurer.POF_CONFIGURATION;
+import static org.littlegrid.impl.ImmutableConfigurer.POF_ENABLED;
 import static org.littlegrid.impl.ImmutableConfigurer.RACK_NAME_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.SITE_NAME_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.SLEEP_AFTER_STOP_DURATION_35X_KEY;
@@ -1197,7 +1199,8 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setPofEnabled(final boolean pofEnabled) {
-//        throw new UnsupportedOperationException();
+        configurer.setBuilderValue(POF_ENABLED, pofEnabled);
+
         return this;
     }
 
@@ -1206,7 +1209,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     @Override
     public Builder setPofConfiguration(final String pofConfiguration) {
-        throw new UnsupportedOperationException();
+        configurer.setBuilderValue(POF_CONFIGURATION, pofConfiguration);
+
+        return this;
     }
 
     /**

@@ -34,6 +34,8 @@ package org.littlegrid.support;
 import java.util.Map;
 import java.util.Properties;
 
+import static java.lang.String.format;
+
 /**
  * System utilities class providing useful system related methods.
  */
@@ -72,6 +74,10 @@ public final class SystemUtils {
         for (final Object object : properties.keySet()) {
             final String key = (String) object;
             final String value = properties.getProperty(key);
+
+            if (key == null || key.trim().length() == 0) {
+                throw new IllegalArgumentException(format("Key cannot be null for value of: '%s'", value));
+            }
 
             if (value.trim().length() > 0) {
                 System.setProperty(key, value);

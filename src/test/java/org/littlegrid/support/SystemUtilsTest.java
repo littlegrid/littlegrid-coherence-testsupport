@@ -115,6 +115,30 @@ public final class SystemUtilsTest {
         assertThat(System.getProperty(key), is(value));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void applyToSystemPropertiesWhenKeyIsEmpty() {
+        final String key = "";
+        final String value = KNOWN_VALUE_1;
+
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+
+        SystemUtils.applyToSystemProperties(properties);
+    }
+
+    @Test
+    public void applyToSystemPropertiesWhenValueIsEmpty() {
+        final String key = KEY1_WITH_KNOWN_PREFIX;
+        final String value = "";
+
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+
+        SystemUtils.applyToSystemProperties(properties);
+
+        assertThat(System.getProperties().containsKey(key), is(false));
+    }
+
     @Test
     public void applyToSystemPropertiesWhenValueIsJustSpaces() {
         final String key = KEY1_WITH_KNOWN_PREFIX;
