@@ -31,6 +31,7 @@
 
 package org.littlegrid.impl;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -42,9 +43,24 @@ import static org.junit.Assert.assertThat;
  */
 public final class ReflectionDelegatingClusterMemberTest {
     @Test(expected = IllegalStateException.class)
+    public void nullClassName() {
+        new ReflectionDelegatingClusterMember()
+                .setDelegateInstanceClassName(null)
+                .start();
+    }
+
+    @Test(expected = IllegalStateException.class)
     public void noClassName() {
         new ReflectionDelegatingClusterMember()
                 .setDelegateInstanceClassName("")
+                .start();
+    }
+
+    @Test
+    @Ignore
+    public void constructorWithClassName() {
+        new ReflectionDelegatingClusterMember()
+                .setDelegateInstanceClassName(StubDelegateClusterMember.class.getName())
                 .start();
     }
 

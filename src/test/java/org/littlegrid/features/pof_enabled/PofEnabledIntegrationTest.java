@@ -47,7 +47,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
  */
 public class PofEnabledIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
-    public void whatever() {
+    public void pofOverrideOfCacheConfigurationThatIsNotPofConfigured() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-pof-serializer-default.xml")
                 .setPofEnabled(true)
