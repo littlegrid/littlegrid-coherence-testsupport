@@ -45,6 +45,7 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLI
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
 import static org.littlegrid.ClusterMemberGroup.Configurer;
+import static org.littlegrid.support.StringUtils.stringHasValue;
 
 /**
  * Immutable configurer.
@@ -575,6 +576,9 @@ class ImmutableConfigurer implements Configurer {
         setPropertyUsingNameMappingAndBuilderValue(properties, EXTEND_PORT_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, LOG_DESTINATION_KEY);
 
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_ENABLED);
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_CONFIGURATION);
+
         properties.putAll(additionalSystemProperties);
 
         return properties;
@@ -632,11 +636,6 @@ class ImmutableConfigurer implements Configurer {
         if (value != null && value.trim().length() > 0) {
             properties.setProperty(key, value);
         }
-    }
-
-    @Deprecated //TODO: move this somewhere else
-    static boolean stringHasValue(final String stringToCheckForValue) {
-        return stringToCheckForValue != null && stringToCheckForValue.trim().length() > 0;
     }
 
     int getBuilderValueAsInt(final String builderKey) {
@@ -705,24 +704,6 @@ class ImmutableConfigurer implements Configurer {
         result = 31 * result + builderKeyToSystemPropertyNameMapping.hashCode();
 
         return result;
-    }
-
-    @Deprecated //TODO: not really deprecated but needs to move somewhere else
-    static String stringArrayToCommaDelimitedString(final String[] jarsToExcludeFromClassPath) {
-        final StringBuilder sb = new StringBuilder();
-
-        int count = 0;
-
-        for (final String jarToExcludeFromClassPath : jarsToExcludeFromClassPath) {
-            if (count > 0) {
-                sb.append(",");
-            }
-
-            sb.append(jarToExcludeFromClassPath);
-            count++;
-        }
-
-        return sb.toString();
     }
 
     Map<String, String> getBuilderKeysAndValues() {

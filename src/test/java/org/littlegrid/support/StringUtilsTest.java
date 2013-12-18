@@ -29,41 +29,50 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.pof_enabled;
+package org.littlegrid.support;
 
-import com.tangosol.io.pof.ConfigurablePofContext;
-import com.tangosol.io.pof.PofContext;
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
-import org.littlegrid.support.ExtendUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
- * POF enabled integration tests.
+ * String utilities tests.
  */
-public class PofEnabledIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class StringUtilsTest {
     @Test
-    public void pofEnablingOfCacheConfigurationThatIsNotPofConfiguredByDefault() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-pof-serializer-default.xml")
-                .setPofEnabled(true)
-                .setPofConfiguration("coherence/littlegrid-test-pof-config.xml")
-                .buildAndConfigureForStorageDisabledClient();
+    public void stringHasValueWhenNull() {
+        assertThat(StringUtils.stringHasValue(null), is(false));
+    }
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+    @Test
+    public void stringHasValueWhenContainsSpaces() {
+        assertThat(StringUtils.stringHasValue("   "), is(false));
+    }
 
-        assertThat(cache.getCacheService().getSerializer().getClass().getName(),
-                is(ConfigurablePofContext.class.getName()));
+    @Test
+    public void stringHasValueWhenContainsCharacters() {
+        assertThat(StringUtils.stringHasValue("ABC"), is(true));
+    }
 
-        final PofContext pofContext = (PofContext) cache.getCacheService().getSerializer();
-        final int id = pofContext.getUserTypeIdentifier(ExtendUtils.GetClusterSizeInvocable.class);
+    @Test
+    public void stringArrayToCommaDelimitedWhenNoStrings() {
+        assertThat(StringUtils.stringArrayToCommaDelimitedString(new String[]{}), is(""));
+    }
 
-        assertThat(id > 0, is(true));
+    @Test
+    public void stringArrayToCommaDelimitedWhenJustOneString() {
+        final String[] strings = {"abc"};
+        final String expectedResult = strings[0];
+
+        assertThat(StringUtils.stringArrayToCommaDelimitedString(strings), is(expectedResult));
+    }
+
+    @Test
+    public void stringArrayToCommaDelimitedWhenManyStrings() {
+        final String[] strings = {"abc", "def"};
+        final String expectedResult = strings[0] + "," + strings[1];
+
+        assertThat(StringUtils.stringArrayToCommaDelimitedString(strings), is(expectedResult));
     }
 }

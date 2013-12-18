@@ -109,8 +109,8 @@ import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_ROLE_NAME_
 import static org.littlegrid.impl.ImmutableConfigurer.TTL_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.WKA_ADDRESS_KEY;
 import static org.littlegrid.impl.ImmutableConfigurer.WKA_PORT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.stringArrayToCommaDelimitedString;
-import static org.littlegrid.impl.ImmutableConfigurer.stringHasValue;
+import static org.littlegrid.support.StringUtils.stringArrayToCommaDelimitedString;
+import static org.littlegrid.support.StringUtils.stringHasValue;
 
 /**
  * Default cluster member group builder implementation.

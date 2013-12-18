@@ -6,7 +6,7 @@
 
     <caching-scheme-mapping>
         <cache-mapping>
-            <cache-name>known-cache</cache-name>
+            <cache-name>*</cache-name>
             <scheme-name>simple-distributed-scheme</scheme-name>
         </cache-mapping>
     </caching-scheme-mapping>
@@ -19,5 +19,21 @@
             </backing-map-scheme>
             <autostart>true</autostart>
         </distributed-scheme>
+
+        <proxy-scheme>
+            <scheme-name>extend-tcp</scheme-name>
+            <service-name>ExtendProxyServerService</service-name>
+
+            <acceptor-config>
+                <tcp-acceptor>
+                    <local-address>
+                        <address system-property="tangosol.coherence.extend.address">127.x.2.3</address>
+                        <port system-property="tangosol.coherence.extend.port">9099</port>
+                    </local-address>
+                </tcp-acceptor>
+            </acceptor-config>
+
+            <autostart system-property="tangosol.coherence.extend.enabled">false</autostart>
+        </proxy-scheme>
     </caching-schemes>
 </cache-config>

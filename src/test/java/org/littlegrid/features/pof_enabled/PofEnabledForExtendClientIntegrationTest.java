@@ -42,21 +42,23 @@ import org.littlegrid.support.ExtendUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_EXTEND_TEST_CACHE;
 
 /**
  * POF enabled integration tests.
  */
-public class PofEnabledIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class PofEnabledForExtendClientIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void pofEnablingOfCacheConfigurationThatIsNotPofConfiguredByDefault() {
         memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledExtendProxyCount(1)
                 .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-pof-serializer-default.xml")
+                .setClientCacheConfiguration("coherence/littlegrid-test-extend-client-cache-config-with-no-pof-serializer-default.xml")
                 .setPofEnabled(true)
                 .setPofConfiguration("coherence/littlegrid-test-pof-config.xml")
-                .buildAndConfigureForStorageDisabledClient();
+                .buildAndConfigureForExtendClient();
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+        final NamedCache cache = CacheFactory.getCache(KNOWN_EXTEND_TEST_CACHE);
 
         assertThat(cache.getCacheService().getSerializer().getClass().getName(),
                 is(ConfigurablePofContext.class.getName()));

@@ -29,41 +29,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.features.pof_enabled;
-
-import com.tangosol.io.pof.ConfigurablePofContext;
-import com.tangosol.io.pof.PofContext;
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
-import org.junit.Test;
-import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
-import org.littlegrid.support.ExtendUtils;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
+package org.littlegrid.support;
 
 /**
- * POF enabled integration tests.
+ * String utilities class.
+ *
+ * @since 2.16
  */
-public class PofEnabledIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
-    @Test
-    public void pofEnablingOfCacheConfigurationThatIsNotPofConfiguredByDefault() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setCacheConfiguration("coherence/littlegrid-test-cache-config-with-no-pof-serializer-default.xml")
-                .setPofEnabled(true)
-                .setPofConfiguration("coherence/littlegrid-test-pof-config.xml")
-                .buildAndConfigureForStorageDisabledClient();
+public final class StringUtils {
+    /**
+     * Default scope to enable test coverage.
+     */
+    StringUtils() {
+        throw new UnsupportedOperationException();
+    }
 
-        final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
+    /**
+     * Checks if the string has a value (as in it is not null and it contains characters
+     * beyond just spaces).
+     *
+     * @param stringToCheckForValue String to check.
+     * @return true if characters exist.
+     */
+    public static boolean stringHasValue(final String stringToCheckForValue) {
+        return stringToCheckForValue != null && stringToCheckForValue.trim().length() > 0;
+    }
 
-        assertThat(cache.getCacheService().getSerializer().getClass().getName(),
-                is(ConfigurablePofContext.class.getName()));
+    /**
+     * Converts strings in an array to a comma-delimited string.
+     *
+     * @param strings String to concatenate.
+     * @return comma-delimited string.
+     */
+    public static String stringArrayToCommaDelimitedString(final String[] strings) {
+        final StringBuilder sb = new StringBuilder();
 
-        final PofContext pofContext = (PofContext) cache.getCacheService().getSerializer();
-        final int id = pofContext.getUserTypeIdentifier(ExtendUtils.GetClusterSizeInvocable.class);
+        int count = 0;
 
-        assertThat(id > 0, is(true));
+        for (final String string : strings) {
+            if (count > 0) {
+                sb.append(",");
+            }
+
+            sb.append(string);
+            count++;
+        }
+
+        return sb.toString();
     }
 }
