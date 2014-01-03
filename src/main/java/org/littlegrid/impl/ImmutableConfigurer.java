@@ -146,7 +146,7 @@ class ImmutableConfigurer implements Configurer {
 
     private final Map<String, String> builderKeysAndValues;
     private final Properties additionalSystemProperties;
-    private final Properties builderKeyToSystemPropertyNameMapping;
+    private final Properties builderKeyToSystemPropertyNameMappings;
 
     private static final Logger LOGGER = Logger.getLogger(ImmutableConfigurer.class.getName());
 
@@ -155,38 +155,37 @@ class ImmutableConfigurer implements Configurer {
      *
      * @param builderKeysAndValues       Builder keys and values.
      * @param additionalSystemProperties Additional system properties.
-     * @param builderKeyToSystemPropertyNameMapping
+     * @param builderKeyToSystemPropertyNameMappings
      *                                   Builder key to system property name mapping.
      */
     ImmutableConfigurer(final Map<String, String> builderKeysAndValues,
                         final Properties additionalSystemProperties,
-                        final Properties builderKeyToSystemPropertyNameMapping) {
+                        final Properties builderKeyToSystemPropertyNameMappings) {
 
         this.builderKeysAndValues = new HashMap<String, String>(builderKeysAndValues);
 
         this.additionalSystemProperties = new Properties(additionalSystemProperties);
         this.additionalSystemProperties.putAll(additionalSystemProperties);
 
-        this.builderKeyToSystemPropertyNameMapping = new Properties();
-        this.builderKeyToSystemPropertyNameMapping.putAll(builderKeyToSystemPropertyNameMapping);
-    }
-
-    @Override
-    public String getClusterName() {
-        return getBuilderValueAsString(CLUSTER_NAME_KEY);
-    }
-
-    @Override
-    public String getExtendAddress() {
-        // The Extend address is always the same as WKA address
-        return getBuilderValueAsString(WKA_ADDRESS_KEY);
+        this.builderKeyToSystemPropertyNameMappings = new Properties();
+        this.builderKeyToSystemPropertyNameMappings.putAll(builderKeyToSystemPropertyNameMappings);
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getClientCacheConfiguration() {
-        return getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
+    @Override
+    public String getClusterName() {
+        return getBuilderValueAsString(CLUSTER_NAME_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getExtendAddress() {
+        // The Extend address is always the same as WKA address
+        return getBuilderValueAsString(WKA_ADDRESS_KEY);
     }
 
     /**
@@ -613,7 +612,7 @@ class ImmutableConfigurer implements Configurer {
     }
 
     String getPropertyNameFromMapping(final String nameMappingKey) {
-        final String systemPropertyName = builderKeyToSystemPropertyNameMapping.getProperty(nameMappingKey);
+        final String systemPropertyName = builderKeyToSystemPropertyNameMappings.getProperty(nameMappingKey);
 
         if (systemPropertyName == null) {
             throw new IllegalStateException(format(
@@ -660,8 +659,8 @@ class ImmutableConfigurer implements Configurer {
     @Override
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
-                + "builderKeyToSystemPropertyNameMapping=%s}",
-                builderKeysAndValues, additionalSystemProperties, builderKeyToSystemPropertyNameMapping);
+                + "builderKeyToSystemPropertyNameMappings=%s}",
+                builderKeysAndValues, additionalSystemProperties, builderKeyToSystemPropertyNameMappings);
     }
 
     /**
@@ -683,7 +682,7 @@ class ImmutableConfigurer implements Configurer {
             return false;
         }
 
-        if (!builderKeyToSystemPropertyNameMapping.equals(otherConfigurer.builderKeyToSystemPropertyNameMapping)) {
+        if (!builderKeyToSystemPropertyNameMappings.equals(otherConfigurer.builderKeyToSystemPropertyNameMappings)) {
             return false;
         }
 
@@ -701,7 +700,7 @@ class ImmutableConfigurer implements Configurer {
     public int hashCode() {
         int result = builderKeysAndValues.hashCode();
         result = 31 * result + additionalSystemProperties.hashCode();
-        result = 31 * result + builderKeyToSystemPropertyNameMapping.hashCode();
+        result = 31 * result + builderKeyToSystemPropertyNameMappings.hashCode();
 
         return result;
     }
@@ -717,9 +716,9 @@ class ImmutableConfigurer implements Configurer {
         return properties;
     }
 
-    Properties getBuilderKeyToSystemPropertyNameMapping() {
+    Properties getBuilderKeyToSystemPropertyNameMappings() {
         final Properties properties = new Properties();
-        properties.putAll(builderKeyToSystemPropertyNameMapping);
+        properties.putAll(builderKeyToSystemPropertyNameMappings);
 
         return properties;
     }
@@ -732,7 +731,7 @@ class ImmutableConfigurer implements Configurer {
         return builderKeysAndValues;
     }
 
-    protected Properties getDirectMutableAccessToBuilderKeyToSystemPropertyNameMapping() {
-        return builderKeyToSystemPropertyNameMapping;
+    protected Properties getDirectMutableAccessToBuilderKeyToSystemPropertyNameMappings() {
+        return builderKeyToSystemPropertyNameMappings;
     }
 }

@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -117,7 +116,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         this.configurer = new ImmutableConfigurer(
                 sourceConfigurer.getBuilderKeysAndValues(),
                 sourceConfigurer.getAdditionalSystemProperties(),
-                sourceConfigurer.getBuilderKeyToSystemPropertyNameMapping());
+                sourceConfigurer.getBuilderKeyToSystemPropertyNameMappings());
 
         systemPropertiesBeforeStartAllInvoked = SystemUtils.snapshotSystemProperties();
 
@@ -367,19 +366,19 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public int[] getStartedMemberIds(final MemberAttributeEnum memberAttributeEnum,
-                                     final String attributeValue) {
-        throw new UnsupportedOperationException();
-    }
+//    @Override
+//    public int[] getStartedMemberIds(final MemberAttributeEnum memberAttributeEnum,
+//                                     final String attributeValue) {
+//        throw new UnsupportedOperationException();
+//    }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
-        throw new UnsupportedOperationException();
-    }
+//    @Override
+//    public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
+//        throw new UnsupportedOperationException();
+//    }
 
     static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {
         try {

@@ -116,6 +116,17 @@ public final class SystemUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void applyToSystemPropertiesWhenKeyIsNull() {
+        final String key = null;
+        final String value = KNOWN_VALUE_1;
+
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+
+        SystemUtils.applyToSystemProperties(properties);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void applyToSystemPropertiesWhenKeyIsEmpty() {
         final String key = "";
         final String value = KNOWN_VALUE_1;

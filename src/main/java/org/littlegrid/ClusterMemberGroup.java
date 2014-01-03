@@ -39,17 +39,17 @@ import java.util.Properties;
  * group or individually for some operations.
  */
 public interface ClusterMemberGroup {
-    /**
-     * Cluster member attribute enum.
-     *
-     * @since 2.16
-     */
-    enum MemberAttributeEnum {
-        SITE_NAME,
-        RACK_NAME,
-        MACHINE_NAME,
-        ROLE_NAME
-    }
+//    /**
+//     * Cluster member attribute enum.
+//     *
+//     * @since in the future
+//     */
+//    enum MemberAttributeEnum {
+//        SITE_NAME,
+//        RACK_NAME,
+//        MACHINE_NAME,
+//        ROLE_NAME
+//    }
 
 
     /**
@@ -122,10 +122,10 @@ public interface ClusterMemberGroup {
      * @param memberAttributeEnum Member attribute enum.
      * @param attributeValue      Attribute value.
      * @return member Ids.
-     * @since 2.16
+     * @since in future
      */
-    int[] getStartedMemberIds(MemberAttributeEnum memberAttributeEnum,
-                              String attributeValue);
+//    int[] getStartedMemberIds(MemberAttributeEnum memberAttributeEnum,
+//                              String attributeValue);
 
     /**
      * Returns the member Ids of the started cluster members matching the specified
@@ -133,8 +133,9 @@ public interface ClusterMemberGroup {
      *
      * @param attributeAndValueMap Attribute and value map.
      * @return member Ids.
+     * @since in future
      */
-    int[] getStartedMemberIds(Map<MemberAttributeEnum, String> attributeAndValueMap);
+//    int[] getStartedMemberIds(Map<MemberAttributeEnum, String> attributeAndValueMap);
 
     /**
      * Returns the suggested seconds to sleep after performing a member stop, the sleep
@@ -998,19 +999,19 @@ public interface ClusterMemberGroup {
          *
          * @param throwable            Throwable.
          * @param builderKeysAndValues Builder keys and values.
-         * @param builderKeyToSystemPropertyNameMapping
+         * @param builderKeyToSystemPropertyNameMappings
          *                             Builder key to system property name mapping.
          */
         void report(Throwable throwable,
                     Map<String, String> builderKeysAndValues,
-                    Properties builderKeyToSystemPropertyNameMapping);
+                    Properties builderKeyToSystemPropertyNameMappings);
 
         /**
          * Report on the exception.
          *
          * @param throwable            Throwable.
          * @param builderKeysAndValues Builder keys and values.
-         * @param builderKeyToSystemPropertyNameMapping
+         * @param builderKeyToSystemPropertyNameMappings
          *                             Builder key to system property name mapping.
          * @param clusterMemberGroupInstanceClassName
          *                             Cluster member group instance class name.
@@ -1020,7 +1021,7 @@ public interface ClusterMemberGroup {
          */
         void report(Throwable throwable,
                     Map<String, String> builderKeysAndValues,
-                    Properties builderKeyToSystemPropertyNameMapping,
+                    Properties builderKeyToSystemPropertyNameMappings,
                     String clusterMemberGroupInstanceClassName,
                     String otherInformation);
     }
@@ -1055,7 +1056,7 @@ public interface ClusterMemberGroup {
 
     /**
      * Configurer interface, applies the necessary system properties and context for
-     * the client.
+     * the cluster member or client.
      *
      * @since 2.16
      */

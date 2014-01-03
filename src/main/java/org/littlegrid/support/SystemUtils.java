@@ -75,8 +75,9 @@ public final class SystemUtils {
             final String key = (String) object;
             final String value = properties.getProperty(key);
 
-            if (key == null || key.trim().length() == 0) {
-                throw new IllegalArgumentException(format("Key cannot be null for value of: '%s'", value));
+            // Key cannot be null because properties extends hash table
+            if (key.trim().length() == 0) {
+                throw new IllegalArgumentException(format("Key cannot be empty string for value of: '%s'", value));
             }
 
             if (value.trim().length() > 0) {

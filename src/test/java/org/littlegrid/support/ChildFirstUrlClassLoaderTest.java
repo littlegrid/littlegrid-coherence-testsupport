@@ -38,9 +38,7 @@ import org.littlegrid.IdentifiableException;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -130,12 +128,28 @@ public final class ChildFirstUrlClassLoaderTest {
     public void loadAndResolve()
             throws Throwable {
 
-        final LoadWithResolveExposedClassLoader classLoader =
-                new LoadWithResolveExposedClassLoader(new URL[]{}, this.getClass().getClassLoader());
+        final LoadMethodWithResolveParameterExposedClassLoader classLoader =
+                new LoadMethodWithResolveParameterExposedClassLoader(new URL[]{}, this.getClass().getClassLoader());
 
         final Class clazz = classLoader.loadClass(Dummy.class.getName(), true);
 
         assertThat(clazz, notNullValue());
+    }
+
+    @Test
+    public void securityException()
+            throws ClassNotFoundException {
+
+        final FindMethodThrowSecurityExceptionClassLoader classLoader =
+                new FindMethodThrowSecurityExceptionClassLoader(new URL[]{}, this.getClass().getClassLoader());
+
+        try {
+            classLoader.loadClass(String.class.getName());
+
+            fail("Exception was expected");
+        } catch (IdentifiableException e) {
+            assertThat(e.getReasonEnum(), is(SECURITY_EXCEPTION));
+        }
     }
 
     @Test
@@ -206,14 +220,16 @@ public final class ChildFirstUrlClassLoaderTest {
         }
     }
 
-    public static class LoadWithResolveExposedClassLoader extends ChildFirstUrlClassLoader {
+    public static class LoadMethodWithResolveParameterExposedClassLoader extends ChildFirstUrlClassLoader {
         /**
          * Constructor.
          *
          * @param urls        URLs from which to try and load classes.
          * @param classLoader Parent class loader.
          */
-        public LoadWithResolveExposedClassLoader(URL[] urls, ClassLoader classLoader) {
+        public LoadMethodWithResolveParameterExposedClassLoader(final URL[] urls,
+                                                                final ClassLoader classLoader) {
+
             super(urls, classLoader);
         }
 
@@ -231,6 +247,26 @@ public final class ChildFirstUrlClassLoaderTest {
                 throws ClassNotFoundException {
 
             return super.loadClass(name, resolve);
+        }
+    }
+
+    public static class FindMethodThrowSecurityExceptionClassLoader extends ChildFirstUrlClassLoader {
+        /**
+         * Constructor.
+         *
+         * @param urls        URLs from which to try and load classes.
+         * @param classLoader Parent class loader.
+         */
+        public FindMethodThrowSecurityExceptionClassLoader(final URL[] urls,
+                                                           final ClassLoader classLoader) {
+            super(urls, classLoader);
+        }
+
+        @Override
+        protected Class<?> findClass(final String name)
+                throws ClassNotFoundException {
+
+            throw new SecurityException();
         }
     }
 }

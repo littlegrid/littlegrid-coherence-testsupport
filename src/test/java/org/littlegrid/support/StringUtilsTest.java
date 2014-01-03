@@ -40,6 +40,11 @@ import static org.junit.Assert.assertThat;
  * String utilities tests.
  */
 public class StringUtilsTest {
+    @Test(expected = UnsupportedOperationException.class)
+    public void construct() {
+        new StringUtils();
+    }
+
     @Test
     public void stringHasValueWhenNull() {
         assertThat(StringUtils.stringHasValue(null), is(false));

@@ -93,9 +93,9 @@ class DefaultConfigurer extends ImmutableConfigurer {
         getDirectMutableAccessToAdditionalSystemProperties().put(key, value);
     }
 
-    public void setBuilderKeyToSystemPropertyNameMapping(final Properties builderKeyToSystemPropertyNameMapping) {
+    public void setBuilderKeyToSystemPropertyNameMappings(final Properties builderKeyToSystemPropertyNameMappings) {
         // Pass them through individually so any bad key/values are identified
-        for (final Map.Entry entry : builderKeyToSystemPropertyNameMapping.entrySet()) {
+        for (final Map.Entry entry : builderKeyToSystemPropertyNameMappings.entrySet()) {
             setBuilderKeyToSystemPropertyNameMapping((String) entry.getKey(), (String) entry.getValue());
         }
     }
@@ -111,6 +111,6 @@ class DefaultConfigurer extends ImmutableConfigurer {
             throw new IllegalArgumentException(String.format("Value cannot be null, supplied key was: '%s'", key));
         }
 
-        getDirectMutableAccessToBuilderKeyToSystemPropertyNameMapping().put(key, value);
+        getDirectMutableAccessToBuilderKeyToSystemPropertyNameMappings().put(key, value);
     }
 }

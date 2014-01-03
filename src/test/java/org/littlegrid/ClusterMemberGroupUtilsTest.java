@@ -143,18 +143,6 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
-        public int[] getStartedMemberIds(final MemberAttributeEnum memberAttributeEnum,
-                                         final String attributeValue) {
-
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public int getSuggestedSleepAfterStopDuration() {
             throw new UnsupportedOperationException();
         }
@@ -210,18 +198,6 @@ public class ClusterMemberGroupUtilsTest {
         @Override
         public boolean isAllShutdown() {
             return shutdownAllInvoked;
-        }
-
-        @Override
-        public int[] getStartedMemberIds(final MemberAttributeEnum memberAttributeEnum,
-                                         final String attributeValue) {
-
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
-            throw new UnsupportedOperationException();
         }
 
         @Override

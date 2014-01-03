@@ -139,15 +139,15 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      */
     public DefaultClusterMemberGroupBuilder() {
         final Map<String, Integer> builderKeysAndValuesLoadedSummary = new LinkedHashMap<String, Integer>();
-        final Map<String, Integer> systemPropertyNameMappingLoadedSummary = new LinkedHashMap<String, Integer>();
+        final Map<String, Integer> systemPropertyNameMappingsLoadedSummary = new LinkedHashMap<String, Integer>();
 
         loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary);
-        loadBuilderKeyToSystemPropertyNameMapping(systemPropertyNameMappingLoadedSummary);
+        loadBuilderKeyToSystemPropertyNameMappings(systemPropertyNameMappingsLoadedSummary);
 
         LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  "
                 + "Builder to Coherence system property mapping values: %s ___",
-                Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org",
-                builderKeysAndValuesLoadedSummary, systemPropertyNameMappingLoadedSummary));
+                Info.getName(), Info.getVersionNumber(), "http://www.littlegrid.net",
+                builderKeysAndValuesLoadedSummary, systemPropertyNameMappingsLoadedSummary));
     }
 
     private void loadAndSetBuilderKeysAndValues(final Map<String, Integer> builderKeysAndValuesLoadedSummary) {
@@ -208,12 +208,12 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         builderKeysAndValuesLoadedSummary.put("override file", overrideProperties.size());
     }
 
-    private void loadBuilderKeyToSystemPropertyNameMapping(
-            final Map<String, Integer> systemPropertyNameMappingLoadedSummary) {
+    private void loadBuilderKeyToSystemPropertyNameMappings(
+            final Map<String, Integer> systemPropertyNameMappingsLoadedSummary) {
 
         final Properties defaultMappingProperties =
                 PropertiesUtils.loadProperties(Level.FINE, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME);
-        systemPropertyNameMappingLoadedSummary.put("default file", defaultMappingProperties.size());
+        systemPropertyNameMappingsLoadedSummary.put("default file", defaultMappingProperties.size());
 
         final String alternativePropertiesFile = System.getProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY);
         final Properties overrideMappingProperties;
@@ -231,9 +231,9 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         mappingProperties.putAll(defaultMappingProperties);
         mappingProperties.putAll(overrideMappingProperties);
 
-        configurer.setBuilderKeyToSystemPropertyNameMapping(mappingProperties);
+        configurer.setBuilderKeyToSystemPropertyNameMappings(mappingProperties);
 
-        systemPropertyNameMappingLoadedSummary.put("override file", overrideMappingProperties.size());
+        systemPropertyNameMappingsLoadedSummary.put("override file", overrideMappingProperties.size());
     }
 
     /**
@@ -397,13 +397,13 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (ClusterMemberGroupBuildException e) {
             exceptionReporter.report(e, configurer.getBuilderKeysAndValues(),
-                    configurer.getBuilderKeyToSystemPropertyNameMapping(),
+                    configurer.getBuilderKeyToSystemPropertyNameMappings(),
                     clusterMemberGroupInstanceClassName, DefaultReusableClusterMemberGroupRegistry.getInstance().toString());
 
             throw e;
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable, configurer.getBuilderKeysAndValues(),
-                    configurer.getBuilderKeyToSystemPropertyNameMapping(),
+                    configurer.getBuilderKeyToSystemPropertyNameMappings(),
                     clusterMemberGroupInstanceClassName, DefaultReusableClusterMemberGroupRegistry.getInstance().toString());
 
             throw new IllegalStateException(throwable);
@@ -1220,10 +1220,10 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
-                + "builderKeyToSystemPropertyNameMapping=%s}",
+                + "builderKeyToSystemPropertyNameMappings=%s}",
                 configurer.getBuilderKeysAndValues(),
                 configurer.getAdditionalSystemProperties(),
-                configurer.getBuilderKeyToSystemPropertyNameMapping());
+                configurer.getBuilderKeyToSystemPropertyNameMappings());
     }
 
     /**
