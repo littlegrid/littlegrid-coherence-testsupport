@@ -31,7 +31,7 @@ public final class PropertiesUtils {
      *
      * @param loadedPropertyFileLogLevel Log level at which properties files loaded should be output.
      * @param commaDelimitedPropertiesFilenames
-     *         Comma delimited properties filenames.
+     *                                   Comma delimited properties filenames.
      * @return properties.
      */
     public static Properties loadProperties(final Level loadedPropertyFileLogLevel,

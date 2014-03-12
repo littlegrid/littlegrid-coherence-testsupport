@@ -124,8 +124,8 @@
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>${cobertura-maven-plugin.version}</version>
                 <configuration>
-                    <instrumentation />
-                    <check />
+                    <instrumentation/>
+                    <check/>
                     <formats>
                         <format>xml</format>
                         <format>html</format>
@@ -171,7 +171,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <source>${pom.basedir}/src/main/script/runGenerateBuildInfoClass.groovy</source>
+                            <source>$ { pom.basedir } / src / main / script / runGenerateBuildInfoClass.groovy</source>
                         </configuration>
                     </execution>
                 </executions>

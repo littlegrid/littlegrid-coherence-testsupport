@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 Jonathan Hall.
+ * Copyright (c) 2010-2014 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ public class SimpleExtendIntegrationTest {
     /**
      * Use BeforeClass to start the cluster up before any of the tests run - this ensures
      * we only have the start-up delay only once.
-     * <p />
+     * <p/>
      * Note: apart from starting up and shutting down littlegrid, its code and API shouldn't
      * really be in any of your tests, unless you want to perform a stop or shutdown of a
      * particular member for failover testing.

@@ -180,7 +180,7 @@
         <!--JH <module name="DesignForExtension"/>-->
         <module name="FinalClass"/>
         <!--JH <module name="HideUtilityClassConstructor"> -->
-                                        <module name="InterfaceIsType"/>
+        <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
 
 

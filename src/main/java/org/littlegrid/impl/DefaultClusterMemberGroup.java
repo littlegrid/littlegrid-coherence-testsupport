@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 Jonathan Hall.
+ * Copyright (c) 2010-2014 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param sleepAfterStopDurationDefault Default sleep duration.
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
-     * @param configurer              Configurer from which to take point-in-time
+     * @param configurer                    Configurer from which to take point-in-time
      *                                      source configuration.
      */
     public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
@@ -408,7 +408,6 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 //    public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
 //        throw new UnsupportedOperationException();
 //    }
-
     static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {
         try {
             final List<Integer> memberIds = new ArrayList<Integer>();

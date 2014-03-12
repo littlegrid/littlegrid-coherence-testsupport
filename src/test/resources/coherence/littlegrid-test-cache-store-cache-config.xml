@@ -37,7 +37,9 @@
                     </internal-cache-scheme>
                     <cachestore-scheme>
                         <class-scheme>
-                            <class-name system-property="example.cachestore">com.tangosol.util.NullImplementation$NullCacheStore</class-name>
+                            <class-name system-property="example.cachestore">
+                                com.tangosol.util.NullImplementation$NullCacheStore
+                            </class-name>
                         </class-scheme>
                     </cachestore-scheme>
                     <write-delay system-property="example.write.delay">0</write-delay>
