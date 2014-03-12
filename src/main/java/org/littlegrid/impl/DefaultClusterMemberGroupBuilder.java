@@ -59,56 +59,56 @@ import static org.littlegrid.ClusterMemberGroup.BuildExceptionReporter;
 import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
-import static org.littlegrid.impl.ImmutableConfigurer.APP_CONSOLE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CLIENT_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CLIENT_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CLIENT_OVERRIDE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME;
-import static org.littlegrid.impl.ImmutableConfigurer.CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CLUSTER_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURED_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.CUSTOM_CONFIGURED_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_CLIENT_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PORT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.EXTEND_PROXY_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.FAST_START_JOIN_TIMEOUT_MILLISECONDS;
-import static org.littlegrid.impl.ImmutableConfigurer.JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.JMX_MONITOR_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.LOG_DESTINATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.MACHINE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.NUMBER_OF_THREADS_IN_START_UP_POOL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.OVERRIDE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.POF_CONFIGURATION;
-import static org.littlegrid.impl.ImmutableConfigurer.POF_ENABLED;
-import static org.littlegrid.impl.ImmutableConfigurer.RACK_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.SITE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.SLEEP_AFTER_STOP_DURATION_35X_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.SLEEP_AFTER_STOP_DURATION_36X_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_CACHE_CONFIGURATION_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_LOG_LEVEL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_PROXY_COUNT_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_PROXY_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.STORAGE_ENABLED_ROLE_NAME_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.TTL_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.WKA_ADDRESS_KEY;
-import static org.littlegrid.impl.ImmutableConfigurer.WKA_PORT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.APP_CONSOLE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CLIENT_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CLIENT_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CLIENT_OVERRIDE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME;
+import static org.littlegrid.impl.DefaultConfigurer.CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CLUSTER_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CORE_JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CUSTOM_CONFIGURED_COUNT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CUSTOM_CONFIGURED_ROLE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.EXTEND_CLIENT_ROLE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.EXTEND_PORT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.EXTEND_PROXY_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.EXTEND_PROXY_COUNT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.EXTEND_PROXY_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.EXTEND_PROXY_ROLE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.FAST_START_JOIN_TIMEOUT_MILLISECONDS;
+import static org.littlegrid.impl.DefaultConfigurer.JARS_TO_EXCLUDE_FROM_CLASS_PATH_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.JMX_MONITOR_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.JMX_MONITOR_COUNT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.JMX_MONITOR_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.JMX_MONITOR_ROLE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.LOG_DESTINATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.LOG_LEVEL_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.MACHINE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.NUMBER_OF_THREADS_IN_START_UP_POOL_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.OVERRIDE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.POF_CONFIGURATION;
+import static org.littlegrid.impl.DefaultConfigurer.POF_ENABLED;
+import static org.littlegrid.impl.DefaultConfigurer.RACK_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.SITE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.SLEEP_AFTER_STOP_DURATION_35X_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.SLEEP_AFTER_STOP_DURATION_36X_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.STORAGE_DISABLED_CLIENT_ROLE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.STORAGE_ENABLED_CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.STORAGE_ENABLED_COUNT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.STORAGE_ENABLED_LOG_LEVEL_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.STORAGE_ENABLED_PROXY_COUNT_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.STORAGE_ENABLED_PROXY_ROLE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.STORAGE_ENABLED_ROLE_NAME_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.TTL_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.WKA_ADDRESS_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.WKA_PORT_KEY;
 import static org.littlegrid.support.StringUtils.stringArrayToCommaDelimitedString;
 import static org.littlegrid.support.StringUtils.stringHasValue;
 
@@ -572,7 +572,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         try {
             final Constructor constructor = clusterMemberGroupClass.getDeclaredConstructor(
                     CallbackHandler.class,
-                    int.class, int.class, int.class, int.class, int.class, ImmutableConfigurer.class);
+                    int.class, int.class, int.class, int.class, int.class, DefaultConfigurer.class);
 
             return (DefaultClusterMemberGroup) constructor.newInstance(createCallbackHandler(),
                     duration35x, duration36x, durationDefault, wkaPort, extendPort, configurer);
@@ -1252,7 +1252,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         return configurer.hashCode();
     }
 
-    ClusterMemberGroup.Configurer getConfigurer() {
+    DefaultConfigurer getConfigurer() {
         return configurer;
     }
 }

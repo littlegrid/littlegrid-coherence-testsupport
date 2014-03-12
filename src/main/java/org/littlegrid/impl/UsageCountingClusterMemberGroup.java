@@ -62,8 +62,7 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
      * @param sleepAfterStopDurationDefault Default sleep duration.
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
-     * @param sourceConfigurer              Configurer from which to take point-in-time
-     *                                      source configuration.
+     * @param configurer                    Configurer from which to use for configuration.
      */
     public UsageCountingClusterMemberGroup(final CallbackHandler callbackHandler,
                                            final int sleepAfterStopDuration35x,
@@ -71,11 +70,11 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
                                            final int sleepAfterStopDurationDefault,
                                            final int wkaPort,
                                            final int extendPort,
-                                           final ImmutableConfigurer sourceConfigurer) {
+                                           final DefaultConfigurer configurer) {
 
         super(callbackHandler,
                 sleepAfterStopDuration35x, sleepAfterStopDuration36x, sleepAfterStopDurationDefault,
-                wkaPort, extendPort, sourceConfigurer);
+                wkaPort, extendPort, configurer);
     }
 
     /**

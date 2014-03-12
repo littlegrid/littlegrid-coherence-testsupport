@@ -32,7 +32,6 @@
 package org.littlegrid.impl;
 
 import org.junit.Test;
-import org.littlegrid.ClusterMemberGroup;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,41 +45,38 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
-import static org.littlegrid.ClusterMemberGroup.Configurer;
 
 /**
  * Configurer tests.
  */
-public class ImmutableConfigurerTest {
+public class ConfigurerTest {
     @Test
     public void constructWithNoEntries() {
-        final ImmutableConfigurer configurer = getEmptyImmutableConfigurer();
+        final DefaultConfigurer configurer = getEmptyConfigurer();
 
         assertThat(configurer.getBuilderKeysAndValues().size(), is(0));
         assertThat(configurer.getAdditionalSystemProperties().size(), is(0));
         assertThat(configurer.getBuilderKeyToSystemPropertyNameMappings().size(), is(0));
-        assertThat(configurer.getDirectMutableAccessToBuilderKeysAndValues().size(), is(0));
-        assertThat(configurer.getDirectMutableAccessToAdditionalSystemProperties().size(), is(0));
-        assertThat(configurer.getDirectMutableAccessToBuilderKeyToSystemPropertyNameMappings().size(), is(0));
     }
 
     @Test
-    public void constructWithEntries() {
-        final Map<String, String> builderKeysAndValues = singletonMap("key", "value");
+    public void constructAndPopulate() {
+        final DefaultConfigurer configurer = new DefaultConfigurer();
+        configurer.setBuilderValue("k", "v");
+
         final Properties additionalSystemProperties = new Properties();
         additionalSystemProperties.setProperty("key1", "value");
         additionalSystemProperties.setProperty("key2", "value");
+        configurer.setAdditionalSystemProperties(additionalSystemProperties);
 
         final Properties builderKeyToSystemPropertyNameMapping = new Properties();
         builderKeyToSystemPropertyNameMapping.setProperty("key1", "value");
         builderKeyToSystemPropertyNameMapping.setProperty("key2", "value");
         builderKeyToSystemPropertyNameMapping.setProperty("key3", "value");
-
-        final ImmutableConfigurer configurer = new ImmutableConfigurer(
-                builderKeysAndValues, additionalSystemProperties, builderKeyToSystemPropertyNameMapping);
+        configurer.setBuilderKeyToSystemPropertyNameMappings(builderKeyToSystemPropertyNameMapping);
 
         assertThat(configurer.getBuilderKeysAndValues(), notNullValue());
-        assertThat(configurer.getBuilderKeysAndValues().size(), is(builderKeysAndValues.size()));
+        assertThat(configurer.getBuilderKeysAndValues().size(), is(1));
 
         assertThat(configurer.getAdditionalSystemProperties(), notNullValue());
         assertThat(configurer.getAdditionalSystemProperties().size(), is(additionalSystemProperties.size()));
@@ -88,22 +84,15 @@ public class ImmutableConfigurerTest {
         assertThat(configurer.getBuilderKeyToSystemPropertyNameMappings(), notNullValue());
         assertThat(configurer.getBuilderKeyToSystemPropertyNameMappings().size(),
                 is(builderKeyToSystemPropertyNameMapping.size()));
-
-        assertThat(configurer.getDirectMutableAccessToBuilderKeysAndValues().size(), is(builderKeysAndValues.size()));
-        assertThat(configurer.getDirectMutableAccessToAdditionalSystemProperties().size(),
-                is(additionalSystemProperties.size()));
-
-        assertThat(configurer.getDirectMutableAccessToBuilderKeyToSystemPropertyNameMappings().size(),
-                is(builderKeyToSystemPropertyNameMapping.size()));
     }
 
     @Test
     public void configurerUsePublicGettersWhenNoValues() {
-        final Configurer configurer = getEmptyImmutableConfigurer();
+        final DefaultConfigurer configurer = getEmptyConfigurer();
 
-        assertThat(configurer.getClusterName(), nullValue());
         assertThat(configurer.getWkaAddress(), nullValue());
         assertThat(configurer.getExtendAddress(), nullValue());
+        assertThat(configurer.getAppConsoleClassName(), nullValue());
 
         try {
             configurer.getWkaPort();
@@ -134,112 +123,106 @@ public class ImmutableConfigurerTest {
         final int expectedWkaPort = 12345;
         final int expectedExtendPort = 23456;
 
+        final DefaultConfigurer configurer = new DefaultConfigurer();
+
         final Map<String, String> builderKeysAndValues = new HashMap<String, String>();
         builderKeysAndValues.put(clusterNameKey, expectedClusterName);
         builderKeysAndValues.put(wkaAddressKey, expectedWkaAndExtendAddress);
         builderKeysAndValues.put(wkaPortKey, Integer.toString(expectedWkaPort));
         builderKeysAndValues.put(extendPortKey, Integer.toString(expectedExtendPort));
+        configurer.setBuilderValues(builderKeysAndValues);
 
         final Properties builderKeyToSystemPropertyNameMappings = new Properties();
         builderKeyToSystemPropertyNameMappings.setProperty(clusterNameKey, "any-name");
         builderKeyToSystemPropertyNameMappings.setProperty(wkaAddressKey, "any-name");
         builderKeyToSystemPropertyNameMappings.setProperty(wkaPortKey, "any-name");
         builderKeyToSystemPropertyNameMappings.setProperty(extendPortKey, "any-name");
+        configurer.setBuilderKeyToSystemPropertyNameMappings(builderKeyToSystemPropertyNameMappings);
 
-        final Configurer configurer = new ImmutableConfigurer(
-                builderKeysAndValues, builderKeyToSystemPropertyNameMappings, new Properties());
-
-        assertThat(configurer.getClusterName(), is(expectedClusterName));
         assertThat(configurer.getWkaAddress(), is(expectedWkaAndExtendAddress));
         assertThat(configurer.getExtendAddress(), is(expectedWkaAndExtendAddress));
         assertThat(configurer.getWkaPort(), is(expectedWkaPort));
         assertThat(configurer.getExtendPort(), is(expectedExtendPort));
 
-        final ImmutableConfigurer immutableConfigurer = (ImmutableConfigurer) configurer;
-        assertThat(immutableConfigurer.getBuilderValueAsInt(wkaPortKey), is(expectedWkaPort));
-        assertThat(immutableConfigurer.getBuilderValueAsLong(wkaPortKey), is((long) expectedWkaPort));
-        assertThat(immutableConfigurer.getBuilderValueAsString(wkaPortKey), is(Integer.toString(expectedWkaPort)));
+        assertThat(configurer.getBuilderValueAsInt(wkaPortKey), is(expectedWkaPort));
+        assertThat(configurer.getBuilderValueAsLong(wkaPortKey), is((long) expectedWkaPort));
+        assertThat(configurer.getBuilderValueAsString(wkaPortKey), is(Integer.toString(expectedWkaPort)));
     }
 
     @Test
-    public void equalsWhenOtherIsThis() {
-        final Configurer builder = getEmptyImmutableConfigurer();
-
-        assertThat(builder.equals(builder), is(true));
-    }
-
-    @Test
-    public void equalsWhenOtherIsNull() {
-        assertThat(getEmptyImmutableConfigurer().equals(null), is(false));
-    }
-
-    @Test
-    public void equalsWhenOtherIsDifferentClass() {
-        assertThat(getEmptyImmutableConfigurer().equals("a-string"), is(false));
-    }
-
-    @Test
-    public void equalsWhenOtherHasDifferentAdditionalSystemProperties() {
-        final Configurer thisConfigurer = getEmptyImmutableConfigurer();
-        final ImmutableConfigurer otherConfigurer = getEmptyImmutableConfigurer();
-        otherConfigurer.getDirectMutableAccessToAdditionalSystemProperties()
-                .setProperty("hasAdditionalSystemPropertyToBeDifferent", "true");
-
-        assertThat(thisConfigurer.equals(otherConfigurer), is(false));
-    }
-
-    @Test
-    public void equalsWhenOtherHasDifferentBuilderToSystemPropertyNameMappings() {
-        final Configurer thisConfigurer = getEmptyImmutableConfigurer();
-        final ImmutableConfigurer otherConfigurer = getEmptyImmutableConfigurer();
-
-        otherConfigurer.getDirectMutableAccessToBuilderKeyToSystemPropertyNameMappings()
-                .setProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
-                        "directory/example-littlegrid-builder-system-property-mapping-override.properties");
-
-        assertThat(thisConfigurer.equals(otherConfigurer), is(false));
-    }
-
-    @Test
-    public void equalsWhenOtherHasDifferentBuilderKeyAndValues() {
-        final Configurer thisConfigurer = getEmptyImmutableConfigurer();
-        final ImmutableConfigurer otherConfigurer = getEmptyImmutableConfigurer();
-        otherConfigurer.getDirectMutableAccessToBuilderKeysAndValues().put("WkaPort", "1234");
-
-        assertThat(thisConfigurer.equals(otherConfigurer), is(false));
-    }
-
-    @Test
-    public void equalsWhenOtherIsSame() {
-        final Configurer thisConfigurer = getEmptyImmutableConfigurer();
-        final Configurer otherConfigurer = getEmptyImmutableConfigurer();
+    public void equalsAndHashCodeWhenOtherIsThis() {
+        final DefaultConfigurer thisConfigurer = getEmptyConfigurer();
+        final DefaultConfigurer otherConfigurer = thisConfigurer;
 
         assertThat(thisConfigurer.equals(otherConfigurer), is(true));
+        assertThat(thisConfigurer.hashCode(), is(otherConfigurer.hashCode()));
     }
 
     @Test
-    public void hashCodeWhenOtherIsDifferent() {
-        final Configurer thisConfigurer = getEmptyImmutableConfigurer();
-        final ImmutableConfigurer otherConfigurer = getEmptyImmutableConfigurer();
-        otherConfigurer.getDirectMutableAccessToBuilderKeysAndValues().put("WkaPort", "1234");
+    public void equalsAndHashCodeWhenOtherIsNull() {
+        final DefaultConfigurer thisConfigurer = getEmptyConfigurer();
 
-        assertThat(otherConfigurer.hashCode(), not(thisConfigurer.hashCode()));
+        assertThat(thisConfigurer.equals(null), is(false));
+        assertThat(thisConfigurer.hashCode(), notNullValue());
     }
 
     @Test
-    public void hashCodeWhenOtherIsSame() {
-        final Configurer thisConfigurer = getEmptyImmutableConfigurer();
-        final Configurer otherConfigurer = getEmptyImmutableConfigurer();
+    public void equalsAndHashCodeWhenOtherIsDifferentClass() {
+        final DefaultConfigurer thisConfigurer = getEmptyConfigurer();
+        final String otherConfigurer = "really-a-string-and-not-a-configurer";
 
-        assertThat(otherConfigurer.hashCode(), is(thisConfigurer.hashCode()));
+        assertThat(thisConfigurer.equals(otherConfigurer), is(false));
+        assertThat(thisConfigurer.hashCode(), not(otherConfigurer.hashCode()));
+    }
+
+    @Test
+    public void equalsAndHashCodeWhenOtherHasDifferentAdditionalSystemProperties() {
+        final DefaultConfigurer thisConfigurer = getEmptyConfigurer();
+        final DefaultConfigurer otherConfigurer = getEmptyConfigurer();
+        otherConfigurer.setAdditionalSystemProperty("k", "v");
+
+        assertThat(thisConfigurer.equals(otherConfigurer), is(false));
+    }
+
+    @Test
+    public void equalsAndHashCodeWhenOtherHasDifferentBuilderToSystemPropertyNameMappings() {
+        final DefaultConfigurer thisConfigurer = getEmptyConfigurer();
+        final DefaultConfigurer otherConfigurer = getEmptyConfigurer();
+
+        final Properties properties = new Properties();
+        properties.setProperty("k", "v");
+
+        otherConfigurer.setBuilderKeyToSystemPropertyNameMappings(properties);
+
+        assertThat(thisConfigurer.equals(otherConfigurer), is(false));
+        assertThat(thisConfigurer.hashCode(), not(otherConfigurer.hashCode()));
+    }
+
+    @Test
+    public void equalsAndHashCodeWhenOtherHasDifferentBuilderKeyAndValues() {
+        final DefaultConfigurer thisConfigurer = getEmptyConfigurer();
+        final DefaultConfigurer otherConfigurer = getEmptyConfigurer();
+        otherConfigurer.setBuilderValue("k", "v");
+
+        assertThat(thisConfigurer.equals(otherConfigurer), is(false));
+        assertThat(thisConfigurer.hashCode(), not(otherConfigurer.hashCode()));
+    }
+
+    @Test
+    public void equalsAndHashCodeWhenOtherIsSame() {
+        final DefaultConfigurer thisConfigurer = getEmptyConfigurer();
+        final DefaultConfigurer otherConfigurer = getEmptyConfigurer();
+
+        assertThat(thisConfigurer.equals(otherConfigurer), is(true));
+        assertThat(thisConfigurer.hashCode(), is(otherConfigurer.hashCode()));
     }
 
     @Test
     public void configurerToString() {
-        assertThat(getEmptyImmutableConfigurer().toString().length() > 0, is(true));
+        assertThat(getEmptyConfigurer().toString().length() > 0, is(true));
     }
 
-    private ImmutableConfigurer getEmptyImmutableConfigurer() {
-        return new ImmutableConfigurer(new HashMap<String, String>(), new Properties(), new Properties());
+    private DefaultConfigurer getEmptyConfigurer() {
+        return new DefaultConfigurer();
     }
 }

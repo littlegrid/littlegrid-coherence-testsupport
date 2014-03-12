@@ -189,13 +189,42 @@ public interface ClusterMemberGroup {
     int getExtendPort();
 
     /**
-     * Returns a configurer for later use when switching or toggling between different
-     * clusters or Extend proxies.
+     * Returns the WKA address.
      *
-     * @return configurer.
+     * @return Address.
      * @since 2.16
      */
-    Configurer getConfigurer();
+    String getWkaAddress();
+
+    /**
+     * Returns the Extend address - presently the same as the WKA address.
+     *
+     * @return Address.
+     * @since 2.16
+     */
+    String getExtendAddress();
+
+    /**
+     * Configures the system properties for an Extend client.
+     *
+     * @since 2.16
+     */
+    void configureForExtendClient();
+
+    /**
+     * Configures the system properties for a storage-disabled member.
+     *
+     * @since 2.16
+     */
+    void configureForStorageDisabledClient();
+
+    /**
+     * Configures the system properties for a storage-enabled member.
+     *
+     * @since 2.16
+     */
+    void configureForStorageEnabledMember();
+
 
     /**
      * Interface to denote that the cluster member group may be re-used.
@@ -760,7 +789,7 @@ public interface ClusterMemberGroup {
          * Sets the well-known address which is used to control which IP address/hostname that
          * Coherence should use - typically this value does not need to be changed, but in the
          * case of problems starting cluster members with the default then other IP addresses
-         * on the machine can be tried.
+         * on the machine can be tried - this address is also used for the Extend address.
          *
          * @param wkaAddress Well-known address, e.g. localhost or xxx.xxx.xxx.xxx IP address.
          * @return builder.
@@ -1052,34 +1081,5 @@ public interface ClusterMemberGroup {
          * Performs any necessary actions after the cluster member has been shutdown.
          */
         void doAfterShutdown();
-    }
-
-    /**
-     * Configurer interface, applies the necessary system properties and context for
-     * the cluster member or client.
-     *
-     * @since 2.16
-     */
-    interface Configurer {
-        String getClusterName();
-
-        int getWkaPort();
-
-        String getWkaAddress();
-
-        int getExtendPort();
-
-        String getExtendAddress();
-
-        /**
-         * Builds for the client.
-         */
-        void configureForExtendClient();
-
-        void configureForStorageDisabledClient();
-
-        void configureForStorageEnabledMember();
-
-        void configureFor(BuildAndConfigureEnum buildAndConfigureEnum);
     }
 }

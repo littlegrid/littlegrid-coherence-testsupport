@@ -168,7 +168,27 @@ public class ClusterMemberGroupUtilsTest {
         }
 
         @Override
-        public Configurer getConfigurer() {
+        public String getWkaAddress() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getExtendAddress() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void configureForExtendClient() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void configureForStorageDisabledClient() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void configureForStorageEnabledMember() {
             throw new UnsupportedOperationException();
         }
 
@@ -198,6 +218,21 @@ public class ClusterMemberGroupUtilsTest {
         @Override
         public boolean isAllShutdown() {
             return shutdownAllInvoked;
+        }
+
+        @Override
+        public void configureForExtendClient() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void configureForStorageDisabledClient() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void configureForStorageEnabledMember() {
+            throw new UnsupportedOperationException();
         }
 
         @Override

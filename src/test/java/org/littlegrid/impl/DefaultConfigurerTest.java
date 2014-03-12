@@ -38,7 +38,7 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.impl.ImmutableConfigurer.CACHE_CONFIGURATION_KEY;
+import static org.littlegrid.impl.DefaultConfigurer.CACHE_CONFIGURATION_KEY;
 
 /**
  * Default configurer tests.

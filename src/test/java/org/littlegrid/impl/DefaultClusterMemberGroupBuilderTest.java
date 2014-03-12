@@ -287,8 +287,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Map<String, String> builderSettings =
-                getImmutableConfigurer(defaultBuilder).getBuilderKeysAndValues();
+        final Map<String, String> builderSettings = defaultBuilder.getConfigurer().getBuilderKeysAndValues();
 
         final int numberOfSpecificLogLevelsNotSetAndSoOmitted = 4;
 
@@ -420,8 +419,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Map<String, String> builderSettings =
-                getImmutableConfigurer(defaultBuilder).getBuilderKeysAndValues();
+        final Map<String, String> builderSettings = defaultBuilder.getConfigurer().getBuilderKeysAndValues();
 
         final int numberOfNonCoherencePropertiesNotSet = 1; // Presently only JARs to exclude
 
@@ -509,8 +507,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForStorageEnabled();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForStorageEnabled();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
@@ -526,8 +523,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setStorageEnabledLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForStorageEnabled();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForStorageEnabled();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
         assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
@@ -538,8 +534,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForExtendProxy(123);
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForExtendProxy(123);
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
@@ -555,8 +550,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setExtendProxyLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForExtendProxy(123);
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForExtendProxy(123);
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
         assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
@@ -573,8 +567,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForStorageDisabledClient();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForStorageDisabledClient();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
@@ -592,8 +585,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setClientLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForStorageDisabledClient();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForStorageDisabledClient();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
         assertThat(properties.getProperty(COHERENCE_OVERRIDE_KEY), is(expectedOverrideConfiguration));
@@ -605,8 +597,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForJmxMonitor();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForJmxMonitor();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
@@ -622,8 +613,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setJmxMonitorLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForJmxMonitor();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForJmxMonitor();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
         assertThat(properties.getProperty(COHERENCE_LOG_LEVEL_KEY), is(expectedLogLevel));
@@ -634,8 +624,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Builder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForExtendProxyClient();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForExtendProxyClient();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), nullValue());
     }
@@ -653,8 +642,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         builder.setClientLogLevel(Integer.parseInt(expectedLogLevel));
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
-        final Properties properties =
-                getImmutableConfigurer(defaultBuilder).getSystemPropertiesForExtendProxyClient();
+        final Properties properties = defaultBuilder.getConfigurer().getSystemPropertiesForExtendProxyClient();
 
         assertThat(properties.getProperty(COHERENCE_CACHE_CONFIG_KEY), is(expectedCacheConfiguration));
         assertThat(properties.getProperty(COHERENCE_OVERRIDE_KEY), is(expectedOverrideConfiguration));
@@ -674,11 +662,5 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private ReusableClusterMemberGroup getClusterMemberGroup() {
         return new UsageCountingClusterMemberGroup(new DefaultCallbackHandler(), 0, 0, 0, 0, 0,
                 new DefaultConfigurer());
-    }
-
-    private ImmutableConfigurer getImmutableConfigurer(
-            final DefaultClusterMemberGroupBuilder builder) {
-
-        return ((ImmutableConfigurer) builder.getConfigurer());
     }
 }

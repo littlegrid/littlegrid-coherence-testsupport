@@ -74,7 +74,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private final int wkaPort;
     private final int extendPort;
     private boolean shutdownAllInvoked;
-    private final Configurer configurer;
+    private final DefaultConfigurer configurer;
 
 
     /**
@@ -86,7 +86,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param sleepAfterStopDurationDefault Default sleep duration.
      * @param wkaPort                       WKA port.
      * @param extendPort                    Extend port.
-     * @param sourceConfigurer              Configurer from which to take point-in-time
+     * @param configurer              Configurer from which to take point-in-time
      *                                      source configuration.
      */
     public DefaultClusterMemberGroup(final CallbackHandler callbackHandler,
@@ -95,7 +95,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
                                      final int sleepAfterStopDurationDefault,
                                      final int wkaPort,
                                      final int extendPort,
-                                     final ImmutableConfigurer sourceConfigurer) {
+                                     final DefaultConfigurer configurer) {
 
         this.wkaPort = wkaPort;
         this.extendPort = extendPort;
@@ -109,14 +109,11 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         this.sleepAfterStopDuration36x = sleepAfterStopDuration36x;
         this.sleepAfterStopDurationDefault = sleepAfterStopDurationDefault;
 
-        if (sourceConfigurer == null) {
-            throw new IllegalArgumentException("Source configure cannot be null");
+        if (configurer == null) {
+            throw new IllegalArgumentException("Configurer cannot be null");
         }
 
-        this.configurer = new ImmutableConfigurer(
-                sourceConfigurer.getBuilderKeysAndValues(),
-                sourceConfigurer.getAdditionalSystemProperties(),
-                sourceConfigurer.getBuilderKeyToSystemPropertyNameMappings());
+        this.configurer = configurer;
 
         systemPropertiesBeforeStartAllInvoked = SystemUtils.snapshotSystemProperties();
 
@@ -180,8 +177,40 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * {@inheritDoc}
      */
     @Override
-    public Configurer getConfigurer() {
-        return configurer;
+    public String getWkaAddress() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getExtendAddress() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configureForExtendClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configureForStorageDisabledClient() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configureForStorageEnabledMember() {
+        throw new UnsupportedOperationException();
     }
 
     int merge(final List<Future<DelegatingClusterMemberWrapper>> memberFuturesToAdd) {

@@ -59,7 +59,7 @@ import static org.littlegrid.ClusterMemberGroup.Builder;
  *
  * @since 2.15
  */
-public class CommandDslShell {
+class CommandDslShell {
     private static final Logger LOGGER = Logger.getLogger(CommandDslShell.class.getName());
     private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 750;
 

@@ -29,9 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.server;
-
-import org.littlegrid.app.CommandDslShell;
+package org.littlegrid.app;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -46,14 +44,15 @@ import static org.littlegrid.app.CommandDslShell.COMMAND_EXCEPTION;
 import static org.littlegrid.app.CommandDslShell.COMMAND_UNKNOWN;
 
 /**
- * Socket server that accepts commands and processes them as per the command DSL shell.
+ * Socket application that accepts commands and processes them as per the
+ * command DSL shell.
  *
  * @since 2.16
  */
-public class SimpleSocketCommandServer {
-    private static final String PORT_ARGUMENT = "port=";
+public class SocketCommandApp {
+    private static final String PORT_ARGUMENT = "littlegrid.app.Port=";
     private static final int DEFAULT_PORT = 21001;
-    private static final String NAME = "Socket command server";
+    private static final String NAME = "Socket command application";
 
     /**
      * Launches the server.
@@ -61,7 +60,7 @@ public class SimpleSocketCommandServer {
      * @param args Arguments.
      */
     public static void main(final String[] args) {
-        new SimpleSocketCommandServer().start(args);
+        new SocketCommandApp().start(args);
     }
 
     void start(final String[] args) {
