@@ -109,6 +109,7 @@ class CommandDslShell {
 
     private final InputStream in;
     private final PrintStream out;
+    private final ClusterMemberGroup memberGroup;
     private final List<String> commandsToIgnore;
     private final boolean outputPrompts;
 
@@ -125,7 +126,7 @@ class CommandDslShell {
     public CommandDslShell(final InputStream in,
                            final PrintStream out) {
 
-        this(in, out, new ArrayList<String>(), true);
+        this(in, out, ClusterMemberGroupUtils.newBuilder().buildAndConfigure(), new ArrayList<String>(), true);
     }
 
     /**
@@ -133,17 +134,20 @@ class CommandDslShell {
      *
      * @param in               Input stream.
      * @param out              Output stream.
+     * @param memberGroup      Cluster member group.
      * @param commandsToIgnore Command that should be ignored based upon the context of the shell usage.
      * @param outputPrompts    Indicates if user prompts should be output.
      * @since 2.16
      */
     public CommandDslShell(final InputStream in,
                            final PrintStream out,
+                           final ClusterMemberGroup memberGroup,
                            final List<String> commandsToIgnore,
                            final boolean outputPrompts) {
 
         this.in = in;
         this.out = out;
+        this.memberGroup = memberGroup;
         this.commandsToIgnore = commandsToIgnore;
         this.outputPrompts = outputPrompts;
     }
@@ -155,9 +159,6 @@ class CommandDslShell {
      * @return response to commands.
      */
     public Response start(final String[] args) {
-        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .buildAndConfigure();
-
         final Response totalResponse = new Response();
         final String commands = parseCommandsString(args);
         final Response commandStringResponse = processCommandsString(memberGroup, commands);

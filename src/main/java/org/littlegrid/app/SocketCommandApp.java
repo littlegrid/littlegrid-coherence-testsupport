@@ -31,6 +31,9 @@
 
 package org.littlegrid.app;
 
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -38,6 +41,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static java.lang.String.format;
 import static org.littlegrid.app.CommandDslShell.COMMAND_EXCEPTION;
@@ -69,26 +73,29 @@ public class SocketCommandApp {
         System.out.println(format("%s ready - access port %d to use littlegrid DSL shell remotely",
                 NAME, port));
 
+
         ServerSocket serverSocket = null;
-        Socket clientSocket = null;
+        ServerSocket serverSocket2 = null;
+        final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .buildAndConfigure();
 
         try {
             serverSocket = new ServerSocket(port);
-            clientSocket = serverSocket.accept();
+            serverSocket2 = new ServerSocket(port + 1);
 
-            System.out.println("Socket accessed - launching DSL shell");
+            new Thread(new Whatever(memberGroup, serverSocket)).start();
+            new Thread(new Whatever(memberGroup, serverSocket)).start();
+            new Thread(new Whatever2(memberGroup, serverSocket2)).start();
 
-            new CommandDslShell(clientSocket.getInputStream(),
-                    getPrintStream(clientSocket),
-                    new ArrayList<String>(), false)
-                    .start(new String[]{});
+            final CommandDslShell shell = new CommandDslShell(System.in, System.out, memberGroup, null, true);
+            StorageDisabledClientReplApp.start(shell, args);
 
             System.out.println(format("%s shutting down", NAME));
         } catch (IOException e) {
             System.out.println(format("Could not listen on port: %d due to exception: %s", port, e));
         } finally {
-            closeClientSocket(clientSocket);
             closeServerSocket(serverSocket);
+            closeServerSocket(serverSocket2);
         }
     }
 
@@ -170,6 +177,75 @@ public class SocketCommandApp {
             }
 
             printWriter.println(returnCode + ":" + message);
+        }
+    }
+
+    public static class Whatever implements Runnable {
+        private final ClusterMemberGroup memberGroup;
+        private final ServerSocket serverSocket;
+
+        public Whatever(final ClusterMemberGroup memberGroup,
+                        final ServerSocket serverSocket) {
+
+            this.memberGroup = memberGroup;
+            this.serverSocket = serverSocket;
+        }
+
+        @Override
+        public void run() {
+            Socket clientSocket = null;
+
+            try {
+                clientSocket = serverSocket.accept();
+
+                System.out.println("Socket accessed - launching DSL shell");
+
+                new CommandDslShell(clientSocket.getInputStream(),
+                        getPrintStream(clientSocket),
+                        memberGroup,
+                        new ArrayList<String>(), false)
+                        .start(new String[]{});
+
+                System.out.println(format("%s shutting down", NAME));
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } finally {
+                closeClientSocket(clientSocket);
+            }
+
+        }
+    }
+
+    public static class Whatever2 implements Runnable {
+        private final ClusterMemberGroup memberGroup;
+        private final ServerSocket serverSocket;
+
+        public Whatever2(final ClusterMemberGroup memberGroup,
+                         final ServerSocket serverSocket) {
+
+            this.memberGroup = memberGroup;
+            this.serverSocket = serverSocket;
+
+        }
+
+        @Override
+        public void run() {
+            Socket clientSocket = null;
+
+            try {
+                clientSocket = serverSocket.accept();
+
+                ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+
+                System.out.println("Socket accessed - shutting down");
+
+                System.exit(1);
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } finally {
+                closeClientSocket(clientSocket);
+            }
+
         }
     }
 }

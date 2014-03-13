@@ -171,7 +171,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <source>$ { pom.basedir } / src / main / script / runGenerateBuildInfoClass.groovy</source>
+                            <source>${pom.basedir}/src/main/script/runGenerateBuildInfoClass.groovy</source>
                         </configuration>
                     </execution>
                 </executions>

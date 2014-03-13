@@ -58,6 +58,15 @@ public class StorageDisabledClientReplApp {
                 STORAGE_DISABLED_CLIENT.name());
 
         final CommandDslShell shell = new CommandDslShell(System.in, System.out);
+        start(shell, args);
+
+    }
+
+    static void start(final CommandDslShell shell,
+                      final String[] args) {
+
         shell.start(args);
+
+        System.exit(1);
     }
 }
