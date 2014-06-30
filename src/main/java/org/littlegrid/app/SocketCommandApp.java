@@ -35,17 +35,18 @@ import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static java.lang.String.format;
 import static org.littlegrid.app.CommandDslShell.COMMAND_EXCEPTION;
 import static org.littlegrid.app.CommandDslShell.COMMAND_UNKNOWN;
+import static org.littlegrid.app.CommandDslShell.DefaultInput;
+import static org.littlegrid.app.CommandDslShell.DefaultOutput;
+import static org.littlegrid.app.Shell.Output;
 
 /**
  * Socket application that accepts commands and processes them as per the
@@ -54,7 +55,9 @@ import static org.littlegrid.app.CommandDslShell.COMMAND_UNKNOWN;
  * @since 2.16
  */
 public class SocketCommandApp {
-    private static final String PORT_ARGUMENT = "littlegrid.app.Port=";
+    private static final String APP_SYSTEM_PROPERTY_PREFIX_KEY = "littlegrid.app.";
+    private static final String PORT_SYSTEM_PROPERTY_KEY = APP_SYSTEM_PROPERTY_PREFIX_KEY + "Port";
+    private static final String SHUTDOWN_PORT_SYSTEM_PROPERTY_KEY = APP_SYSTEM_PROPERTY_PREFIX_KEY + "ShutdownPort";
     private static final int DEFAULT_PORT = 21001;
     private static final String NAME = "Socket command application";
 
@@ -73,36 +76,37 @@ public class SocketCommandApp {
         System.out.println(format("%s ready - access port %d to use littlegrid DSL shell remotely",
                 NAME, port));
 
-
-        ServerSocket serverSocket = null;
-        ServerSocket serverSocket2 = null;
+        ServerSocket clientServerSocket = null;
+        ServerSocket shutdownServerSocket = null;
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()
                 .buildAndConfigure();
 
         try {
-            serverSocket = new ServerSocket(port);
-            serverSocket2 = new ServerSocket(port + 1);
+            clientServerSocket = new ServerSocket(port);
+            shutdownServerSocket = new ServerSocket(port + 1);
 
-            new Thread(new Whatever(memberGroup, serverSocket)).start();
-            new Thread(new Whatever(memberGroup, serverSocket)).start();
-            new Thread(new Whatever2(memberGroup, serverSocket2)).start();
+            new Thread(new ShutdownConnectionListener(memberGroup, shutdownServerSocket)).start();
+            new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
 
-            final CommandDslShell shell = new CommandDslShell(System.in, System.out, memberGroup, null, true);
-            StorageDisabledClientReplApp.start(shell, args);
+            final CommandDslShell shell =
+                    new CommandDslShell(new DefaultInput(System.in),
+                            new DefaultOutput(System.out), memberGroup, null);
+            shell.start(args);
 
             System.out.println(format("%s shutting down", NAME));
+            System.exit(0);
         } catch (IOException e) {
             System.out.println(format("Could not listen on port: %d due to exception: %s", port, e));
         } finally {
-            closeServerSocket(serverSocket);
-            closeServerSocket(serverSocket2);
+            closeServerSocket(clientServerSocket);
+            closeServerSocket(shutdownServerSocket);
         }
     }
 
     private static int parsePort(final String[] args) {
         for (final String argument : args) {
-            if (argument.startsWith(PORT_ARGUMENT)) {
-                final String portString = argument.replaceAll(PORT_ARGUMENT, "");
+            if (argument.startsWith(PORT_SYSTEM_PROPERTY_KEY)) {
+                final String portString = argument.replaceAll(PORT_SYSTEM_PROPERTY_KEY, "");
 
                 return Integer.parseInt(portString);
             }
@@ -131,33 +135,33 @@ public class SocketCommandApp {
         }
     }
 
-    private static PrintStream getPrintStream(final Socket clientSocket)
+    private static Output getShellOutput(final Socket clientSocket)
             throws IOException {
 
-        return new PrintStreamAndWriterMessageResponseInterpreterWrapper(System.out,
+        return new PrintStreamAndWriterShellOutput(System.out,
                 new PrintWriter(clientSocket.getOutputStream(), true));
     }
 
     /**
-     * Print steam and wrapper wrapper, directs output to both an output stream and
+     * Print steam and writer shell output, directs output to both an output stream and
      * a print writer, whilst interpreting the message to be be written and prefixing
      * a response code.
      *
      * @since 2.16
      */
-    static class PrintStreamAndWriterMessageResponseInterpreterWrapper extends PrintStream {
+    static class PrintStreamAndWriterShellOutput extends DefaultOutput {
         private final PrintWriter printWriter;
 
         /**
          * Constructor.
          *
-         * @param outputStream Output stream.
-         * @param printWriter  Print writer.
+         * @param printStream Print stream.
+         * @param printWriter Print writer.
          */
-        public PrintStreamAndWriterMessageResponseInterpreterWrapper(final OutputStream outputStream,
-                                                                     final PrintWriter printWriter) {
+        public PrintStreamAndWriterShellOutput(final PrintStream printStream,
+                                               final PrintWriter printWriter) {
 
-            super(outputStream);
+            super(printStream);
             this.printWriter = printWriter;
         }
 
@@ -165,9 +169,23 @@ public class SocketCommandApp {
          * {@inheritDoc}
          */
         @Override
-        public void print(String message) {
-            super.print(message);
+        public void printResponse(final String message) {
+            super.printResponse(message);
 
+            whatever(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void printlnResponse(final String message) {
+            super.printlnResponse(message);
+
+            whatever(message);
+        }
+
+        private void whatever(final String message) {
             int returnCode = 0;
 
             if (message.startsWith(COMMAND_EXCEPTION)) {
@@ -180,17 +198,20 @@ public class SocketCommandApp {
         }
     }
 
-    public static class Whatever implements Runnable {
+    static class ClientWhatever implements Runnable {
         private final ClusterMemberGroup memberGroup;
         private final ServerSocket serverSocket;
 
-        public Whatever(final ClusterMemberGroup memberGroup,
-                        final ServerSocket serverSocket) {
+        public ClientWhatever(final ClusterMemberGroup memberGroup,
+                              final ServerSocket serverSocket) {
 
             this.memberGroup = memberGroup;
             this.serverSocket = serverSocket;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void run() {
             Socket clientSocket = null;
@@ -200,34 +221,36 @@ public class SocketCommandApp {
 
                 System.out.println("Socket accessed - launching DSL shell");
 
-                new CommandDslShell(clientSocket.getInputStream(),
-                        getPrintStream(clientSocket),
+                new CommandDslShell(
+                        new DefaultInput(clientSocket.getInputStream()),
+                        getShellOutput(clientSocket),
                         memberGroup,
-                        new ArrayList<String>(), false)
+                        new ArrayList<String>())
                         .start(new String[]{});
 
                 System.out.println(format("%s shutting down", NAME));
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                // Do nothing
             } finally {
                 closeClientSocket(clientSocket);
             }
-
         }
     }
 
-    public static class Whatever2 implements Runnable {
+    static class ShutdownConnectionListener implements Runnable {
         private final ClusterMemberGroup memberGroup;
         private final ServerSocket serverSocket;
 
-        public Whatever2(final ClusterMemberGroup memberGroup,
-                         final ServerSocket serverSocket) {
+        public ShutdownConnectionListener(final ClusterMemberGroup memberGroup,
+                                          final ServerSocket serverSocket) {
 
             this.memberGroup = memberGroup;
             this.serverSocket = serverSocket;
-
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void run() {
             Socket clientSocket = null;
@@ -239,13 +262,12 @@ public class SocketCommandApp {
 
                 System.out.println("Socket accessed - shutting down");
 
-                System.exit(1);
+                System.exit(0);
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                // Do nothing
             } finally {
                 closeClientSocket(clientSocket);
             }
-
         }
     }
 }

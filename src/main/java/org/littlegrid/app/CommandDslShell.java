@@ -59,7 +59,7 @@ import static org.littlegrid.ClusterMemberGroup.Builder;
  *
  * @since 2.15
  */
-class CommandDslShell {
+class CommandDslShell implements Shell {
     private static final Logger LOGGER = Logger.getLogger(CommandDslShell.class.getName());
     private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 750;
 
@@ -100,18 +100,17 @@ class CommandDslShell {
     /**
      * Text to indicate an unknown command was used.
      */
-    public static final String COMMAND_UNKNOWN = "COMMAND_UNKNOWN:";
+    static final String COMMAND_UNKNOWN = "COMMAND_UNKNOWN:";
 
     /**
      * Text to indicate that a command caused an exception.
      */
-    public static final String COMMAND_EXCEPTION = "COMMAND_EXCEPTION:";
+    static final String COMMAND_EXCEPTION = "COMMAND_EXCEPTION:";
 
-    private final InputStream in;
-    private final PrintStream out;
+    private final Input in;
+    private final Output out;
     private final ClusterMemberGroup memberGroup;
     private final List<String> commandsToIgnore;
-    private final boolean outputPrompts;
 
     private String site;
     private String rack;
@@ -126,30 +125,28 @@ class CommandDslShell {
     public CommandDslShell(final InputStream in,
                            final PrintStream out) {
 
-        this(in, out, ClusterMemberGroupUtils.newBuilder().buildAndConfigure(), new ArrayList<String>(), true);
+        this(new DefaultInput(in), new DefaultOutput(out),
+                ClusterMemberGroupUtils.newBuilder().buildAndConfigure(), new ArrayList<String>());
     }
 
     /**
      * Constructor.
      *
-     * @param in               Input stream.
-     * @param out              Output stream.
+     * @param in               Input.
+     * @param out              Output.
      * @param memberGroup      Cluster member group.
      * @param commandsToIgnore Command that should be ignored based upon the context of the shell usage.
-     * @param outputPrompts    Indicates if user prompts should be output.
      * @since 2.16
      */
-    public CommandDslShell(final InputStream in,
-                           final PrintStream out,
+    public CommandDslShell(final Input in,
+                           final Output out,
                            final ClusterMemberGroup memberGroup,
-                           final List<String> commandsToIgnore,
-                           final boolean outputPrompts) {
+                           final List<String> commandsToIgnore) {
 
         this.in = in;
         this.out = out;
         this.memberGroup = memberGroup;
         this.commandsToIgnore = commandsToIgnore;
-        this.outputPrompts = outputPrompts;
     }
 
     /**
@@ -158,21 +155,18 @@ class CommandDslShell {
      * @param args Commands passed for execution.
      * @return response to commands.
      */
+    @Override
     public Response start(final String[] args) {
-        final Response totalResponse = new Response();
+        final Response totalResponse = new DefaultResponse();
         final String commands = parseCommandsString(args);
         final Response commandStringResponse = processCommandsString(memberGroup, commands);
         totalResponse.merge(commandStringResponse);
 
         if (!commandStringResponse.isExitRequested()) {
-            if (outputPrompts) {
-                out.println(format("littlegrid (%s) DSL shell ready - for list of commands type: help",
-                        Info.getVersionNumber()));
-            }
+            out.printlnInfo(format("littlegrid (%s) DSL shell ready - for list of commands type: help",
+                    Info.getVersionNumber()));
 
-            final Scanner scanner = new Scanner(in);
-
-            final Response commandStreamResponse = processCommandsStream(memberGroup, scanner);
+            final Response commandStreamResponse = processCommandsStream(memberGroup);
             totalResponse.merge(commandStreamResponse);
         }
 
@@ -193,24 +187,20 @@ class CommandDslShell {
         return "";
     }
 
-    private Response processCommandsStream(final ClusterMemberGroup memberGroup,
-                                           final Scanner scanner) {
-
-        final Response totalResponse = new Response();
+    private Response processCommandsStream(final ClusterMemberGroup memberGroup) {
+        final Response totalResponse = new DefaultResponse();
 
         do {
-            if (outputPrompts) {
-                out.println();
-                out.print(COMMAND_PROMPT);
-            }
+            out.printlnInfo("");
+            out.printInfo(COMMAND_PROMPT);
 
             try {
-                final String stringEntered = scanner.nextLine();
+                final String stringEntered = in.readln();
                 final Response response = processCommandsString(memberGroup, stringEntered);
 
                 totalResponse.merge(response);
             } catch (Exception e) {
-                out.println("No exit request made, but no more commands to process - exiting");
+                out.printlnResponse("No exit request has been made, however no more commands to process - exiting");
 
                 totalResponse.requestExit();
             }
@@ -222,7 +212,7 @@ class CommandDslShell {
     private Response processCommandsString(final ClusterMemberGroup memberGroup,
                                            final String stringEntered) {
 
-        final Response response = new Response();
+        final Response response = new DefaultResponse();
         final String[] commands = stringEntered.split(COMMAND_DELIMITER);
 
         for (String untrimmedCommand : commands) {
@@ -333,7 +323,7 @@ class CommandDslShell {
             }
 
             if (!outputResponse.isEmpty()) {
-                out.println(outputResponse);
+                out.printlnResponse(outputResponse);
             }
         }
 
@@ -367,7 +357,7 @@ class CommandDslShell {
 
         final long sleepTime = (dateToWaitUntil.getTimeInMillis() - now.getTime()) / MILLISECONDS_IN_SECOND;
 
-        out.print(format("Current time %s, now about to sleep for %d seconds - which is: %s",
+        out.printResponse(format("Current time %s, now about to sleep for %d seconds - which is: %s",
                 now, sleepTime, dateToWaitUntil.getTime()));
 
         TimeUnit.SECONDS.sleep(sleepTime);
@@ -405,50 +395,50 @@ class CommandDslShell {
     }
 
     private void outputHelp() {
-        out.println(format("%s - starts a storage enabled member in this process", START_STORAGE_ENABLED_COMMAND));
-        out.println(format("%sn - starts the specified number of storage enabled members in this process",
+        out.printlnInfo(format("%s - starts a storage enabled member in this process", START_STORAGE_ENABLED_COMMAND));
+        out.printlnInfo(format("%sn - starts the specified number of storage enabled members in this process",
                 START_MULTIPLE_STORAGE_ENABLED_COMMAND));
 
-        out.println(format("%s n - starts an Extend proxy member with specified port in this process",
+        out.printlnInfo(format("%s n - starts an Extend proxy member with specified port in this process",
                 START_EXTEND_PROXY_COMMAND));
 
-        out.println(format("%s - starts a JMX monitor member in this process", START_JMX_MONITOR_COMMAND));
+        out.printlnInfo(format("%s - starts a JMX monitor member in this process", START_JMX_MONITOR_COMMAND));
 
-        out.println(format("%s - displays member Ids known to this process (note: these are only for this process)",
+        out.printlnInfo(format("%s - displays member Ids known to this process (note: these are only for this process)",
                 GET_STARTED_MEMBER_IDS_COMMAND));
 
-        out.println(format("%s member_id_1 member_id_X - stops the specified cluster member(s) using their member id",
+        out.printlnInfo(format("%s member_id_1 member_id_X - stops the specified cluster member(s) using their member id",
                 STOP_MEMBER_COMMAND));
 
-        out.println(format("%s member_id_1 member_id_X - shuts down the specified cluster member(s) using their id",
+        out.printlnInfo(format("%s member_id_1 member_id_X - shuts down the specified cluster member(s) using their id",
                 SHUTDOWN_MEMBER_COMMAND));
 
-        out.println(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
-        out.println(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
+        out.printlnInfo(format("%s - stops all cluster member(s)", STOP_ALL_COMMAND));
+        out.printlnInfo(format("%s - shuts down all cluster member(s)", SHUTDOWN_ALL_COMMAND));
 
-        out.println(format("%s - exits application - same as %s and %s", BYE_COMMAND, QUIT_COMMAND, EXIT_COMMAND));
-        out.println(format("%s - exits application - same as %s and %s", QUIT_COMMAND, BYE_COMMAND, EXIT_COMMAND));
-        out.println(format("%s - exits application - same as %s and %s", EXIT_COMMAND, QUIT_COMMAND, BYE_COMMAND));
+        out.printlnInfo(format("%s - exits application - same as %s and %s", BYE_COMMAND, QUIT_COMMAND, EXIT_COMMAND));
+        out.printlnInfo(format("%s - exits application - same as %s and %s", QUIT_COMMAND, BYE_COMMAND, EXIT_COMMAND));
+        out.printlnInfo(format("%s - exits application - same as %s and %s", EXIT_COMMAND, QUIT_COMMAND, BYE_COMMAND));
 
-        out.println(format("%s duration_X - sleeps for the specified time in milliseconds, e.g. 1000", SLEEP_COMMAND));
-        out.println(format("%s HH:MI:SS - sleeps until the specified time, e.g. 18:01:02", SLEEP_UNTIL_COMMAND));
+        out.printlnInfo(format("%s duration_X - sleeps for the specified time in milliseconds, e.g. 1000", SLEEP_COMMAND));
+        out.printlnInfo(format("%s HH:MI:SS - sleeps until the specified time, e.g. 18:01:02", SLEEP_UNTIL_COMMAND));
 
-        out.println(format("%s - displays this help", HELP_COMMAND));
-        out.println(format("%s - displays the current date and time", DATE_COMMAND));
-        out.println(format("%s - a comment line, useful when scripting and wanting to comment scripts",
+        out.printlnInfo(format("%s - displays this help", HELP_COMMAND));
+        out.printlnInfo(format("%s - displays the current date and time", DATE_COMMAND));
+        out.printlnInfo(format("%s - a comment line, useful when scripting and wanting to comment scripts",
                 COMMENT_COMMAND));
 
-        out.println(format("%s siteName - sets site name, this will be used by all future started members",
+        out.printlnInfo(format("%s siteName - sets site name, this will be used by all future started members",
                 SITE_COMMAND));
 
-        out.println(format("%s rackName - sets rack name, this will be used by all future started members",
+        out.printlnInfo(format("%s rackName - sets rack name, this will be used by all future started members",
                 RACK_COMMAND));
 
-        out.println(format("%s machineName - sets machine name, this will be used by all future started members",
+        out.printlnInfo(format("%s machineName - sets machine name, this will be used by all future started members",
                 MACHINE_COMMAND));
 
-        out.println(format("%s - launches CohQL console", COHQL_COMMAND));
-        out.println(format("%s - launches Coherence console (not for Extend clients)", CONSOLE_COMMAND));
+        out.printlnInfo(format("%s - launches CohQL console", COHQL_COMMAND));
+        out.printlnInfo(format("%s - launches Coherence console (not for Extend clients)", CONSOLE_COMMAND));
     }
 
     private String startJmxMonitorMember(final ClusterMemberGroup memberGroup) {
@@ -521,7 +511,8 @@ class CommandDslShell {
 
         final int sleepTime = parseInteger(SLEEP_COMMAND, command);
 
-        out.print(format("About to sleep for %d milliseconds", sleepTime));
+        //TODO: info or response?
+        out.printlnInfo(format("About to sleep for %d milliseconds", sleepTime));
         TimeUnit.MILLISECONDS.sleep(sleepTime);
 
         return "";
@@ -593,7 +584,7 @@ class CommandDslShell {
      *
      * @since 2.15
      */
-    public static class Response {
+    static class DefaultResponse implements Response {
         private int validCommandsExecuted;
         private int invalidCommandsExecuted;
         private int unknownCommandsExecuted;
@@ -601,100 +592,94 @@ class CommandDslShell {
         private boolean exitRequested;
 
         /**
-         * Increments the number of valid commands executed.
+         * {@code}
          */
+        @Override
         public void incrementValidCommandsExecuted() {
             validCommandsExecuted++;
         }
 
         /**
-         * Increments the number of invalid commands executed.
+         * {@code}
          */
+        @Override
         public void incrementInvalidCommandsExecuted() {
             invalidCommandsExecuted++;
         }
 
         /**
-         * Increments the number of unknown commands executed.
+         * {@code}
          */
+        @Override
         public void incrementUnknownCommandsExecuted() {
             unknownCommandsExecuted++;
         }
 
         /**
-         * Increments the number of unknown commands executed.
+         * {@code}
          */
+        @Override
         public void incrementCommentCommandsExecuted() {
             commentCommandsExecuted++;
         }
 
         /**
-         * Indicates that exit is being requested.
+         * {@code}
          */
+        @Override
         public void requestExit() {
             exitRequested = true;
         }
 
         /**
-         * Number of valid commands executed.
-         *
-         * @return number of valid commands executed.
+         * {@code}
          */
+        @Override
         public int getValidCommandsExecuted() {
             return validCommandsExecuted;
         }
 
         /**
-         * Number of invalid commands executed, these are commands where the instruction
-         * has been recognised, but the syntax is incorrect, for instance a string is
-         * provided instead of an expected number argument.
-         *
-         * @return number of invalid commands executed.
+         * {@code}
          */
+        @Override
         public int getInvalidCommandsExecuted() {
             return invalidCommandsExecuted;
         }
 
         /**
-         * Number of unknown commands executed, these are commands where the instruction
-         * has not been recognised and is not one of the supported commands.
-         *
-         * @return number of unknown commands executed.
+         * {@code}
          */
+        @Override
         public int getUnknownCommandsExecuted() {
             return unknownCommandsExecuted;
         }
 
         /**
-         * Number of comments executed.
-         *
-         * @return number of comments executed.
+         * {@code}
          */
+        @Override
         public int getCommentCommandsExecuted() {
             return commentCommandsExecuted;
         }
 
         /**
-         * Has exit been requested, this is where one of the instructions to quit
-         * has been specified and the shell should exit.
-         *
-         * @return true if exit requested.
+         * {@code}
          */
+        @Override
         public boolean isExitRequested() {
             return exitRequested;
         }
 
         /**
-         * Merges another response with this response to combine the totals commands
-         * executed.
-         *
-         * @param otherResponse other response.
+         * {@code}
          */
+        @Override
         public void merge(final Response otherResponse) {
-            validCommandsExecuted += otherResponse.validCommandsExecuted;
-            invalidCommandsExecuted += otherResponse.invalidCommandsExecuted;
-            unknownCommandsExecuted += otherResponse.unknownCommandsExecuted;
-            commentCommandsExecuted += otherResponse.commentCommandsExecuted;
+            validCommandsExecuted += otherResponse.getValidCommandsExecuted();
+            invalidCommandsExecuted += otherResponse.getInvalidCommandsExecuted();
+            unknownCommandsExecuted += otherResponse.getUnknownCommandsExecuted();
+            commentCommandsExecuted += otherResponse.getCommentCommandsExecuted();
 
             if (otherResponse.isExitRequested()) {
                 exitRequested = true;
@@ -710,6 +695,67 @@ class CommandDslShell {
             return format("Commands executed - valid: %d, invalid: %d, unknown: %d, comments: %d, exit: %s",
                     validCommandsExecuted, invalidCommandsExecuted, unknownCommandsExecuted, commentCommandsExecuted,
                     exitRequested);
+        }
+    }
+
+    static class DefaultInput implements Input {
+        private final Scanner scanner;
+
+        /**
+         * Constructor.
+         *
+         * @param inputStream Input stream.
+         */
+        public DefaultInput(final InputStream inputStream) {
+            scanner = new Scanner(inputStream);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String readln() {
+            return scanner.nextLine();
+        }
+    }
+
+    static class DefaultOutput implements Output {
+        private final PrintStream printStream;
+
+        public DefaultOutput(final PrintStream printStream) {
+            this.printStream = printStream;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void printResponse(final String message) {
+            printStream.print(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void printlnResponse(final String message) {
+            printStream.println(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void printInfo(final String message) {
+            printStream.print(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void printlnInfo(final String message) {
+            printStream.println(message);
         }
     }
 

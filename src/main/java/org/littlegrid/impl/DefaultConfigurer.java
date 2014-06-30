@@ -240,6 +240,7 @@ class DefaultConfigurer {
         configureFor(STORAGE_ENABLED_MEMBER);
     }
 
+    @SuppressWarnings("unchecked")
     void configureFor(final BuildAndConfigureEnum buildAndConfigureEnum) {
         final Properties systemProperties;
 
