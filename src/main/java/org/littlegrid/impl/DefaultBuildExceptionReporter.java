@@ -82,7 +82,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
 
         final PrintStream out = System.out;
 
-        out.print("http://littlegrid.bitbucket.org - ");
+        out.print(format("%s - ", Info.getWebsiteAddress()));
 
         if (throwable instanceof ClusterMemberGroupBuildException) {
             final ClusterMemberGroupBuildException buildException = (ClusterMemberGroupBuildException) throwable;
@@ -190,7 +190,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
 
     private void outputHeading(final PrintStream out) {
         out.println("**********************************************************************************************");
-        out.println("Please check the FAQ (http://littlegrid.bitbucket.org/faq.html) for help on the exception");
+        out.println(format("Please check the FAQ (%s/faq.html) for help on the exception", Info.getWebsiteAddress()));
         out.println("you've just had - also don't forget to check if a newer version of littlegrid is available.");
         out.println();
         out.println("If you would like help, then please email this entire exception report to: help@littlegrid.org");

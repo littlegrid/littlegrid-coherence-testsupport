@@ -87,6 +87,8 @@ public class SocketCommandApp {
 
             new Thread(new ShutdownConnectionListener(memberGroup, shutdownServerSocket)).start();
             new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
+            new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
+            new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
 
             final CommandDslShell shell =
                     new CommandDslShell(new DefaultInput(System.in),

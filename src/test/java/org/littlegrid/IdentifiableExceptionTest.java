@@ -31,18 +31,22 @@
 
 package org.littlegrid;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
 /**
  * Identifiable exception tests.
  */
-@Ignore
 public class IdentifiableExceptionTest {
     @Test
-    public void construct() {
-        new IdentifiableException("message", new RuntimeException(), SUSPECTED_AUTOSTART_EXCEPTION);
+    public void constructAndToString() {
+        final IdentifiableException exception =
+                new IdentifiableException("message", new RuntimeException(), SUSPECTED_AUTOSTART_EXCEPTION);
+
+        assertThat(exception.toString().length() > 0, is(true));
     }
 }

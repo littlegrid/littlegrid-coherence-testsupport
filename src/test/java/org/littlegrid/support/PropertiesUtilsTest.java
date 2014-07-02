@@ -2,6 +2,9 @@ package org.littlegrid.support;
 
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -30,6 +33,14 @@ public final class PropertiesUtilsTest {
         final Properties properties = PropertiesUtils.loadProperties(Level.INFO, propertiesFilenames);
 
         assertThat(properties.size(), is(0));
+    }
+
+    @Test(expected = Exception.class)
+    public void fileThatDoesNotExistWithWhatever()
+            throws MalformedURLException {
+
+        PropertiesUtils.loadProperties(null, new Properties(), "filename",
+                new URL("http://this-does-not-exist"));
     }
 
     @Test

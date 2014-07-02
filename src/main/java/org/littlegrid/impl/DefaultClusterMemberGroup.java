@@ -408,6 +408,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 //    public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
 //        throw new UnsupportedOperationException();
 //    }
+
     static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {
         try {
             final List<Integer> memberIds = new ArrayList<Integer>();

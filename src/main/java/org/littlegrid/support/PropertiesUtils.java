@@ -29,9 +29,8 @@ public final class PropertiesUtils {
     /**
      * Loads properties using the specified (potentially comma delimited) filenames.
      *
-     * @param loadedPropertyFileLogLevel Log level at which properties files loaded should be output.
-     * @param commaDelimitedPropertiesFilenames
-     *                                   Comma delimited properties filenames.
+     * @param loadedPropertyFileLogLevel        Log level at which properties files loaded should be output.
+     * @param commaDelimitedPropertiesFilenames Comma delimited properties filenames.
      * @return properties.
      */
     public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
@@ -65,20 +64,36 @@ public final class PropertiesUtils {
                 continue;
             }
 
-            try {
-                final Properties currentProperties = new Properties();
-                currentProperties.load(url.openStream());
-
-                properties.putAll(currentProperties);
-                loadedSummary.put(propertiesFilename, Integer.toString(currentProperties.size()));
-            } catch (Exception e) {
-                throw new IllegalArgumentException(format(
-                        "Cannot load properties file: '%s' due to: %s", propertiesFilename, e));
-            }
+            loadProperties(loadedSummary, properties, propertiesFilename, url);
         }
 
         LOGGER.log(loadedPropertyFileLogLevel, loadedSummary.toString());
 
         return properties;
+    }
+
+    /**
+     * Default scope for testing.
+     *
+     * @param loadedSummary      Loaded summary.
+     * @param properties         Properties file to load new properties into.
+     * @param propertiesFilename Properties filename.
+     * @param url                Url.
+     */
+    static void loadProperties(final Map<String, String> loadedSummary,
+                               final Properties properties,
+                               final String propertiesFilename,
+                               final URL url) {
+
+        try {
+            final Properties currentProperties = new Properties();
+            currentProperties.load(url.openStream());
+
+            properties.putAll(currentProperties);
+            loadedSummary.put(propertiesFilename, Integer.toString(currentProperties.size()));
+        } catch (Exception e) {
+            throw new IllegalArgumentException(format(
+                    "Cannot load properties file: '%s' due to: %s", propertiesFilename, e));
+        }
     }
 }

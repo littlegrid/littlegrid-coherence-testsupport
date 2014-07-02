@@ -169,6 +169,18 @@ public class CommandDslShellIntegrationTest {
     }
 
     @Test
+    public void exit() {
+        final Response response = new CommandDslShell(System.in, System.out)
+                .start(new String[]{"commands=exit"});
+
+        assertThat(response.getValidCommandsExecuted(), is(1));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
+    }
+
+    @Test
     public void members() {
         final Response response = new CommandDslShell(System.in, System.out)
                 .start(new String[]{"commands=members; bye"});

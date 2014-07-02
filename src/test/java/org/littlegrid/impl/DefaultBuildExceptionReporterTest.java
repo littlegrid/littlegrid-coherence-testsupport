@@ -32,6 +32,16 @@
 package org.littlegrid.impl;
 
 import org.junit.Test;
+import org.littlegrid.ClusterMemberGroupBuildException;
+import org.littlegrid.IdentifiableException;
+
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.littlegrid.IdentifiableException.ReasonEnum.REUSABLE_MEMBER_GROUP_CANNOT_BE_MERGED;
 
 /**
  * Default builder exception reporter tests.
@@ -50,5 +60,32 @@ public class DefaultBuildExceptionReporterTest {
     @Test
     public void standardExceptionWithMemberGroupClassNameAndOtherInformation() {
         new DefaultBuildExceptionReporter().report(new RuntimeException(), null, null, null, "This is other info.");
+    }
+
+    @Test
+    public void clusterMemberGroupBuildExceptionWithMemberGroupClassNameAndOtherInformation() {
+        final Properties systemPropertiesBeforeStart = new Properties();
+        systemPropertiesBeforeStart.setProperty("a", "b");
+
+        final Properties systemPropertiesToBeApplied = new Properties();
+        systemPropertiesToBeApplied.setProperty("b", "c");
+
+        final ClusterMemberGroupBuildException buildException =
+                new ClusterMemberGroupBuildException(
+                        new IdentifiableException("message", REUSABLE_MEMBER_GROUP_CANNOT_BE_MERGED),
+                        systemPropertiesBeforeStart,
+                        systemPropertiesToBeApplied,
+                        1,
+                        new URL[]{},
+                        "a.b.c",
+                        2);
+
+        final Map<String, String> builderKeysAndValues = Collections.singletonMap("bk", "bv");
+
+        final Properties builderKeyToSystemPropertyNameMappings = new Properties();
+        builderKeyToSystemPropertyNameMappings.setProperty("bk", "spn");
+
+        new DefaultBuildExceptionReporter().report(buildException,
+                builderKeysAndValues, builderKeyToSystemPropertyNameMappings, null, "This is other info.");
     }
 }

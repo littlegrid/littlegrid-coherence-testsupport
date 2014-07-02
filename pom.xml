@@ -208,7 +208,7 @@
                                 below argLine settings are used to avoid the perm-space from becoming full.
                             -->
                             <forkMode>always</forkMode>
-                            <argLine>-Xmx1024m -Xms1024m -XX:MaxPermSize=512m</argLine>
+                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=256m</argLine>
                         </configuration>
                     </plugin>
 
@@ -238,7 +238,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <forkMode>always</forkMode>
-                            <argLine>-Xmx1024m -Xms1024m -XX:MaxPermSize=512m ${argLine}</argLine>
+                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=256m ${argLine}</argLine>
                             <!--
                                 If using this custom argLine profile (typically to support command-line override),
                                 then in additional to your own user specified settings you should also include
@@ -255,9 +255,7 @@
         <java.target.version>1.6</java.target.version>
 
         <!-- JAR versions -->
-        <!--<coherence.version>3.7.1.0</coherence.version>-->
-        <!--<coherence.version>3.7.1.10</coherence.version>-->
-        <coherence.version>12.1.2-0-0</coherence.version>
+        <coherence.version>12.1.2-0-1</coherence.version>
         <junit.version>4.8.2</junit.version>
 
         <!-- Plugin versions -->
