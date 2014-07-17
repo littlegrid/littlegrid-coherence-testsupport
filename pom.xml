@@ -255,7 +255,7 @@
         <java.target.version>1.6</java.target.version>
 
         <!-- JAR versions -->
-        <coherence.version>12.1.2-0-1</coherence.version>
+        <coherence.version>12.1.3-0-0</coherence.version>
         <junit.version>4.8.2</junit.version>
 
         <!-- Plugin versions -->

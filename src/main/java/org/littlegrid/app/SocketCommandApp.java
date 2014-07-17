@@ -59,6 +59,7 @@ public class SocketCommandApp {
     private static final String PORT_SYSTEM_PROPERTY_KEY = APP_SYSTEM_PROPERTY_PREFIX_KEY + "Port";
     private static final String SHUTDOWN_PORT_SYSTEM_PROPERTY_KEY = APP_SYSTEM_PROPERTY_PREFIX_KEY + "ShutdownPort";
     private static final int DEFAULT_PORT = 21001;
+    private static final int DEFAULT_SHUTDOWN_PORT = 21002;
     private static final String NAME = "Socket command application";
 
     /**
@@ -73,8 +74,14 @@ public class SocketCommandApp {
     void start(final String[] args) {
         final int port = parsePort(args);
 
-        System.out.println(format("%s ready - access port %d to use littlegrid DSL shell remotely",
+        System.out.println("");
+        System.out.println(format("** %s ready - access port %d to use littlegrid DSL shell remotely",
                 NAME, port));
+
+        System.out.println(format("** Access port %d to remotely shutdown littlegrid DSL shell",
+                DEFAULT_SHUTDOWN_PORT));
+
+        System.out.println("");
 
         ServerSocket clientServerSocket = null;
         ServerSocket shutdownServerSocket = null;
@@ -83,11 +90,9 @@ public class SocketCommandApp {
 
         try {
             clientServerSocket = new ServerSocket(port);
-            shutdownServerSocket = new ServerSocket(port + 1);
+            shutdownServerSocket = new ServerSocket(DEFAULT_SHUTDOWN_PORT);
 
             new Thread(new ShutdownConnectionListener(memberGroup, shutdownServerSocket)).start();
-            new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
-            new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
             new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
 
             final CommandDslShell shell =
@@ -174,7 +179,7 @@ public class SocketCommandApp {
         public void printResponse(final String message) {
             super.printResponse(message);
 
-            whatever(message);
+            printResponseConvertingMessageToReturnCodeIfNecessary(message);
         }
 
         /**
@@ -184,10 +189,10 @@ public class SocketCommandApp {
         public void printlnResponse(final String message) {
             super.printlnResponse(message);
 
-            whatever(message);
+            printResponseConvertingMessageToReturnCodeIfNecessary(message);
         }
 
-        private void whatever(final String message) {
+        private void printResponseConvertingMessageToReturnCodeIfNecessary(final String message) {
             int returnCode = 0;
 
             if (message.startsWith(COMMAND_EXCEPTION)) {

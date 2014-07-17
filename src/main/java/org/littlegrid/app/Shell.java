@@ -5,7 +5,7 @@ package org.littlegrid.app;
  *
  * @since 2.16
  */
-public interface Shell {
+interface Shell {
     /**
      * Starts a shell.
      *
