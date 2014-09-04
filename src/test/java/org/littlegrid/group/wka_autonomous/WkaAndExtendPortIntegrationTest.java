@@ -51,7 +51,7 @@ public final class WkaAndExtendPortIntegrationTest {
 
     @Test
     public void twoSmallMemberGroupsWithDifferentWkaAndExtendPorts() {
-        final int offset = 100;
+        final int offset = 20;
         final int numberOfMembers = SMALL_TEST_CLUSTER_SIZE;
         final int expectedClusterSize = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 

@@ -35,6 +35,7 @@ import com.tangosol.util.ClassHelper;
 import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
@@ -90,6 +91,11 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
         invokeMethod(clusterMemberInstance, "start");
 
         running = true;
+    }
+
+    @Override
+    public Serializable invoke(Serializable serializable) {
+        throw new UnsupportedOperationException();
     }
 
     /**

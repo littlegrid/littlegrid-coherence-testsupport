@@ -31,6 +31,7 @@
 
 package org.littlegrid;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Properties;
 
@@ -50,7 +51,6 @@ public interface ClusterMemberGroup {
 //        MACHINE_NAME,
 //        ROLE_NAME
 //    }
-
 
     /**
      * Shuts down specific cluster members in the group, the members shutdown politely and notify
@@ -243,6 +243,9 @@ public interface ClusterMemberGroup {
      * uses.
      */
     interface ClusterMember {
+        Serializable invoke(Serializable serializable);
+
+
         /**
          * Shutdown the member, it leaves the cluster politely and notifies other members.
          */

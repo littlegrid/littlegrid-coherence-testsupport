@@ -34,6 +34,8 @@ package org.littlegrid.impl;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultCacheServer;
 
+import java.io.Serializable;
+
 import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 
@@ -73,6 +75,11 @@ public class DefaultClusterMember implements ClusterMember, CallbackHandler {
      */
     @Override
     public void doBeforeShutdown() {
+    }
+
+    @Override
+    public Serializable invoke(Serializable serializable) {
+        throw new UnsupportedOperationException();
     }
 
     /**

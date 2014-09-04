@@ -40,7 +40,7 @@ public class AutonomousClusterIntegrationTest {
     @Test
     public void twoAutonomousClusters() {
         final int numberOfMembers = 2;
-        final int portOffset = 100;
+        final int portOffset = 20;
         final int expectedClusterSize = numberOfMembers + 1; // Include this test which will join as a member
 
         ClusterMemberGroup memberGroupCluster1 = null;
