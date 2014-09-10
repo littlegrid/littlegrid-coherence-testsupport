@@ -219,6 +219,7 @@
                             <systemPropertyVariables>
                                 <littlegrid.builder.WkaPort>${starting.thousand.port.number}${surefire.forkNumber}00</littlegrid.builder.WkaPort>
                                 <littlegrid.builder.ExtendPort>${starting.thousand.port.number}${surefire.forkNumber}50</littlegrid.builder.ExtendPort>
+                                <littlegrid.builder.ClusterName>littlegridCluster-${surefire.forkNumber}</littlegrid.builder.ClusterName>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

@@ -40,7 +40,7 @@ import org.littlegrid.ClusterMemberGroupUtils;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Simple test example.
+ * Simple integration test example.
  */
 public final class SimpleStorageEnabledIntegrationTest {
     private static ClusterMemberGroup memberGroup;
