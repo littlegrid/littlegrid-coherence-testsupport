@@ -73,7 +73,13 @@ public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrat
         memberGroup.stopAll();
         memberGroup.stopAll();
 
-        sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        /*
+            Wait longer because all of them are being stopped - otherwise the client won't have
+            recognised they have gone, essentially it needs a little time to figure it out.
+         */
+        for (int i = 0; i < 2; i++) {
+            sleepForSeconds(memberGroup.getSuggestedSleepAfterStopDuration());
+        }
 
         assertThatClusterIsExpectedSize(cluster, CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
     }
