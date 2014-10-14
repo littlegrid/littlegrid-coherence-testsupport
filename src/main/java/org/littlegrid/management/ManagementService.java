@@ -20,9 +20,9 @@ public interface ManagementService {
 
 
     interface Builder {
-        String BUILDER_SYSTEM_PROPERTY_PREFIX_KEY = "littlegrid.management.builder";
+        String BUILDER_SYSTEM_PROPERTY_PREFIX_KEY = "littlegrid.management.builder.";
 
-        String BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY = "littlegrid_builder_";
+        String BUILDER_ENVIRONMENT_VARIABLE_PREFIX_KEY = "littlegrid_management_builder_";
 
         Builder setUrlPath(String urlPath);
 

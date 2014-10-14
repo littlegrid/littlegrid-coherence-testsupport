@@ -1,5 +1,6 @@
 package org.littlegrid.app;
 
+import org.littlegrid.impl.Info;
 import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.ManagementUtils;
 
@@ -12,6 +13,8 @@ import static java.lang.String.format;
 
 /**
  * Management DSL shell
+ *
+ * @since 2.16
  */
 class ManagementDslShell implements Shell {
     private static final Logger LOGGER = Logger.getLogger(ManagementDslShell.class.getName());
@@ -93,7 +96,8 @@ class ManagementDslShell implements Shell {
         totalResponse.merge(commandStringResponse);
 
         if (!commandStringResponse.isExitRequested()) {
-            out.printlnInfo(format("littlegrid (alpha) ManagementDSL shell ready - for list of commands type: help"));
+            out.printlnInfo(format("littlegrid (%s) ManagementDSL shell ready - for list of commands type: help",
+                    Info.getVersionNumber()));
 
             final Response commandStreamResponse = processCommandsStream();
             totalResponse.merge(commandStreamResponse);
