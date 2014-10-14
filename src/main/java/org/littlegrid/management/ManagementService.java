@@ -1,6 +1,7 @@
 package org.littlegrid.management;
 
 import javax.management.MBeanServerConnection;
+import java.util.Collection;
 
 /**
  * Management service.
@@ -13,6 +14,13 @@ public interface ManagementService {
      * @return results.
      */
     TabularResultSet findManagementInformation(String query);
+
+    int createManagementInformationSnapshot(String snapshotName,
+                                            String snapshotQuery);
+
+    boolean dropManagementInformationSnapshot(String snapshotName);
+
+    Collection<String> findSnapshots();
 
     Object updateManagementInformation(Object notSureYet);
 

@@ -8,7 +8,7 @@ import static com.tangosol.util.InvocableMap.EntryAggregator;
 /**
  * Management query parser.
  */
-public interface QueryParser {
+interface QueryParser {
     /**
      * Returns the projection.
      *
@@ -22,6 +22,13 @@ public interface QueryParser {
      * @return target.
      */
     String getTarget();
+
+    /**
+     * Returns the alias of the target.
+     *
+     * @return alias.
+     */
+    String getAlias();
 
     /**
      * Returns the restriction.

@@ -59,6 +59,27 @@ public class DefaultQueryParserTest {
     }
 
     @Test
+    public void simpleSelectWithAlias() {
+        final String expectedTarget = "target";
+        final String expectedAlias = "snapshot";
+
+        final String query = format("select a from %s as %s", expectedTarget, expectedAlias);
+
+        final QueryParser parser = new DefaultQueryParser(query);
+
+        assertThat(parser.isAggregation(), is(false));
+        assertThat(parser.getAggregation(), nullValue());
+
+        assertThat(parser.getTarget(), is(expectedTarget));
+        assertThat(parser.getAlias(), is(expectedAlias));
+        assertThat(parser.getRestriction(), Is.<Filter>is(AlwaysFilter.INSTANCE));
+
+        final ValueExtractor extractor = new ReflectionExtractor("getA");
+
+        assertThat(parser.getProjection(), is(extractor));
+    }
+
+    @Test
     public void simpleSelectWhere() {
         final String target = "test";
         final String valueWithoutQuotes = "SomeValue";

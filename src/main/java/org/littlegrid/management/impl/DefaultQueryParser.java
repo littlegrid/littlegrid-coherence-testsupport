@@ -20,6 +20,7 @@ import static com.tangosol.util.InvocableMap.EntryAggregator;
 class DefaultQueryParser implements QueryParser {
     private static final TokenTable TOKEN_TABLE = CoherenceQueryLanguage.getSqlTokenTable(false);
     private static final String FROM_KEYWORD = "from";
+    private static final String ALIAS_KEYWORD = "alias";
     private static final String FIELD_LIST_KEYWORD = "fieldList";
     private static final String IS_DISTINCT_KEYWORD = "isDistinct";
     private static final String WHERE_CLAUSE_KEYWORD = "whereClause";
@@ -27,6 +28,7 @@ class DefaultQueryParser implements QueryParser {
     private final ValueExtractor projection;
     private final EntryAggregator aggregation;
     private final String target;
+    private final String alias;
     private final Filter restriction;
 
     /**
@@ -44,10 +46,11 @@ class DefaultQueryParser implements QueryParser {
         }
 */
 
-        this.target = parseAndSetTarget(term);
-        this.restriction = parseAndSetRestriction(term);
-        this.projection = parseAndSetProjection(term);
-        this.aggregation = parseAndSetAggregation(term);
+        this.target = parseForTarget(term);
+        this.alias = parseForAlias(term);
+        this.restriction = parseForRestriction(term);
+        this.projection = parseForProjection(term);
+        this.aggregation = parseForAggregation(term);
     }
 
     /**
@@ -64,6 +67,14 @@ class DefaultQueryParser implements QueryParser {
     @Override
     public String getTarget() {
         return target;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAlias() {
+        return alias;
     }
 
     /**
@@ -90,11 +101,15 @@ class DefaultQueryParser implements QueryParser {
         return aggregation;
     }
 
-    private String parseAndSetTarget(final NodeTerm term) {
+    private String parseForTarget(final NodeTerm term) {
         return atomicStringValueOf(term.findAttribute(FROM_KEYWORD));
     }
 
-    private Filter parseAndSetRestriction(final NodeTerm term) {
+    private String parseForAlias(final NodeTerm term) {
+        return atomicStringValueOf(term.findAttribute(ALIAS_KEYWORD));
+    }
+
+    private Filter parseForRestriction(final NodeTerm term) {
         final Term restrictionTerm = parseRestrictionTerm(term);
 
         if (restrictionTerm == null) {
@@ -104,7 +119,7 @@ class DefaultQueryParser implements QueryParser {
         }
     }
 
-    private ValueExtractor parseAndSetProjection(final NodeTerm term) {
+    private ValueExtractor parseForProjection(final NodeTerm term) {
         final Term projectionTerm = parseProjectionTerm(term);
         final SelectListMaker selectMaker = new SelectListMaker((NodeTerm) projectionTerm);
         selectMaker.makeSelects();
@@ -112,7 +127,7 @@ class DefaultQueryParser implements QueryParser {
         return selectMaker.getResultsAsValueExtractor();
     }
 
-    private EntryAggregator parseAndSetAggregation(final NodeTerm term) {
+    private EntryAggregator parseForAggregation(final NodeTerm term) {
         final Term aggregationTerm = parseAggregationTerm(term);
         final SelectListMaker selectMaker = new SelectListMaker((NodeTerm) aggregationTerm);
         selectMaker.makeSelects();

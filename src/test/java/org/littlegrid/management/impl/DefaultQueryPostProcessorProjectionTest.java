@@ -27,7 +27,7 @@ public class DefaultQueryPostProcessorProjectionTest extends AbstractQueryPostPr
         final TabularResultSet results = DefaultQueryPostProcessorProjection.performProjection(
                 new HashSet<Map.Entry<Integer, Map<String, Object>>>(), AGE_EXTRACTOR);
 
-        assertThat(results.size(), is(0));
+        assertThat(results.getRowCount(), is(0));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class DefaultQueryPostProcessorProjectionTest extends AbstractQueryPostPr
                 getPopulatedEntries(numberOfEntries),
                 AGE_EXTRACTOR);
 
-        assertThat(results.size(), is(numberOfEntries));
+        assertThat(results.getRowCount(), is(numberOfEntries));
 
         final Collection<String> columnNames = results.getColumnNames();
         assertThat(columnNames.size(), is(1));
@@ -58,7 +58,7 @@ public class DefaultQueryPostProcessorProjectionTest extends AbstractQueryPostPr
                 getPopulatedEntries(numberOfEntries, OTHER_COLUMN),
                 PROJECTION_WITH_SEVERAL_COLUMNS);
 
-        assertThat(results.size(), is(numberOfEntries));
+        assertThat(results.getRowCount(), is(numberOfEntries));
 
         final Collection<String> columnNames = results.getColumnNames();
         assertThat(columnNames.size(), is(2));
@@ -75,7 +75,7 @@ public class DefaultQueryPostProcessorProjectionTest extends AbstractQueryPostPr
                 getPopulatedEntries(numberOfEntries, OTHER_COLUMN),
                 extractorForColumnNotInRow);
 
-        assertThat(results.size(), is(numberOfEntries));
+        assertThat(results.getRowCount(), is(numberOfEntries));
 
         final Collection<String> columnNames = results.getColumnNames();
         assertThat(columnNames.size(), is(1));
@@ -90,7 +90,7 @@ public class DefaultQueryPostProcessorProjectionTest extends AbstractQueryPostPr
                 getPopulatedEntries(numberOfEntries, OTHER_COLUMN),
                 PROJECTION_WITH_SEVERAL_COLUMNS);
 
-        assertThat(results.size(), is(numberOfEntries));
+        assertThat(results.getRowCount(), is(numberOfEntries));
 
         final Collection<String> columnNames = results.getColumnNames();
         assertThat(columnNames.size(), is(2));

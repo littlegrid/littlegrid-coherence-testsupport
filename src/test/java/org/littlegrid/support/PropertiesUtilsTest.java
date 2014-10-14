@@ -36,7 +36,7 @@ public final class PropertiesUtilsTest {
     }
 
     @Test(expected = Exception.class)
-    public void fileThatDoesNotExistWithWhatever()
+    public void fileThatDoesNotExistAtLocation()
             throws MalformedURLException {
 
         PropertiesUtils.loadProperties(null, new Properties(), "filename",

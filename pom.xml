@@ -273,8 +273,7 @@
         <java.target.version>1.6</java.target.version>
 
         <!-- JAR versions -->
-        <!--<coherence.version>12.1.3-0-0</coherence.version>-->
-        <coherence.version>12.1.2-0-3b53876XXX</coherence.version>
+        <coherence.version>12.1.3-0-0</coherence.version>
         <junit.version>4.8.2</junit.version>
 
         <starting.thousand.port.number>40</starting.thousand.port.number>

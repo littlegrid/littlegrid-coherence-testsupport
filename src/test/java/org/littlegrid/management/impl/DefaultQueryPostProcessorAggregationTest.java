@@ -63,7 +63,7 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
         final TabularResultSet results = DefaultQueryPostProcessorAggregation.performAggregation(
                 getPopulatedEntries(numberOfEntries), aggregator);
 
-        assertThat(results.size(), is(1));
+        assertThat(results.getRowCount(), is(1));
 
         final Map<String, Object> row = results.getRows().iterator().next();
         assertThat(row.get(aggregator.toString()), nullValue());
@@ -76,7 +76,7 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
         final TabularResultSet results = DefaultQueryPostProcessorAggregation.performAggregation(
                 getPopulatedEntries(numberOfEntries), AGGREGATION_WITH_SEVERAL_AGGREGATES);
 
-        assertThat(results.size(), is(1));
+        assertThat(results.getRowCount(), is(1));
 
         final Collection<String> columnNames = results.getColumnNames();
         assertThat(columnNames.size(), is(2));
@@ -99,7 +99,7 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
         final TabularResultSet results = DefaultQueryPostProcessorAggregation.performAggregation(
                 getPopulatedEntries(numberOfEntries), aggregator);
 
-        assertThat(results.size(), is(1));
+        assertThat(results.getRowCount(), is(1));
 
         final Collection<String> columnNames = results.getColumnNames();
         assertThat(columnNames.size(), is(1));

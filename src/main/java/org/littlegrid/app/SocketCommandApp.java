@@ -93,7 +93,7 @@ public class SocketCommandApp {
             shutdownServerSocket = new ServerSocket(DEFAULT_SHUTDOWN_PORT);
 
             new Thread(new ShutdownConnectionListener(memberGroup, shutdownServerSocket)).start();
-            new Thread(new ClientWhatever(memberGroup, clientServerSocket)).start();
+            new Thread(new ClientConnection(memberGroup, clientServerSocket)).start();
 
             final CommandDslShell shell =
                     new CommandDslShell(new DefaultInput(System.in),
@@ -205,12 +205,12 @@ public class SocketCommandApp {
         }
     }
 
-    static class ClientWhatever implements Runnable {
+    static class ClientConnection implements Runnable {
         private final ClusterMemberGroup memberGroup;
         private final ServerSocket serverSocket;
 
-        public ClientWhatever(final ClusterMemberGroup memberGroup,
-                              final ServerSocket serverSocket) {
+        public ClientConnection(final ClusterMemberGroup memberGroup,
+                                final ServerSocket serverSocket) {
 
             this.memberGroup = memberGroup;
             this.serverSocket = serverSocket;

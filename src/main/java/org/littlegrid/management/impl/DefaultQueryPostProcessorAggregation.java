@@ -58,6 +58,7 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
         return resultsToReturn;
     }
 
+    @SuppressWarnings("unchecked")
     private static Map<String, Object> createRowFromList(final EntryAggregator aggregation,
                                                          final Object aggregationResult) {
 

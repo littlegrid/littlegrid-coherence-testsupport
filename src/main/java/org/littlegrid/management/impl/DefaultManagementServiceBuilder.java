@@ -136,7 +136,7 @@ public class DefaultManagementServiceBuilder implements Builder {
     @Override
     public ManagementService buildAndConnect() {
         try {
-            final JMXServiceURL jmxUrl = new JMXServiceURL("rmi", "", 0, urlPath);
+            final JMXServiceURL jmxUrl = new JMXServiceURL(urlPath);
             final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, null);
             final MBeanServerConnection mBeanServer = jmxConnector.getMBeanServerConnection();
             final ManagementRepository managementRepository = new ManagementRepositoryJmxImpl(mBeanServer);

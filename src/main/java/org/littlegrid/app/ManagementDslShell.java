@@ -38,6 +38,10 @@ class ManagementDslShell implements Shell {
     private static final String COMMENT_COMMAND = "#";
     private static final int MILLISECONDS_IN_SECOND = 1000;
 
+    private static final String CREATE_SNAPSHOT = "create snapshot ";
+    private static final String DROP_SNAPSHOT = "drop snapshot ";
+    private static final String SHOW_SNAPSHOTS = "show snapshots";
+
     /**
      * Text to indicate an unknown command was used.
      */
@@ -140,7 +144,6 @@ class ManagementDslShell implements Shell {
             String outputResponse;
 
             try {
-
                 if (command.equals(BYE_COMMAND)
                         || command.equals(QUIT_COMMAND)
                         || command.equals(EXIT_COMMAND)) {
@@ -161,6 +164,18 @@ class ManagementDslShell implements Shell {
                     outputResponse = displayHelp();
                     response.incrementCommentCommandsExecuted();
 
+                } else if (command.startsWith(CREATE_SNAPSHOT)) {
+                    outputResponse = createSnapshot(command);
+                    response.incrementCommentCommandsExecuted();
+
+                } else if (command.startsWith(DROP_SNAPSHOT)) {
+                    outputResponse = dropSnapshot(command);
+                    response.incrementCommentCommandsExecuted();
+
+                } else if (command.startsWith(SHOW_SNAPSHOTS)) {
+                    outputResponse = showSnapshots();
+                    response.incrementCommentCommandsExecuted();
+
                 } else if (command.equals("")) {
                     outputResponse = "";
 
@@ -179,6 +194,26 @@ class ManagementDslShell implements Shell {
         }
 
         return response;
+    }
+
+    private String createSnapshot(final String command) {
+        final String snapshotNameAndQuery = command.replace(CREATE_SNAPSHOT, "").trim();
+        final int firstSpaceIndex = snapshotNameAndQuery.indexOf(" ");
+        final String snapshotName = snapshotNameAndQuery.substring(0, firstSpaceIndex);
+        final String snapshotQuery = snapshotNameAndQuery.substring(firstSpaceIndex).trim();
+
+        return new Integer(managementService.createManagementInformationSnapshot(snapshotName,
+                snapshotQuery)).toString();
+    }
+
+    private String dropSnapshot(String command) {
+        final String snapshotName = command.replace(DROP_SNAPSHOT, "").trim();
+
+        return new Boolean(managementService.dropManagementInformationSnapshot(snapshotName)).toString();
+    }
+
+    private String showSnapshots() {
+        return managementService.findSnapshots().toString();
     }
 
     private String displayHelp() {

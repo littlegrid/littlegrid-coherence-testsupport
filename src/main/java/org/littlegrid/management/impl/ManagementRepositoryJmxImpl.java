@@ -8,17 +8,26 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import static com.tangosol.util.InvocableMap.EntryAggregator;
+import static java.lang.String.format;
 
 /**
  * Management repository JMX implementation.
  */
-public class ManagementRepositoryJmxImpl implements ManagementRepository {
+class ManagementRepositoryJmxImpl implements ManagementRepository {
+    private static final Logger LOGGER = Logger.getLogger(ManagementRepositoryJmxImpl.class.getName());
+
     private final MBeanServerConnection mBeanServerConnection;
+
+    //TODO: think this through a bit more
+    private final Map<String, TabularResultSet> snapshots = new HashMap<String, TabularResultSet>();
 
     /**
      * Constructor.
@@ -71,9 +80,54 @@ public class ManagementRepositoryJmxImpl implements ManagementRepository {
         return new DefaultQueryPostProcessorAggregation(queryResults, aggregation, restriction).getResult();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int createManagementInformationSnapshot(final String snapshotName,
+                                                   final String snapshotQuery) {
+
+        LOGGER.info(format("About to create snapshot '%s' using '%s' query", snapshotName, snapshotQuery));
+
+        final TabularResultSet results = performQuery(snapshotQuery);
+
+        snapshots.put(snapshotName, results);
+
+        return results.getRowCount() * results.getRowCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean dropManagementInformationSnapshot(final String snapshotName) {
+        final TabularResultSet results = snapshots.remove(snapshotName);
+
+        return results != null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<String> findSnapshots() {
+        return new HashSet<String>(snapshots.keySet());
+    }
+
     @SuppressWarnings("unchecked")
     private TabularResultSet performQuery(final String queryTarget) {
+        final TabularResultSet cachedResults = snapshots.get(queryTarget);
+
+        if (cachedResults != null) {
+            LOGGER.info("Found snapshot for re-use");
+
+            return cachedResults;
+        }
+
+        LOGGER.info(format("About to perform query using: %s", queryTarget));
+
         try {
+            final long startTime = System.currentTimeMillis();
             final Set<ObjectInstance> queryResults =
                     mBeanServerConnection.queryMBeans(new ObjectName(queryTarget), null);
 
@@ -97,6 +151,14 @@ public class ManagementRepositoryJmxImpl implements ManagementRepository {
 
                 results.addRow(row);
             }
+
+            final long duration = System.currentTimeMillis() - startTime;
+            final int rowCount = results.getRowCount();
+            final int columnCount = results.getColumnCount();
+            final int totalAttributeValues = rowCount * columnCount;
+
+            LOGGER.info(format("Completed query in %dms, resulting in %d rows and %d columns (%d attribute values)",
+                    duration, rowCount, columnCount, totalAttributeValues));
 
             return results;
         } catch (Exception e) {

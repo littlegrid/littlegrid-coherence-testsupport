@@ -20,8 +20,9 @@ public class TabularResultSetImplTest {
     public void constructOnly() {
         final TabularResultSet result = new DefaultTabularResultSet();
 
-        assertThat(result.size(), is(0));
+        assertThat(result.getRowCount(), is(0));
         assertThat(result.getRows().size(), is(0));
+        assertThat(result.getColumnCount(), is(0));
         assertThat(result.getColumnNames().size(), is(0));
     }
 
@@ -34,10 +35,12 @@ public class TabularResultSetImplTest {
 
         result.addRow(singletonMap(key, (Object) value));
 
-        assertThat(result.size(), is(1));
+        assertThat(result.getRowCount(), is(1));
 
         final Collection<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), is(1));
+
+        assertThat(result.getColumnCount(), is(1));
 
         final Collection<String> columns = result.getColumnNames();
         assertThat(columns.size(), is(1));

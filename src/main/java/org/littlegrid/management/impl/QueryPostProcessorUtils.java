@@ -15,7 +15,7 @@ class QueryPostProcessorUtils {
     @SuppressWarnings("unchecked")
     static Set<Map.Entry<Integer, Map<String, Object>>> convertToEntries(final TabularResultSet results) {
         final Set<Map.Entry<Integer, Map<String, Object>>> entries =
-                new HashSet<Map.Entry<Integer, Map<String, Object>>>(results.size());
+                new HashSet<Map.Entry<Integer, Map<String, Object>>>(results.getRowCount());
 
         int counter = 1;
 

@@ -37,7 +37,7 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
         final Set<Map.Entry<Integer, Map<String, Object>>> entries =
                 QueryPostProcessorUtils.convertToEntries(results);
 
-        assertThat(entries.size(), is(results.size()));
+        assertThat(entries.size(), is(results.getRowCount()));
 
         final Map.Entry<Integer, Map<String, Object>> entry = entries.iterator().next();
         assertThat(entry.getKey(), is(1));

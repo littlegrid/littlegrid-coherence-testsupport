@@ -5,7 +5,7 @@ import org.littlegrid.management.TabularResultSet;
 /**
  * Query post processor.
  */
-public interface QueryPostProcessor {
+interface QueryPostProcessor {
     /**
      * Returns result of any post-processing.
      *

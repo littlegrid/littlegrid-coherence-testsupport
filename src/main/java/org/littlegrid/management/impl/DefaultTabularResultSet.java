@@ -37,8 +37,16 @@ class DefaultTabularResultSet implements TabularResultSet {
      * {@inheritDoc}
      */
     @Override
-    public int size() {
+    public int getRowCount() {
         return rows.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getColumnCount() {
+        return columns.size();
     }
 
     /**

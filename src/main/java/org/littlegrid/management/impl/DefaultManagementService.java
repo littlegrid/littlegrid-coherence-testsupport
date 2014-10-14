@@ -4,12 +4,22 @@ import com.tangosol.util.Filter;
 import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.TabularResultSet;
 
+import java.util.Collection;
+import java.util.logging.Logger;
+
 /**
  * Management service implementation.
  */
-public class DefaultManagementService implements ManagementService {
+class DefaultManagementService implements ManagementService {
+    private static final Logger LOGGER = Logger.getLogger(DefaultManagementService.class.getName());
+
     private final ManagementRepository managementRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param managementRepository  Management repository.
+     */
     public DefaultManagementService(final ManagementRepository managementRepository) {
         this.managementRepository = managementRepository;
     }
@@ -30,6 +40,40 @@ public class DefaultManagementService implements ManagementService {
             return managementRepository.findManagementInformationByCriteria(
                     parser.getProjection(), queryTarget, restriction);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int createManagementInformationSnapshot(final String snapshotName,
+                                                   final String snapshotQuery) {
+
+        LOGGER.info("Experimental feature");
+
+        final QueryParser parser = new DefaultQueryParser("select value() from " + snapshotQuery);
+
+        return managementRepository.createManagementInformationSnapshot(snapshotName, parser.getTarget());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean dropManagementInformationSnapshot(final String snapshotName) {
+        LOGGER.info("Experimental feature");
+
+        return managementRepository.dropManagementInformationSnapshot(snapshotName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<String> findSnapshots() {
+        LOGGER.info("Experimental feature");
+
+        return managementRepository.findSnapshots();
     }
 
     /**

@@ -15,9 +15,14 @@ public interface TabularResultSet {
     Collection<String> getColumnNames();
 
     /**
-     * @return returns the row count in the result.
+     * @return returns the number of rows in the result.
      */
-    int size();
+    int getRowCount();
+
+    /**
+     * @return returns the number of columns in the result.
+     */
+    int getColumnCount();
 
     /**
      * @return returns the data within the result.
