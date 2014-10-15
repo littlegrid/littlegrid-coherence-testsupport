@@ -13,6 +13,7 @@ import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.filter.AlwaysFilter;
 
 import static com.tangosol.util.InvocableMap.EntryAggregator;
+import static java.lang.String.format;
 
 /**
  * Management query parser default implementation with default scope.
@@ -20,7 +21,6 @@ import static com.tangosol.util.InvocableMap.EntryAggregator;
 class DefaultQueryParser implements QueryParser {
     private static final TokenTable TOKEN_TABLE = CoherenceQueryLanguage.getSqlTokenTable(false);
     private static final String FROM_KEYWORD = "from";
-    private static final String ALIAS_KEYWORD = "alias";
     private static final String FIELD_LIST_KEYWORD = "fieldList";
     private static final String IS_DISTINCT_KEYWORD = "isDistinct";
     private static final String WHERE_CLAUSE_KEYWORD = "whereClause";
@@ -28,7 +28,6 @@ class DefaultQueryParser implements QueryParser {
     private final ValueExtractor projection;
     private final EntryAggregator aggregation;
     private final String target;
-    private final String alias;
     private final Filter restriction;
 
     /**
@@ -37,7 +36,7 @@ class DefaultQueryParser implements QueryParser {
      * @param query Query.
      */
     public DefaultQueryParser(final String query) {
-        final SQLOPParser parser = new SQLOPParser(query, TOKEN_TABLE);
+        final SQLOPParser parser = new SQLOPParser(addFromTargetQuotes(query), TOKEN_TABLE);
         final NodeTerm term = (NodeTerm) parser.parse();
 
 /*
@@ -47,10 +46,33 @@ class DefaultQueryParser implements QueryParser {
 */
 
         this.target = parseForTarget(term);
-        this.alias = parseForAlias(term);
         this.restriction = parseForRestriction(term);
         this.projection = parseForProjection(term);
         this.aggregation = parseForAggregation(term);
+    }
+
+    private String addFromTargetQuotes(final String query) {
+        final int fromKeywordStart = query.indexOf(FROM_KEYWORD);
+        final int fromKeywordEndPlusSpace = fromKeywordStart + FROM_KEYWORD.length() + 1;
+        final int nextSpaceAfterTarget = query.indexOf(" ", fromKeywordEndPlusSpace);
+
+        final String projectionIncludingFromPlusSpace = query.substring(0, fromKeywordEndPlusSpace);
+        final String queryWithQuotedTarget;
+
+        if (nextSpaceAfterTarget == -1) {
+            final String target = query.substring(fromKeywordEndPlusSpace);
+
+            queryWithQuotedTarget = format("%s '%s'", projectionIncludingFromPlusSpace, target);
+        } else  {
+            final String target = query.substring(fromKeywordEndPlusSpace, nextSpaceAfterTarget);
+            final String afterTarget = query.substring(nextSpaceAfterTarget);
+
+            queryWithQuotedTarget = format("%s '%s' %s", projectionIncludingFromPlusSpace, target, afterTarget);
+        }
+
+        System.out.println("Quoted query: " + queryWithQuotedTarget);
+
+        return queryWithQuotedTarget;
     }
 
     /**
@@ -67,14 +89,6 @@ class DefaultQueryParser implements QueryParser {
     @Override
     public String getTarget() {
         return target;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getAlias() {
-        return alias;
     }
 
     /**
@@ -103,10 +117,6 @@ class DefaultQueryParser implements QueryParser {
 
     private String parseForTarget(final NodeTerm term) {
         return atomicStringValueOf(term.findAttribute(FROM_KEYWORD));
-    }
-
-    private String parseForAlias(final NodeTerm term) {
-        return atomicStringValueOf(term.findAttribute(ALIAS_KEYWORD));
     }
 
     private Filter parseForRestriction(final NodeTerm term) {

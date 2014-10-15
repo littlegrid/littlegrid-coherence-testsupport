@@ -20,7 +20,9 @@ public interface ManagementService {
 
     boolean dropManagementInformationSnapshot(String snapshotName);
 
-    Collection<String> findSnapshots();
+    TabularResultSet findSnapshots();
+
+    TabularResultSet describeSnapshot(String snapshotName);
 
     Object updateManagementInformation(Object notSureYet);
 

@@ -187,11 +187,14 @@
                 <version>${cobertura-maven-plugin.version}</version>
             </plugin>
 
+<!--
+TODO: look to switch over to Jacoco and split into the usual demarcation between normal and integration tests.
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.6.3.201306030806</version>
             </plugin>
+-->
         </plugins>
     </reporting>
 
@@ -207,17 +210,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${maven-surefire-plugin.version}</version>
-<!--
-                        <configuration>
-                            <!–
-                                Due to the classes being loaded into different class loaders and coupled with
-                                the fact that these tests are all about testing that behaviour, the forking and
-                                below argLine settings are used to avoid the perm-space from becoming full.
-                            –>
-                            <forkMode>always</forkMode>
-                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=384m</argLine>
-                        </configuration>
--->
                         <configuration>
                             <forkCount>${fork.count}</forkCount>
                             <reuseForks>false</reuseForks>

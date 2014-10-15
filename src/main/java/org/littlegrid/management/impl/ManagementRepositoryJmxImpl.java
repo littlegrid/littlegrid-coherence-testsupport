@@ -4,19 +4,25 @@ import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
 import org.littlegrid.management.TabularResultSet;
 
+import javax.management.Attribute;
+import javax.management.AttributeList;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
 
 /**
  * Management repository JMX implementation.
@@ -27,7 +33,7 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
     private final MBeanServerConnection mBeanServerConnection;
 
     //TODO: think this through a bit more
-    private final Map<String, TabularResultSet> snapshots = new HashMap<String, TabularResultSet>();
+    private final Map<String, Snapshot> snapshots = new LinkedHashMap<String, Snapshot>();
 
     /**
      * Constructor.
@@ -91,8 +97,9 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
 
         final TabularResultSet results = performQuery(snapshotQuery);
 
-        snapshots.put(snapshotName, results);
+        snapshots.put(snapshotName, new Snapshot(snapshotQuery, results));
 
+        //TODO: check why return seems different from output
         return results.getRowCount() * results.getRowCount();
     }
 
@@ -101,27 +108,62 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
      */
     @Override
     public boolean dropManagementInformationSnapshot(final String snapshotName) {
-        final TabularResultSet results = snapshots.remove(snapshotName);
+        final Snapshot snapshot = snapshots.remove(snapshotName);
 
-        return results != null;
+        return snapshot != null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> findSnapshots() {
-        return new HashSet<String>(snapshots.keySet());
+    public TabularResultSet findSnapshots() {
+        final TabularResultSet summary = new DefaultTabularResultSet();
+
+        for (final Map.Entry<String, Snapshot> entry : snapshots.entrySet()) {
+            final Map<String, Object> row = new LinkedHashMap<String, Object>();
+            row.put("Name", entry.getKey());
+
+            final Snapshot snapshot = entry.getValue();
+
+            row.put("Query", snapshot.getQuery());
+            row.put("Created", snapshot.getCreatedDate());
+
+            final TabularResultSet results = snapshot.getResults();
+
+            row.put("Rows", results.getRowCount());
+            row.put("Column", results.getColumnCount());
+
+            summary.addRow(row);
+        }
+
+        return summary;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TabularResultSet describeSnapshot(final String snapshotName) {
+        final TabularResultSet results = new DefaultTabularResultSet();
+        final Snapshot snapshot = snapshots.get(snapshotName);
+
+        //TODO: check for null
+        for (String columnName : snapshot.getResults().getColumnNames()) {
+            results.addRow(Collections.<String, Object>singletonMap(columnName, "TODO"));
+        }
+
+        return results;
     }
 
     @SuppressWarnings("unchecked")
     private TabularResultSet performQuery(final String queryTarget) {
-        final TabularResultSet cachedResults = snapshots.get(queryTarget);
+        final Snapshot snapshot = snapshots.get(queryTarget);
 
-        if (cachedResults != null) {
+        if (snapshot != null) {
             LOGGER.info("Found snapshot for re-use");
 
-            return cachedResults;
+            return snapshot.getResults();
         }
 
         LOGGER.info(format("About to perform query using: %s", queryTarget));
@@ -138,11 +180,22 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
                 final Map<String, Object> row = new HashMap<String, Object>();
                 final MBeanAttributeInfo[] attributes = mBeanServerConnection.getMBeanInfo(objectName).getAttributes();
 
+                final Collection<String> keys = new ArrayList<String>();
+
                 //TODO: change this to getAttributes
                 for (final MBeanAttributeInfo info : attributes) {
                     final String key = info.getName();
 
-                    row.put(key, mBeanServerConnection.getAttribute(objectName, key));
+                    keys.add(key);
+                }
+
+                final AttributeList attributeList = mBeanServerConnection.getAttributes(objectName,
+                        keys.toArray(new String[keys.size()]));
+
+                for (final Object object : attributeList) {
+                    final Attribute attribute = (Attribute) object;
+
+                    row.put(attribute.getName(), attribute.getValue());
                 }
 
                 for (final Map.Entry entry : objectName.getKeyPropertyList().entrySet()) {
@@ -163,6 +216,31 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
             return results;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static class Snapshot {
+        private final Date createdDate = new Date();
+        private final String query;
+        private final TabularResultSet results;
+
+        private Snapshot(final String query,
+                         final TabularResultSet results) {
+
+            this.query = query;
+            this.results = results;
+        }
+
+        public Date getCreatedDate() {
+            return createdDate;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public TabularResultSet getResults() {
+            return results;
         }
     }
 }

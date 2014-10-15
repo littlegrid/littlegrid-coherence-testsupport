@@ -8,9 +8,10 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Tabular result implementation with default scope.
+ * Tabular result implementation.
  */
-class DefaultTabularResultSet implements TabularResultSet {
+//TODO: look to reduce scope again??
+public class DefaultTabularResultSet implements TabularResultSet {
     private final Collection<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
     private final Collection<String> columns = new HashSet<String>();
 

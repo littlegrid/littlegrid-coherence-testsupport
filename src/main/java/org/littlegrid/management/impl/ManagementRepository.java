@@ -43,5 +43,7 @@ interface ManagementRepository {
 
     boolean dropManagementInformationSnapshot(String snapshotName);
 
-    Collection<String> findSnapshots();
+    TabularResultSet findSnapshots();
+
+    TabularResultSet describeSnapshot(String snapshotName);
 }

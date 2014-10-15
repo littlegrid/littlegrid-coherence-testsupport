@@ -3,9 +3,13 @@ package org.littlegrid.app;
 import org.littlegrid.impl.Info;
 import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.ManagementUtils;
+import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.impl.DefaultTabularResultSet;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -36,11 +40,15 @@ class ManagementDslShell implements Shell {
     private static final String DATE_COMMAND = "date";
     private static final String HELP_COMMAND = "help";
     private static final String COMMENT_COMMAND = "#";
+    private static final String HISTORY_COMMAND = "history";
+    private static final String RE_RUN_COMMAND = "!";
+    private static final String DESC_COMMAND = "desc";
+
     private static final int MILLISECONDS_IN_SECOND = 1000;
 
-    private static final String CREATE_SNAPSHOT = "create snapshot ";
-    private static final String DROP_SNAPSHOT = "drop snapshot ";
-    private static final String SHOW_SNAPSHOTS = "show snapshots";
+    private static final String CREATE_SNAPSHOT_COMMAND = "create snapshot ";
+    private static final String DROP_SNAPSHOT_COMMAND = "drop snapshot ";
+    private static final String SHOW_SNAPSHOTS_COMMAND = "show snapshots";
 
     /**
      * Text to indicate an unknown command was used.
@@ -55,6 +63,9 @@ class ManagementDslShell implements Shell {
     private final Input in;
     private final Output out;
     private final ManagementService managementService;
+
+    //TODO: think this through more
+    private final TabularResultSet previousValidCommands = new DefaultTabularResultSet();
 
     public ManagementDslShell(final InputStream in,
                               final PrintStream out) {
@@ -155,6 +166,7 @@ class ManagementDslShell implements Shell {
                 } else if (command.startsWith(SELECT_COMMAND)) {
                     outputResponse = select(command);
                     response.incrementValidCommandsExecuted();
+                    addToPreviousCommands(command);
 
                 } else if (command.startsWith(COMMENT_COMMAND)) {
                     outputResponse = command;
@@ -164,17 +176,33 @@ class ManagementDslShell implements Shell {
                     outputResponse = displayHelp();
                     response.incrementCommentCommandsExecuted();
 
-                } else if (command.startsWith(CREATE_SNAPSHOT)) {
+                } else if (command.startsWith(CREATE_SNAPSHOT_COMMAND)) {
                     outputResponse = createSnapshot(command);
-                    response.incrementCommentCommandsExecuted();
+                    response.incrementValidCommandsExecuted();
+                    addToPreviousCommands(command);
 
-                } else if (command.startsWith(DROP_SNAPSHOT)) {
+                } else if (command.startsWith(DROP_SNAPSHOT_COMMAND)) {
                     outputResponse = dropSnapshot(command);
-                    response.incrementCommentCommandsExecuted();
+                    response.incrementValidCommandsExecuted();
+                    addToPreviousCommands(command);
 
-                } else if (command.startsWith(SHOW_SNAPSHOTS)) {
+                } else if (command.startsWith(SHOW_SNAPSHOTS_COMMAND)) {
                     outputResponse = showSnapshots();
-                    response.incrementCommentCommandsExecuted();
+                    response.incrementValidCommandsExecuted();
+                    addToPreviousCommands(command);
+
+                } else if (command.startsWith(DESC_COMMAND)) {
+                    outputResponse = desc(command);
+                    response.incrementValidCommandsExecuted();
+                    addToPreviousCommands(command);
+
+                } else if (command.equals(HISTORY_COMMAND)) {
+                    outputResponse = showPreviousValidCommands();
+                    response.incrementValidCommandsExecuted();
+
+                } else if (command.startsWith(RE_RUN_COMMAND)) {
+                    outputResponse = showSnapshots();
+                    response.incrementValidCommandsExecuted();
 
                 } else if (command.equals("")) {
                     outputResponse = "";
@@ -196,8 +224,52 @@ class ManagementDslShell implements Shell {
         return response;
     }
 
+    private String desc(final String command) {
+        final String snapshotName = parseSnapshotName(DESC_COMMAND, command);
+
+        return managementService.describeSnapshot(snapshotName).toString();
+    }
+
+    private void addToPreviousCommands(final String command) {
+        final int nextNumber = previousValidCommands.getRowCount() + 1;
+        final Map<String, Object> row = new LinkedHashMap<String, Object>();
+
+        row.put(Integer.toString(nextNumber), command);
+
+        previousValidCommands.addRow(row);
+    }
+
+    private String showPreviousValidCommands() {
+        return previousValidCommands.toString();
+    }
+
+    @Deprecated //TODO: refactor to re-use
+    private static int parseInteger(final String command,
+                                    final String commandAndNumber) {
+
+        return parseIntegers(command, NUMBER_DELIMITER, commandAndNumber)[0];
+    }
+
+    @Deprecated //TODO: refactor to re-use
+    private static int[] parseIntegers(final String command,
+                                       final String delimiter,
+                                       final String commandAndDelimitedNumbers) {
+
+        final String delimitedNumbers = commandAndDelimitedNumbers.replaceAll(command, "").replace("*", "");
+        final String[] stringNumbers = delimitedNumbers.trim().split(delimiter);
+
+        final int[] numbers = new int[stringNumbers.length];
+
+        for (int i = 0; i < numbers.length; i++) {
+            numbers[i] = Integer.parseInt(stringNumbers[i].trim());
+        }
+
+        return numbers;
+    }
+
     private String createSnapshot(final String command) {
-        final String snapshotNameAndQuery = command.replace(CREATE_SNAPSHOT, "").trim();
+        //TODO: use parse snapshot name
+        final String snapshotNameAndQuery = command.replace(CREATE_SNAPSHOT_COMMAND, "").trim();
         final int firstSpaceIndex = snapshotNameAndQuery.indexOf(" ");
         final String snapshotName = snapshotNameAndQuery.substring(0, firstSpaceIndex);
         final String snapshotQuery = snapshotNameAndQuery.substring(firstSpaceIndex).trim();
@@ -206,8 +278,17 @@ class ManagementDslShell implements Shell {
                 snapshotQuery)).toString();
     }
 
+    private String parseSnapshotName(final String keyword,
+                                     final String command) {
+
+        final String snapshotName = command.replace(keyword, "").trim();
+
+        return snapshotName;
+    }
+
     private String dropSnapshot(String command) {
-        final String snapshotName = command.replace(DROP_SNAPSHOT, "").trim();
+        //TODO: use parse snapshot name
+        final String snapshotName = command.replace(DROP_SNAPSHOT_COMMAND, "").trim();
 
         return new Boolean(managementService.dropManagementInformationSnapshot(snapshotName)).toString();
     }

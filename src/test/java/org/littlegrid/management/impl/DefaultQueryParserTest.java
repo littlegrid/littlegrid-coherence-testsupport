@@ -21,32 +21,58 @@ import static org.junit.Assert.assertThat;
  * Management query parser implementation tests.
  */
 public class DefaultQueryParserTest {
+    //TODO: include various tests where there are lots of spaces
+    
     @Test
     public void simpleSelect() {
         final String target = "test";
 
-        simpleSelect(target, target);
+        simpleSelect(target);
     }
 
     @Test
     public void simpleSelectUsingJmxTarget() {
         final String target = "Coherence:type=Node,nodeId=*";
-        final String quotedTarget = format("'%s'", target);
 
-        simpleSelect(quotedTarget, target);
+        simpleSelect(target);
     }
 
-    private void simpleSelect(final String fromTarget,
-                              final String expectedTarget) {
+    @Test
+    public void simpleSelectUsingJmxTargetUsingKeyInMapForProjection() {
+        final String target = "Coherence:type=Node,nodeId=*";
+        final String query = format("select get('nodeId') from %s", target);
 
-        final String query = format("select a, b from %s", fromTarget);
+        simpleSelectUsingKeyInMapForProjection(target, query);
+    }
+
+    @Test
+    public void simpleSelectUsingUsingKeyInMapForProjection() {
+        final String target = "node";
+        final String query = format("select get('nodeId') from %s", target);
+
+        simpleSelectUsingKeyInMapForProjection(target, query);
+    }
+
+    private void simpleSelectUsingKeyInMapForProjection(String target, String query) {
+        final QueryParser parser = new DefaultQueryParser(query);
+
+        assertThat(parser.isAggregation(), is(false));
+        assertThat(parser.getAggregation(), nullValue());
+
+        assertThat(parser.getTarget(), is(target));
+
+        assertThat(parser.getRestriction(), Is.<Filter>is(AlwaysFilter.INSTANCE));
+    }
+
+    private void simpleSelect(final String target) {
+        final String query = format("select a, b from %s", target);
 
         final QueryParser parser = new DefaultQueryParser(query);
 
         assertThat(parser.isAggregation(), is(false));
         assertThat(parser.getAggregation(), nullValue());
 
-        assertThat(parser.getTarget(), is(expectedTarget));
+        assertThat(parser.getTarget(), is(target));
 
         assertThat(parser.getRestriction(), Is.<Filter>is(AlwaysFilter.INSTANCE));
 
@@ -54,27 +80,6 @@ public class DefaultQueryParserTest {
                 new ReflectionExtractor("getA"),
                 new ReflectionExtractor("getB")
         });
-
-        assertThat(parser.getProjection(), is(extractor));
-    }
-
-    @Test
-    public void simpleSelectWithAlias() {
-        final String expectedTarget = "target";
-        final String expectedAlias = "snapshot";
-
-        final String query = format("select a from %s as %s", expectedTarget, expectedAlias);
-
-        final QueryParser parser = new DefaultQueryParser(query);
-
-        assertThat(parser.isAggregation(), is(false));
-        assertThat(parser.getAggregation(), nullValue());
-
-        assertThat(parser.getTarget(), is(expectedTarget));
-        assertThat(parser.getAlias(), is(expectedAlias));
-        assertThat(parser.getRestriction(), Is.<Filter>is(AlwaysFilter.INSTANCE));
-
-        final ValueExtractor extractor = new ReflectionExtractor("getA");
 
         assertThat(parser.getProjection(), is(extractor));
     }
@@ -105,7 +110,7 @@ public class DefaultQueryParserTest {
     }
 
     @Test
-    public void simpleSelectUsingKeyInMap() {
+    public void simpleSelectUsingKeyInMapForProjection() {
         final String keyInMap = "SomeKey";
         final String target = "test";
         final String query = format("select get('%s'), from %s ", keyInMap, target);

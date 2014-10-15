@@ -24,13 +24,6 @@ interface QueryParser {
     String getTarget();
 
     /**
-     * Returns the alias of the target.
-     *
-     * @return alias.
-     */
-    String getAlias();
-
-    /**
      * Returns the restriction.
      *
      * @return restriction.

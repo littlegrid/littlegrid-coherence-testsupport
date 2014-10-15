@@ -70,10 +70,18 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> findSnapshots() {
+    public TabularResultSet findSnapshots() {
         LOGGER.info("Experimental feature");
 
         return managementRepository.findSnapshots();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TabularResultSet describeSnapshot(final String snapshotName) {
+        return managementRepository.describeSnapshot(snapshotName);
     }
 
     /**
