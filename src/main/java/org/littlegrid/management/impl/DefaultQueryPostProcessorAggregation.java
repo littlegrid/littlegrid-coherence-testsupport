@@ -1,6 +1,7 @@
 package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
+import com.tangosol.util.InvocableMap;
 import com.tangosol.util.aggregator.CompositeAggregator;
 import org.littlegrid.management.TabularResultSet;
 
@@ -50,12 +51,19 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
         if (aggregationResult instanceof List) {
             resultsToReturn.addRow(createRowFromList(aggregation, aggregationResult));
         } else if (aggregationResult instanceof Map) {
-            throw new UnsupportedOperationException();
+            //TODO: add some tests
+            resultsToReturn.addRow(createRowFromMap(aggregation, aggregationResult));
         } else {
             resultsToReturn.addRow(singletonMap(aggregation.toString(), aggregationResult));
         }
 
         return resultsToReturn;
+    }
+
+    private static Map<String, Object> createRowFromMap(final EntryAggregator aggregation,
+                                                        final Object aggregationResult) {
+
+        return singletonMap("TODO", aggregationResult);
     }
 
     @SuppressWarnings("unchecked")

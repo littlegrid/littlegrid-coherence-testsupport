@@ -8,6 +8,9 @@ import org.littlegrid.management.impl.DefaultTabularResultSet;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -40,8 +43,9 @@ class ManagementDslShell implements Shell {
     private static final String DATE_COMMAND = "date";
     private static final String HELP_COMMAND = "help";
     private static final String COMMENT_COMMAND = "#";
-    private static final String HISTORY_COMMAND = "history";
+    private static final String HISTORY_COMMAND = "!";
     private static final String RE_RUN_COMMAND = "!";
+    private static final String ALIAS_COMMAND = "@";
     private static final String DESC_COMMAND = "desc";
 
     private static final int MILLISECONDS_IN_SECOND = 1000;
@@ -65,7 +69,7 @@ class ManagementDslShell implements Shell {
     private final ManagementService managementService;
 
     //TODO: think this through more
-    private final TabularResultSet previousValidCommands = new DefaultTabularResultSet();
+    private final Map<String, String> previousValidCommands = new LinkedHashMap<String, String>();
 
     public ManagementDslShell(final InputStream in,
                               final PrintStream out) {
@@ -114,6 +118,9 @@ class ManagementDslShell implements Shell {
             out.printlnInfo(format("littlegrid (%s) ManagementDSL shell ready - for list of commands type: help",
                     Info.getVersionNumber()));
 
+            out.printlnInfo("This console is ALPHA CODE and is being used to try out ideas that may go into liittlegrid");
+            out.printlnInfo("This console is NOT FOR PRODUCTION USE or any use where you could either get told off or sacked!");
+
             final Response commandStreamResponse = processCommandsStream();
             totalResponse.merge(commandStreamResponse);
         }
@@ -151,7 +158,16 @@ class ManagementDslShell implements Shell {
         final String[] commands = stringEntered.split(COMMAND_DELIMITER);
 
         for (String untrimmedCommand : commands) {
-            final String command = untrimmedCommand.trim();
+            final String candidateCommand = untrimmedCommand.trim();
+            final String command;
+
+            if (candidateCommand.startsWith(RE_RUN_COMMAND) && candidateCommand.length() > 1) {
+                //TODO: this could be better
+                command = previousValidCommands.get(candidateCommand);
+            } else {
+                command = candidateCommand;
+            }
+
             String outputResponse;
 
             try {
@@ -163,6 +179,11 @@ class ManagementDslShell implements Shell {
                     response.requestExit();
                     response.incrementValidCommandsExecuted();
 
+                } else if (command.startsWith(ALIAS_COMMAND)) {
+                    outputResponse = alias(command);
+                    response.incrementValidCommandsExecuted();
+                    addToPreviousCommands(command);
+
                 } else if (command.startsWith(SELECT_COMMAND)) {
                     outputResponse = select(command);
                     response.incrementValidCommandsExecuted();
@@ -173,7 +194,8 @@ class ManagementDslShell implements Shell {
                     response.incrementCommentCommandsExecuted();
 
                 } else if (command.startsWith(HELP_COMMAND)) {
-                    outputResponse = displayHelp();
+                    outputHelp();
+                    outputResponse = "";
                     response.incrementCommentCommandsExecuted();
 
                 } else if (command.startsWith(CREATE_SNAPSHOT_COMMAND)) {
@@ -200,10 +222,6 @@ class ManagementDslShell implements Shell {
                     outputResponse = showPreviousValidCommands();
                     response.incrementValidCommandsExecuted();
 
-                } else if (command.startsWith(RE_RUN_COMMAND)) {
-                    outputResponse = showSnapshots();
-                    response.incrementValidCommandsExecuted();
-
                 } else if (command.equals("")) {
                     outputResponse = "";
 
@@ -224,6 +242,10 @@ class ManagementDslShell implements Shell {
         return response;
     }
 
+    private String alias(String command) {
+        return select(command);
+    }
+
     private String desc(final String command) {
         final String snapshotName = parseSnapshotName(DESC_COMMAND, command);
 
@@ -231,16 +253,21 @@ class ManagementDslShell implements Shell {
     }
 
     private void addToPreviousCommands(final String command) {
-        final int nextNumber = previousValidCommands.getRowCount() + 1;
-        final Map<String, Object> row = new LinkedHashMap<String, Object>();
-
-        row.put(Integer.toString(nextNumber), command);
-
-        previousValidCommands.addRow(row);
+        final int nextNumber = previousValidCommands.size() + 1;
+        previousValidCommands.put(RE_RUN_COMMAND + nextNumber, command);
     }
 
     private String showPreviousValidCommands() {
-        return previousValidCommands.toString();
+        final TabularResultSet history = new DefaultTabularResultSet();
+
+        for (final Map.Entry<String, String> entry : previousValidCommands.entrySet()) {
+            final Map<String, Object> row = new HashMap<String, Object>();
+            row.put(entry.getKey(), entry.getValue());
+
+            history.addRow(row);
+        }
+
+        return history.toString();
     }
 
     @Deprecated //TODO: refactor to re-use
@@ -297,10 +324,24 @@ class ManagementDslShell implements Shell {
         return managementService.findSnapshots().toString();
     }
 
-    private String displayHelp() {
-        return "just select at the moment, e.g. "
-                + "select get('nodeId'), get('RequestMaxDuration') "
-                + "from 'Coherence:type=Service,name=DistributedCache,nodeId=*'";
+    private void outputHelp() {
+
+        out.printlnInfo(format("%s - exits application - same as %s and %s", BYE_COMMAND, QUIT_COMMAND, EXIT_COMMAND));
+        out.printlnInfo(format("%s - exits application - same as %s and %s", QUIT_COMMAND, BYE_COMMAND, EXIT_COMMAND));
+        out.printlnInfo(format("%s - exits application - same as %s and %s", EXIT_COMMAND, QUIT_COMMAND, BYE_COMMAND));
+
+/*
+        out.printlnInfo(format("%s duration_X - sleeps for the specified time in milliseconds, e.g. 1000", SLEEP_COMMAND));
+        out.printlnInfo(format("%s HH:MI:SS - sleeps until the specified time, e.g. 18:01:02", SLEEP_UNTIL_COMMAND));
+*/
+
+        out.printlnInfo(format("%s - displays this help", HELP_COMMAND));
+/*
+        out.printlnInfo(format("%s - displays the current date and time", DATE_COMMAND));
+*/
+        out.printlnInfo(format("%s - a comment line, useful when scripting and wanting to comment scripts",
+                COMMENT_COMMAND));
+
     }
 
     private String select(final String command) {

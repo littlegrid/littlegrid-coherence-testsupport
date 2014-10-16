@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
  */
 public class DefaultQueryParserTest {
     //TODO: include various tests where there are lots of spaces
-    
+
     @Test
     public void simpleSelect() {
         final String target = "test";

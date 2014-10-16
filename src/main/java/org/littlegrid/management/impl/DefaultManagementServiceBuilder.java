@@ -38,6 +38,7 @@ public class DefaultManagementServiceBuilder implements Builder {
     private String username;
     private String password;
     private MBeanServerConnection mBeanServerConnection;
+    private Properties aliases;
 
     /**
      * Constructor.
@@ -50,6 +51,9 @@ public class DefaultManagementServiceBuilder implements Builder {
         LOGGER.info(format("___ %s %s (%s) - initialised.  Management builder values: %s.  ",
                 Info.getName(), Info.getVersionNumber(), Info.getWebsiteAddress(),
                 builderKeysAndValuesLoadedSummary));
+
+        //TODO: still all experimental stuff
+        aliases = PropertiesUtils.loadProperties(Level.INFO, "littlegrid/littlegrid-management-alias-default.properties");
     }
 
     private void loadAndSetBuilderKeysAndValues(final Map<String, Integer> builderKeysAndValuesLoadedSummary) {
@@ -100,6 +104,19 @@ public class DefaultManagementServiceBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
+    public Builder setAliases(String commaDelimitedPropertiesFilenames) {
+        final Properties properties =
+                PropertiesUtils.loadProperties(Level.INFO, commaDelimitedPropertiesFilenames);
+
+        BeanUtils.multiSetter(this, properties);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Builder setUrlPath(final String urlPath) {
         this.urlPath = urlPath;
 
@@ -141,7 +158,7 @@ public class DefaultManagementServiceBuilder implements Builder {
             final MBeanServerConnection mBeanServer = jmxConnector.getMBeanServerConnection();
             final ManagementRepository managementRepository = new ManagementRepositoryJmxImpl(mBeanServer);
 
-            return new DefaultManagementService(managementRepository);
+            return new DefaultManagementService(managementRepository, aliases);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

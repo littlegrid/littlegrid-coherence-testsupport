@@ -5,6 +5,7 @@ import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.TabularResultSet;
 
 import java.util.Collection;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -14,14 +15,18 @@ class DefaultManagementService implements ManagementService {
     private static final Logger LOGGER = Logger.getLogger(DefaultManagementService.class.getName());
 
     private final ManagementRepository managementRepository;
+    private final Properties aliases;
 
     /**
      * Constructor.
      *
      * @param managementRepository  Management repository.
      */
-    public DefaultManagementService(final ManagementRepository managementRepository) {
+    public DefaultManagementService(final ManagementRepository managementRepository,
+                                    final Properties aliases) {
+
         this.managementRepository = managementRepository;
+        this.aliases = aliases;
     }
 
     /**
@@ -29,7 +34,15 @@ class DefaultManagementService implements ManagementService {
      */
     @Override
     public TabularResultSet findManagementInformation(final String query) {
-        final QueryParser parser = new DefaultQueryParser(query);
+        final String queryToExecute;
+
+        if (aliases.containsKey(query)) {
+            queryToExecute = aliases.getProperty(query);
+        } else {
+            queryToExecute = query;
+        }
+
+        final QueryParser parser = new DefaultQueryParser(queryToExecute);
         final String queryTarget = parser.getTarget();
         final Filter restriction = parser.getRestriction();
 
@@ -49,9 +62,17 @@ class DefaultManagementService implements ManagementService {
     public int createManagementInformationSnapshot(final String snapshotName,
                                                    final String snapshotQuery) {
 
-        LOGGER.info("Experimental feature");
+        LOGGER.info("Experimental feature: " + snapshotName + ", " + snapshotQuery);
 
-        final QueryParser parser = new DefaultQueryParser("select value() from " + snapshotQuery);
+        final String queryToExecute;
+
+        if (aliases.containsKey(snapshotQuery)) {
+            queryToExecute = aliases.getProperty(snapshotQuery);
+        } else {
+            queryToExecute = "select value() from " + snapshotQuery;
+        }
+
+        final QueryParser parser = new DefaultQueryParser(queryToExecute);
 
         return managementRepository.createManagementInformationSnapshot(snapshotName, parser.getTarget());
     }
