@@ -8,6 +8,8 @@ import java.util.Properties;
  * Management service.
  */
 public interface ManagementService {
+    String getAliasExpansionIndicator();
+
     /**
      * Finds management information based upon the supplied query.
      *
@@ -44,6 +46,10 @@ public interface ManagementService {
         Builder setPassword(String password);
 
         Builder setMBeanServerConnection(MBeanServerConnection mBeanServerConnection);
+
+        Builder setAliasExpansionIndicator(String aliasExpansionIndicator);
+
+        Builder setAliasValueDelimiter(String aliasValueDelimiter);
 
         ManagementService buildAndConnect();
     }

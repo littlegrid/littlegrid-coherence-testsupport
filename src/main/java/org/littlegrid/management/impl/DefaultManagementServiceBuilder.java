@@ -39,6 +39,8 @@ public class DefaultManagementServiceBuilder implements Builder {
     private String password;
     private MBeanServerConnection mBeanServerConnection;
     private Properties aliases;
+    private String aliasExpansionIndicator;
+    private String aliasValueDelimiter;
 
     /**
      * Constructor.
@@ -151,6 +153,23 @@ public class DefaultManagementServiceBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
+    public Builder setAliasExpansionIndicator(final String aliasExpansionIndicator) {
+        this.aliasExpansionIndicator = aliasExpansionIndicator;
+
+        return this;
+    }
+
+    @Override
+    public Builder setAliasValueDelimiter(final String aliasValueDelimiter) {
+        this.aliasValueDelimiter = aliasValueDelimiter;
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ManagementService buildAndConnect() {
         try {
             final JMXServiceURL jmxUrl = new JMXServiceURL(urlPath);
@@ -158,7 +177,8 @@ public class DefaultManagementServiceBuilder implements Builder {
             final MBeanServerConnection mBeanServer = jmxConnector.getMBeanServerConnection();
             final ManagementRepository managementRepository = new ManagementRepositoryJmxImpl(mBeanServer);
 
-            return new DefaultManagementService(managementRepository, aliases);
+            return new DefaultManagementService(managementRepository, aliases,
+                    aliasExpansionIndicator, aliasValueDelimiter);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

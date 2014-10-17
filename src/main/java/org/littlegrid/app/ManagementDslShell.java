@@ -45,7 +45,6 @@ class ManagementDslShell implements Shell {
     private static final String COMMENT_COMMAND = "#";
     private static final String HISTORY_COMMAND = "!";
     private static final String RE_RUN_COMMAND = "!";
-    private static final String ALIAS_COMMAND = "@";
     private static final String DESC_COMMAND = "desc";
 
     private static final int MILLISECONDS_IN_SECOND = 1000;
@@ -88,9 +87,9 @@ class ManagementDslShell implements Shell {
     /**
      * Constructor.
      *
-     * @param in  Input.
-     * @param out Output.
-     * @since 2.16
+     * @param in                Input.
+     * @param out               Output.
+     * @param managementService Management service.
      */
     public ManagementDslShell(final Input in,
                               final Output out,
@@ -162,7 +161,7 @@ class ManagementDslShell implements Shell {
             final String command;
 
             if (candidateCommand.startsWith(RE_RUN_COMMAND) && candidateCommand.length() > 1) {
-                //TODO: this could be better
+                //TODO: this could be better, chheck for null etc.. - but add tests first once idea stabilised.
                 command = previousValidCommands.get(candidateCommand);
             } else {
                 command = candidateCommand;
@@ -179,7 +178,7 @@ class ManagementDslShell implements Shell {
                     response.requestExit();
                     response.incrementValidCommandsExecuted();
 
-                } else if (command.startsWith(ALIAS_COMMAND)) {
+                } else if (command.startsWith(managementService.getAliasExpansionIndicator())) {
                     outputResponse = alias(command);
                     response.incrementValidCommandsExecuted();
                     addToPreviousCommands(command);
@@ -220,6 +219,7 @@ class ManagementDslShell implements Shell {
 
                 } else if (command.equals(HISTORY_COMMAND)) {
                     outputResponse = showPreviousValidCommands();
+
                     response.incrementValidCommandsExecuted();
 
                 } else if (command.equals("")) {
