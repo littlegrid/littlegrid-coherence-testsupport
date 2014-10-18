@@ -18,8 +18,8 @@ public interface ManagementService {
      */
     TabularResultSet findManagementInformation(String query);
 
-    int createManagementInformationSnapshot(String snapshotName,
-                                            String snapshotQuery);
+    TabularResultSet createManagementInformationSnapshot(String snapshotName,
+                                                         String snapshotQuery);
 
     boolean dropManagementInformationSnapshot(String snapshotName);
 

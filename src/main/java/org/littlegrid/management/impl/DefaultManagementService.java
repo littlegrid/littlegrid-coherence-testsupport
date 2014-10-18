@@ -5,7 +5,6 @@ import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.TabularResultSet;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -70,12 +69,13 @@ class DefaultManagementService implements ManagementService {
             } else {
                 alias = query.substring(startOfAlias, endOfAlias);
 
-                int endOfValuesToExpand = query.indexOf("", endOfAlias);
+                final int endOfValuesToExpand = query.indexOf(" ", endOfAlias + 1);
 
+                System.out.println("E: " + endOfValuesToExpand);
                 if (endOfValuesToExpand == -1) {
-                    valuesToExpand = null;
+                    valuesToExpand = query.substring(endOfAlias + 1);
                 } else {
-                    valuesToExpand = query.substring(endOfAlias, endOfValuesToExpand);
+                    valuesToExpand = query.substring(endOfAlias + 1, endOfValuesToExpand);
                 }
             }
 
@@ -99,7 +99,13 @@ class DefaultManagementService implements ManagementService {
 
                     LOGGER.info(format("About to expand: %s, using: %s", queryToExpand, Arrays.deepToString(valuesToUse)));
 
-                    final String expandedQuery = format(queryToExpand, valuesToUse);
+                    String expandedQuery = queryToExpand;
+                    int counter = 1;
+                    for (final String valueToUse : valuesToUse) {
+                        expandedQuery = expandedQuery.replaceAll("%" + counter, valueToUse);
+
+                        counter++;
+                    }
 
                     LOGGER.info(format("Expanded query: %s", expandedQuery));
 
@@ -129,8 +135,8 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public int createManagementInformationSnapshot(final String snapshotName,
-                                                   final String snapshotQuery) {
+    public TabularResultSet createManagementInformationSnapshot(final String snapshotName,
+                                                                final String snapshotQuery) {
 
         LOGGER.info("Experimental feature: " + snapshotName + ", " + snapshotQuery);
 
@@ -144,7 +150,8 @@ class DefaultManagementService implements ManagementService {
 
         final QueryParser parser = new DefaultQueryParser(queryToExecute);
 
-        return managementRepository.createManagementInformationSnapshot(snapshotName, parser.getTarget());
+        throw new UnsupportedOperationException();
+//        return managementRepository.createManagementInformationSnapshot(snapshotName, parser.getTarget());
     }
 
     /**

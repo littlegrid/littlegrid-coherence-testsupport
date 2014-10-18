@@ -55,22 +55,6 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
         final TabularResultSet queryResults = performQuery(queryTarget);
 
         return new DefaultQueryPostProcessorProjection(queryResults, projection, restriction).getResult();
-
-//        final Set<Map.Entry> results2 = PostQueryResultUtils.performPostRestriction(results, restriction);
-
-//        final Collection<Map<String, Object>> results3 = PostQueryResultUtils.performPostProjection(results2, projection);
-//        System.out.println("After restriction: " + results2);
-        /*
-            Perform the query
-
-            Determine the MBean type returned
-
-            Populate the model
-
-            Perform the post restriction and projection
-
-            Convert the results from the model into the generic return type.
-         */
     }
 
     /**

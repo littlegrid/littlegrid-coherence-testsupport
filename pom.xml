@@ -53,7 +53,8 @@
             <groupId>com.oracle.coherence</groupId>
             <artifactId>coherence</artifactId>
             <version>${coherence.version}</version>
-            <scope>provided</scope>
+<!--TODO: changed to default for now -->
+            <!--<scope>provided</scope>-->
         </dependency>
     </dependencies>
 

@@ -117,7 +117,7 @@ class ManagementDslShell implements Shell {
             out.printlnInfo(format("littlegrid (%s) ManagementDSL shell ready - for list of commands type: help",
                     Info.getVersionNumber()));
 
-            out.printlnInfo("This console is ALPHA CODE and is being used to try out ideas that may go into liittlegrid");
+            out.printlnInfo("This console is ALPHA CODE and is being used to try out ideas that may go into littlegrid");
             out.printlnInfo("This console is NOT FOR PRODUCTION USE or any use where you could either get told off or sacked!");
 
             final Response commandStreamResponse = processCommandsStream();
@@ -301,8 +301,11 @@ class ManagementDslShell implements Shell {
         final String snapshotName = snapshotNameAndQuery.substring(0, firstSpaceIndex);
         final String snapshotQuery = snapshotNameAndQuery.substring(firstSpaceIndex).trim();
 
+        throw new UnsupportedOperationException();
+/*
         return new Integer(managementService.createManagementInformationSnapshot(snapshotName,
                 snapshotQuery)).toString();
+*/
     }
 
     private String parseSnapshotName(final String keyword,
