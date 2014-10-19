@@ -74,17 +74,29 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public int createManagementInformationSnapshot(final String snapshotName,
-                                                   final String snapshotQuery) {
+    public TabularResultSet createManagementInformationSnapshot(final String snapshotName,
+                                                                final String snapshotQuery) {
 
         LOGGER.info(format("About to create snapshot '%s' using '%s' query", snapshotName, snapshotQuery));
 
         final TabularResultSet results = performQuery(snapshotQuery);
 
-        snapshots.put(snapshotName, new Snapshot(snapshotQuery, results));
+        final String createdSnapshotName;
 
-        //TODO: check why return seems different from output
-        return results.getRowCount() * results.getRowCount();
+        if (snapshotName.startsWith("~")) {
+            createdSnapshotName = snapshotName;
+        } else {
+            createdSnapshotName = "~" + snapshotName;
+        }
+
+        snapshots.put(createdSnapshotName, new Snapshot(snapshotQuery, results));
+
+        final TabularResultSet snapshotDetails = new DefaultTabularResultSet();
+        snapshotDetails.addRow(Collections.<String, Object>singletonMap("Name", createdSnapshotName));
+        snapshotDetails.addRow(Collections.<String, Object>singletonMap("Rows", results.getRowCount()));
+        snapshotDetails.addRow(Collections.<String, Object>singletonMap("Columns", results.getColumnCount()));
+
+        return snapshotDetails;
     }
 
     /**
@@ -132,9 +144,10 @@ class ManagementRepositoryJmxImpl implements ManagementRepository {
         final TabularResultSet results = new DefaultTabularResultSet();
         final Snapshot snapshot = snapshots.get(snapshotName);
 
-        //TODO: check for null
-        for (String columnName : snapshot.getResults().getColumnNames()) {
-            results.addRow(Collections.<String, Object>singletonMap(columnName, "TODO"));
+        if (snapshot != null) {
+            for (String columnName : snapshot.getResults().getColumnNames()) {
+                results.addRow(Collections.<String, Object>singletonMap(columnName, "TODO"));
+            }
         }
 
         return results;

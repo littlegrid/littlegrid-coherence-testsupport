@@ -4,12 +4,14 @@ import org.littlegrid.impl.Info;
 import org.littlegrid.management.ManagementService;
 import org.littlegrid.support.BeanUtils;
 import org.littlegrid.support.PropertiesUtils;
+import org.littlegrid.support.StringUtils;
 import org.littlegrid.support.SystemUtils;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +41,8 @@ public class DefaultManagementServiceBuilder implements Builder {
     private String password;
     private MBeanServerConnection mBeanServerConnection;
     private Properties aliases;
-    private String aliasExpansionIndicator;
+    private String aliasPrefix;
+    private String snapshotPrefix;
     private String aliasValueDelimiter;
 
     /**
@@ -55,7 +58,8 @@ public class DefaultManagementServiceBuilder implements Builder {
                 builderKeysAndValuesLoadedSummary));
 
         //TODO: still all experimental stuff
-        aliases = PropertiesUtils.loadProperties(Level.INFO, "littlegrid/littlegrid-management-alias-default.properties");
+        aliases = PropertiesUtils.loadProperties(Level.INFO,
+                "littlegrid/littlegrid-management-alias-default.properties");
     }
 
     private void loadAndSetBuilderKeysAndValues(final Map<String, Integer> builderKeysAndValuesLoadedSummary) {
@@ -130,7 +134,9 @@ public class DefaultManagementServiceBuilder implements Builder {
      */
     @Override
     public Builder setUsername(final String username) {
-        throw new UnsupportedOperationException();
+        this.username = username;
+
+        return this;
     }
 
     /**
@@ -138,7 +144,9 @@ public class DefaultManagementServiceBuilder implements Builder {
      */
     @Override
     public Builder setPassword(final String password) {
-        throw new UnsupportedOperationException();
+        this.password = password;
+
+        return this;
     }
 
     /**
@@ -153,12 +161,25 @@ public class DefaultManagementServiceBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
-    public Builder setAliasExpansionIndicator(final String aliasExpansionIndicator) {
-        this.aliasExpansionIndicator = aliasExpansionIndicator;
+    public Builder setAliasPrefix(final String aliasPrefix) {
+        this.aliasPrefix = aliasPrefix;
 
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Builder setSnapshotPrefix(final String snapshotPrefix) {
+        this.snapshotPrefix = snapshotPrefix;
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Builder setAliasValueDelimiter(final String aliasValueDelimiter) {
         this.aliasValueDelimiter = aliasValueDelimiter;
@@ -172,15 +193,23 @@ public class DefaultManagementServiceBuilder implements Builder {
     @Override
     public ManagementService buildAndConnect() {
         try {
+            final Map<String, Object> env = new HashMap<String, Object>();
+
+            if (StringUtils.stringHasValue(username)) {
+                final String[] credentials = {username, password};
+
+                env.put(JMXConnector.CREDENTIALS, credentials);
+            }
+
             final JMXServiceURL jmxUrl = new JMXServiceURL(urlPath);
-            final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, null);
+            final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, env);
             final MBeanServerConnection mBeanServer = jmxConnector.getMBeanServerConnection();
             final ManagementRepository managementRepository = new ManagementRepositoryJmxImpl(mBeanServer);
 
             return new DefaultManagementService(managementRepository, aliases,
-                    aliasExpansionIndicator, aliasValueDelimiter);
+                    aliasPrefix, aliasValueDelimiter);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(format("Exception connecting to MBean server: %s", e));
         }
     }
 }

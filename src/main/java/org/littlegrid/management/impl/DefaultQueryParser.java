@@ -12,6 +12,8 @@ import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.filter.AlwaysFilter;
 
+import javax.xml.soap.Node;
+
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 import static java.lang.String.format;
 
@@ -184,8 +186,8 @@ class DefaultQueryParser implements QueryParser {
     }
 
     private ValueExtractor parseForProjection(final NodeTerm term) {
-        final Term projectionTerm = parseForProjectionTerm(term);
-        final SelectListMaker selectMaker = new SelectListMaker((NodeTerm) projectionTerm);
+        final NodeTerm projectionTerm = parseForProjectionTerm(term);
+        final SelectListMaker selectMaker = new SelectListMaker(projectionTerm);
         selectMaker.makeSelects();
 
         return selectMaker.getResultsAsValueExtractor();
@@ -207,8 +209,8 @@ class DefaultQueryParser implements QueryParser {
         return term.findChild(COHQL_IS_DISTINCT_KEYWORD);
     }
 
-    private Term parseForProjectionTerm(final NodeTerm term) {
-        return term.findChild(COHQL_FIELD_LIST_KEYWORD);
+    private NodeTerm parseForProjectionTerm(final NodeTerm term) {
+        return (NodeTerm) term.findChild(COHQL_FIELD_LIST_KEYWORD);
     }
 
     private String atomicStringValueOf(final Term term) {

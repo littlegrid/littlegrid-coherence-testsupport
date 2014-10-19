@@ -42,7 +42,7 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public String getAliasExpansionIndicator() {
+    public String getAliasPrefix() {
         return aliasExpansionIndicator;
     }
 
@@ -150,8 +150,7 @@ class DefaultManagementService implements ManagementService {
 
         final QueryParser parser = new DefaultQueryParser(queryToExecute);
 
-        throw new UnsupportedOperationException();
-//        return managementRepository.createManagementInformationSnapshot(snapshotName, parser.getTarget());
+        return managementRepository.createManagementInformationSnapshot(snapshotName, parser.getTarget());
     }
 
     /**

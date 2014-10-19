@@ -8,8 +8,6 @@ import org.littlegrid.management.impl.DefaultTabularResultSet;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,8 +47,8 @@ class ManagementDslShell implements Shell {
 
     private static final int MILLISECONDS_IN_SECOND = 1000;
 
-    private static final String CREATE_SNAPSHOT_COMMAND = "create snapshot ";
-    private static final String DROP_SNAPSHOT_COMMAND = "drop snapshot ";
+    private static final String CREATE_SNAPSHOT_COMMAND = "create snapshot";
+    private static final String DROP_SNAPSHOT_COMMAND = "drop snapshot";
     private static final String SHOW_SNAPSHOTS_COMMAND = "show snapshots";
 
     /**
@@ -178,7 +176,7 @@ class ManagementDslShell implements Shell {
                     response.requestExit();
                     response.incrementValidCommandsExecuted();
 
-                } else if (command.startsWith(managementService.getAliasExpansionIndicator())) {
+                } else if (command.startsWith(managementService.getAliasPrefix())) {
                     outputResponse = alias(command);
                     response.incrementValidCommandsExecuted();
                     addToPreviousCommands(command);
@@ -296,16 +294,13 @@ class ManagementDslShell implements Shell {
 
     private String createSnapshot(final String command) {
         //TODO: use parse snapshot name
-        final String snapshotNameAndQuery = command.replace(CREATE_SNAPSHOT_COMMAND, "").trim();
+        final String snapshotNameAndQuery = command.replace(CREATE_SNAPSHOT_COMMAND + " ", "").trim();
         final int firstSpaceIndex = snapshotNameAndQuery.indexOf(" ");
         final String snapshotName = snapshotNameAndQuery.substring(0, firstSpaceIndex);
         final String snapshotQuery = snapshotNameAndQuery.substring(firstSpaceIndex).trim();
 
-        throw new UnsupportedOperationException();
-/*
-        return new Integer(managementService.createManagementInformationSnapshot(snapshotName,
+        return (managementService.createManagementInformationSnapshot(snapshotName,
                 snapshotQuery)).toString();
-*/
     }
 
     private String parseSnapshotName(final String keyword,
@@ -318,7 +313,7 @@ class ManagementDslShell implements Shell {
 
     private String dropSnapshot(String command) {
         //TODO: use parse snapshot name
-        final String snapshotName = command.replace(DROP_SNAPSHOT_COMMAND, "").trim();
+        final String snapshotName = command.replace(DROP_SNAPSHOT_COMMAND + " ", "").trim();
 
         return new Boolean(managementService.dropManagementInformationSnapshot(snapshotName)).toString();
     }
@@ -329,8 +324,18 @@ class ManagementDslShell implements Shell {
 
     private void outputHelp() {
 
-        out.printlnInfo(format("%s - exits application - same as %s and %s", BYE_COMMAND, QUIT_COMMAND, EXIT_COMMAND));
-        out.printlnInfo(format("%s - exits application - same as %s and %s", QUIT_COMMAND, BYE_COMMAND, EXIT_COMMAND));
+        out.printlnInfo(format("%s - perform select using a projection (columns) or aggregation (e.g. sum) from "
+                + "a target with optional where and group by", SELECT_COMMAND));
+
+        out.printlnInfo(format("%s snapshotName selectStatement|alias - creates a snapshot ",
+                CREATE_SNAPSHOT_COMMAND));
+
+        out.printlnInfo(format("%s - displays information about snapshots", SHOW_SNAPSHOTS_COMMAND));
+        out.printlnInfo(format("%s snapshotName - drops the specified snapshot", DROP_SNAPSHOT_COMMAND));
+        out.printlnInfo(format("%s objectName - describes an object, such as a snapshot", DESC_COMMAND));
+        out.printlnInfo(format("%s - displays the command history", HISTORY_COMMAND));
+        out.printlnInfo(format("%s_X - where _X is a number relating to a command history entry", HISTORY_COMMAND));
+
         out.printlnInfo(format("%s - exits application - same as %s and %s", EXIT_COMMAND, QUIT_COMMAND, BYE_COMMAND));
 
 /*

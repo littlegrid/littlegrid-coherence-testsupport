@@ -38,8 +38,8 @@ interface ManagementRepository {
                                                          String queryTarget,
                                                          Filter restriction);
 
-    int createManagementInformationSnapshot(String snapshotName,
-                                            String snapshotQuery);
+    TabularResultSet createManagementInformationSnapshot(String snapshotName,
+                                                         String snapshotQuery);
 
     boolean dropManagementInformationSnapshot(String snapshotName);
 

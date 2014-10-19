@@ -8,7 +8,7 @@ import java.util.Properties;
  * Management service.
  */
 public interface ManagementService {
-    String getAliasExpansionIndicator();
+    String getAliasPrefix();
 
     /**
      * Finds management information based upon the supplied query.
@@ -47,7 +47,9 @@ public interface ManagementService {
 
         Builder setMBeanServerConnection(MBeanServerConnection mBeanServerConnection);
 
-        Builder setAliasExpansionIndicator(String aliasExpansionIndicator);
+        Builder setAliasPrefix(String aliasPrefix);
+
+        Builder setSnapshotPrefix(String snapshotPrefix);
 
         Builder setAliasValueDelimiter(String aliasValueDelimiter);
 
