@@ -1,3 +1,34 @@
+/*
+ * Copyright (c) 2010-2014 Jonathan Hall.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the littlegrid nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.littlegrid.management.impl;
 
 import com.tangosol.coherence.dslquery.CoherenceQueryLanguage;
@@ -12,13 +43,16 @@ import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.filter.AlwaysFilter;
 
-import javax.xml.soap.Node;
-
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 import static java.lang.String.format;
+import static org.littlegrid.management.impl.TermUtils.FIELD_LIST_TERM_KEYWORD;
+import static org.littlegrid.management.impl.TermUtils.IS_DISTINCT_TERM_KEYWORD;
+import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD;
 
 /**
  * Management query parser default implementation.
+ *
+ * @since 2.16
  */
 class DefaultQueryParser implements QueryParser {
     private static final TokenTable TOKEN_TABLE = CoherenceQueryLanguage.getSqlTokenTable(false);
@@ -29,9 +63,6 @@ class DefaultQueryParser implements QueryParser {
     private static final String SPACE_FROM_KEYWORD_PLUS_SPACE = SPACE + FROM_KEYWORD + SPACE;
     private static final String SPACE_WHERE_KEYWORD_PLUS_SPACE = SPACE + "where" + SPACE;
     private static final String SPACE_GROUP_BY_WHERE = SPACE + "group by" + SPACE;
-    private static final String COHQL_FIELD_LIST_KEYWORD = "fieldList";
-    private static final String COHQL_IS_DISTINCT_KEYWORD = "isDistinct";
-    private static final String COHQL_WHERE_CLAUSE_KEYWORD = "whereClause";
 
     private final ValueExtractor projection;
     private final EntryAggregator aggregation;
@@ -82,10 +113,10 @@ class DefaultQueryParser implements QueryParser {
         final int fromEndPositionPlusSpaceImpliedTargetStart =
                 fromStartPosition + SPACE_FROM_KEYWORD_PLUS_SPACE.length();
 
-        final int whereStartPosition =  lowerCaseTrimmedQuery.indexOf(SPACE_WHERE_KEYWORD_PLUS_SPACE);
+        final int whereStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_WHERE_KEYWORD_PLUS_SPACE);
         final int targetEndPosition;
 
-        if (whereStartPosition == - 1) {
+        if (whereStartPosition == -1) {
             final int groupByStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_GROUP_BY_WHERE,
                     fromEndPositionPlusSpaceImpliedTargetStart);
 
@@ -202,15 +233,15 @@ class DefaultQueryParser implements QueryParser {
     }
 
     private Term parseForAggregationTerm(NodeTerm term) {
-        return term.findChild(COHQL_FIELD_LIST_KEYWORD);
+        return term.findChild(FIELD_LIST_TERM_KEYWORD);
     }
 
     private Term parseDistinctTerm(NodeTerm term) {
-        return term.findChild(COHQL_IS_DISTINCT_KEYWORD);
+        return term.findChild(IS_DISTINCT_TERM_KEYWORD);
     }
 
     private NodeTerm parseForProjectionTerm(final NodeTerm term) {
-        return (NodeTerm) term.findChild(COHQL_FIELD_LIST_KEYWORD);
+        return (NodeTerm) term.findChild(FIELD_LIST_TERM_KEYWORD);
     }
 
     private String atomicStringValueOf(final Term term) {
@@ -226,14 +257,13 @@ class DefaultQueryParser implements QueryParser {
     }
 
     private Term parseForRestrictionTerm(final NodeTerm term) {
-        final Term child = term.findChild(COHQL_WHERE_CLAUSE_KEYWORD);
+        final Term child = term.findChild(WHERE_CLAUSE_TERM_KEYWORD);
+        final int childCount = child.length();
 
-        if (child == null) {
+        if (childCount == 0) {
             return null;
-        }
-
-        if (child.length() == 1) {
-            return child.termAt(1);
+        } else if (childCount == 1) {
+            return child.termAt(childCount);
         } else {
             return null;
         }

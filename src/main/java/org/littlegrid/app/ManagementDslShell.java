@@ -8,10 +8,14 @@ import org.littlegrid.management.impl.DefaultTabularResultSet;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
@@ -43,6 +47,7 @@ class ManagementDslShell implements Shell {
     private static final String COMMENT_COMMAND = "#";
     private static final String HISTORY_COMMAND = "!";
     private static final String RE_RUN_COMMAND = "!";
+    private static final String RE_RUN_PREVIOUS_COMMAND = "!!";
     private static final String DESC_COMMAND = "desc";
 
     private static final int MILLISECONDS_IN_SECOND = 1000;
@@ -116,7 +121,7 @@ class ManagementDslShell implements Shell {
                     Info.getVersionNumber()));
 
             out.printlnInfo("This console is ALPHA CODE and is being used to try out ideas that may go into littlegrid");
-            out.printlnInfo("This console is NOT FOR PRODUCTION USE or any use where you could either get told off or sacked!");
+            out.printlnInfo("This console is NOT-FOR-PRODUCTION-USE or any use where you could either get shouted at or sacked!");
 
             final Response commandStreamResponse = processCommandsStream();
             totalResponse.merge(commandStreamResponse);
@@ -150,7 +155,6 @@ class ManagementDslShell implements Shell {
     }
 
     private Response processCommandsString(final String stringEntered) {
-
         final Response response = new DefaultResponse();
         final String[] commands = stringEntered.split(COMMAND_DELIMITER);
 
@@ -158,7 +162,15 @@ class ManagementDslShell implements Shell {
             final String candidateCommand = untrimmedCommand.trim();
             final String command;
 
-            if (candidateCommand.startsWith(RE_RUN_COMMAND) && candidateCommand.length() > 1) {
+            if (candidateCommand.equals(RE_RUN_PREVIOUS_COMMAND)) {
+                final List<String> values = new ArrayList<String>(previousValidCommands.values());
+
+                if (values.isEmpty()) {
+                    command = candidateCommand;
+                } else {
+                    command = values.get(values.size() - 1);
+                }
+            } else if (candidateCommand.startsWith(RE_RUN_COMMAND) && candidateCommand.length() > 1) {
                 //TODO: this could be better, chheck for null etc.. - but add tests first once idea stabilised.
                 command = previousValidCommands.get(candidateCommand);
             } else {

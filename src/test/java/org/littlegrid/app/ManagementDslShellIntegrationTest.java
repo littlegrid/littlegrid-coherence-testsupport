@@ -31,23 +31,47 @@
 
 package org.littlegrid.app;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupUtils;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 /**
- * Application utilities.
+ * Management DSL shell integration tests.
  */
-class AppUtils {
-    /**
-     * Default scope to enable test coverage.
-     */
-    protected AppUtils() {
-        throw new UnsupportedOperationException();
+public class ManagementDslShellIntegrationTest {
+    private static ClusterMemberGroup memberGroup;
+
+    @BeforeClass
+    public static void beforeTests() {
+        memberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setStorageEnabledCount(1)
+                .setJmxMonitorCount(1)
+                .buildAndConfigureForStorageDisabledClient();
     }
 
-    /**
-     * Exit.
-     *
-     * @param status status.
-     */
-    public void systemExit(final int status) {
-        System.exit(status);
+    @AfterClass
+    public static void afterTests() {
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
+    }
+
+
+    @Test
+    @Ignore
+    public void whatever() {
+        final Shell.Response response = new ManagementDslShell(System.in, System.out)
+                .start(new String[]{"commands=stop member 1; bye"});
+
+        assertThat(response.getValidCommandsExecuted(), is(2));
+        assertThat(response.getInvalidCommandsExecuted(), is(0));
+        assertThat(response.getUnknownCommandsExecuted(), is(0));
+        assertThat(response.getCommentCommandsExecuted(), is(0));
+        assertThat(response.isExitRequested(), is(true));
     }
 }

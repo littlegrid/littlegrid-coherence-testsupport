@@ -1,3 +1,34 @@
+/*
+ * Copyright (c) 2010-2014 Jonathan Hall.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the littlegrid nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
@@ -12,29 +43,33 @@ import static java.lang.String.format;
 
 /**
  * Management service implementation.
+ *
+ * @since 2.16
  */
 class DefaultManagementService implements ManagementService {
     private static final Logger LOGGER = Logger.getLogger(DefaultManagementService.class.getName());
 
     private final ManagementRepository managementRepository;
     private final Properties aliases;
-    private final String aliasExpansionIndicator;
+    private final String aliasPrefix;
     private final String aliasValueDelimiter;
 
     /**
      * Constructor.
      *
      * @param managementRepository Management repository.
-     * @param aliasValueDelimiter
+     * @param aliases              Aliases,
+     * @param aliasPrefix          Alias prefix.
+     * @param aliasValueDelimiter  Delimiter between alias values.
      */
     public DefaultManagementService(final ManagementRepository managementRepository,
                                     final Properties aliases,
-                                    final String aliasExpansionIndicator,
+                                    final String aliasPrefix,
                                     final String aliasValueDelimiter) {
 
         this.managementRepository = managementRepository;
         this.aliases = aliases;
-        this.aliasExpansionIndicator = aliasExpansionIndicator;
+        this.aliasPrefix = aliasPrefix;
         this.aliasValueDelimiter = aliasValueDelimiter;
     }
 
@@ -43,7 +78,7 @@ class DefaultManagementService implements ManagementService {
      */
     @Override
     public String getAliasPrefix() {
-        return aliasExpansionIndicator;
+        return aliasPrefix;
     }
 
     /**
@@ -54,10 +89,10 @@ class DefaultManagementService implements ManagementService {
         final String queryToExecute;
 
         //TODO: hack something to test concept
-        if (query.contains(aliasExpansionIndicator)) {
+        if (query.contains(aliasPrefix)) {
             LOGGER.info("Alias expansion to be performed");
 
-            final int startOfAlias = query.indexOf(aliasExpansionIndicator);
+            final int startOfAlias = query.indexOf(aliasPrefix);
             final int endOfAlias = query.indexOf(":", startOfAlias);
 
             final String alias;

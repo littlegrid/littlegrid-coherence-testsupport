@@ -29,34 +29,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.management;
+package org.littlegrid.management.impl;
 
-import java.util.Collection;
-import java.util.Map;
+import org.junit.Ignore;
 
 /**
- * Query result.
+ * Management repository JMX implementation tests.
  */
-public interface TabularResultSet {
-    void addRow(Map<String, Object> result);
-
-    /**
-     * @return returns the column names in the result.
-     */
-    Collection<String> getColumnNames();
-
-    /**
-     * @return returns the number of rows in the result.
-     */
-    int getRowCount();
-
-    /**
-     * @return returns the number of columns in the result.
-     */
-    int getColumnCount();
-
-    /**
-     * @return returns the data within the result.
-     */
-    Collection<Map<String, Object>> getRows();
+@Ignore
+public class ManagementRepositoryJmxImplTest {
 }
