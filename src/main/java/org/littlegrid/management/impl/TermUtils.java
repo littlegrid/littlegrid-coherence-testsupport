@@ -33,7 +33,10 @@ package org.littlegrid.management.impl;
 
 import com.tangosol.coherence.dsltools.termtrees.Term;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
+import static java.lang.String.format;
 
 /**
  * Terms utilities.
@@ -61,17 +64,20 @@ public class TermUtils {
 //        final
 
 
-
-
         throw new UnsupportedOperationException();
     }
 
     static Collection<String> getAllLiterals(final Term term) {
-        if (!term.getFunctor().equals(FIELD_LIST_TERM_KEYWORD)) {
-            throw new UnsupportedOperationException();
+        final String functor = term.getFunctor();
+
+        if (!functor.equals(FIELD_LIST_TERM_KEYWORD)) {
+            throw new IllegalArgumentException(format("Argument was not a: %s, but instead was wrongly: %s",
+                    FIELD_LIST_TERM_KEYWORD, functor));
         }
 
+        final Collection<String> literals = new ArrayList<String>();
 
-        throw new UnsupportedOperationException();
+
+        return literals;
     }
 }

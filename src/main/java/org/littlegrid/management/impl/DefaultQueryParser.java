@@ -43,6 +43,9 @@ import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.filter.AlwaysFilter;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 import static java.lang.String.format;
 import static org.littlegrid.management.impl.TermUtils.FIELD_LIST_TERM_KEYWORD;
@@ -56,13 +59,18 @@ import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD
  */
 class DefaultQueryParser implements QueryParser {
     private static final TokenTable TOKEN_TABLE = CoherenceQueryLanguage.getSqlTokenTable(false);
-    private static final String SPACE = " ";
+    private static final String BACK_TICK_PATTERN = "`(?:(?)[^`])*`";
+    private static final String SINGLE_SPACE = " ";
+    private static final String SINGLE_QUOTE = "'";
+    private static final String SINGLE_BACK_TICK = "`";
     private static final String SELECT_KEYWORD = "select";
-    private static final String SELECT_KEYWORD_PLUS_SPACE = SELECT_KEYWORD + SPACE;
     private static final String FROM_KEYWORD = "from";
-    private static final String SPACE_FROM_KEYWORD_PLUS_SPACE = SPACE + FROM_KEYWORD + SPACE;
-    private static final String SPACE_WHERE_KEYWORD_PLUS_SPACE = SPACE + "where" + SPACE;
-    private static final String SPACE_GROUP_BY_WHERE = SPACE + "group by" + SPACE;
+    private static final String WHERE_KEYWORD = "where";
+    private static final String GROUP_BY_KEYWORD = "group by";
+    private static final String SELECT_PLUS_SPACE = SELECT_KEYWORD + SINGLE_SPACE;
+    private static final String SPACE_FROM_PLUS_SPACE = SINGLE_SPACE + FROM_KEYWORD + SINGLE_SPACE;
+    private static final String SPACE_WHERE_PLUS_SPACE = SINGLE_SPACE + WHERE_KEYWORD + SINGLE_SPACE;
+    private static final String SPACE_GROUP_BY_SPACE = SINGLE_SPACE + GROUP_BY_KEYWORD + SINGLE_SPACE;
 
     private final ValueExtractor projection;
     private final EntryAggregator aggregation;
@@ -78,7 +86,8 @@ class DefaultQueryParser implements QueryParser {
         final String queryEnsuredFrom = ensureFromIsPresent(query);
         final String queryEnsuredSelect = ensureSelectIsPresent(queryEnsuredFrom);
         final String queryEnsuredQuotes = ensureFromTargetHasQuotes(queryEnsuredSelect);
-        final SQLOPParser parser = new SQLOPParser(queryEnsuredQuotes, TOKEN_TABLE);
+        final String queryEnsuredGetters = ensureBackTicksConvertedToMapGets(queryEnsuredQuotes);
+        final SQLOPParser parser = new SQLOPParser(queryEnsuredGetters, TOKEN_TABLE);
         final NodeTerm nodeTerm;
 
         try {
@@ -100,24 +109,40 @@ class DefaultQueryParser implements QueryParser {
         this.aggregation = parseForAggregation(nodeTerm);
     }
 
+    static String ensureBackTicksConvertedToMapGets(final String query) {
+        final Pattern pattern = Pattern.compile(BACK_TICK_PATTERN);
+        final Matcher matcher = pattern.matcher(query);
+
+        String result = query;
+
+        while (matcher.find()) {
+            final String group = matcher.group();
+            final String unbackTickedGroup = group.replaceAll(SINGLE_BACK_TICK, "");
+
+            result = result.replaceFirst(group, "get('" + unbackTickedGroup + "')");
+        }
+
+        return result;
+    }
+
     static String ensureFromTargetHasQuotes(final String query) {
         final String trimmedQuery = query.trim();
         final String lowerCaseTrimmedQuery = trimmedQuery.toLowerCase();
-        final int fromStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_FROM_KEYWORD_PLUS_SPACE);
+        final int fromStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_FROM_PLUS_SPACE);
 
         if (fromStartPosition == -1) {
             throw new IllegalArgumentException(format("Cannot find keyword: '%s' with query: '%s'",
-                    SPACE_FROM_KEYWORD_PLUS_SPACE, query));
+                    SPACE_FROM_PLUS_SPACE, query));
         }
 
         final int fromEndPositionPlusSpaceImpliedTargetStart =
-                fromStartPosition + SPACE_FROM_KEYWORD_PLUS_SPACE.length();
+                fromStartPosition + SPACE_FROM_PLUS_SPACE.length();
 
-        final int whereStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_WHERE_KEYWORD_PLUS_SPACE);
+        final int whereStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_WHERE_PLUS_SPACE);
         final int targetEndPosition;
 
         if (whereStartPosition == -1) {
-            final int groupByStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_GROUP_BY_WHERE,
+            final int groupByStartPosition = lowerCaseTrimmedQuery.indexOf(SPACE_GROUP_BY_SPACE,
                     fromEndPositionPlusSpaceImpliedTargetStart);
 
             if (groupByStartPosition == -1) {
@@ -132,7 +157,7 @@ class DefaultQueryParser implements QueryParser {
         final String trimmedCandidateTarget = trimmedQuery.substring(fromEndPositionPlusSpaceImpliedTargetStart,
                 targetEndPosition).trim();
 
-        final String quotedTarget = format("'%s'", trimmedCandidateTarget);
+        final String quotedTarget = SINGLE_QUOTE + trimmedCandidateTarget + SINGLE_QUOTE;
         final String beforeTarget = trimmedQuery.substring(0, fromEndPositionPlusSpaceImpliedTargetStart);
         final String afterTarget = trimmedQuery.substring(targetEndPosition);
 
@@ -142,11 +167,11 @@ class DefaultQueryParser implements QueryParser {
     }
 
     static String ensureFromIsPresent(final String query) {
-        return ensureKeywordIsPresent(query, SPACE_FROM_KEYWORD_PLUS_SPACE, SPACE_FROM_KEYWORD_PLUS_SPACE);
+        return ensureKeywordIsPresent(query, SPACE_FROM_PLUS_SPACE, SPACE_FROM_PLUS_SPACE);
     }
 
     static String ensureSelectIsPresent(final String query) {
-        return ensureKeywordIsPresent(query, SELECT_KEYWORD_PLUS_SPACE, SELECT_KEYWORD_PLUS_SPACE + "value() ");
+        return ensureKeywordIsPresent(query, SELECT_PLUS_SPACE, SELECT_PLUS_SPACE + "value() ");
     }
 
     static String ensureKeywordIsPresent(final String query,

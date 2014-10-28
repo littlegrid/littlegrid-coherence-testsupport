@@ -1,6 +1,7 @@
 package org.littlegrid.management.impl;
 
 import com.tangosol.coherence.dslquery.AbstractCoherenceQueryWalker;
+import com.tangosol.coherence.dslquery.SelectListMaker;
 import com.tangosol.coherence.dsltools.termtrees.AtomicTerm;
 import com.tangosol.coherence.dsltools.termtrees.Term;
 import com.tangosol.coherence.dsltools.termtrees.Terms;
@@ -19,9 +20,9 @@ import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD
 
 @Ignore
 public class TermUtilsTest {
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void getWhenNotFieldList() {
-        TermUtils.getAllLiterals(Terms.newTerm(WHERE_CLAUSE_TERM_KEYWORD));
+        TermUtils.getAllLiterals(Terms.newTerm("not-a-field-list"));
     }
 
     @Test
@@ -46,7 +47,9 @@ public class TermUtilsTest {
     public void noLiteralsToConvert() {
         final Term term = Terms.newTerm(FIELD_LIST_TERM_KEYWORD);
 
-        final MyTermWalker walker = new MyTermWalker();
+        final MyTermWalker walker = new MyTermWalker(getPopulatedFieldListWithOneLiteral("a"));
+//        walker.makeSelects((com.tangosol.coherence.dsltools.termtrees.NodeTerm) getPopulatedFieldListWithOneLiteral("a"));
+        walker.makeSelects();
 
         final Term converted = TermUtils.convertFieldListLiteralsToGettersOnMap(term);
 
@@ -107,7 +110,11 @@ public class TermUtilsTest {
 
     }
 
-    public static class MyTermWalker extends AbstractCoherenceQueryWalker {
+    public static class MyTermWalker extends SelectListMaker {
+        public MyTermWalker(Term a) {
+            super((com.tangosol.coherence.dsltools.termtrees.NodeTerm) a);
+        }
+
         @Override
         public void acceptAtom(String sFunctor, AtomicTerm atom) {
             System.out.println("HERE");

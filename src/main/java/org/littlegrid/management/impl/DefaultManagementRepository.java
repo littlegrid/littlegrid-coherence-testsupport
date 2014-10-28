@@ -39,10 +39,8 @@ import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -83,16 +81,6 @@ class DefaultManagementRepository implements ManagementRepository {
         this.mBeanServerConnection = mBeanServerConnection;
         this.aliasPrefix = aliasPrefix;
         this.snapshotPrefix = snapshotPrefix;
-
-        try {
-            System.out.println("Domains: " + Arrays.deepToString(mBeanServerConnection.getDomains()));
-
-            System.out.println("Cache: " + mBeanServerConnection.queryNames(new ObjectName("Coherence:type=Cache,*"), null));
-            System.out.println("Storage: " + mBeanServerConnection.queryNames(new ObjectName("Coherence:type=StorageManager,*"), null));
-            System.out.println("Storage: " + mBeanServerConnection.queryNames(new ObjectName("Coherence:type=Cache,service=DistributedCache,name=test,nodeId=4,tier=back"), null));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
