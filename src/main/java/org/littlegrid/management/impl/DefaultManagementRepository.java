@@ -53,6 +53,7 @@ import java.util.logging.Logger;
 
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 import static java.lang.String.format;
+import static java.util.Map.Entry;
 
 /**
  * Management repository JMX implementation.
@@ -155,7 +156,7 @@ class DefaultManagementRepository implements ManagementRepository {
     public TabularResultSet findSnapshots() {
         final TabularResultSet summary = new DefaultTabularResultSet();
 
-        for (final Map.Entry<String, Snapshot> entry : snapshots.entrySet()) {
+        for (final Entry<String, Snapshot> entry : snapshots.entrySet()) {
             final Map<String, Object> row = new LinkedHashMap<String, Object>();
             row.put("Name", entry.getKey());
 
@@ -208,6 +209,10 @@ class DefaultManagementRepository implements ManagementRepository {
             return snapshot.getResults();
         }
 
+        if (queryTarget.contains("@") || queryTarget.contains("~") || queryTarget.contains("select ")) {
+            throw new UnsupportedOperationException("Query contains @, ~ or select" + queryTarget);
+        }
+
         LOGGER.info(format("About to perform query using: %s", queryTarget));
 
         try {
@@ -243,7 +248,7 @@ class DefaultManagementRepository implements ManagementRepository {
                     row.put(attribute.getName(), attribute.getValue());
                 }
 
-                for (final Map.Entry entry : objectName.getKeyPropertyList().entrySet()) {
+                for (final Entry entry : objectName.getKeyPropertyList().entrySet()) {
                     //TODO: potentially re-use key strings
                     row.put(entry.getKey().toString(), entry.getValue());
                 }

@@ -104,11 +104,11 @@ public class ChildFirstUrlClassLoader extends URLClassLoader {
             } catch (SecurityException e) {
                 throw new IdentifiableException(
                         format("Cannot load '%s' , please check your class path as it "
-                                + "should not contain any core JAR files relating to the JRE/JDK such "
-                                + "as rt.jar etc.  Typical reasons for this problem are if your JAVA_HOME "
-                                + "environment variable is different from the JDK configured in your IDE "
-                                + "or if you're using OSGI and some of the OSGI bundled JARs are being "
-                                + "included in your class path: '%s'",
+                                        + "should not contain any core JAR files relating to the JRE/JDK such "
+                                        + "as rt.jar etc.  Typical reasons for this problem are if your JAVA_HOME "
+                                        + "environment variable is different from the JDK configured in your IDE "
+                                        + "or if you're using OSGI and some of the OSGI bundled JARs are being "
+                                        + "included in your class path: '%s'",
                                 name, e),
                         SECURITY_EXCEPTION);
             }

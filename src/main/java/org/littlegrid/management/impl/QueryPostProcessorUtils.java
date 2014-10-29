@@ -39,6 +39,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Map.Entry;
+
 /**
  * Query post processor utilities.
  *
@@ -46,9 +48,9 @@ import java.util.Set;
  */
 class QueryPostProcessorUtils {
     @SuppressWarnings("unchecked")
-    static Set<Map.Entry<Integer, Map<String, Object>>> convertToEntries(final TabularResultSet results) {
-        final Set<Map.Entry<Integer, Map<String, Object>>> entries =
-                new HashSet<Map.Entry<Integer, Map<String, Object>>>(results.getRowCount());
+    static Set<Entry<Integer, Map<String, Object>>> convertToEntries(final TabularResultSet results) {
+        final Set<Entry<Integer, Map<String, Object>>> entries =
+                new HashSet<Entry<Integer, Map<String, Object>>>(results.getRowCount());
 
         int counter = 1;
 
@@ -61,14 +63,14 @@ class QueryPostProcessorUtils {
         return entries;
     }
 
-    static Set<Map.Entry<Integer, Map<String, Object>>> performRestriction(
-            final Set<Map.Entry<Integer, Map<String, Object>>> entriesBeforeRestriction,
+    static Set<Entry<Integer, Map<String, Object>>> performRestriction(
+            final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction,
             final Filter restriction) {
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> results =
-                new HashSet<Map.Entry<Integer, Map<String, Object>>>();
+        final Set<Entry<Integer, Map<String, Object>>> results =
+                new HashSet<Entry<Integer, Map<String, Object>>>();
 
-        for (final Map.Entry<Integer, Map<String, Object>> entry : entriesBeforeRestriction) {
+        for (final Entry<Integer, Map<String, Object>> entry : entriesBeforeRestriction) {
             final Object value = entry.getValue();
 
             if (restriction.evaluate(value)) {

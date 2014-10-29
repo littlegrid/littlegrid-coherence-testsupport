@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.singletonMap;
+import static java.util.Map.Entry;
 
 /**
  * Projection query post processor implementation.
@@ -64,17 +65,17 @@ class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
                                                final ValueExtractor projection,
                                                final Filter restriction) {
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesBeforeRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction =
                 QueryPostProcessorUtils.convertToEntries(queryResultsToProcess);
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
                 QueryPostProcessorUtils.performRestriction(entriesBeforeRestriction, restriction);
 
         this.results = performProjection(entriesAfterRestriction, projection);
     }
 
     @SuppressWarnings("unchecked")
-    static TabularResultSet performProjection(final Set<Map.Entry<Integer, Map<String, Object>>> entriesToRestrict,
+    static TabularResultSet performProjection(final Set<Entry<Integer, Map<String, Object>>> entriesToRestrict,
                                               final ValueExtractor projection) {
 
         final Map<Integer, Object> projectionResult =
@@ -84,7 +85,7 @@ class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
 
         for (final Object object : projectionResult.values()) {
             if (object instanceof List) {
-                resultsToReturn.addRow(createRowFromList(projection, object));
+                resultsToReturn.addRow(createRowFromList(projection, (List<Object>) object));
             } else {
                 resultsToReturn.addRow(singletonMap(projection.toString(), object));
             }
@@ -95,9 +96,8 @@ class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
 
     @SuppressWarnings("unchecked")
     private static Map<String, Object> createRowFromList(final ValueExtractor projection,
-                                                         final Object object) {
+                                                         final List<Object> list) {
 
-        final List<Object> list = (List<Object>) object;
         final MultiExtractor multiExtractor = (MultiExtractor) projection;
         final ValueExtractor[] extractors = multiExtractor.getExtractors();
         final int numberOfExtractors = extractors.length;

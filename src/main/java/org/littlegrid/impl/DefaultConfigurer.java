@@ -40,6 +40,7 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static java.util.Map.Entry;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
@@ -182,7 +183,7 @@ class DefaultConfigurer {
     @Override
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
-                + "builderKeyToSystemPropertyNameMappings=%s}",
+                        + "builderKeyToSystemPropertyNameMappings=%s}",
                 builderKeysAndValues, additionalSystemProperties, builderKeyToSystemPropertyNameMappings);
     }
 
@@ -693,7 +694,7 @@ class DefaultConfigurer {
     }
 
     void setBuilderValues(final Map<String, String> builderValues) {
-        for (final Map.Entry<String, String> entry : builderValues.entrySet()) {
+        for (final Entry<String, String> entry : builderValues.entrySet()) {
             setBuilderValue(entry.getKey(), entry.getValue());
         }
     }

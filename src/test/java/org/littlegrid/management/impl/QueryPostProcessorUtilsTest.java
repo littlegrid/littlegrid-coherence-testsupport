@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.singletonMap;
+import static java.util.Map.Entry;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -51,7 +52,7 @@ import static org.junit.Assert.assertThat;
 public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest {
     @Test
     public void convertWhenResultsHasNoRows() {
-        final Set<Map.Entry<Integer, Map<String, Object>>> entries =
+        final Set<Entry<Integer, Map<String, Object>>> entries =
                 QueryPostProcessorUtils.convertToEntries(new DefaultTabularResultSet());
 
         assertThat(entries.size(), is(0));
@@ -65,12 +66,12 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
         final TabularResultSet results = new DefaultTabularResultSet();
         results.addRow(singletonMap(key, (Object) value));
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entries =
+        final Set<Entry<Integer, Map<String, Object>>> entries =
                 QueryPostProcessorUtils.convertToEntries(results);
 
         assertThat(entries.size(), is(results.getRowCount()));
 
-        final Map.Entry<Integer, Map<String, Object>> entry = entries.iterator().next();
+        final Entry<Integer, Map<String, Object>> entry = entries.iterator().next();
         assertThat(entry.getKey(), is(1));
 
         final Map<String, Object> map = entry.getValue();
@@ -80,9 +81,9 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
 
     @Test
     public void restrictionWhenNoEntriesInSet() {
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(0);
+        final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(0);
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
                 QueryPostProcessorUtils.performRestriction(entriesBeforeRestriction,
                         AlwaysFilter.INSTANCE);
 
@@ -91,9 +92,9 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
 
     @Test
     public void restrictionThatMatchesAllWhenOneEntryInSet() {
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(1);
+        final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(1);
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
                 QueryPostProcessorUtils.performRestriction(entriesBeforeRestriction,
                         AlwaysFilter.INSTANCE);
 
@@ -102,9 +103,9 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
 
     @Test
     public void restrictionThatMatchesNoneWhenOneEntryInSet() {
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(1);
+        final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(1);
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
                 QueryPostProcessorUtils.performRestriction(entriesBeforeRestriction,
                         new GreaterEqualsFilter(AGE_EXTRACTOR, 40));
 
@@ -113,9 +114,9 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
 
     @Test
     public void restrictionThatMatchesSomeWhenSeveralEntriesInSet() {
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(10);
+        final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction = getPopulatedEntries(10);
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
                 QueryPostProcessorUtils.performRestriction(entriesBeforeRestriction,
                         new LessFilter(AGE_EXTRACTOR, STARTING_AGE + 5));
 

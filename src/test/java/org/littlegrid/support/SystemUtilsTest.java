@@ -34,10 +34,10 @@ package org.littlegrid.support;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import static java.util.Map.Entry;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -68,7 +68,7 @@ public final class SystemUtilsTest {
         clearSystemProperties();
 
         {
-            Properties systemPropertiesWithPrefix = SystemUtils.getSystemPropertiesWithPrefix(KNOWN_PREFIX);
+            final Properties systemPropertiesWithPrefix = SystemUtils.getSystemPropertiesWithPrefix(KNOWN_PREFIX);
             assertThat(systemPropertiesWithPrefix.size(), is(0));
         }
 
@@ -78,10 +78,10 @@ public final class SystemUtilsTest {
         System.setProperty(key, value);
 
         {
-            Properties systemPropertiesWithPrefix = SystemUtils.getSystemPropertiesWithPrefix(KNOWN_PREFIX);
+            final Properties systemPropertiesWithPrefix = SystemUtils.getSystemPropertiesWithPrefix(KNOWN_PREFIX);
             assertThat(systemPropertiesWithPrefix.size(), is(1));
 
-            Map.Entry<String, String> entry = getFirstEntry(systemPropertiesWithPrefix);
+            final Entry<String, String> entry = getFirstEntry(systemPropertiesWithPrefix);
 
             assertThat(entry.getKey(), is(key));
             assertThat(entry.getValue(), is(value));
@@ -105,7 +105,7 @@ public final class SystemUtilsTest {
         final String key = KEY1_WITH_KNOWN_PREFIX;
         final String value = KNOWN_VALUE_1;
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(key, value);
 
         SystemUtils.applyToSystemProperties(properties);
@@ -119,7 +119,7 @@ public final class SystemUtilsTest {
         final String key = "";
         final String value = KNOWN_VALUE_1;
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(key, value);
 
         SystemUtils.applyToSystemProperties(properties);
@@ -130,7 +130,7 @@ public final class SystemUtilsTest {
         final String key = KEY1_WITH_KNOWN_PREFIX;
         final String value = "";
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(key, value);
 
         SystemUtils.applyToSystemProperties(properties);
@@ -143,7 +143,7 @@ public final class SystemUtilsTest {
         final String key = KEY1_WITH_KNOWN_PREFIX;
         final String value = "  ";
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.setProperty(key, value);
 
         SystemUtils.applyToSystemProperties(properties);
@@ -206,9 +206,9 @@ public final class SystemUtilsTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map.Entry<String, String> getFirstEntry(final Properties properties) {
-        Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+    private static Entry<String, String> getFirstEntry(final Properties properties) {
+        Set<Entry<Object, Object>> entries = properties.entrySet();
 
-        return (Map.Entry<String, String>) entries.toArray()[0];
+        return (Entry<String, String>) entries.toArray()[0];
     }
 }

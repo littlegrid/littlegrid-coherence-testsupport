@@ -37,5 +37,5 @@ import org.junit.Ignore;
  * Management repository JMX implementation tests.
  */
 @Ignore
-public class ManagementRepositoryJmxImplTest {
+public class DefaultManagementRepositoryTest {
 }

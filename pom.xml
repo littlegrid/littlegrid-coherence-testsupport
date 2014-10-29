@@ -187,14 +187,14 @@
                 <version>${cobertura-maven-plugin.version}</version>
             </plugin>
 
-<!--
-TODO: look to switch over to Jacoco and split into the usual demarcation between normal and integration tests.
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.6.3.201306030806</version>
-            </plugin>
--->
+            <!--
+            TODO: look to switch over to Jacoco and split into the usual demarcation between normal and integration tests.
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>0.6.3.201306030806</version>
+                        </plugin>
+            -->
         </plugins>
     </reporting>
 
@@ -215,9 +215,13 @@ TODO: look to switch over to Jacoco and split into the usual demarcation between
                             <reuseForks>false</reuseForks>
                             <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=384m</argLine>
                             <systemPropertyVariables>
-                                <littlegrid.builder.WkaPort>${starting.thousand.port.number}${surefire.forkNumber}00</littlegrid.builder.WkaPort>
-                                <littlegrid.builder.ExtendPort>${starting.thousand.port.number}${surefire.forkNumber}50</littlegrid.builder.ExtendPort>
-                                <littlegrid.builder.ClusterName>littlegridCluster-${surefire.forkNumber}</littlegrid.builder.ClusterName>
+                                <littlegrid.builder.WkaPort>${starting.thousand.port.number}${surefire.forkNumber}00
+                                </littlegrid.builder.WkaPort>
+                                <littlegrid.builder.ExtendPort>
+                                    ${starting.thousand.port.number}${surefire.forkNumber}50
+                                </littlegrid.builder.ExtendPort>
+                                <littlegrid.builder.ClusterName>littlegridCluster-${surefire.forkNumber}
+                                </littlegrid.builder.ClusterName>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Map.Entry;
+
 /**
  * Abstract query post-processor tests base class.
  */
@@ -51,8 +53,8 @@ public abstract class AbstractQueryPostProcessorTest {
     protected static final ValueExtractor AGE_EXTRACTOR =
             new ReflectionExtractor("get", new Object[]{AGE_COLUMN_NAME});
 
-    protected static Set<Map.Entry<Integer, Map<String, Object>>> getPopulatedEntries(final int numberOfEntries,
-                                                                                      final String... otherColumns) {
+    protected static Set<Entry<Integer, Map<String, Object>>> getPopulatedEntries(final int numberOfEntries,
+                                                                                  final String... otherColumns) {
 
         return QueryPostProcessorUtils.convertToEntries(getResultsToUse(numberOfEntries, otherColumns));
     }

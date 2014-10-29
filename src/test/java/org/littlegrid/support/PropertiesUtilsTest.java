@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 

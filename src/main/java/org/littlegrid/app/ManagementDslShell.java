@@ -9,16 +9,15 @@ import org.littlegrid.management.impl.DefaultTabularResultSet;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static java.util.Map.Entry;
 
 /**
  * Management DSL shell
@@ -120,6 +119,7 @@ class ManagementDslShell implements Shell {
             out.printlnInfo(format("littlegrid (%s) ManagementDSL shell ready - for list of commands type: help",
                     Info.getVersionNumber()));
 
+            out.printlnInfo("");
             out.printlnInfo("This console is ALPHA CODE and is being used to try out ideas that may go into littlegrid");
             out.printlnInfo("This console is NOT-FOR-PRODUCTION-USE or any use where you could either get shouted at or sacked!");
 
@@ -270,7 +270,7 @@ class ManagementDslShell implements Shell {
     private String showPreviousValidCommands() {
         final TabularResultSet history = new DefaultTabularResultSet();
 
-        for (final Map.Entry<String, String> entry : previousValidCommands.entrySet()) {
+        for (final Entry<String, String> entry : previousValidCommands.entrySet()) {
             final Map<String, Object> row = new HashMap<String, Object>();
             row.put(entry.getKey(), entry.getValue());
 
@@ -339,7 +339,7 @@ class ManagementDslShell implements Shell {
         out.printlnInfo(format("%s - perform select using a projection (columns) or aggregation (e.g. sum) from "
                 + "a target with optional where and group by", SELECT_COMMAND));
 
-        out.printlnInfo(format("%s snapshotName selectStatement|alias - creates a snapshot ",
+        out.printlnInfo(format("%s snapshotName JMX-ObjectName|alias - creates a snapshot ",
                 CREATE_SNAPSHOT_COMMAND));
 
         out.printlnInfo(format("%s - displays information about snapshots", SHOW_SNAPSHOTS_COMMAND));

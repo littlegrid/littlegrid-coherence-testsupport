@@ -31,10 +31,10 @@
 
 package org.littlegrid.support;
 
-import java.util.Map;
 import java.util.Properties;
 
 import static java.lang.String.format;
+import static java.util.Map.Entry;
 
 /**
  * System utilities class providing useful system related methods.
@@ -139,7 +139,7 @@ public final class SystemUtils {
     public static Properties getEnvironmentVariables() {
         final Properties environmentVariables = new Properties();
 
-        for (final Map.Entry<String, String> entry : System.getenv().entrySet()) {
+        for (final Entry<String, String> entry : System.getenv().entrySet()) {
             environmentVariables.setProperty(entry.getKey(), entry.getValue());
         }
 

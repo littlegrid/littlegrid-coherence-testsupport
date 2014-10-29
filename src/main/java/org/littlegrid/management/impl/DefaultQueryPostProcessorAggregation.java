@@ -32,7 +32,6 @@
 package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
-import com.tangosol.util.InvocableMap;
 import com.tangosol.util.aggregator.CompositeAggregator;
 import org.littlegrid.management.TabularResultSet;
 
@@ -43,6 +42,7 @@ import java.util.Set;
 
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 import static java.util.Collections.singletonMap;
+import static java.util.Map.Entry;
 
 /**
  * Aggregation query post processor implementation.
@@ -64,17 +64,17 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
                                                 final EntryAggregator aggregation,
                                                 final Filter restriction) {
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesBeforeRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction =
                 QueryPostProcessorUtils.convertToEntries(queryResultsToProcess);
 
-        final Set<Map.Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
+        final Set<Entry<Integer, Map<String, Object>>> entriesAfterRestriction =
                 QueryPostProcessorUtils.performRestriction(entriesBeforeRestriction, restriction);
 
         this.results = performAggregation(entriesAfterRestriction, aggregation);
     }
 
     @SuppressWarnings("unchecked")
-    static TabularResultSet performAggregation(final Set<Map.Entry<Integer, Map<String, Object>>> entriesToAggregate,
+    static TabularResultSet performAggregation(final Set<Entry<Integer, Map<String, Object>>> entriesToAggregate,
                                                final EntryAggregator aggregation) {
 
         final TabularResultSet resultsToReturn = new DefaultTabularResultSet();
@@ -82,10 +82,10 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
         final Object aggregationResult = aggregation.aggregate(entriesToAggregate);
 
         if (aggregationResult instanceof List) {
-            resultsToReturn.addRow(createRowFromList(aggregation, aggregationResult));
+            resultsToReturn.addRow(createRowFromList(aggregation, (List<Object>) aggregationResult));
         } else if (aggregationResult instanceof Map) {
             //TODO: add some tests
-            resultsToReturn.addRow(createRowFromMap(aggregation, aggregationResult));
+            resultsToReturn.addRow(createRowFromMap(aggregation, (Map<Object, Object>) aggregationResult));
         } else {
             resultsToReturn.addRow(singletonMap(aggregation.toString(), aggregationResult));
         }
@@ -94,16 +94,15 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
     }
 
     private static Map<String, Object> createRowFromMap(final EntryAggregator aggregation,
-                                                        final Object aggregationResult) {
+                                                        final Map<Object, Object> map) {
 
-        return singletonMap("TODO", aggregationResult);
+        return singletonMap("TODO: " + aggregation, (Object) map);
     }
 
     @SuppressWarnings("unchecked")
     private static Map<String, Object> createRowFromList(final EntryAggregator aggregation,
-                                                         final Object aggregationResult) {
+                                                         final List<Object> list) {
 
-        final List<Object> list = (List<Object>) aggregationResult;
         final CompositeAggregator compositeAggregator = (CompositeAggregator) aggregation;
         final EntryAggregator[] aggregators = compositeAggregator.getAggregators();
         final int numberOfAggregators = aggregators.length;

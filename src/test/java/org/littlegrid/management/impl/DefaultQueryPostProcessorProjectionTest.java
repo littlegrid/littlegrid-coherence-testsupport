@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
+import static java.util.Map.Entry;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -57,7 +58,7 @@ public class
     @Test
     public void projectionWhenNoEntriesInSet() {
         final TabularResultSet results = DefaultQueryPostProcessorProjection.performProjection(
-                new HashSet<Map.Entry<Integer, Map<String, Object>>>(), AGE_EXTRACTOR);
+                new HashSet<Entry<Integer, Map<String, Object>>>(), AGE_EXTRACTOR);
 
         assertThat(results.getRowCount(), is(0));
     }

@@ -147,7 +147,7 @@ class DefaultManagementService implements ManagementService {
                     queryToExecute = expandedQuery;
                 }
             } else {
-                throw new UnsupportedOperationException("Alias not recognised");
+                throw new UnsupportedOperationException(format("Alias '%s' not recognised", alias));
             }
         } else {
             queryToExecute = query;

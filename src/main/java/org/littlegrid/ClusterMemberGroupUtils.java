@@ -95,7 +95,7 @@ public final class ClusterMemberGroupUtils {
         if (exceptionDuringShutdownCounter > 0) {
             throw new IllegalStateException(
                     format("Whilst attempting to shutdown the total of %s member group(s), "
-                            + "%s of them threw exceptions during their shutdown",
+                                    + "%s of them threw exceptions during their shutdown",
                             clusterMemberGroups.length, exceptionDuringShutdownCounter));
         }
     }

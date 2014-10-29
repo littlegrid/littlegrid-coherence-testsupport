@@ -235,8 +235,7 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     /**
      * Set method name of get actual containing class loader.
      *
-     * @param getActualContainingClassLoaderMethodName
-     *         Method name.
+     * @param getActualContainingClassLoaderMethodName Method name.
      * @return reflection delegating cluster member.
      */
     public ReflectionDelegatingClusterMember setGetActualContainingClassLoaderMethodName(

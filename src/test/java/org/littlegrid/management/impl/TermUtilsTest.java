@@ -1,6 +1,5 @@
 package org.littlegrid.management.impl;
 
-import com.tangosol.coherence.dslquery.AbstractCoherenceQueryWalker;
 import com.tangosol.coherence.dslquery.SelectListMaker;
 import com.tangosol.coherence.dsltools.termtrees.AtomicTerm;
 import com.tangosol.coherence.dsltools.termtrees.Term;
@@ -16,7 +15,6 @@ import static org.littlegrid.management.impl.TermUtils.CALL_NODE_TERM_KEYWORD;
 import static org.littlegrid.management.impl.TermUtils.FIELD_LIST_TERM_KEYWORD;
 import static org.littlegrid.management.impl.TermUtils.GET_TERM_KEYWORD;
 import static org.littlegrid.management.impl.TermUtils.LITERAL_TERM_KEYWORD;
-import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD;
 
 @Ignore
 public class TermUtilsTest {

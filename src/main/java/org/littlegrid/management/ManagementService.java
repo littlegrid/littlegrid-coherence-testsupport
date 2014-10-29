@@ -32,8 +32,6 @@
 package org.littlegrid.management;
 
 import javax.management.MBeanServerConnection;
-import java.util.Collection;
-import java.util.Properties;
 
 /**
  * Management service.

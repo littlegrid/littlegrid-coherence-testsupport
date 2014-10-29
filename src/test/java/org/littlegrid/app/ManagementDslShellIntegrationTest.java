@@ -35,7 +35,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
 
@@ -64,7 +63,7 @@ public class ManagementDslShellIntegrationTest {
 
     @Test
     @Ignore
-    public void whatever() {
+    public void todo() {
         final Shell.Response response = new ManagementDslShell(System.in, System.out)
                 .start(new String[]{"commands=stop member 1; bye"});
 

@@ -35,8 +35,6 @@ import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
 import org.littlegrid.management.TabularResultSet;
 
-import java.util.Collection;
-
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 
 /**

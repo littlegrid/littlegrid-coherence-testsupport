@@ -337,7 +337,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         if (memberIdSet.size() != memberIds.length) {
             throw new IdentifiableException(
                     format("There were %s member ids %s - however only these were unique member "
-                            + "ids %s.  Ensure that the Coherence JAR is on your test class path",
+                                    + "ids %s.  Ensure that the Coherence JAR is on your test class path",
                             memberIds.length, Arrays.toString(memberIds), memberIdSet),
                     CHECK_CHILD_FIRST_CLASS_PATH_IN_USE);
         }
@@ -408,7 +408,6 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 //    public int[] getStartedMemberIds(final Map<MemberAttributeEnum, String> attributeAndValueMap) {
 //        throw new UnsupportedOperationException();
 //    }
-
     static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {
         try {
             final List<Integer> memberIds = new ArrayList<Integer>();

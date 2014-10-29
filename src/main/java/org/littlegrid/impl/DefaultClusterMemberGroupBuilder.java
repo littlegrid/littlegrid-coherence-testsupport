@@ -145,7 +145,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         loadBuilderKeyToSystemPropertyNameMappings(systemPropertyNameMappingsLoadedSummary);
 
         LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  "
-                + "Builder to Coherence system property mapping values: %s ___",
+                        + "Builder to Coherence system property mapping values: %s ___",
                 Info.getName(), Info.getVersionNumber(), Info.getWebsiteAddress(),
                 builderKeysAndValuesLoadedSummary, systemPropertyNameMappingsLoadedSummary));
     }
@@ -1220,7 +1220,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
-                + "builderKeyToSystemPropertyNameMappings=%s}",
+                        + "builderKeyToSystemPropertyNameMappings=%s}",
                 configurer.getBuilderKeysAndValues(),
                 configurer.getAdditionalSystemProperties(),
                 configurer.getBuilderKeyToSystemPropertyNameMappings());
