@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 import static java.lang.String.format;
 
 /**
- * Management service implementation.
+ * Management service defult implementation.
  *
  * @since 2.16
  */

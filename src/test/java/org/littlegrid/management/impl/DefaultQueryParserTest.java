@@ -161,17 +161,17 @@ public class DefaultQueryParserTest {
     public void ensureGettersWhenNoBackTicks() {
         final String expected = "select a, b, c from d where e = 'a' group by f";
 
-        final String result = DefaultQueryParser.ensureBackTicksConvertedToMapGets(expected);
+        final String result = DefaultQueryParser.ensureAttributesConvertedToMapGets(expected);
 
         assertThat(result, is(expected));
     }
 
     @Test
-    public void ensureGettersWhenBackTicks() {
-        final String starting = "select `a`, `b`, `c` from d where `e` = 'a' group by `f`";
-        final String expected = "select get('a'), get('b'), get('c') from d where get('e') = 'a' group by get('f')";
+    public void ensureGettersWhenAttributeName() {
+        final String starting = "select @a, @b, @c from d where @eeee = 'a' group by @f";
+        final String expected = "select get('a'), get('b'), get('c') from d where get('eeee') = 'a' group by get('f')";
 
-        final String result = DefaultQueryParser.ensureBackTicksConvertedToMapGets(starting);
+        final String result = DefaultQueryParser.ensureAttributesConvertedToMapGets(starting);
 
         assertThat(result, is(expected));
     }

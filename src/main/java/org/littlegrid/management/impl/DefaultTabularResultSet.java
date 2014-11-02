@@ -39,7 +39,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Tabular result implementation.
+ * Tabular result set default implementation.
  *
  * @since 2.16
  */

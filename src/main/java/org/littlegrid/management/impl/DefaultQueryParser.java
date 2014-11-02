@@ -59,10 +59,10 @@ import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD
  */
 class DefaultQueryParser implements QueryParser {
     private static final TokenTable TOKEN_TABLE = CoherenceQueryLanguage.getSqlTokenTable(false);
-    private static final String BACK_TICK_PATTERN = "`(?:(?)[^`])*`";
+    private static final String ATTRIBUTE_NAME_PATTERN = "(@\\w*)";
     private static final String SINGLE_SPACE = " ";
     private static final String SINGLE_QUOTE = "'";
-    private static final String SINGLE_BACK_TICK = "`";
+    private static final String ATTRIBUTE_NAME_INDICATOR = "@";
     private static final String SELECT_KEYWORD = "select";
     private static final String FROM_KEYWORD = "from";
     private static final String WHERE_KEYWORD = "where";
@@ -86,7 +86,7 @@ class DefaultQueryParser implements QueryParser {
         final String queryEnsuredFrom = ensureFromIsPresent(query);
         final String queryEnsuredSelect = ensureSelectIsPresent(queryEnsuredFrom);
         final String queryEnsuredQuotes = ensureFromTargetHasQuotes(queryEnsuredSelect);
-        final String queryEnsuredGetters = ensureBackTicksConvertedToMapGets(queryEnsuredQuotes);
+        final String queryEnsuredGetters = ensureAttributesConvertedToMapGets(queryEnsuredQuotes);
         final SQLOPParser parser = new SQLOPParser(queryEnsuredGetters, TOKEN_TABLE);
         final NodeTerm nodeTerm;
 
@@ -109,17 +109,17 @@ class DefaultQueryParser implements QueryParser {
         this.aggregation = parseForAggregation(nodeTerm);
     }
 
-    static String ensureBackTicksConvertedToMapGets(final String query) {
-        final Pattern pattern = Pattern.compile(BACK_TICK_PATTERN);
+    static String ensureAttributesConvertedToMapGets(final String query) {
+        final Pattern pattern = Pattern.compile(ATTRIBUTE_NAME_PATTERN);
         final Matcher matcher = pattern.matcher(query);
 
         String result = query;
 
         while (matcher.find()) {
             final String group = matcher.group();
-            final String unbackTickedGroup = group.replaceAll(SINGLE_BACK_TICK, "");
+            final String translatedAttribute = group.replaceAll(ATTRIBUTE_NAME_INDICATOR, "");
 
-            result = result.replaceFirst(group, "get('" + unbackTickedGroup + "')");
+            result = result.replaceFirst(group, "get('" + translatedAttribute + "')");
         }
 
         return result;

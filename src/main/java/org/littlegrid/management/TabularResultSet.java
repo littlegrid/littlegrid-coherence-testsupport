@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Query result.
+ * Tabular result set, contains the results of some query or processing.
  */
 public interface TabularResultSet {
     void addRow(Map<String, Object> result);
