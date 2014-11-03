@@ -33,7 +33,7 @@ package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
 import org.littlegrid.management.ManagementService;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -53,6 +53,7 @@ class DefaultManagementService implements ManagementService {
     private final Properties aliases;
     private final String aliasPrefix;
     private final String aliasValueDelimiter;
+    private final String snapshotPrefix;
 
     /**
      * Constructor.
@@ -65,12 +66,14 @@ class DefaultManagementService implements ManagementService {
     public DefaultManagementService(final ManagementRepository managementRepository,
                                     final Properties aliases,
                                     final String aliasPrefix,
-                                    final String aliasValueDelimiter) {
+                                    final String aliasValueDelimiter,
+                                    final String snapshotPrefix) {
 
         this.managementRepository = managementRepository;
         this.aliases = aliases;
         this.aliasPrefix = aliasPrefix;
         this.aliasValueDelimiter = aliasValueDelimiter;
+        this.snapshotPrefix = snapshotPrefix;
     }
 
     /**
@@ -85,7 +88,7 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet findManagementInformation(final String query) {
+    public TabularResult findManagementInformation(final String query) {
         final String queryToExecute;
 
         //TODO: hack something to test concept
@@ -170,8 +173,8 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet createManagementInformationSnapshot(final String snapshotName,
-                                                                final String snapshotQuery) {
+    public TabularResult createSnapshot(final String snapshotName,
+                                        final String snapshotQuery) {
 
         LOGGER.info("Experimental feature: " + snapshotName + ", " + snapshotQuery);
 
@@ -192,7 +195,7 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public boolean dropManagementInformationSnapshot(final String snapshotName) {
+    public boolean dropSnapshot(final String snapshotName) {
         LOGGER.info("Experimental feature");
 
         return managementRepository.dropManagementInformationSnapshot(snapshotName);
@@ -202,7 +205,7 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet findSnapshots() {
+    public TabularResult findSnapshots() {
         LOGGER.info("Experimental feature");
 
         return managementRepository.findSnapshots();
@@ -212,7 +215,7 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet describeSnapshot(final String snapshotName) {
+    public TabularResult describeSnapshot(final String snapshotName) {
         return managementRepository.describeSnapshot(snapshotName);
     }
 

@@ -38,7 +38,7 @@ import com.tangosol.util.aggregator.DoubleMin;
 import com.tangosol.util.aggregator.DoubleSum;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.Collection;
 import java.util.Map;
@@ -78,7 +78,7 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
     public void aggregationForSeveralAggregatesWhenOneEntryInSet() {
         final int numberOfEntries = 1;
 
-        final TabularResultSet results = DefaultQueryPostProcessorAggregation.performAggregation(
+        final TabularResult results = DefaultQueryPostProcessorAggregation.performAggregation(
                 getPopulatedEntries(numberOfEntries), AGGREGATION_WITH_SEVERAL_AGGREGATES);
 
         final Collection<String> columnNames = results.getColumnNames();
@@ -91,7 +91,7 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
     public void aggregationForNonExistentColumnWhenSeveralEntriesInSet() {
         final EntryAggregator aggregator = new DoubleSum(OTHER_EXTRACTOR);
         final int numberOfEntries = 2;
-        final TabularResultSet results = DefaultQueryPostProcessorAggregation.performAggregation(
+        final TabularResult results = DefaultQueryPostProcessorAggregation.performAggregation(
                 getPopulatedEntries(numberOfEntries), aggregator);
 
         assertThat(results.getRowCount(), is(1));
@@ -104,7 +104,7 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
     public void aggregationForSeveralAggregatesWhenSeveralEntriesInSet() {
         final int numberOfEntries = 10;
 
-        final TabularResultSet results = DefaultQueryPostProcessorAggregation.performAggregation(
+        final TabularResult results = DefaultQueryPostProcessorAggregation.performAggregation(
                 getPopulatedEntries(numberOfEntries), AGGREGATION_WITH_SEVERAL_AGGREGATES);
 
         assertThat(results.getRowCount(), is(1));
@@ -127,7 +127,7 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
     private static void aggregationForOneAggregateWhen(final int numberOfEntries) {
         final EntryAggregator aggregator = new Count();
 
-        final TabularResultSet results = DefaultQueryPostProcessorAggregation.performAggregation(
+        final TabularResult results = DefaultQueryPostProcessorAggregation.performAggregation(
                 getPopulatedEntries(numberOfEntries), aggregator);
 
         assertThat(results.getRowCount(), is(1));

@@ -3,13 +3,11 @@ package org.littlegrid.app;
 import org.littlegrid.impl.Info;
 import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.ManagementUtils;
-import org.littlegrid.management.TabularResultSet;
-import org.littlegrid.management.impl.DefaultTabularResultSet;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +62,7 @@ class ManagementDslShell implements Shell {
      * Text to indicate that a command caused an exception.
      */
     static final String COMMAND_EXCEPTION = "COMMAND_EXCEPTION:";
+    public static final String NEW_LINE = "\n";
 
     private final Input in;
     private final Output out;
@@ -268,13 +267,13 @@ class ManagementDslShell implements Shell {
     }
 
     private String showPreviousValidCommands() {
-        final TabularResultSet history = new DefaultTabularResultSet();
+        final Collection<String> history = new ArrayList<String>();
+        history.add(NEW_LINE);
 
         for (final Entry<String, String> entry : previousValidCommands.entrySet()) {
-            final Map<String, Object> row = new HashMap<String, Object>();
-            row.put(entry.getKey(), entry.getValue());
+            final String row = entry.getKey() + "=" + entry.getValue() + NEW_LINE;
 
-            history.addRow(row);
+            history.add(row);
         }
 
         return history.toString();
@@ -311,7 +310,7 @@ class ManagementDslShell implements Shell {
         final String snapshotName = snapshotNameAndQuery.substring(0, firstSpaceIndex);
         final String snapshotQuery = snapshotNameAndQuery.substring(firstSpaceIndex).trim();
 
-        return (managementService.createManagementInformationSnapshot(snapshotName,
+        return (managementService.createSnapshot(snapshotName,
                 snapshotQuery)).toString();
     }
 
@@ -327,7 +326,7 @@ class ManagementDslShell implements Shell {
         //TODO: use parse snapshot name
         final String snapshotName = command.replace(DROP_SNAPSHOT_COMMAND + " ", "").trim();
 
-        return new Boolean(managementService.dropManagementInformationSnapshot(snapshotName)).toString();
+        return new Boolean(managementService.dropSnapshot(snapshotName)).toString();
     }
 
     private String showSnapshots() {

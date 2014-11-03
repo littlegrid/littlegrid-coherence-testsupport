@@ -29,34 +29,79 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.management;
+package org.littlegrid.management.impl;
 
+import org.littlegrid.management.TabularResult;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Tabular result set, contains the results of some query or processing.
+ * Tabular result set default implementation.
+ *
+ * @since 2.16
  */
-public interface TabularResultSet {
-    void addRow(Map<String, Object> result);
+class DefaultTabularResult implements TabularResult {
+    private final Collection<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+    private final Collection<String> columns = new HashSet<String>();
 
     /**
-     * @return returns the column names in the result.
+     * {@inheritDoc}
      */
-    Collection<String> getColumnNames();
+    @Override
+    public void addRow(final Map<String, Object> row) {
+        //TODO: add check to ensure row being added is uniform with the existing rows.
+
+        columns.addAll(row.keySet());
+        rows.add(row);
+    }
 
     /**
-     * @return returns the number of rows in the result.
+     * {@inheritDoc}
      */
-    int getRowCount();
+    @Override
+    public Collection<String> getColumnNames() {
+        return new HashSet<String>(columns);
+    }
 
     /**
-     * @return returns the number of columns in the result.
+     * {@inheritDoc}
      */
-    int getColumnCount();
+    @Override
+    public int getRowCount() {
+        return rows.size();
+    }
 
     /**
-     * @return returns the data within the result.
+     * {@inheritDoc}
      */
-    Collection<Map<String, Object>> getRows();
+    @Override
+    public int getColumnCount() {
+        return columns.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Map<String, Object>> getRows() {
+        return new ArrayList<Map<String, Object>>(rows);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+
+        for (final Map row : rows) {
+            sb.append(row);
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
 }

@@ -31,7 +31,7 @@
 
 package org.littlegrid.management.impl;
 
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 /**
  * Query post processor.
@@ -44,5 +44,5 @@ interface QueryPostProcessor {
      *
      * @return results.
      */
-    TabularResultSet getResult();
+    TabularResult getResult();
 }

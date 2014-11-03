@@ -240,7 +240,7 @@ public class DefaultManagementServiceBuilder implements Builder {
                     mBeanServer, aliasPrefix, snapshotPrefix);
 
             return new DefaultManagementService(managementRepository, aliases,
-                    aliasPrefix, aliasValueDelimiter);
+                    aliasPrefix, aliasValueDelimiter, snapshotPrefix);
         } catch (Exception e) {
             throw new RuntimeException(format("Exception connecting to MBean server: %s", e));
         }

@@ -35,7 +35,7 @@ import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.aggregator.ReducerAggregator;
 import com.tangosol.util.extractor.MultiExtractor;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,7 +51,7 @@ import static java.util.Map.Entry;
  * @since 2.16
  */
 class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
-    private final TabularResultSet results;
+    private final TabularResult results;
 
     /**
      * Constructor.
@@ -61,7 +61,7 @@ class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
      * @param restriction           Restriction to apply.
      */
     @SuppressWarnings("unchecked")
-    public DefaultQueryPostProcessorProjection(final TabularResultSet queryResultsToProcess,
+    public DefaultQueryPostProcessorProjection(final TabularResult queryResultsToProcess,
                                                final ValueExtractor projection,
                                                final Filter restriction) {
 
@@ -75,13 +75,13 @@ class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    static TabularResultSet performProjection(final Set<Entry<Integer, Map<String, Object>>> entriesToRestrict,
+    static TabularResult performProjection(final Set<Entry<Integer, Map<String, Object>>> entriesToRestrict,
                                               final ValueExtractor projection) {
 
         final Map<Integer, Object> projectionResult =
                 (Map<Integer, Object>) new ReducerAggregator(projection).aggregate(entriesToRestrict);
 
-        final TabularResultSet resultsToReturn = new DefaultTabularResultSet();
+        final TabularResult resultsToReturn = new DefaultTabularResult();
 
         for (final Object object : projectionResult.values()) {
             if (object instanceof List) {
@@ -114,7 +114,7 @@ class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet getResult() {
+    public TabularResult getResult() {
         return results;
     }
 }

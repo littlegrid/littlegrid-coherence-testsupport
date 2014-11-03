@@ -33,7 +33,7 @@ package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 
@@ -52,7 +52,7 @@ interface ManagementRepository {
      * @param restriction Restriction.
      * @return query results.
      */
-    TabularResultSet findManagementInformationByCriteria(ValueExtractor projection,
+    TabularResult findManagementInformationByCriteria(ValueExtractor projection,
                                                          String queryTarget,
                                                          Filter restriction);
 
@@ -65,16 +65,16 @@ interface ManagementRepository {
      * @param restriction Restriction.
      * @return query results.
      */
-    TabularResultSet findManagementInformationByCriteria(EntryAggregator aggregation,
+    TabularResult findManagementInformationByCriteria(EntryAggregator aggregation,
                                                          String queryTarget,
                                                          Filter restriction);
 
-    TabularResultSet createManagementInformationSnapshot(String snapshotName,
+    TabularResult createManagementInformationSnapshot(String snapshotName,
                                                          String snapshotQuery);
 
     boolean dropManagementInformationSnapshot(String snapshotName);
 
-    TabularResultSet findSnapshots();
+    TabularResult findSnapshots();
 
-    TabularResultSet describeSnapshot(String snapshotName);
+    TabularResult describeSnapshot(String snapshotName);
 }

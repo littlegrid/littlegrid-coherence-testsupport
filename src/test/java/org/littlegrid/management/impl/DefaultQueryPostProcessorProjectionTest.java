@@ -36,7 +36,7 @@ import com.tangosol.util.extractor.MultiExtractor;
 import com.tangosol.util.extractor.ReflectionExtractor;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -57,7 +57,7 @@ public class
 
     @Test
     public void projectionWhenNoEntriesInSet() {
-        final TabularResultSet results = DefaultQueryPostProcessorProjection.performProjection(
+        final TabularResult results = DefaultQueryPostProcessorProjection.performProjection(
                 new HashSet<Entry<Integer, Map<String, Object>>>(), AGE_EXTRACTOR);
 
         assertThat(results.getRowCount(), is(0));
@@ -67,7 +67,7 @@ public class
     public void projectionForOneColumnWhenOneEntryInSet() {
         final int numberOfEntries = 1;
 
-        final TabularResultSet results = DefaultQueryPostProcessorProjection.performProjection(
+        final TabularResult results = DefaultQueryPostProcessorProjection.performProjection(
                 getPopulatedEntries(numberOfEntries),
                 AGE_EXTRACTOR);
 
@@ -87,7 +87,7 @@ public class
     public void projectionForSeveralColumnsWhenOneEntryInSet() {
         final int numberOfEntries = 1;
 
-        final TabularResultSet results = DefaultQueryPostProcessorProjection.performProjection(
+        final TabularResult results = DefaultQueryPostProcessorProjection.performProjection(
                 getPopulatedEntries(numberOfEntries, OTHER_COLUMN),
                 PROJECTION_WITH_SEVERAL_COLUMNS);
 
@@ -104,7 +104,7 @@ public class
         final int numberOfEntries = 2;
         final ValueExtractor extractorForColumnNotInRow = new ReflectionExtractor("get", new Object[]{"Name"});
 
-        final TabularResultSet results = DefaultQueryPostProcessorProjection.performProjection(
+        final TabularResult results = DefaultQueryPostProcessorProjection.performProjection(
                 getPopulatedEntries(numberOfEntries, OTHER_COLUMN),
                 extractorForColumnNotInRow);
 
@@ -119,7 +119,7 @@ public class
     public void projectionForSeveralColumnsWhenSeveralEntriesInSet() {
         final int numberOfEntries = 2;
 
-        final TabularResultSet results = DefaultQueryPostProcessorProjection.performProjection(
+        final TabularResult results = DefaultQueryPostProcessorProjection.performProjection(
                 getPopulatedEntries(numberOfEntries, OTHER_COLUMN),
                 PROJECTION_WITH_SEVERAL_COLUMNS);
 

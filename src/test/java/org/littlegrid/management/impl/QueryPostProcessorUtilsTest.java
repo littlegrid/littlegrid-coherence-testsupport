@@ -36,7 +36,7 @@ import com.tangosol.util.filter.GreaterEqualsFilter;
 import com.tangosol.util.filter.LessFilter;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +53,7 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
     @Test
     public void convertWhenResultsHasNoRows() {
         final Set<Entry<Integer, Map<String, Object>>> entries =
-                QueryPostProcessorUtils.convertToEntries(new DefaultTabularResultSet());
+                QueryPostProcessorUtils.convertToEntries(new DefaultTabularResult());
 
         assertThat(entries.size(), is(0));
     }
@@ -63,7 +63,7 @@ public class QueryPostProcessorUtilsTest extends AbstractQueryPostProcessorTest 
         final String key = "key";
         final String value = "value";
 
-        final TabularResultSet results = new DefaultTabularResultSet();
+        final TabularResult results = new DefaultTabularResult();
         results.addRow(singletonMap(key, (Object) value));
 
         final Set<Entry<Integer, Map<String, Object>>> entries =

@@ -58,11 +58,12 @@ import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD
  * @since 2.16
  */
 class DefaultQueryParser implements QueryParser {
+    static final String ATTRIBUTE_NAME_DEFAULT_PATTERN = "(@\\w*)";
+    static final String ATTRIBUTE_NAME_DEFAULT_INDICATOR = "@";
+
     private static final TokenTable TOKEN_TABLE = CoherenceQueryLanguage.getSqlTokenTable(false);
-    private static final String ATTRIBUTE_NAME_PATTERN = "(@\\w*)";
     private static final String SINGLE_SPACE = " ";
     private static final String SINGLE_QUOTE = "'";
-    private static final String ATTRIBUTE_NAME_INDICATOR = "@";
     private static final String SELECT_KEYWORD = "select";
     private static final String FROM_KEYWORD = "from";
     private static final String WHERE_KEYWORD = "where";
@@ -80,13 +81,20 @@ class DefaultQueryParser implements QueryParser {
     /**
      * Constructor.
      *
-     * @param query Query.
+     * @param attributeNamePattern   Attribute name pattern.
+     * @param attributeNameIndicator Attribute name indicator.
+     * @param query                  Query.
      */
-    public DefaultQueryParser(final String query) {
+    public DefaultQueryParser(final String attributeNamePattern,
+                              final String attributeNameIndicator,
+                              final String query) {
+
         final String queryEnsuredFrom = ensureFromIsPresent(query);
         final String queryEnsuredSelect = ensureSelectIsPresent(queryEnsuredFrom);
         final String queryEnsuredQuotes = ensureFromTargetHasQuotes(queryEnsuredSelect);
-        final String queryEnsuredGetters = ensureAttributesConvertedToMapGets(queryEnsuredQuotes);
+        final String queryEnsuredGetters = ensureAttributesConvertedToMapGets(
+                attributeNamePattern, attributeNameIndicator, queryEnsuredQuotes);
+
         final SQLOPParser parser = new SQLOPParser(queryEnsuredGetters, TOKEN_TABLE);
         final NodeTerm nodeTerm;
 
@@ -109,15 +117,27 @@ class DefaultQueryParser implements QueryParser {
         this.aggregation = parseForAggregation(nodeTerm);
     }
 
-    static String ensureAttributesConvertedToMapGets(final String query) {
-        final Pattern pattern = Pattern.compile(ATTRIBUTE_NAME_PATTERN);
+    /**
+     * Constructor.
+     *
+     * @param query Query.
+     */
+    public DefaultQueryParser(final String query) {
+        this(ATTRIBUTE_NAME_DEFAULT_PATTERN, ATTRIBUTE_NAME_DEFAULT_INDICATOR, query);
+    }
+
+    static String ensureAttributesConvertedToMapGets(final String attributeNamePattern,
+                                                     final String attributeNameIndicator,
+                                                     final String query) {
+
+        final Pattern pattern = Pattern.compile(attributeNamePattern);
         final Matcher matcher = pattern.matcher(query);
 
         String result = query;
 
         while (matcher.find()) {
             final String group = matcher.group();
-            final String translatedAttribute = group.replaceAll(ATTRIBUTE_NAME_INDICATOR, "");
+            final String translatedAttribute = group.replaceAll(attributeNameIndicator, "");
 
             result = result.replaceFirst(group, "get('" + translatedAttribute + "')");
         }

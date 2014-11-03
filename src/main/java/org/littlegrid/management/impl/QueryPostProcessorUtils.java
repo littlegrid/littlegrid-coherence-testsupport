@@ -33,7 +33,7 @@ package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
 import com.tangosol.util.SimpleMapEntry;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -48,7 +48,7 @@ import static java.util.Map.Entry;
  */
 class QueryPostProcessorUtils {
     @SuppressWarnings("unchecked")
-    static Set<Entry<Integer, Map<String, Object>>> convertToEntries(final TabularResultSet results) {
+    static Set<Entry<Integer, Map<String, Object>>> convertToEntries(final TabularResult results) {
         final Set<Entry<Integer, Map<String, Object>>> entries =
                 new HashSet<Entry<Integer, Map<String, Object>>>(results.getRowCount());
 

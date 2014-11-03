@@ -33,7 +33,7 @@ package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
 import com.tangosol.util.aggregator.CompositeAggregator;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,7 +50,7 @@ import static java.util.Map.Entry;
  * @since 2.16
  */
 class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
-    private final TabularResultSet results;
+    private final TabularResult results;
 
     /**
      * Constructor.
@@ -60,7 +60,7 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
      * @param restriction           Restriction to apply.
      */
     @SuppressWarnings("unchecked")
-    public DefaultQueryPostProcessorAggregation(final TabularResultSet queryResultsToProcess,
+    public DefaultQueryPostProcessorAggregation(final TabularResult queryResultsToProcess,
                                                 final EntryAggregator aggregation,
                                                 final Filter restriction) {
 
@@ -74,10 +74,10 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    static TabularResultSet performAggregation(final Set<Entry<Integer, Map<String, Object>>> entriesToAggregate,
+    static TabularResult performAggregation(final Set<Entry<Integer, Map<String, Object>>> entriesToAggregate,
                                                final EntryAggregator aggregation) {
 
-        final TabularResultSet resultsToReturn = new DefaultTabularResultSet();
+        final TabularResult resultsToReturn = new DefaultTabularResult();
 
         final Object aggregationResult = aggregation.aggregate(entriesToAggregate);
 
@@ -119,7 +119,7 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet getResult() {
+    public TabularResult getResult() {
         return results;
     }
 }

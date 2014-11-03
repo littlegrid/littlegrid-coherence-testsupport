@@ -33,7 +33,7 @@ package org.littlegrid.management.impl;
 
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.extractor.ReflectionExtractor;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,10 +59,10 @@ public abstract class AbstractQueryPostProcessorTest {
         return QueryPostProcessorUtils.convertToEntries(getResultsToUse(numberOfEntries, otherColumns));
     }
 
-    private static TabularResultSet getResultsToUse(final int numberOfRows,
+    private static TabularResult getResultsToUse(final int numberOfRows,
                                                     final String... otherColumns) {
 
-        final TabularResultSet result = new DefaultTabularResultSet();
+        final TabularResult result = new DefaultTabularResult();
 
         for (int i = 0; i < numberOfRows; i++) {
             final Map<String, Object> row = new HashMap<String, Object>();

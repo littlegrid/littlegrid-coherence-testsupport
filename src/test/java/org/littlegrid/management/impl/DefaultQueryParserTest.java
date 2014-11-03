@@ -48,6 +48,8 @@ import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.management.impl.DefaultQueryParser.ATTRIBUTE_NAME_DEFAULT_INDICATOR;
+import static org.littlegrid.management.impl.DefaultQueryParser.ATTRIBUTE_NAME_DEFAULT_PATTERN;
 
 /**
  * Management query parser implementation tests.
@@ -158,20 +160,22 @@ public class DefaultQueryParserTest {
     }
 
     @Test
-    public void ensureGettersWhenNoBackTicks() {
+    public void ensureGettersWhenNoAttributeNameIndicatorsPresent() {
         final String expected = "select a, b, c from d where e = 'a' group by f";
 
-        final String result = DefaultQueryParser.ensureAttributesConvertedToMapGets(expected);
+        final String result = DefaultQueryParser.ensureAttributesConvertedToMapGets(
+                ATTRIBUTE_NAME_DEFAULT_PATTERN, ATTRIBUTE_NAME_DEFAULT_INDICATOR, expected);
 
         assertThat(result, is(expected));
     }
 
     @Test
-    public void ensureGettersWhenAttributeName() {
+    public void ensureGettersWhenAttributeNameIndicatorsPresent() {
         final String starting = "select @a, @b, @c from d where @eeee = 'a' group by @f";
         final String expected = "select get('a'), get('b'), get('c') from d where get('eeee') = 'a' group by get('f')";
 
-        final String result = DefaultQueryParser.ensureAttributesConvertedToMapGets(starting);
+        final String result = DefaultQueryParser.ensureAttributesConvertedToMapGets(
+                ATTRIBUTE_NAME_DEFAULT_PATTERN, ATTRIBUTE_NAME_DEFAULT_INDICATOR, starting);
 
         assertThat(result, is(expected));
     }

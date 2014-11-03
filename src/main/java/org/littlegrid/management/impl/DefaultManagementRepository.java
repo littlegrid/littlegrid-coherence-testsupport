@@ -33,7 +33,7 @@ package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
 import com.tangosol.util.ValueExtractor;
-import org.littlegrid.management.TabularResultSet;
+import org.littlegrid.management.TabularResult;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -88,11 +88,11 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet findManagementInformationByCriteria(final ValueExtractor projection,
+    public TabularResult findManagementInformationByCriteria(final ValueExtractor projection,
                                                                 final String queryTarget,
                                                                 final Filter restriction) {
 
-        final TabularResultSet queryResults = performQuery(queryTarget);
+        final TabularResult queryResults = performQuery(queryTarget);
 
         return new DefaultQueryPostProcessorProjection(queryResults, projection, restriction).getResult();
     }
@@ -101,11 +101,11 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet findManagementInformationByCriteria(final EntryAggregator aggregation,
+    public TabularResult findManagementInformationByCriteria(final EntryAggregator aggregation,
                                                                 final String queryTarget,
                                                                 final Filter restriction) {
 
-        final TabularResultSet queryResults = performQuery(queryTarget);
+        final TabularResult queryResults = performQuery(queryTarget);
 
         return new DefaultQueryPostProcessorAggregation(queryResults, aggregation, restriction).getResult();
     }
@@ -114,12 +114,12 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet createManagementInformationSnapshot(final String snapshotName,
+    public TabularResult createManagementInformationSnapshot(final String snapshotName,
                                                                 final String snapshotQuery) {
 
         LOGGER.info(format("About to create snapshot '%s' using '%s' query", snapshotName, snapshotQuery));
 
-        final TabularResultSet results = performQuery(snapshotQuery);
+        final TabularResult results = performQuery(snapshotQuery);
 
         final String createdSnapshotName;
 
@@ -131,7 +131,7 @@ class DefaultManagementRepository implements ManagementRepository {
 
         snapshots.put(createdSnapshotName, new Snapshot(snapshotQuery, results));
 
-        final TabularResultSet snapshotDetails = new DefaultTabularResultSet();
+        final TabularResult snapshotDetails = new DefaultTabularResult();
         snapshotDetails.addRow(Collections.<String, Object>singletonMap("Name", createdSnapshotName));
         snapshotDetails.addRow(Collections.<String, Object>singletonMap("Rows", results.getRowCount()));
         snapshotDetails.addRow(Collections.<String, Object>singletonMap("Columns", results.getColumnCount()));
@@ -153,8 +153,8 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet findSnapshots() {
-        final TabularResultSet summary = new DefaultTabularResultSet();
+    public TabularResult findSnapshots() {
+        final TabularResult summary = new DefaultTabularResult();
 
         for (final Entry<String, Snapshot> entry : snapshots.entrySet()) {
             final Map<String, Object> row = new LinkedHashMap<String, Object>();
@@ -165,7 +165,7 @@ class DefaultManagementRepository implements ManagementRepository {
             row.put("Query", snapshot.getQuery());
             row.put("Created", snapshot.getCreatedDate());
 
-            final TabularResultSet results = snapshot.getResults();
+            final TabularResult results = snapshot.getResults();
 
             row.put("Rows", results.getRowCount());
             row.put("Column", results.getColumnCount());
@@ -180,8 +180,8 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResultSet describeSnapshot(final String snapshotName) {
-        final TabularResultSet results = new DefaultTabularResultSet();
+    public TabularResult describeSnapshot(final String snapshotName) {
+        final TabularResult results = new DefaultTabularResult();
         final Snapshot snapshot = snapshots.get(snapshotName);
         final Set<String> sortedColumnNames = new TreeSet<String>();
 
@@ -200,7 +200,7 @@ class DefaultManagementRepository implements ManagementRepository {
     }
 
     @SuppressWarnings("unchecked")
-    private TabularResultSet performQuery(final String queryTarget) {
+    private TabularResult performQuery(final String queryTarget) {
         final Snapshot snapshot = snapshots.get(queryTarget);
 
         if (snapshot != null) {
@@ -220,7 +220,7 @@ class DefaultManagementRepository implements ManagementRepository {
             final Set<ObjectName> queryResults =
                     mBeanServerConnection.queryNames(new ObjectName(queryTarget), null);
 
-            final TabularResultSet results = new DefaultTabularResultSet();
+            final TabularResult results = new DefaultTabularResult();
             String[] attributeKeys = null;
 
             for (final ObjectName objectName : queryResults) {
@@ -273,10 +273,10 @@ class DefaultManagementRepository implements ManagementRepository {
     private static class Snapshot {
         private final Date createdDate = new Date();
         private final String query;
-        private final TabularResultSet results;
+        private final TabularResult results;
 
         private Snapshot(final String query,
-                         final TabularResultSet results) {
+                         final TabularResult results) {
 
             this.query = query;
             this.results = results;
@@ -290,7 +290,7 @@ class DefaultManagementRepository implements ManagementRepository {
             return query;
         }
 
-        public TabularResultSet getResults() {
+        public TabularResult getResults() {
             return results;
         }
     }

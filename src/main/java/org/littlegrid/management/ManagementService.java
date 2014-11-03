@@ -45,22 +45,27 @@ public interface ManagementService {
      * @param query Query.
      * @return results.
      */
-    TabularResultSet findManagementInformation(String query);
+    TabularResult findManagementInformation(String query);
 
-    TabularResultSet createManagementInformationSnapshot(String snapshotName,
-                                                         String snapshotQuery);
+    TabularResult createSnapshot(String snapshotName,
+                                 String snapshotQuery);
 
-    boolean dropManagementInformationSnapshot(String snapshotName);
+    boolean dropSnapshot(String snapshotName);
 
-    TabularResultSet findSnapshots();
+    TabularResult findSnapshots();
 
-    TabularResultSet describeSnapshot(String snapshotName);
+    TabularResult describeSnapshot(String snapshotName);
 
+    @Deprecated //TODO: think about this...
     Object updateManagementInformation(Object notSureYet);
 
+    @Deprecated //TODO: think about this...
     Object executeManagementInformationFunction(Object notSureYet);
 
 
+    /**
+     * Management service builder.
+     */
     interface Builder {
         String BUILDER_SYSTEM_PROPERTY_PREFIX_KEY = "littlegrid.management.builder.";
 

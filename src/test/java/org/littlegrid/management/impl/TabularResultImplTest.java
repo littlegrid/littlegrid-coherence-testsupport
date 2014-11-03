@@ -31,77 +31,58 @@
 
 package org.littlegrid.management.impl;
 
-import org.littlegrid.management.TabularResultSet;
+import org.hamcrest.CoreMatchers;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.littlegrid.management.TabularResult;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 /**
- * Tabular result set default implementation.
- *
- * @since 2.16
+ * Tabular result implementation tests.
  */
-public class DefaultTabularResultSet implements TabularResultSet {
-    private final Collection<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
-    private final Collection<String> columns = new HashSet<String>();
+public class TabularResultImplTest {
+    @Test
+    public void constructOnly() {
+        final TabularResult result = new DefaultTabularResult();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addRow(final Map<String, Object> row) {
-        //TODO: add check to ensure row being added is uniform with the existing rows.
-
-        columns.addAll(row.keySet());
-        rows.add(row);
+        assertThat(result.getRowCount(), is(0));
+        assertThat(result.getRows().size(), is(0));
+        assertThat(result.getColumnCount(), is(0));
+        assertThat(result.getColumnNames().size(), is(0));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<String> getColumnNames() {
-        return new HashSet<String>(columns);
+    @Test
+    public void addRow() {
+        final String key = "key";
+        final Integer value = 123;
+
+        final TabularResult result = new DefaultTabularResult();
+
+        result.addRow(singletonMap(key, (Object) value));
+
+        assertThat(result.getRowCount(), is(1));
+
+        final Collection<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), is(1));
+
+        assertThat(result.getColumnCount(), is(1));
+
+        final Collection<String> columns = result.getColumnNames();
+        assertThat(columns.size(), is(1));
+        assertThat(columns.iterator().next(), is(key));
+
+        final Map<String, Object> row = rows.iterator().next();
+        assertThat(row.get(key), CoreMatchers.<Object>is(value));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getRowCount() {
-        return rows.size();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getColumnCount() {
-        return columns.size();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<Map<String, Object>> getRows() {
-        return new ArrayList<Map<String, Object>>(rows);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-
-        for (final Map row : rows) {
-            sb.append(row);
-            sb.append("\n");
-        }
-
-        return sb.toString();
+    @Test
+    @Ignore
+    public void addNonUniformRow() {
     }
 }
