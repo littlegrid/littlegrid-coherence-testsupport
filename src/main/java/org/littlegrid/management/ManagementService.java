@@ -35,8 +35,16 @@ import javax.management.MBeanServerConnection;
 
 /**
  * Management service.
+ *
+ * @since 2.16
  */
 public interface ManagementService {
+    /**
+     * Returns the prefix that denotes an alias, an alias being a short-cut for a longer
+     * query.
+     *
+     * @return alias.
+     */
     String getAliasPrefix();
 
     /**
@@ -47,20 +55,38 @@ public interface ManagementService {
      */
     TabularResult findManagementInformation(String query);
 
-    TabularResult createSnapshot(String snapshotName,
-                                 String snapshotQuery);
+    /**
+     * Creates a snapshot using the supplied query.
+     *
+     * @param name  Snapshot name (may omit the snapshot prefix as it will be added).
+     * @param query Query that should be used to create snapshot.
+     * @return summary information.
+     */
+    TabularResult createSnapshot(String name,
+                                 String query);
 
-    boolean dropSnapshot(String snapshotName);
+    /**
+     * Drops a snapshot.
+     *
+     * @param name Snapshot name.
+     * @return <code>true</code> if dropped.
+     */
+    boolean dropSnapshot(String name);
 
-    TabularResult findSnapshots();
+    /**
+     * Finds summary information about the existing snapshots.
+     *
+     * @return summary information.
+     */
+    TabularResult findSnapshotSummaries();
 
-    TabularResult describeSnapshot(String snapshotName);
-
-    @Deprecated //TODO: think about this...
-    Object updateManagementInformation(Object notSureYet);
-
-    @Deprecated //TODO: think about this...
-    Object executeManagementInformationFunction(Object notSureYet);
+    /**
+     * Describes a particular snapshot in detail.
+     *
+     * @param name Snapshot name.
+     * @return snapshot detailed information.
+     */
+    TabularResult describeSnapshot(String name);
 
 
     /**

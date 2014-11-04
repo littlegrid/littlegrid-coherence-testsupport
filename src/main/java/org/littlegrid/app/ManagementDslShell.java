@@ -74,7 +74,7 @@ class ManagementDslShell implements Shell {
     public ManagementDslShell(final InputStream in,
                               final PrintStream out) {
 
-        this(in, out, ManagementUtils.newManagementBuilder()
+        this(in, out, ManagementUtils.newBuilder()
                 .buildAndConnect());
     }
 
@@ -330,7 +330,7 @@ class ManagementDslShell implements Shell {
     }
 
     private String showSnapshots() {
-        return managementService.findSnapshots().toString();
+        return managementService.findSnapshotSummaries().toString();
     }
 
     private void outputHelp() {

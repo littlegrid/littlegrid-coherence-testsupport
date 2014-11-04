@@ -48,13 +48,14 @@ import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.management.impl.DefaultQueryParser.ATTRIBUTE_NAME_DEFAULT_INDICATOR;
-import static org.littlegrid.management.impl.DefaultQueryParser.ATTRIBUTE_NAME_DEFAULT_PATTERN;
 
 /**
  * Management query parser implementation tests.
  */
 public class DefaultQueryParserTest {
+    private static final String ATTRIBUTE_NAME_DEFAULT_PATTERN = "(@\\w*)";
+    private static final String ATTRIBUTE_NAME_DEFAULT_INDICATOR = "@";
+
     @Test
     public void ensureFromWhenPresent() {
         final String expected = " from test";

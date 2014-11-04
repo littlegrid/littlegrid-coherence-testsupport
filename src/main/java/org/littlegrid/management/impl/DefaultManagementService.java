@@ -173,39 +173,39 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public TabularResult createSnapshot(final String snapshotName,
-                                        final String snapshotQuery) {
+    public TabularResult createSnapshot(final String name,
+                                        final String query) {
 
-        LOGGER.info("Experimental feature: " + snapshotName + ", " + snapshotQuery);
+        LOGGER.info("Experimental feature: " + name + ", " + query);
 
         final String queryToExecute;
 
-        if (aliases.containsKey(snapshotQuery)) {
-            queryToExecute = aliases.getProperty(snapshotQuery);
+        if (aliases.containsKey(query)) {
+            queryToExecute = aliases.getProperty(query);
         } else {
-            queryToExecute = "select value() from " + snapshotQuery;
+            queryToExecute = "select value() from " + query;
         }
 
         final QueryParser parser = new DefaultQueryParser(queryToExecute);
 
-        return managementRepository.createManagementInformationSnapshot(snapshotName, parser.getTarget());
+        return managementRepository.createManagementInformationSnapshot(name, parser.getTarget());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean dropSnapshot(final String snapshotName) {
+    public boolean dropSnapshot(final String name) {
         LOGGER.info("Experimental feature");
 
-        return managementRepository.dropManagementInformationSnapshot(snapshotName);
+        return managementRepository.dropManagementInformationSnapshot(name);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TabularResult findSnapshots() {
+    public TabularResult findSnapshotSummaries() {
         LOGGER.info("Experimental feature");
 
         return managementRepository.findSnapshots();
@@ -215,23 +215,7 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public TabularResult describeSnapshot(final String snapshotName) {
-        return managementRepository.describeSnapshot(snapshotName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object updateManagementInformation(final Object notSureYet) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object executeManagementInformationFunction(final Object notSureYet) {
-        throw new UnsupportedOperationException();
+    public TabularResult describeSnapshot(final String name) {
+        return managementRepository.describeSnapshot(name);
     }
 }

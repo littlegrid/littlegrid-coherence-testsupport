@@ -37,12 +37,14 @@ import static org.littlegrid.management.ManagementService.Builder;
 
 /**
  * Management utilities.
+ *
+ * @since 2.16
  */
 public class ManagementUtils {
     private ManagementUtils() {
     }
 
-    public static Builder newManagementBuilder() {
+    public static Builder newBuilder() {
         return new DefaultManagementServiceBuilder();
     }
 

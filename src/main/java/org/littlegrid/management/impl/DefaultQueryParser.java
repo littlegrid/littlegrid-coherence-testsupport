@@ -48,9 +48,6 @@ import java.util.regex.Pattern;
 
 import static com.tangosol.util.InvocableMap.EntryAggregator;
 import static java.lang.String.format;
-import static org.littlegrid.management.impl.TermUtils.FIELD_LIST_TERM_KEYWORD;
-import static org.littlegrid.management.impl.TermUtils.IS_DISTINCT_TERM_KEYWORD;
-import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD;
 
 /**
  * Management query parser default implementation.
@@ -58,8 +55,12 @@ import static org.littlegrid.management.impl.TermUtils.WHERE_CLAUSE_TERM_KEYWORD
  * @since 2.16
  */
 class DefaultQueryParser implements QueryParser {
-    static final String ATTRIBUTE_NAME_DEFAULT_PATTERN = "(@\\w*)";
-    static final String ATTRIBUTE_NAME_DEFAULT_INDICATOR = "@";
+    private static final String ATTRIBUTE_NAME_DEFAULT_PATTERN = "(@\\w*)";
+    private static final String ATTRIBUTE_NAME_DEFAULT_INDICATOR = "@";
+
+    private static final String FIELD_LIST_TERM_KEYWORD = "fieldList";
+    private static final String IS_DISTINCT_TERM_KEYWORD = "isDistinct";
+    private static final String WHERE_CLAUSE_TERM_KEYWORD = "whereClause";
 
     private static final TokenTable TOKEN_TABLE = CoherenceQueryLanguage.getSqlTokenTable(false);
     private static final String SINGLE_SPACE = " ";

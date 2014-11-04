@@ -36,6 +36,8 @@ import java.util.Map;
 
 /**
  * Tabular result, contains the results of some query or processing.
+ *
+ * @since 2.16
  */
 public interface TabularResult {
     void addRow(Map<String, Object> result);
