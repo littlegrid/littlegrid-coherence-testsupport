@@ -105,14 +105,14 @@ public interface ManagementService {
 
         Builder setPassword(String password);
 
-        Builder setMBeanServerConnection(MBeanServerConnection mBeanServerConnection);
-
         Builder setAliasPrefix(String aliasPrefix);
 
         Builder setSnapshotPrefix(String snapshotPrefix);
 
         Builder setAliasValueDelimiter(String aliasValueDelimiter);
 
-        ManagementService buildAndConnect();
+        ManagementService build();
+
+        ManagementService build(MBeanServerConnection mBeanServerConnection);
     }
 }

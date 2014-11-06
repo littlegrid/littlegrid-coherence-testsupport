@@ -184,14 +184,6 @@ public class DefaultManagementServiceBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
-    public Builder setMBeanServerConnection(final MBeanServerConnection mBeanServerConnection) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Builder setAliasPrefix(final String aliasPrefix) {
         this.aliasPrefix = aliasPrefix;
 
@@ -222,7 +214,7 @@ public class DefaultManagementServiceBuilder implements Builder {
      * {@inheritDoc}
      */
     @Override
-    public ManagementService buildAndConnect() {
+    public ManagementService build() {
         try {
             final Map<String, Object> env = new HashMap<String, Object>();
 
@@ -235,14 +227,22 @@ public class DefaultManagementServiceBuilder implements Builder {
             //TODO: Add check to throw illegal state exception or something like that if null...
             final JMXServiceURL jmxUrl = new JMXServiceURL(urlPath);
             final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, env);
-            final MBeanServerConnection mBeanServer = jmxConnector.getMBeanServerConnection();
-            final ManagementRepository managementRepository = new DefaultManagementRepository(
-                    mBeanServer, aliasPrefix, snapshotPrefix);
 
-            return new DefaultManagementService(managementRepository, aliases,
-                    aliasPrefix, aliasValueDelimiter, snapshotPrefix);
+            return build(jmxConnector.getMBeanServerConnection());
         } catch (Exception e) {
             throw new RuntimeException(format("Exception connecting to MBean server: %s", e));
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ManagementService build(final MBeanServerConnection mBeanServerConnection) {
+        final ManagementRepository managementRepository = new DefaultManagementRepository(
+                mBeanServerConnection, aliasPrefix, snapshotPrefix);
+
+        return new DefaultManagementService(managementRepository, aliases,
+                aliasPrefix, aliasValueDelimiter, snapshotPrefix);
     }
 }

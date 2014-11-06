@@ -75,7 +75,7 @@ class ManagementDslShell implements Shell {
                               final PrintStream out) {
 
         this(in, out, ManagementUtils.newBuilder()
-                .buildAndConnect());
+                .build());
     }
 
     public ManagementDslShell(final InputStream in,
