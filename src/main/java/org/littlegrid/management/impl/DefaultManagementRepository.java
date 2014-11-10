@@ -42,7 +42,6 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -62,6 +61,12 @@ import static java.util.Map.Entry;
  */
 class DefaultManagementRepository implements ManagementRepository {
     private static final Logger LOGGER = Logger.getLogger(DefaultManagementRepository.class.getName());
+
+    private static final String SNAPSHOT_NAME_COLUMN_NAME = "Name";
+    private static final String SNAPSHOT_ROWS_COLUMN_NAME = "Rows";
+    private static final String SNAPSHOT_COLUMNS_COLUMN_NAME = "Columns";
+    private static final String SNAPSHOT_QUERY_COLUMN_NAME = "Query";
+    private static final String SNAPSHOT_CREATED_COLUMN_NAME = "Created";
 
     private final MBeanServerConnection mBeanServerConnection;
     private final Map<String, Snapshot> snapshots = new LinkedHashMap<String, Snapshot>();
@@ -89,8 +94,8 @@ class DefaultManagementRepository implements ManagementRepository {
      */
     @Override
     public TabularResult findManagementInformationByCriteria(final ValueExtractor projection,
-                                                                final String queryTarget,
-                                                                final Filter restriction) {
+                                                             final String queryTarget,
+                                                             final Filter restriction) {
 
         final TabularResult queryResults = performQuery(queryTarget);
 
@@ -102,8 +107,8 @@ class DefaultManagementRepository implements ManagementRepository {
      */
     @Override
     public TabularResult findManagementInformationByCriteria(final EntryAggregator aggregation,
-                                                                final String queryTarget,
-                                                                final Filter restriction) {
+                                                             final String queryTarget,
+                                                             final Filter restriction) {
 
         final TabularResult queryResults = performQuery(queryTarget);
 
@@ -115,7 +120,7 @@ class DefaultManagementRepository implements ManagementRepository {
      */
     @Override
     public TabularResult createManagementInformationSnapshot(final String snapshotName,
-                                                                final String snapshotQuery) {
+                                                             final String snapshotQuery) {
 
         LOGGER.info(format("About to create snapshot '%s' using '%s' query", snapshotName, snapshotQuery));
 
@@ -132,9 +137,9 @@ class DefaultManagementRepository implements ManagementRepository {
         snapshots.put(createdSnapshotName, new Snapshot(snapshotQuery, results));
 
         final TabularResult snapshotDetails = new DefaultTabularResult();
-        snapshotDetails.addRow(Collections.<String, Object>singletonMap("Name", createdSnapshotName));
-        snapshotDetails.addRow(Collections.<String, Object>singletonMap("Rows", results.getRowCount()));
-        snapshotDetails.addRow(Collections.<String, Object>singletonMap("Columns", results.getColumnCount()));
+        snapshotDetails.addRow(SNAPSHOT_NAME_COLUMN_NAME, createdSnapshotName);
+        snapshotDetails.addRow(SNAPSHOT_ROWS_COLUMN_NAME, results.getRowCount());
+        snapshotDetails.addRow(SNAPSHOT_COLUMNS_COLUMN_NAME, results.getColumnCount());
 
         return snapshotDetails;
     }
@@ -158,17 +163,17 @@ class DefaultManagementRepository implements ManagementRepository {
 
         for (final Entry<String, Snapshot> entry : snapshots.entrySet()) {
             final Map<String, Object> row = new LinkedHashMap<String, Object>();
-            row.put("Name", entry.getKey());
+            row.put(SNAPSHOT_NAME_COLUMN_NAME, entry.getKey());
 
             final Snapshot snapshot = entry.getValue();
 
-            row.put("Query", snapshot.getQuery());
-            row.put("Created", snapshot.getCreatedDate());
+            row.put(SNAPSHOT_QUERY_COLUMN_NAME, snapshot.getQuery());
+            row.put(SNAPSHOT_CREATED_COLUMN_NAME, snapshot.getCreatedDate());
 
             final TabularResult results = snapshot.getResults();
 
-            row.put("Rows", results.getRowCount());
-            row.put("Column", results.getColumnCount());
+            row.put(SNAPSHOT_ROWS_COLUMN_NAME, results.getRowCount());
+            row.put(SNAPSHOT_COLUMNS_COLUMN_NAME, results.getColumnCount());
 
             summary.addRow(row);
         }
@@ -192,7 +197,7 @@ class DefaultManagementRepository implements ManagementRepository {
             }
 
             for (String columnName : sortedColumnNames) {
-                results.addRow(Collections.<String, Object>singletonMap(columnName, "TODO"));
+                results.addRow(columnName, "TODO");
             }
         }
 
@@ -270,6 +275,9 @@ class DefaultManagementRepository implements ManagementRepository {
         }
     }
 
+    /**
+     * Snapshot containing information about when it was taken and what it contains.
+     */
     private static class Snapshot {
         private final Date createdDate = new Date();
         private final String query;

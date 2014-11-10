@@ -55,9 +55,10 @@ public class DefaultQueryPostProcessorAggregationTest extends AbstractQueryPostP
     private static final EntryAggregator MIN_AGE_AGGREGATOR = new DoubleMin(AGE_EXTRACTOR);
     private static final EntryAggregator MAX_AGE_AGGREGATOR = new DoubleMax(AGE_EXTRACTOR);
     private static final EntryAggregator AGGREGATION_WITH_SEVERAL_AGGREGATES =
-            new CompositeAggregator().createInstance(new EntryAggregator[]{
+            CompositeAggregator.createInstance(new EntryAggregator[]{
                     MIN_AGE_AGGREGATOR,
-                    MAX_AGE_AGGREGATOR});
+                    MAX_AGE_AGGREGATOR
+            });
 
     @Test
     public void aggregationWhenNoEntriesInSet() {

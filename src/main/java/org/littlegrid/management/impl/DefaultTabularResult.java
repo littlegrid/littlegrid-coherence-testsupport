@@ -31,12 +31,19 @@
 
 package org.littlegrid.management.impl;
 
+import org.littlegrid.management.ManagementIdentifiableException;
 import org.littlegrid.management.TabularResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
+import static org.littlegrid.management.ManagementIdentifiableException.ReasonEnum.INVALID_COLUMN_NAME;
+import static org.littlegrid.management.ManagementIdentifiableException.ReasonEnum.INVALID_ROW_NUMBER;
 
 /**
  * Tabular result set default implementation.
@@ -44,8 +51,17 @@ import java.util.Map;
  * @since 2.16
  */
 class DefaultTabularResult implements TabularResult {
-    private final Collection<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+    private final List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
     private final Collection<String> columns = new HashSet<String>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addRow(final String key,
+                       final Object value) {
+        addRow(Collections.singletonMap(key, value));
+    }
 
     /**
      * {@inheritDoc}
@@ -62,8 +78,34 @@ class DefaultTabularResult implements TabularResult {
      * {@inheritDoc}
      */
     @Override
+    public void addRows(final Collection<Map<String, Object>> rows) {
+        for (final Map<String, Object> row : rows) {
+            addRow(row);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Collection<String> getColumnNames() {
         return new HashSet<String>(columns);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean containsColumn(final String columnName) {
+        return columns.contains(columnName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean containsRow(final int rowNumber) {
+        return !(rowNumber < 0 || rowNumber >= rows.size());
     }
 
     /**
@@ -88,6 +130,39 @@ class DefaultTabularResult implements TabularResult {
     @Override
     public Collection<Map<String, Object>> getRows() {
         return new ArrayList<Map<String, Object>>(rows);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getValue(final String columnName,
+                           final int rowNumber) {
+
+        if (!containsColumn(columnName)) {
+            throw new ManagementIdentifiableException(format("Column '%s' does not exist within %s",
+                    columnName, columns),
+                    INVALID_COLUMN_NAME);
+        }
+
+        if (!containsRow(rowNumber)) {
+            throw new ManagementIdentifiableException(format("Row %d does not exist, there are %d rows",
+                    rowNumber, rows.size()), INVALID_ROW_NUMBER);
+        }
+
+        final Map<String, Object> row = rows.get(rowNumber);
+
+        return row.get(columnName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(final String columnName,
+                            final int rowNumber) {
+
+        return containsColumn(columnName) && containsRow(rowNumber);
     }
 
     /**

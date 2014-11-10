@@ -53,8 +53,8 @@ interface ManagementRepository {
      * @return query results.
      */
     TabularResult findManagementInformationByCriteria(ValueExtractor projection,
-                                                         String queryTarget,
-                                                         Filter restriction);
+                                                      String queryTarget,
+                                                      Filter restriction);
 
     /**
      * Finds management information and performs a projection (values from
@@ -66,11 +66,11 @@ interface ManagementRepository {
      * @return query results.
      */
     TabularResult findManagementInformationByCriteria(EntryAggregator aggregation,
-                                                         String queryTarget,
-                                                         Filter restriction);
+                                                      String queryTarget,
+                                                      Filter restriction);
 
     TabularResult createManagementInformationSnapshot(String snapshotName,
-                                                         String snapshotQuery);
+                                                      String snapshotQuery);
 
     boolean dropManagementInformationSnapshot(String snapshotName);
 

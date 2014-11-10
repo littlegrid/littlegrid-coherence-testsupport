@@ -60,7 +60,7 @@ public abstract class AbstractQueryPostProcessorTest {
     }
 
     private static TabularResult getResultsToUse(final int numberOfRows,
-                                                    final String... otherColumns) {
+                                                 final String... otherColumns) {
 
         final TabularResult result = new DefaultTabularResult();
 

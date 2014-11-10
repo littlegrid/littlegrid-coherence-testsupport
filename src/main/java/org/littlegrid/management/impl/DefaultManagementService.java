@@ -36,10 +36,13 @@ import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.TabularResult;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
+import static java.util.Map.Entry;
 
 /**
  * Management service defult implementation.
@@ -48,6 +51,9 @@ import static java.lang.String.format;
  */
 class DefaultManagementService implements ManagementService {
     private static final Logger LOGGER = Logger.getLogger(DefaultManagementService.class.getName());
+
+    private static final String ALIAS_NAME_COLUMN_NAME = "alias";
+    private static final String ALIAS_VALUE_COLUMN_NAME = "value";
 
     private final ManagementRepository managementRepository;
     private final Properties aliases;
@@ -82,6 +88,24 @@ class DefaultManagementService implements ManagementService {
     @Override
     public String getAliasPrefix() {
         return aliasPrefix;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TabularResult findAliases() {
+        final TabularResult result = new DefaultTabularResult();
+
+        for (final Entry entry : aliases.entrySet()) {
+            final Map<String, Object> row = new LinkedHashMap<String, Object>();
+            row.put(ALIAS_NAME_COLUMN_NAME, entry.getKey());
+            row.put(ALIAS_VALUE_COLUMN_NAME, entry.getValue());
+
+            result.addRow(row);
+        }
+
+        return result;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.littlegrid.app;
 import org.littlegrid.impl.Info;
 import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.ManagementUtils;
+import org.littlegrid.management.TabularResult;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -45,7 +46,7 @@ class ManagementDslShell implements Shell {
     private static final String HISTORY_COMMAND = "!";
     private static final String RE_RUN_COMMAND = "!";
     private static final String RE_RUN_PREVIOUS_COMMAND = "!!";
-    private static final String DESC_COMMAND = "desc";
+    private static final String DESCRIBE_COMMAND = "desc";
 
     private static final int MILLISECONDS_IN_SECOND = 1000;
 
@@ -170,7 +171,7 @@ class ManagementDslShell implements Shell {
                     command = values.get(values.size() - 1);
                 }
             } else if (candidateCommand.startsWith(RE_RUN_COMMAND) && candidateCommand.length() > 1) {
-                //TODO: this could be better, chheck for null etc.. - but add tests first once idea stabilised.
+                //TODO: this could be better, check for null etc.. - but add tests first once idea stabilised.
                 command = previousValidCommands.get(candidateCommand);
             } else {
                 command = candidateCommand;
@@ -221,7 +222,7 @@ class ManagementDslShell implements Shell {
                     response.incrementValidCommandsExecuted();
                     addToPreviousCommands(command);
 
-                } else if (command.startsWith(DESC_COMMAND)) {
+                } else if (command.startsWith(DESCRIBE_COMMAND)) {
                     outputResponse = desc(command);
                     response.incrementValidCommandsExecuted();
                     addToPreviousCommands(command);
@@ -252,11 +253,15 @@ class ManagementDslShell implements Shell {
     }
 
     private String alias(String command) {
-        return select(command);
+        if (managementService.getAliasPrefix().equals(command.trim())) {
+            return managementService.findAliases().toString();
+        } else {
+            return select(command);
+        }
     }
 
     private String desc(final String command) {
-        final String snapshotName = parseSnapshotName(DESC_COMMAND, command);
+        final String snapshotName = parseSnapshotName(DESCRIBE_COMMAND, command);
 
         return managementService.describeSnapshot(snapshotName).toString();
     }
@@ -343,7 +348,8 @@ class ManagementDslShell implements Shell {
 
         out.printlnInfo(format("%s - displays information about snapshots", SHOW_SNAPSHOTS_COMMAND));
         out.printlnInfo(format("%s snapshotName - drops the specified snapshot", DROP_SNAPSHOT_COMMAND));
-        out.printlnInfo(format("%s objectName - describes an object, such as a snapshot", DESC_COMMAND));
+        out.printlnInfo(format("%s objectName - describes an object, such as a snapshot", DESCRIBE_COMMAND));
+        out.printlnInfo(format("%s - displays current aliases", managementService.getAliasPrefix()));
         out.printlnInfo(format("%s - displays the command history", HISTORY_COMMAND));
         out.printlnInfo(format("%s_X - where _X is a number relating to a command history entry", HISTORY_COMMAND));
 
@@ -364,7 +370,9 @@ class ManagementDslShell implements Shell {
     }
 
     private String select(final String command) {
-        return managementService.findManagementInformation(command).toString();
+        final TabularResult result = managementService.findManagementInformation(command);
+
+        return result.toString() + "\nRow count: " + result.getRowCount();
     }
 
     private String parseCommandsString(final String[] args) {

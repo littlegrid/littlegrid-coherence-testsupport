@@ -51,9 +51,11 @@ import static org.junit.Assert.assertThat;
  */
 public class
         DefaultQueryPostProcessorProjectionTest extends AbstractQueryPostProcessorTest {
-    private static final ValueExtractor PROJECTION_WITH_SEVERAL_COLUMNS = new MultiExtractor(new ValueExtractor[]{
-            AGE_EXTRACTOR,
-            OTHER_EXTRACTOR});
+    private static final ValueExtractor PROJECTION_WITH_SEVERAL_COLUMNS =
+            new MultiExtractor(new ValueExtractor[]{
+                    AGE_EXTRACTOR,
+                    OTHER_EXTRACTOR
+            });
 
     @Test
     public void projectionWhenNoEntriesInSet() {

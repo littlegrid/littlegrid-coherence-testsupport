@@ -40,25 +40,76 @@ import java.util.Map;
  * @since 2.16
  */
 public interface TabularResult {
-    void addRow(Map<String, Object> result);
+    /**
+     * Adds a simple row containing just one column.
+     *
+     * @param key   Key.
+     * @param value Value.
+     */
+    void addRow(String key,
+                Object value);
 
     /**
-     * @return returns the column names in the result.
+     * Adds a row.
+     *
+     * @param row Row.
+     */
+    void addRow(Map<String, Object> row);
+
+    /**
+     * Adds all the rows.
+     *
+     * @param rows Rows.
+     */
+    void addRows(Collection<Map<String, Object>> rows);
+
+    /**
+     * @return the column names in the result.
      */
     Collection<String> getColumnNames();
 
     /**
-     * @return returns the number of rows in the result.
+     * @return if the specified column exists.
+     */
+    boolean containsColumn(String columnName);
+
+    /**
+     * @return if the specified row exists.
+     */
+    boolean containsRow(int rowNumber);
+
+    /**
+     * @return the number of rows in the result.
      */
     int getRowCount();
 
     /**
-     * @return returns the number of columns in the result.
+     * @return the number of columns in the result.
      */
     int getColumnCount();
 
     /**
-     * @return returns the data within the result.
+     * @return the data within the result.
      */
     Collection<Map<String, Object>> getRows();
+
+    /**
+     * Gets a value for the specified column and row.
+     *
+     * @param columnName Column name.
+     * @param rowNumber  Row number (starts from 0).
+     * @return value.
+     */
+    Object getValue(String columnName,
+                    int rowNumber);
+
+    /**
+     * Returns if contains the specified column and row.
+     *
+     * @param columnName Column name.
+     * @param rowNumber  Row number (starts from 0).
+     * @return <code>true</code> if exists.
+     */
+    boolean contains(String columnName,
+                     int rowNumber);
 }

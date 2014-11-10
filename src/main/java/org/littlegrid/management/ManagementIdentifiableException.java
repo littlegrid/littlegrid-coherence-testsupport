@@ -31,45 +31,48 @@
 
 package org.littlegrid.management;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
-import org.littlegrid.ClusterMemberGroupUtils;
-
-import javax.management.MBeanServerConnection;
-import java.lang.management.ManagementFactory;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static java.lang.String.format;
 
 /**
- * Management service utils integration tests.
+ * Management identifiable exception.
  */
-public class ManagementUtilsIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
-    @Before
-    public void beforeTest() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
-                .setStorageEnabledCount(1)
-                .setExtendProxyCount(1)
-                .setJmxMonitorCount(1)
-                .buildAndConfigureForNoClient();
+public class ManagementIdentifiableException extends RuntimeException {
+    private final ReasonEnum reasonEnum;
+
+    /**
+     * Types of exception reason.
+     */
+    public static enum ReasonEnum {
+        INVALID_ROW_NUMBER,
+        INVALID_COLUMN_NAME
     }
 
-    @Test
-    public void whatever() {
-        final MBeanServerConnection connection = ManagementFactory.getPlatformMBeanServer();
+    /**
+     * Constructor.
+     *
+     * @param reasonEnum Exception enum if exception is potentially recognisable.
+     * @param message    Message.
+     */
+    public ManagementIdentifiableException(final String message,
+                                           final ReasonEnum reasonEnum) {
+        super(message);
+        this.reasonEnum = reasonEnum;
+    }
 
-        final ManagementService managementService = ManagementUtils.newBuilder()
-                .build(connection);
+    /**
+     * Returns the suggested exception reason.
+     *
+     * @return suggested reason.
+     */
+    public ReasonEnum getReasonEnum() {
+        return reasonEnum;
+    }
 
-        final TabularResult result = managementService.findManagementInformation(
-                "select count() from Coherence:type=Node,*");
-
-        assertThat(result.getRowCount(), is(1));
-        assertThat(result.getColumnCount(), is(1));
-
-        final String columnName = result.getColumnNames().iterator().next();
-        final int count = (Integer) result.getValue(columnName, 0);
-        assertThat(count, is(3));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return format(format("%s %s", reasonEnum.toString(), getMessage()));
     }
 }

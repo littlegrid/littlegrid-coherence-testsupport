@@ -32,9 +32,15 @@
 package org.littlegrid.management.impl;
 
 import com.tangosol.util.Filter;
+import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.aggregator.CompositeAggregator;
+import com.tangosol.util.aggregator.GroupAggregator;
+import com.tangosol.util.extractor.MultiExtractor;
 import org.littlegrid.management.TabularResult;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +81,7 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
 
     @SuppressWarnings("unchecked")
     static TabularResult performAggregation(final Set<Entry<Integer, Map<String, Object>>> entriesToAggregate,
-                                               final EntryAggregator aggregation) {
+                                            final EntryAggregator aggregation) {
 
         final TabularResult resultsToReturn = new DefaultTabularResult();
 
@@ -85,7 +91,7 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
             resultsToReturn.addRow(createRowFromList(aggregation, (List<Object>) aggregationResult));
         } else if (aggregationResult instanceof Map) {
             //TODO: add some tests
-            resultsToReturn.addRow(createRowFromMap(aggregation, (Map<Object, Object>) aggregationResult));
+            resultsToReturn.addRows(createRowsFromMap(aggregation, (Map<Object, Object>) aggregationResult));
         } else {
             resultsToReturn.addRow(singletonMap(aggregation.toString(), aggregationResult));
         }
@@ -93,10 +99,70 @@ class DefaultQueryPostProcessorAggregation implements QueryPostProcessor {
         return resultsToReturn;
     }
 
-    private static Map<String, Object> createRowFromMap(final EntryAggregator aggregation,
-                                                        final Map<Object, Object> map) {
+    private static Collection<Map<String, Object>> createRowsFromMap(final EntryAggregator aggregation,
+                                                                     final Map<Object, Object> map) {
 
-        return singletonMap("TODO: " + aggregation, (Object) map);
+        final GroupAggregator groupAggregator = (GroupAggregator) aggregation;
+        final ValueExtractor aggregationExtractor = groupAggregator.getExtractor();
+        final ValueExtractor[] extractorColumns;
+
+        if (aggregationExtractor instanceof MultiExtractor) {
+            final MultiExtractor multiExtractor = (MultiExtractor) aggregationExtractor;
+
+            extractorColumns = multiExtractor.getExtractors();
+        } else {
+            extractorColumns = new ValueExtractor[]{aggregationExtractor};
+        }
+
+        final EntryAggregator aggregationAggregator = groupAggregator.getAggregator();
+        final EntryAggregator[] aggregatorColumns;
+
+        if (aggregationAggregator instanceof CompositeAggregator) {
+            final CompositeAggregator compositeAggregator = (CompositeAggregator) aggregationAggregator;
+
+            aggregatorColumns = compositeAggregator.getAggregators();
+        } else {
+            aggregatorColumns = new EntryAggregator[]{aggregationAggregator};
+        }
+
+        final List<Object> columns = new ArrayList<Object>(extractorColumns.length + aggregatorColumns.length);
+        Collections.addAll(columns, extractorColumns);
+        Collections.addAll(columns, aggregatorColumns);
+
+        final Collection<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+
+        for (final Entry entry : map.entrySet()) {
+            final Map<String, Object> row = new LinkedHashMap<String, Object>();
+            final List<Object> values = new ArrayList<Object>(columns.size());
+
+            final Object key = entry.getKey();
+
+            if (key instanceof Collection) {
+                final Collection collection = (Collection) key;
+
+                values.addAll(collection);
+            } else {
+                values.add(key);
+            }
+
+            final Object value = entry.getValue();
+
+            if (value instanceof Collection) {
+                final Collection collection = (Collection) value;
+
+                values.addAll(collection);
+            } else {
+                values.add(value);
+            }
+
+            for (int i = 0; i < columns.size(); i++) {
+                row.put(columns.get(i).toString(), values.get(i));
+            }
+
+            rows.add(row);
+        }
+
+        return rows;
     }
 
     @SuppressWarnings("unchecked")

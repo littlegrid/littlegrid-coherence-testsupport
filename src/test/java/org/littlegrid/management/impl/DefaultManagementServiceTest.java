@@ -31,58 +31,46 @@
 
 package org.littlegrid.management.impl;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.TabularResult;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.Properties;
 
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Tabular result implementation tests.
+ * Default management service tests.
  */
-public class TabularResultImplTest {
-    @Test
-    public void constructOnly() {
-        final TabularResult result = new DefaultTabularResult();
+public class DefaultManagementServiceTest {
+    private static final String ALIAS_NAME_COLUMN_NAME = "alias";
+    private static final String ALIAS_VALUE_COLUMN_NAME = "value";
 
-        assertThat(result.getRowCount(), is(0));
-        assertThat(result.getRows().size(), is(0));
-        assertThat(result.getColumnCount(), is(0));
-        assertThat(result.getColumnNames().size(), is(0));
+    @Test
+    public void findAliasesWhenNoneExist() {
+        final ManagementService service = new DefaultManagementService(null, new Properties(), null, null, null);
+
+        assertThat(service.findAliases().getRowCount(), is(0));
     }
 
     @Test
-    public void addRow() {
-        final String key = "key";
-        final Integer value = 123;
+    public void findAliasesWhenSomeDoExist() {
+        final String aliasName = "some-alias-name";
+        final Object aliasValue = "some-alias-value";
 
-        final TabularResult result = new DefaultTabularResult();
+        final ManagementService service;
 
-        result.addRow(singletonMap(key, (Object) value));
+        {
+            final Properties aliases = new Properties();
+            aliases.setProperty(aliasName, aliasValue.toString());
 
-        assertThat(result.getRowCount(), is(1));
+            service = new DefaultManagementService(null, aliases, null, null, null);
+        }
 
-        final Collection<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), is(1));
-
-        assertThat(result.getColumnCount(), is(1));
-
-        final Collection<String> columns = result.getColumnNames();
-        assertThat(columns.size(), is(1));
-        assertThat(columns.iterator().next(), is(key));
-
-        final Map<String, Object> row = rows.iterator().next();
-        assertThat(row.get(key), CoreMatchers.<Object>is(value));
-    }
-
-    @Test
-    @Ignore
-    public void addNonUniformRow() {
+        final TabularResult aliases = service.findAliases();
+        assertThat(aliases.getRowCount(), is(1));
+        assertThat((String) aliases.getValue(ALIAS_NAME_COLUMN_NAME, 0), is(aliasName));
+        assertThat(aliases.getValue(ALIAS_VALUE_COLUMN_NAME, 0), is(aliasValue));
     }
 }

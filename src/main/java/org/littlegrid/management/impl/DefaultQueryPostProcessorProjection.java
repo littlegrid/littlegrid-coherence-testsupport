@@ -76,7 +76,7 @@ class DefaultQueryPostProcessorProjection implements QueryPostProcessor {
 
     @SuppressWarnings("unchecked")
     static TabularResult performProjection(final Set<Entry<Integer, Map<String, Object>>> entriesToRestrict,
-                                              final ValueExtractor projection) {
+                                           final ValueExtractor projection) {
 
         final Map<Integer, Object> projectionResult =
                 (Map<Integer, Object>) new ReducerAggregator(projection).aggregate(entriesToRestrict);

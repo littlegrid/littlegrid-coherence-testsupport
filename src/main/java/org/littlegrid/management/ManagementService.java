@@ -48,6 +48,13 @@ public interface ManagementService {
     String getAliasPrefix();
 
     /**
+     * Finds all the current aliases.
+     *
+     * @return aliases.
+     */
+    TabularResult findAliases();
+
+    /**
      * Finds management information based upon the supplied query.
      *
      * @param query Query.
