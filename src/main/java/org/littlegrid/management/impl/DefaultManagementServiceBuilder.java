@@ -215,6 +215,7 @@ public class DefaultManagementServiceBuilder implements Builder {
      */
     @Override
     public ManagementService build() {
+        //TODO: add connecting to log message
         try {
             final Map<String, Object> env = new HashMap<String, Object>();
 

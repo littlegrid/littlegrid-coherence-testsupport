@@ -189,7 +189,7 @@ public class DefaultTabularResultTest {
         assertThat((String) value, is(KNOWN_VALUE));
     }
 
-    private TabularResult getPopulatedResult() {
+    private static TabularResult getPopulatedResult() {
         final TabularResult result = new DefaultTabularResult();
         result.addRow(KNOWN_KEY, KNOWN_VALUE);
 

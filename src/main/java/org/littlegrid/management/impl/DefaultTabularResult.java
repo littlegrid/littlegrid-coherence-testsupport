@@ -37,7 +37,7 @@ import org.littlegrid.management.TabularResult;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +51,10 @@ import static org.littlegrid.management.ManagementIdentifiableException.ReasonEn
  * @since 2.16
  */
 class DefaultTabularResult implements TabularResult {
+    private static final String NEW_LINE = "\n";
+
     private final List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
-    private final Collection<String> columns = new HashSet<String>();
+    private final Collection<String> columns = new LinkedHashSet<String>();
 
     /**
      * {@inheritDoc}
@@ -89,7 +91,7 @@ class DefaultTabularResult implements TabularResult {
      */
     @Override
     public Collection<String> getColumnNames() {
-        return new HashSet<String>(columns);
+        return new ArrayList<String>(columns);
     }
 
     /**
@@ -174,7 +176,7 @@ class DefaultTabularResult implements TabularResult {
 
         for (final Map row : rows) {
             sb.append(row);
-            sb.append("\n");
+            sb.append(NEW_LINE);
         }
 
         return sb.toString();

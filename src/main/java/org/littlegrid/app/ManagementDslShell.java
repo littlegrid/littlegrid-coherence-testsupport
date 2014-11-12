@@ -4,9 +4,13 @@ import org.littlegrid.impl.Info;
 import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.ManagementUtils;
 import org.littlegrid.management.TabularResult;
+import org.littlegrid.management.TabularResultWriter;
+import org.littlegrid.management.impl.CsvStringTabularResultWriter;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -372,7 +376,13 @@ class ManagementDslShell implements Shell {
     private String select(final String command) {
         final TabularResult result = managementService.findManagementInformation(command);
 
-        return result.toString() + "\nRow count: " + result.getRowCount();
+//        return result.toString() + "\nRow count: " + result.getRowCount();
+        final Writer writer = new StringWriter();
+        final TabularResultWriter resultWriter = new CsvStringTabularResultWriter(writer);
+//        final TabularResultWriter resultWriter = new ToStringTabularResultWriter(writer);
+        resultWriter.apply(result);
+
+        return writer.toString() + "\nRow count: " + result.getRowCount();
     }
 
     private String parseCommandsString(final String[] args) {
