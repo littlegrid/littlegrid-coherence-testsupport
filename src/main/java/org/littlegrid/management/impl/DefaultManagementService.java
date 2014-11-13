@@ -212,7 +212,7 @@ class DefaultManagementService implements ManagementService {
 
         final QueryParser parser = new DefaultQueryParser(queryToExecute);
 
-        return managementRepository.createManagementInformationSnapshot(name, parser.getTarget());
+        return managementRepository.createSnapshot(name, parser.getTarget());
     }
 
     /**
@@ -222,7 +222,7 @@ class DefaultManagementService implements ManagementService {
     public boolean dropSnapshot(final String name) {
         LOGGER.info("Experimental feature");
 
-        return managementRepository.dropManagementInformationSnapshot(name);
+        return managementRepository.dropSnapshot(name);
     }
 
     /**
@@ -232,7 +232,15 @@ class DefaultManagementService implements ManagementService {
     public TabularResult findSnapshotSummaries() {
         LOGGER.info("Experimental feature");
 
-        return managementRepository.findSnapshots();
+        return managementRepository.findSnapshotSummaries();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TabularResult findSnapshotResults(final String snapshotName) {
+        return managementRepository.findSnapshotResults(snapshotName);
     }
 
     /**

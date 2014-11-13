@@ -119,8 +119,8 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResult createManagementInformationSnapshot(final String snapshotName,
-                                                             final String snapshotQuery) {
+    public TabularResult createSnapshot(final String snapshotName,
+                                        final String snapshotQuery) {
 
         LOGGER.info(format("About to create snapshot '%s' using '%s' query", snapshotName, snapshotQuery));
 
@@ -148,7 +148,7 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public boolean dropManagementInformationSnapshot(final String snapshotName) {
+    public boolean dropSnapshot(final String snapshotName) {
         final Snapshot snapshot = snapshots.remove(snapshotName);
 
         return snapshot != null;
@@ -158,7 +158,7 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResult findSnapshots() {
+    public TabularResult findSnapshotSummaries() {
         final TabularResult summary = new DefaultTabularResult();
 
         for (final Entry<String, Snapshot> entry : snapshots.entrySet()) {
@@ -202,6 +202,15 @@ class DefaultManagementRepository implements ManagementRepository {
         }
 
         return results;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TabularResult findSnapshotResults(final String snapshotName) {
+        //TODO: could throw null pointer, add tests
+        return snapshots.get(snapshotName).getResults();
     }
 
     @SuppressWarnings("unchecked")

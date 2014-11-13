@@ -87,6 +87,8 @@ public interface ManagementService {
      */
     TabularResult findSnapshotSummaries();
 
+    TabularResult findSnapshotResults(String snapshotName);
+
     /**
      * Describes a particular snapshot in detail.
      *

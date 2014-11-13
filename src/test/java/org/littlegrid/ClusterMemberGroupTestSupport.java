@@ -73,7 +73,7 @@ public final class ClusterMemberGroupTestSupport {
     public static final int MEDIUM_TEST_CLUSTER_SIZE = 3;
     public static final int LARGE_TEST_CLUSTER_SIZE = 6;
 
-    private static final int NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP = 2;
+    private static final int NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP = 4;
 
     /**
      * Private constructor to prevent creation.

@@ -69,12 +69,14 @@ interface ManagementRepository {
                                                       String queryTarget,
                                                       Filter restriction);
 
-    TabularResult createManagementInformationSnapshot(String snapshotName,
-                                                      String snapshotQuery);
+    TabularResult createSnapshot(String snapshotName,
+                                 String snapshotQuery);
 
-    boolean dropManagementInformationSnapshot(String snapshotName);
+    boolean dropSnapshot(String snapshotName);
 
-    TabularResult findSnapshots();
+    TabularResult findSnapshotSummaries();
 
     TabularResult describeSnapshot(String snapshotName);
+
+    TabularResult findSnapshotResults(String snapshotName);
 }

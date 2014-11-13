@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CSV string tabular result writer.
+ * Delimited string tabular result writer.
  *
  * @since 2.16
  */
-public class CsvStringTabularResultWriter implements TabularResultWriter {
+public class DelimitedStringTabularResultWriter implements TabularResultWriter {
     private static final String NEW_LINE = "\n";
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = "|";
 
     private final Writer writer;
     private final boolean outputHeading;
@@ -26,7 +26,7 @@ public class CsvStringTabularResultWriter implements TabularResultWriter {
      *
      * @param writer Writer.
      */
-    public CsvStringTabularResultWriter(final Writer writer) {
+    public DelimitedStringTabularResultWriter(final Writer writer) {
         this(writer, true);
     }
 
@@ -36,8 +36,8 @@ public class CsvStringTabularResultWriter implements TabularResultWriter {
      * @param writer        Writer.
      * @param outputHeading Determines if heading should be output.
      */
-    public CsvStringTabularResultWriter(final Writer writer,
-                                        final boolean outputHeading) {
+    public DelimitedStringTabularResultWriter(final Writer writer,
+                                              final boolean outputHeading) {
 
         this.writer = writer;
         this.outputHeading = outputHeading;

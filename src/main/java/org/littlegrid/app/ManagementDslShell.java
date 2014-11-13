@@ -5,8 +5,12 @@ import org.littlegrid.management.ManagementService;
 import org.littlegrid.management.ManagementUtils;
 import org.littlegrid.management.TabularResult;
 import org.littlegrid.management.TabularResultWriter;
-import org.littlegrid.management.impl.CsvStringTabularResultWriter;
+import org.littlegrid.management.impl.DelimitedStringTabularResultWriter;
+import org.littlegrid.management.impl.ToStringTabularResultWriter;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringWriter;
@@ -51,12 +55,15 @@ class ManagementDslShell implements Shell {
     private static final String RE_RUN_COMMAND = "!";
     private static final String RE_RUN_PREVIOUS_COMMAND = "!!";
     private static final String DESCRIBE_COMMAND = "desc";
-
     private static final int MILLISECONDS_IN_SECOND = 1000;
-
     private static final String CREATE_SNAPSHOT_COMMAND = "create snapshot";
     private static final String DROP_SNAPSHOT_COMMAND = "drop snapshot";
     private static final String SHOW_SNAPSHOTS_COMMAND = "show snapshots";
+    private static final String DUMP_COMMAND = "dump";
+    private static final String DUMP_SNAPSHOT_COMMAND = "dump snapshot";
+    private static final String DUMP_FILE_PREFIX = "lgm-";
+    private static final String DUMP_FILE_EXTENSION = ".txt";
+    private static final String NEW_LINE = "\n";
 
     /**
      * Text to indicate an unknown command was used.
@@ -66,8 +73,7 @@ class ManagementDslShell implements Shell {
     /**
      * Text to indicate that a command caused an exception.
      */
-    static final String COMMAND_EXCEPTION = "COMMAND_EXCEPTION:";
-    public static final String NEW_LINE = "\n";
+    private static final String COMMAND_EXCEPTION = "COMMAND_EXCEPTION:";
 
     private final Input in;
     private final Output out;
@@ -76,6 +82,14 @@ class ManagementDslShell implements Shell {
     //TODO: think this through more
     private final Map<String, String> previousValidCommands = new LinkedHashMap<String, String>();
 
+    private TabularResult lastTabularResult;
+
+    /**
+     * Constructor.
+     *
+     * @param in  Input stream.
+     * @param out Output stream.
+     */
     public ManagementDslShell(final InputStream in,
                               final PrintStream out) {
 
@@ -83,6 +97,13 @@ class ManagementDslShell implements Shell {
                 .build());
     }
 
+    /**
+     * Constructor.
+     *
+     * @param in                Input stream.
+     * @param out               Output stream.
+     * @param managementService Management service.
+     */
     public ManagementDslShell(final InputStream in,
                               final PrintStream out,
                               final ManagementService managementService) {
@@ -221,6 +242,11 @@ class ManagementDslShell implements Shell {
                     response.incrementValidCommandsExecuted();
                     addToPreviousCommands(command);
 
+                } else if (command.startsWith(DUMP_SNAPSHOT_COMMAND)) {
+                    outputResponse = dumpSnapshot(command);
+                    response.incrementValidCommandsExecuted();
+                    addToPreviousCommands(command);
+
                 } else if (command.startsWith(SHOW_SNAPSHOTS_COMMAND)) {
                     outputResponse = showSnapshots();
                     response.incrementValidCommandsExecuted();
@@ -233,6 +259,11 @@ class ManagementDslShell implements Shell {
 
                 } else if (command.equals(HISTORY_COMMAND)) {
                     outputResponse = showPreviousValidCommands();
+
+                    response.incrementValidCommandsExecuted();
+
+                } else if (command.equals(DUMP_COMMAND)) {
+                    outputResponse = dumpLastResult();
 
                     response.incrementValidCommandsExecuted();
 
@@ -254,6 +285,31 @@ class ManagementDslShell implements Shell {
         }
 
         return response;
+    }
+
+    private String dumpLastResult() {
+        if (lastTabularResult == null) {
+            return "No last results to dump";
+        } else {
+            final String filename = DUMP_FILE_PREFIX + System.currentTimeMillis() + DUMP_FILE_EXTENSION;
+
+            return dumpResults(filename, lastTabularResult);
+        }
+    }
+
+    private static String dumpResults(final String filename,
+                                      final TabularResult result) {
+
+        try {
+            final Writer writer = new BufferedWriter(new FileWriter(filename));
+            final TabularResultWriter resultWriter = new DelimitedStringTabularResultWriter(writer);
+            final int written = resultWriter.apply(result);
+            writer.close();
+
+            return format("%s file written containing %d record(s)", filename, written);
+        } catch (IOException e) {
+            throw new UnsupportedOperationException(e);
+        }
     }
 
     private String alias(String command) {
@@ -326,9 +382,7 @@ class ManagementDslShell implements Shell {
     private String parseSnapshotName(final String keyword,
                                      final String command) {
 
-        final String snapshotName = command.replace(keyword, "").trim();
-
-        return snapshotName;
+        return command.replace(keyword, "").trim();
     }
 
     private String dropSnapshot(String command) {
@@ -336,6 +390,14 @@ class ManagementDslShell implements Shell {
         final String snapshotName = command.replace(DROP_SNAPSHOT_COMMAND + " ", "").trim();
 
         return new Boolean(managementService.dropSnapshot(snapshotName)).toString();
+    }
+
+    private String dumpSnapshot(final String command) {
+        final String snapshotName = parseSnapshotName(DUMP_SNAPSHOT_COMMAND, command);
+        final TabularResult results = managementService.findSnapshotResults(snapshotName);
+        final String filename = DUMP_FILE_PREFIX + snapshotName + DUMP_FILE_EXTENSION;
+
+        return dumpResults(filename, results);
     }
 
     private String showSnapshots() {
@@ -352,10 +414,12 @@ class ManagementDslShell implements Shell {
 
         out.printlnInfo(format("%s - displays information about snapshots", SHOW_SNAPSHOTS_COMMAND));
         out.printlnInfo(format("%s snapshotName - drops the specified snapshot", DROP_SNAPSHOT_COMMAND));
+        out.printlnInfo(format("%s snapshotName - dumps the specified snapshot to a file", DUMP_SNAPSHOT_COMMAND));
         out.printlnInfo(format("%s objectName - describes an object, such as a snapshot", DESCRIBE_COMMAND));
         out.printlnInfo(format("%s - displays current aliases", managementService.getAliasPrefix()));
         out.printlnInfo(format("%s - displays the command history", HISTORY_COMMAND));
-        out.printlnInfo(format("%s_X - where _X is a number relating to a command history entry", HISTORY_COMMAND));
+        out.printlnInfo(format("%sx - runs the specified command where x is a number relating to a command history entry", HISTORY_COMMAND));
+        out.printlnInfo(format("%s - dumps the results of the last query run to a file", DUMP_COMMAND));
 
         out.printlnInfo(format("%s - exits application - same as %s and %s", EXIT_COMMAND, QUIT_COMMAND, BYE_COMMAND));
 
@@ -375,11 +439,12 @@ class ManagementDslShell implements Shell {
 
     private String select(final String command) {
         final TabularResult result = managementService.findManagementInformation(command);
+        lastTabularResult = result;
 
 //        return result.toString() + "\nRow count: " + result.getRowCount();
         final Writer writer = new StringWriter();
-        final TabularResultWriter resultWriter = new CsvStringTabularResultWriter(writer);
-//        final TabularResultWriter resultWriter = new ToStringTabularResultWriter(writer);
+//        final TabularResultWriter resultWriter = new DelimitedStringTabularResultWriter(writer);
+        final TabularResultWriter resultWriter = new ToStringTabularResultWriter(writer);
         resultWriter.apply(result);
 
         return writer.toString() + "\nRow count: " + result.getRowCount();

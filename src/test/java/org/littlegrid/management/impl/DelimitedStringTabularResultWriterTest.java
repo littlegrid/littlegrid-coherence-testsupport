@@ -16,9 +16,9 @@ import static org.junit.Assert.assertThat;
 /**
  * CSV string tabular result writer tests.
  */
-public class CsvStringTabularResultWriterTest {
+public class DelimitedStringTabularResultWriterTest {
     private static final String NEW_LINE = "\n";
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = "|";
 
     private static final String KNOWN_KEY_PREFIX = "some-key-%d";
     private static final String KNOWN_VALUE_PREFIX = "some-value-%d-%d";
@@ -71,7 +71,7 @@ public class CsvStringTabularResultWriterTest {
     @Test
     public void applyWhenValueIsNull() {
         final Writer wrappedWriter = new StringWriter();
-        final TabularResultWriter resultWriter = new CsvStringTabularResultWriter(wrappedWriter);
+        final TabularResultWriter resultWriter = new DelimitedStringTabularResultWriter(wrappedWriter);
         final TabularResult result = new DefaultTabularResult();
         result.addRow("columnName", null);
 
@@ -79,9 +79,9 @@ public class CsvStringTabularResultWriterTest {
         assertThat(rows, is(1));
     }
 
-    private void applyAndCheckAsExpected(final boolean outputHeading,
-                                         final int numberOfRows,
-                                         final int numberOfColumns) {
+    private static void applyAndCheckAsExpected(final boolean outputHeading,
+                                                final int numberOfRows,
+                                                final int numberOfColumns) {
 
         final StringBuilder sb = new StringBuilder();
 
@@ -111,7 +111,7 @@ public class CsvStringTabularResultWriterTest {
 
         final String expectedOutput = sb.toString();
         final Writer wrappedWriter = new StringWriter();
-        final TabularResultWriter resultWriter = new CsvStringTabularResultWriter(wrappedWriter, outputHeading);
+        final TabularResultWriter resultWriter = new DelimitedStringTabularResultWriter(wrappedWriter, outputHeading);
 
         final int rows = resultWriter.apply(getPopulatedResult(numberOfRows, numberOfColumns));
         assertThat(rows, is(numberOfRows));
