@@ -55,7 +55,8 @@ public interface ManagementService {
     TabularResult findAliases();
 
     /**
-     * Finds management information based upon the supplied query.
+     * Finds management information based upon the supplied query, the target of
+     * the query - the 'from' may be an JMX Object name or an existing snapshot.
      *
      * @param query Query.
      * @return results.
@@ -73,6 +74,14 @@ public interface ManagementService {
                                  String query);
 
     /**
+     * Refreshes an existing snapshot.
+     *
+     * @param name  Snapshot name.
+     * @return summary information.
+     */
+    TabularResult refreshSnapshot(String name);
+
+    /**
      * Drops a snapshot.
      *
      * @param name Snapshot name.
@@ -87,7 +96,13 @@ public interface ManagementService {
      */
     TabularResult findSnapshotSummaries();
 
-    TabularResult findSnapshotResults(String snapshotName);
+    /**
+     * Finds a snapshot and returns its current results.
+     *
+     * @param name  Snapshot name.
+     * @return results.
+     */
+    TabularResult findSnapshotResults(String name);
 
     /**
      * Describes a particular snapshot in detail.

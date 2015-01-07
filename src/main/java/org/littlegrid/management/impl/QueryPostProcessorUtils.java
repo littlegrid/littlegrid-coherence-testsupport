@@ -47,6 +47,12 @@ import static java.util.Map.Entry;
  * @since 2.16
  */
 class QueryPostProcessorUtils {
+    /**
+     * Converts tabular results to set of entries.
+     *
+     * @param results Tabular results.
+     * @return entries.
+     */
     @SuppressWarnings("unchecked")
     static Set<Entry<Integer, Map<String, Object>>> convertToEntries(final TabularResult results) {
         final Set<Entry<Integer, Map<String, Object>>> entries =
@@ -63,6 +69,13 @@ class QueryPostProcessorUtils {
         return entries;
     }
 
+    /**
+     * Performs a restriction on a set of entries.
+     *
+     * @param entriesBeforeRestriction Set of entries before restriction.
+     * @param restriction              Restriction to apply.
+     * @return entries after restriction.
+     */
     static Set<Entry<Integer, Map<String, Object>>> performRestriction(
             final Set<Entry<Integer, Map<String, Object>>> entriesBeforeRestriction,
             final Filter restriction) {
@@ -80,6 +93,4 @@ class QueryPostProcessorUtils {
 
         return results;
     }
-
-//    static Object
 }

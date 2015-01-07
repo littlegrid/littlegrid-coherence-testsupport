@@ -45,7 +45,7 @@ import static java.lang.String.format;
 import static java.util.Map.Entry;
 
 /**
- * Management service defult implementation.
+ * Management service default implementation.
  *
  * @since 2.16
  */
@@ -219,9 +219,15 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public boolean dropSnapshot(final String name) {
-        LOGGER.info("Experimental feature");
+    public TabularResult refreshSnapshot(final String name) {
+        throw new UnsupportedOperationException();
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean dropSnapshot(final String name) {
         return managementRepository.dropSnapshot(name);
     }
 
@@ -230,8 +236,6 @@ class DefaultManagementService implements ManagementService {
      */
     @Override
     public TabularResult findSnapshotSummaries() {
-        LOGGER.info("Experimental feature");
-
         return managementRepository.findSnapshotSummaries();
     }
 
@@ -239,8 +243,8 @@ class DefaultManagementService implements ManagementService {
      * {@inheritDoc}
      */
     @Override
-    public TabularResult findSnapshotResults(final String snapshotName) {
-        return managementRepository.findSnapshotResults(snapshotName);
+    public TabularResult findSnapshotResults(final String name) {
+        return managementRepository.findSnapshotResults(name);
     }
 
     /**

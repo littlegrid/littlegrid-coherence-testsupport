@@ -69,14 +69,44 @@ interface ManagementRepository {
                                                       String queryTarget,
                                                       Filter restriction);
 
-    TabularResult createSnapshot(String snapshotName,
-                                 String snapshotQuery);
+    /**
+     * Creates a snapshot using the supplied query.
+     *
+     * @param name  Snapshot name (may omit the snapshot prefix as it will be added).
+     * @param query Query that should be used to create snapshot.
+     * @return summary information.
+     */
+    TabularResult createSnapshot(String name,
+                                 String query);
 
-    boolean dropSnapshot(String snapshotName);
+    /**
+     * Drops a snapshot.
+     *
+     * @param name Snapshot name.
+     * @return <code>true</code> if dropped.
+     */
+    boolean dropSnapshot(String name);
 
+    /**
+     * Finds summary information about the existing snapshots.
+     *
+     * @return summary information.
+     */
     TabularResult findSnapshotSummaries();
 
-    TabularResult describeSnapshot(String snapshotName);
+    /**
+     * Finds a snapshot and returns its current results.
+     *
+     * @param name  Snapshot name.
+     * @return results.
+     */
+    TabularResult findSnapshotResults(String name);
 
-    TabularResult findSnapshotResults(String snapshotName);
+    /**
+     * Describes a particular snapshot in detail.
+     *
+     * @param name Snapshot name.
+     * @return snapshot detailed information.
+     */
+    TabularResult describeSnapshot(String name);
 }

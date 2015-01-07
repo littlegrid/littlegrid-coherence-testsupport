@@ -119,22 +119,22 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResult createSnapshot(final String snapshotName,
-                                        final String snapshotQuery) {
+    public TabularResult createSnapshot(final String name,
+                                        final String query) {
 
-        LOGGER.info(format("About to create snapshot '%s' using '%s' query", snapshotName, snapshotQuery));
+        LOGGER.info(format("About to create snapshot '%s' using '%s' query", name, query));
 
-        final TabularResult results = performQuery(snapshotQuery);
+        final TabularResult results = performQuery(query);
 
         final String createdSnapshotName;
 
-        if (snapshotName.startsWith(snapshotPrefix)) {
-            createdSnapshotName = snapshotName;
+        if (name.startsWith(snapshotPrefix)) {
+            createdSnapshotName = name;
         } else {
-            createdSnapshotName = snapshotPrefix + snapshotName;
+            createdSnapshotName = snapshotPrefix + name;
         }
 
-        snapshots.put(createdSnapshotName, new Snapshot(snapshotQuery, results));
+        snapshots.put(createdSnapshotName, new Snapshot(query, results));
 
         final TabularResult snapshotDetails = new DefaultTabularResult();
         snapshotDetails.addRow(SNAPSHOT_NAME_COLUMN_NAME, createdSnapshotName);
@@ -148,8 +148,8 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public boolean dropSnapshot(final String snapshotName) {
-        final Snapshot snapshot = snapshots.remove(snapshotName);
+    public boolean dropSnapshot(final String name) {
+        final Snapshot snapshot = snapshots.remove(name);
 
         return snapshot != null;
     }
@@ -185,9 +185,18 @@ class DefaultManagementRepository implements ManagementRepository {
      * {@inheritDoc}
      */
     @Override
-    public TabularResult describeSnapshot(final String snapshotName) {
+    public TabularResult findSnapshotResults(final String name) {
+        //TODO: could throw null pointer, add tests
+        return snapshots.get(name).getResults();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TabularResult describeSnapshot(final String name) {
         final TabularResult results = new DefaultTabularResult();
-        final Snapshot snapshot = snapshots.get(snapshotName);
+        final Snapshot snapshot = snapshots.get(name);
         final Set<String> sortedColumnNames = new TreeSet<String>();
 
         if (snapshot != null) {
@@ -202,15 +211,6 @@ class DefaultManagementRepository implements ManagementRepository {
         }
 
         return results;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TabularResult findSnapshotResults(final String snapshotName) {
-        //TODO: could throw null pointer, add tests
-        return snapshots.get(snapshotName).getResults();
     }
 
     @SuppressWarnings("unchecked")
