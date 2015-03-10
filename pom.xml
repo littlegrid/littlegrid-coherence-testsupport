@@ -267,7 +267,7 @@
     </profiles>
 
     <properties>
-        <java.target.version>1.8</java.target.version>
+        <java.target.version>1.7</java.target.version>
 
         <!-- JAR versions -->
         <coherence.version>12.1.2-0-1</coherence.version>
