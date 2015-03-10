@@ -29,47 +29,62 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.management;
+package org.littlegrid.impl;
 
+import com.tangosol.net.CacheFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
-
-import javax.management.MBeanServerConnection;
-import java.lang.management.ManagementFactory;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 
 /**
- * Management service utils integration tests.
+ * Reusable cluster member group integration tests which shutdown all each time to force
+ * a new instance to be created - i.e. the instance in the registry cannot be used.
  */
-public class ManagementUtilsIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class ReusableClusterMemberGroupIntegrationWhenShutdownAllEachTimeTest {
+    private ClusterMemberGroup testMemberGroup;
+
     @Before
     public void beforeTest() {
-        memberGroup = ClusterMemberGroupUtils.newBuilder()
+        startMemberGroup();
+        testMemberGroup.shutdownAll();
+        testMemberGroup.shutdownAll();
+        testMemberGroup.shutdownAll();
+        testMemberGroup.shutdownAll();
+        testMemberGroup.shutdownAll();
+
+        startMemberGroup();
+        CacheFactory.getCache(KNOWN_TEST_CACHE);
+    }
+
+    @After
+    public void afterTest() {
+        final UsageCountingClusterMemberGroup instance = (UsageCountingClusterMemberGroup) testMemberGroup;
+        assertThat(instance.getCurrentUsageCount(), is(1));
+
+        ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(testMemberGroup);
+    }
+
+    private void startMemberGroup() {
+        testMemberGroup = ClusterMemberGroupUtils.newBuilder()
+                .setClusterMemberGroupInstanceClassName(UsageCountingClusterMemberGroup.class.getName())
                 .setStorageEnabledCount(1)
-                .setExtendProxyCount(1)
-                .setJmxMonitorCount(1)
-                .buildAndConfigureForNoClient();
+                .setLogLevel(0)
+                .setFastStartJoinTimeoutMilliseconds(100)
+                .setOverrideConfiguration("littlegrid/littlegrid-fast-start-coherence-override.xml")
+                .buildAndConfigureForStorageDisabledClient();
     }
 
     @Test
-    public void whatever() {
-        final MBeanServerConnection connection = ManagementFactory.getPlatformMBeanServer();
+    public void test1() {
+    }
 
-        final ManagementService managementService = ManagementUtils.newBuilder()
-                .build(connection);
-
-        final TabularResult result = managementService.findManagementInformation(
-                "select count() from Coherence:type=Node,*");
-
-        assertThat(result.getRowCount(), is(1));
-        assertThat(result.getColumnCount(), is(1));
-
-        final String columnName = result.getColumnNames().iterator().next();
-        final int count = (Integer) result.getValue(columnName, 0);
-        assertThat(count, is(3));
+    @Test
+    public void test2() {
     }
 }
