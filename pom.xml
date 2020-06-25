@@ -266,14 +266,10 @@
     </profiles>
 
     <properties>
-        <java.target.version>1.7</java.target.version>
-
+        <java.target.version>1.8</java.target.version>
 
         <!-- JAR versions -->
         <junit.version>4.8.2</junit.version>
-        <com.sun.xml.bind.version>2.3.0</com.sun.xml.bind.version>
-        <javax.activation.version>1.1.1</javax.activation.version>
-        <jersey.version>2.29</jersey.version>
 
         <starting.thousand.port.number>40</starting.thousand.port.number>
         <fork.count>1</fork.count>
