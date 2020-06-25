@@ -50,10 +50,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle.coherence</groupId>
+            <groupId>com.oracle.coherence.ce</groupId>
             <artifactId>coherence</artifactId>
-            <version>${coherence.version}</version>
-            <scope>provided</scope>
+            <version>${coherence.ce.version}</version>
         </dependency>
     </dependencies>
 
@@ -267,11 +266,9 @@
     </profiles>
 
     <properties>
-        <java.target.version>1.7</java.target.version>
+        <java.target.version>1.8</java.target.version>
 
-        
         <!-- JAR versions -->
-        <coherence.version>12.1.2-0-1</coherence.version>
         <junit.version>4.8.2</junit.version>
 
         <starting.thousand.port.number>40</starting.thousand.port.number>
@@ -294,5 +291,6 @@
 
         <!-- Configuration files -->
         <checkstyle-configuration-file>tweaked_sun_checks.xml</checkstyle-configuration-file>
+        <coherence.ce.version>20.06</coherence.ce.version>
     </properties>
 </project>
