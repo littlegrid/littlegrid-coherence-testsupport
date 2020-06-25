@@ -59,6 +59,7 @@ import static org.littlegrid.support.ExtendUtils.getClusterSizeThatExtendClientI
 /**
  * Cluster member group Extend tests.
  */
+@Ignore
 public final class ExtendProxyIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void noStorageEnabledMembersCannotStoreData() {
