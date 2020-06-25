@@ -33,6 +33,7 @@ package org.littlegrid.features.merge;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -47,6 +48,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 /**
  * Merge cluster member group integration tests.
  */
+@Ignore
 public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void incrementallyMergeInNewMemberGroups() {

@@ -34,6 +34,7 @@ package org.littlegrid.features.stop;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -53,6 +54,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.sleepForSeconds;
  * Cluster member group stop tests, for stopping all the members, specific members and
  * demonstrating failover for Extend clients when Extend proxy is stopped.
  */
+@Ignore
 public final class StopIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void startAndStopInvokedTwice() {
