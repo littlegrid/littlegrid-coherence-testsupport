@@ -68,7 +68,7 @@ public final class BeanUtils {
     public static int multiSetter(final Object bean,
                                   final Properties properties) {
 
-        final Map<String, String> methodNameMapping = new HashMap<String, String>();
+        final Map<String, String> methodNameMapping = new HashMap<>();
         final Method[] methods = bean.getClass().getDeclaredMethods();
 
         for (final Method method : methods) {
@@ -77,7 +77,7 @@ public final class BeanUtils {
             methodNameMapping.put(methodName.toUpperCase(), methodName);
         }
 
-        final Map<String, String> propertyNameMapping = new HashMap<String, String>(properties.size());
+        final Map<String, String> propertyNameMapping = new HashMap<>(properties.size());
 
         for (final Object key : properties.keySet()) {
             final String methodName = SET_PREFIX + key.toString();
@@ -85,7 +85,7 @@ public final class BeanUtils {
             propertyNameMapping.put(methodName.toUpperCase(), methodName);
         }
 
-        final Set<String> upperCasePropertyNamesNotMatched = new HashSet<String>(propertyNameMapping.keySet());
+        final Set<String> upperCasePropertyNamesNotMatched = new HashSet<>(propertyNameMapping.keySet());
         upperCasePropertyNamesNotMatched.removeAll(methodNameMapping.keySet());
 
         if (upperCasePropertyNamesNotMatched.size() > 0) {
@@ -129,7 +129,7 @@ public final class BeanUtils {
                             } catch (Exception e4) {
                                 throw new IdentifiableException(
                                         format("Unable to invoke '%s' to set value to: '%s' due to: %s "
-                                                + "- parameter type not supported",
+                                                        + "- parameter type not supported",
                                                 methodName, value, e),
                                         UNABLE_TO_SET_BEAN_PROPERTY);
                             }

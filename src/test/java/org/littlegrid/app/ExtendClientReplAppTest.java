@@ -38,7 +38,7 @@ import org.littlegrid.support.SystemUtils;
 
 import java.util.Properties;
 
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
  * Extend client REPL application tests.

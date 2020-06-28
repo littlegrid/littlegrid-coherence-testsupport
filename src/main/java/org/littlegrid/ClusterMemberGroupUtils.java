@@ -38,11 +38,10 @@ import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
+import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_OVERRIDE_KEY;
 
 /**
- * Cluster member group utilities, used for the creation of {@link ClusterMemberGroup.Builder}
+ * Cluster member group utilities, used for the creation of {@link ClusterMemberGroupBuilder}
  * and for shutting down {@link ClusterMemberGroup}(s).
  */
 public final class ClusterMemberGroupUtils {
@@ -60,7 +59,7 @@ public final class ClusterMemberGroupUtils {
      *
      * @return builder.
      */
-    public static Builder newBuilder() {
+    public static ClusterMemberGroupBuilder newBuilder() {
         return new DefaultClusterMemberGroupBuilder();
     }
 
@@ -95,7 +94,7 @@ public final class ClusterMemberGroupUtils {
         if (exceptionDuringShutdownCounter > 0) {
             throw new IllegalStateException(
                     format("Whilst attempting to shutdown the total of %s member group(s), "
-                            + "%s of them threw exceptions during their shutdown",
+                                    + "%s of them threw exceptions during their shutdown",
                             clusterMemberGroups.length, exceptionDuringShutdownCounter));
         }
     }
@@ -153,10 +152,10 @@ public final class ClusterMemberGroupUtils {
 
     static ClusterMemberGroup launchAndStartConsole(final String[] args) {
         if (args.length == 1) {
-            System.setProperty(Builder.BUILDER_OVERRIDE_KEY, args[0]);
+            System.setProperty(BUILDER_OVERRIDE_KEY, args[0]);
         }
 
-        final Builder builder = newBuilder();
+        final ClusterMemberGroupBuilder builder = newBuilder();
         final ClusterMemberGroup memberGroup;
 
         try {

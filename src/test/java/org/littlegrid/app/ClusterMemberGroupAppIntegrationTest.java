@@ -29,41 +29,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.impl;
+package org.littlegrid.app;
 
-import org.littlegrid.CallbackHandler;
+import org.junit.Test;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 
-/**
- * Default implementation of callback handler.
- *
- * @since 2.6.1
- */
-public class DefaultCallbackHandler implements CallbackHandler {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doBeforeStart() {
+public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+    @Test(expected = UnsupportedOperationException.class)
+    public void construct() {
+        new ClusterMemberGroupApp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doAfterStart() {
+    @Test
+    public void runMain() {
+        ClusterMemberGroupApp.main(new String[]{"littlegrid/member-group-1-littlegrid-builder.properties"});
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doBeforeShutdown() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doAfterShutdown() {
+    public static class NoWaitConsole {
+        public static void main(String[] args) {
+            System.out.println("Console launched - and done");
+        }
     }
 }

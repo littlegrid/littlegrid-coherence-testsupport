@@ -31,11 +31,11 @@
 
 package org.littlegrid.app;
 
+import org.littlegrid.ClusterMemberGroupBuilder;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_EXTEND_CLIENT;
+import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
  * Extend client REPL application, providing access to CohQL and littlegrid features
@@ -56,9 +56,9 @@ public class ExtendClientReplApp {
      */
     public static void main(final String[] args) {
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
-                EXTEND_CLIENT.name());
+                CONFIGURE_FOR_EXTEND_CLIENT.name());
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         if (builder.getClientCacheConfiguration().trim().length() == 0) {
             throw new IllegalStateException(

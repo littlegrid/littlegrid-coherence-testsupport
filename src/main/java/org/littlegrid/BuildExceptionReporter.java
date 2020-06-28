@@ -29,41 +29,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.impl;
+package org.littlegrid;
 
-import org.littlegrid.CallbackHandler;
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * Default implementation of callback handler.
+ * Build exception reporter, reports useful exception information in a form to help with
+ * trouble-shooting.
  *
- * @since 2.6.1
+ * @since 3.0.0 - top-level interface.
  */
-public class DefaultCallbackHandler implements CallbackHandler {
+public interface BuildExceptionReporter {
     /**
-     * {@inheritDoc}
+     * Report on the exception.
+     *
+     * @param throwable                              Throwable.
+     * @param builderKeysAndValues                   Builder keys and values.
+     * @param builderKeyToSystemPropertyNameMappings Builder key to system property name mapping.
      */
-    @Override
-    public void doBeforeStart() {
-    }
+    void report(Throwable throwable,
+                Map<String, String> builderKeysAndValues,
+                Properties builderKeyToSystemPropertyNameMappings);
 
     /**
-     * {@inheritDoc}
+     * Report on the exception.
+     *
+     * @param throwable                              Throwable.
+     * @param builderKeysAndValues                   Builder keys and values.
+     * @param builderKeyToSystemPropertyNameMappings Builder key to system property name mapping.
+     * @param clusterMemberGroupInstanceClassName    Cluster member group instance class name.
+     * @param otherInformation                       Other information that may be builder specific and useful
+     *                                               to help identify the problem.
+     * @since 2.15
      */
-    @Override
-    public void doAfterStart() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doBeforeShutdown() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doAfterShutdown() {
-    }
+    void report(Throwable throwable,
+                Map<String, String> builderKeysAndValues,
+                Properties builderKeyToSystemPropertyNameMappings,
+                String clusterMemberGroupInstanceClassName,
+                String otherInformation);
 }

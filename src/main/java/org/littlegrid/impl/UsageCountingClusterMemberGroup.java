@@ -31,12 +31,13 @@
 
 package org.littlegrid.impl;
 
+import org.littlegrid.CallbackHandler;
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ReusableClusterMemberGroup;
 
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
  * Usage counting local process cluster member group implementation, performs its

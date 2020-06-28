@@ -32,6 +32,8 @@
 package org.littlegrid.impl;
 
 import com.tangosol.net.CacheFactory;
+import org.littlegrid.CallbackHandler;
+import org.littlegrid.ClusterMember;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.IdentifiableException;
@@ -62,8 +64,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private static final int ONE_MB = 1024 * 1024;
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroup.class.getName());
 
-    private final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
-            new ArrayList<Future<DelegatingClusterMemberWrapper>>();
+    private final List<Future<DelegatingClusterMemberWrapper>> memberFutures = new ArrayList<>();
 
     private CallbackHandler callbackHandler;
     private boolean startAllInvoked;
@@ -134,7 +135,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      */
     @Override
     public ClassLoader[] getActualContainingClassLoaders(final int... memberIds) {
-        final List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
+        final List<ClassLoader> classLoaders = new ArrayList<>();
 
         for (final int memberId : memberIds) {
             final ClusterMember member = getClusterMember(memberId);
@@ -225,17 +226,14 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         }
 
         final Properties systemPropertiesBeforeStartInvoked = SystemUtils.snapshotSystemProperties();
-
-        final List<Future<DelegatingClusterMemberWrapper>> memberFutures =
-                new ArrayList<Future<DelegatingClusterMemberWrapper>>();
+        final List<Future<DelegatingClusterMemberWrapper>> memberFutures = new ArrayList<>();
 
         SystemUtils.applyToSystemProperties(systemPropertiesToBeApplied);
         outputStartAllMessages(numberOfMembers, systemPropertiesToBeApplied, classPathUrls,
                 numberOfThreadsInStartUpPool);
 
         try {
-            final List<Callable<DelegatingClusterMemberWrapper>> tasks =
-                    new ArrayList<Callable<DelegatingClusterMemberWrapper>>(numberOfMembers);
+            final List<Callable<DelegatingClusterMemberWrapper>> tasks = new ArrayList<>(numberOfMembers);
 
             for (int i = 0; i < numberOfMembers; i++) {
                 tasks.add(new ClusterMemberCallable(clusterMemberInstanceClassName, classPathUrls));
@@ -278,7 +276,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     }
 
     static void ensureMemberIdsAreUnique(final int[] memberIds) {
-        Set<Integer> memberIdSet = new HashSet<Integer>(memberIds.length);
+        Set<Integer> memberIdSet = new HashSet<>(memberIds.length);
 
         for (int memberId : memberIds) {
             memberIdSet.add(memberId);
@@ -287,7 +285,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         if (memberIdSet.size() != memberIds.length) {
             throw new IdentifiableException(
                     format("There were %s member ids %s - however only these were unique member "
-                            + "ids %s.  Ensure that the Coherence JAR is on your test class path",
+                                    + "ids %s.  Ensure that the Coherence JAR is on your test class path",
                             memberIds.length, Arrays.toString(memberIds), memberIdSet),
                     CHECK_CHILD_FIRST_CLASS_PATH_IN_USE);
         }
@@ -302,7 +300,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
                 numberOfMembers, numberOfThreadsInStartUpPool));
 
         LOGGER.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        LOGGER.info(format("System properties to be set.: %s", new TreeMap(systemPropertiesToBeApplied)));
+        LOGGER.info(format("System properties to be set.: %s", new TreeMap<>(systemPropertiesToBeApplied)));
         outputMemoryMessage();
     }
 
@@ -343,7 +341,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
     static int[] getStartedMemberIds(final List<Future<DelegatingClusterMemberWrapper>> memberFutures) {
         try {
-            final List<Integer> memberIds = new ArrayList<Integer>();
+            final List<Integer> memberIds = new ArrayList<>();
 
             for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {
                 final DelegatingClusterMemberWrapper memberWrapper = task.get();
@@ -360,9 +358,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
             }
 
             return memberIdsArray;
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new IllegalStateException(e);
         }
     }

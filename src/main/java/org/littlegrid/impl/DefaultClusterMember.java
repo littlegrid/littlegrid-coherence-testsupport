@@ -33,9 +33,8 @@ package org.littlegrid.impl;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultCacheServer;
-
-import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
-import static org.littlegrid.ClusterMemberGroup.ClusterMember;
+import org.littlegrid.CallbackHandler;
+import org.littlegrid.ClusterMember;
 
 /**
  * Default cluster member (which may be extended if specialised behaviour is required,

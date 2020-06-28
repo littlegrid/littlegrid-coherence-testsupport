@@ -46,7 +46,7 @@ public class IdentifiableException extends RuntimeException {
     /**
      * Types of exception reason.
      */
-    public static enum ReasonEnum {
+    public enum ReasonEnum {
         /**
          * Exception reason.
          */
@@ -118,6 +118,6 @@ public class IdentifiableException extends RuntimeException {
      */
     @Override
     public String toString() {
-        return format(format("%s %s", reasonEnum.toString(), getMessage()));
+        return format("%s %s", reasonEnum.toString(), getMessage());
     }
 }

@@ -29,41 +29,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.impl;
-
-import org.littlegrid.CallbackHandler;
+package org.littlegrid;
 
 /**
- * Default implementation of callback handler.
+ * Interface to denote that the cluster member group may be re-used.
  *
- * @since 2.6.1
+ * @since 2.15.
+ * @since 3.0.0 - top-level interface.
  */
-public class DefaultCallbackHandler implements CallbackHandler {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doBeforeStart() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doAfterStart() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doBeforeShutdown() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doAfterShutdown() {
-    }
+public interface ReusableClusterMemberGroup extends ClusterMemberGroup {
+    int getCurrentUsageCount();
 }

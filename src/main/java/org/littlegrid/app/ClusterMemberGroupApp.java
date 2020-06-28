@@ -29,41 +29,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.impl;
+package org.littlegrid.app;
 
-import org.littlegrid.CallbackHandler;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 /**
- * Default implementation of callback handler.
+ * Cluster member group app.
  *
- * @since 2.6.1
+ * @since 2.14
+ * @since 3.0.0 moved to app package
  */
-public class DefaultCallbackHandler implements CallbackHandler {
+public class ClusterMemberGroupApp {
     /**
-     * {@inheritDoc}
+     * Default scope to enable test coverage.
      */
-    @Override
-    public void doBeforeStart() {
+    ClusterMemberGroupApp() {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * {@inheritDoc}
+     * Launches a littlegrid cluster member group, this technique is useful when an external process
+     * is required - for instance, if launching littlegrid from .Net or perhaps if you want to run
+     * mini-clusters on your development machine and connect to then via an external process such as
+     * WebLogic or Tomcat etc.
+     *
+     * @param args Arguments - either no arguments can be specified or optionally, a single properties
+     *             file can be specified from which the cluster member group configuration should be
+     *             specified.
      */
-    @Override
-    public void doAfterStart() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doBeforeShutdown() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doAfterShutdown() {
+    public static void main(final String[] args) {
+        ClusterMemberGroupUtils.main(args);
     }
 }

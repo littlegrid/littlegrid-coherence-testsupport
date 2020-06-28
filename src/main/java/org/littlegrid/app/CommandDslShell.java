@@ -34,6 +34,7 @@ package org.littlegrid.app;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupBuilder;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import java.io.InputStream;
@@ -48,7 +49,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroup.Builder;
 
 /**
  * Command DSL shell - purposely reduced scope for the class and methods to keep visible
@@ -425,7 +425,7 @@ class CommandDslShell {
         outputStartedMemberIds(memberGroup);
     }
 
-    private Builder getNewBuilder() {
+    private ClusterMemberGroupBuilder getNewBuilder() {
         return ClusterMemberGroupUtils.newBuilder()
                 .setSiteName(site)
                 .setRackName(rack)

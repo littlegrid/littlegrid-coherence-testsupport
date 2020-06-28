@@ -31,6 +31,7 @@
 
 package org.littlegrid.impl;
 
+import org.littlegrid.BuildExceptionReporter;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.ClassPathUtils;
@@ -46,7 +47,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroup.BuildExceptionReporter;
 
 /**
  * Default exception reporter implementation that outputs useful information for
@@ -65,9 +65,9 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
     @Override
     public void report(final Throwable throwable,
                        final Map<String, String> builderKeysAndValues,
-                       final Properties builderKeyToSystemPropertyNameMapping) {
+                       final Properties builderKeyToSystemPropertyNameMappings) {
 
-        report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping, null, null);
+        report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMappings, null, null);
     }
 
     /**
@@ -76,7 +76,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
     @Override
     public void report(final Throwable throwable,
                        final Map<String, String> builderKeysAndValues,
-                       final Properties builderKeyToSystemPropertyNameMapping,
+                       final Properties builderKeyToSystemPropertyNameMappings,
                        final String clusterMemberGroupInstanceClassName,
                        final String otherInformation) {
 
@@ -105,7 +105,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
             outputNetwork(out);
             outputSortedCurrentSystemProperties(out);
             outputBuilderKeysAndValues(out, builderKeysAndValues);
-            outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMapping);
+            outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMappings);
             outputException(out, throwable.getCause());
             outputOtherInformation(out, otherInformation);
             outputSuggestedExceptionReason(out, buildException);
@@ -150,7 +150,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
         out.println(SECTION_DIVIDER);
         out.println("Builder keys and values - sorted to help identification");
 
-        final Map<String, String> map = new TreeMap<String, String>(builderKeysAndValues);
+        final Map<String, String> map = new TreeMap<>(builderKeysAndValues);
 
         for (final String key : map.keySet()) {
             String value = map.get(key);
@@ -292,7 +292,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
     }
 
     private void outputClusterMemberGroupInstanceClassName(final PrintStream out,
-                                                      final String clusterMemberGroupInstanceClassName) {
+                                                           final String clusterMemberGroupInstanceClassName) {
 
         out.println(SECTION_DIVIDER);
         out.println("Cluster member group name: " + clusterMemberGroupInstanceClassName);

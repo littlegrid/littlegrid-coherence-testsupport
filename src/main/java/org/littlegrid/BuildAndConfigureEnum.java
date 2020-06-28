@@ -29,41 +29,37 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.impl;
-
-import org.littlegrid.CallbackHandler;
+package org.littlegrid;
 
 /**
- * Default implementation of callback handler.
+ * Build and configure enum, defining what type of 'client' or environment to configure
+ * after the cluster member group has been built.
  *
- * @since 2.6.1
+ * @since 2.14
+ * @since 3.0.0 - top-level enum with name changes.
  */
-public class DefaultCallbackHandler implements CallbackHandler {
+public enum BuildAndConfigureEnum {
     /**
-     * {@inheritDoc}
+     * Denotes that after the cluster member group has been built that the environment
+     * should be configured for a storage-disabled client to interact with Coherence.
      */
-    @Override
-    public void doBeforeStart() {
-    }
+    CONFIGURE_FOR_STORAGE_DISABLED_CLIENT,
 
     /**
-     * {@inheritDoc}
+     * Denotes that after the cluster member group has been built that the environment
+     * should be configured for a Extend client to interact with Coherence.
      */
-    @Override
-    public void doAfterStart() {
-    }
+    CONFIGURE_FOR_EXTEND_CLIENT,
 
     /**
-     * {@inheritDoc}
+     * Denotes that after the cluster member group has been built then no special
+     * configuration should be applied.
      */
-    @Override
-    public void doBeforeShutdown() {
-    }
+    CONFIGURE_FOR_NO_CLIENT,
 
     /**
-     * {@inheritDoc}
+     * Denotes that after the cluster member group has been built that the environment
+     * should be configured for a storage enabled member to interact with Coherence.
      */
-    @Override
-    public void doAfterShutdown() {
-    }
+    CONFIGURE_FOR_STORAGE_ENABLED_MEMBER
 }

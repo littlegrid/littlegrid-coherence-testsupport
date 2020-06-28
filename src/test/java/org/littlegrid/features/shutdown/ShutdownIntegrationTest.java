@@ -39,8 +39,6 @@ import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
@@ -138,9 +136,7 @@ public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownInte
     }
 
     @Test
-    public void startAndShutdownSeveralMembersOfGroup()
-            throws InterruptedException {
-
+    public void startAndShutdownSeveralMembersOfGroup() {
         final int numberOfMembers = MEDIUM_TEST_CLUSTER_SIZE;
         final int[] memberIdsToShutdown = {1, 2};
         final int expectedClusterSizeBeforeShutdown = numberOfMembers + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;

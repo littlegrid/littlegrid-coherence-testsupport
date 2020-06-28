@@ -31,8 +31,8 @@
 
 package org.littlegrid.app;
 
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 
 /**
  * Storage disabled client REPL application, providing access to the CacheFactory console, CohQL
@@ -55,7 +55,7 @@ public class StorageDisabledClientReplApp {
      */
     public static void main(final String[] args) {
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
-                STORAGE_DISABLED_CLIENT.name());
+                CONFIGURE_FOR_STORAGE_DISABLED_CLIENT.name());
 
         final CommandDslShell shell = new CommandDslShell(System.in, System.out);
         shell.start(args);

@@ -29,41 +29,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.impl;
-
-import org.littlegrid.CallbackHandler;
+package org.littlegrid;
 
 /**
- * Default implementation of callback handler.
+ * Callback handler interface, enabling callbacks to be registered for certain lifecycle events.
  *
- * @since 2.6.1
+ * @since 2.6
+ * @since 3.0.0 - top-level interface.
  */
-public class DefaultCallbackHandler implements CallbackHandler {
+public interface CallbackHandler {
     /**
-     * {@inheritDoc}
+     * Performs any necessary setup before cluster member is started.
      */
-    @Override
-    public void doBeforeStart() {
-    }
+    void doBeforeStart();
 
     /**
-     * {@inheritDoc}
+     * Performs any necessary actions after the cluster member has been started.
      */
-    @Override
-    public void doAfterStart() {
-    }
+    void doAfterStart();
 
     /**
-     * {@inheritDoc}
+     * Performs any necessary actions before the cluster member is shutdown.
      */
-    @Override
-    public void doBeforeShutdown() {
-    }
+    void doBeforeShutdown();
 
     /**
-     * {@inheritDoc}
+     * Performs any necessary actions after the cluster member has been shutdown.
      */
-    @Override
-    public void doAfterShutdown() {
-    }
+    void doAfterShutdown();
 }

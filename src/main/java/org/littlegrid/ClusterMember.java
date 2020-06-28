@@ -32,29 +32,35 @@
 package org.littlegrid;
 
 /**
- * Cluster member group app.
+ * Cluster member interface - implementations of this class need to provide basic functionality,
+ * so they may be controlled by the {@link ClusterMemberGroup}
+ * implementations - typically the default implementation of this class should suffice for most
+ * uses.
  *
- * @since 2.14
+ * @since 3.0.0 - top-level interface.
  */
-public class ClusterMemberGroupApp {
+public interface ClusterMember {
     /**
-     * Default scope to enable test coverage.
+     * Shutdown the member, it leaves the cluster politely and notifies other members.
      */
-    ClusterMemberGroupApp() {
-        throw new UnsupportedOperationException();
-    }
+    void shutdown();
 
     /**
-     * Launches a littlegrid cluster member group, this technique is useful when an external process
-     * is required - for instance, if launching littlegrid from .Net or perhaps if you want to run
-     * mini-clusters on your development machine and connect to then via an external process such as
-     * WebLogic or Tomcat etc.
-     *
-     * @param args Arguments - either no arguments can be specified or optionally, a single properties
-     *             file can be specified from which the cluster member group configuration should be
-     *             specified.
+     * Stops the member immediately, it leaves the cluster without notifying other members.
      */
-    public static void main(final String[] args) {
-        ClusterMemberGroupUtils.main(args);
-    }
+    void stop();
+
+    /**
+     * Gets this local member Id.
+     *
+     * @return member id.
+     */
+    int getLocalMemberId();
+
+    /**
+     * Returns the class loader that the cluster member has been loaded into.
+     *
+     * @return class loader.
+     */
+    ClassLoader getActualContainingClassLoader();
 }
