@@ -31,6 +31,8 @@
 
 package org.littlegrid.impl;
 
+import org.littlegrid.BuildExceptionReporter;
+import org.littlegrid.CallbackHandler;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.support.BeanUtils;
@@ -57,9 +59,7 @@ import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.EXTEND_CLI
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.NO_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
 import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_ENABLED_MEMBER;
-import static org.littlegrid.ClusterMemberGroup.BuildExceptionReporter;
 import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
 
 /**
@@ -167,7 +167,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
     private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
 
-    private final Map<String, String> builderKeysAndValues = new HashMap<String, String>();
+    private final Map<String, String> builderKeysAndValues = new HashMap<>();
     private final Properties additionalSystemProperties = new Properties();
     private final Properties builderKeyToSystemPropertyNameMapping = new Properties();
 
@@ -175,14 +175,14 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
      * Default constructor.
      */
     public DefaultClusterMemberGroupBuilder() {
-        final Map<String, Integer> builderKeysAndValuesLoadedSummary = new LinkedHashMap<String, Integer>();
-        final Map<String, Integer> systemPropertyNameMappingLoadedSummary = new LinkedHashMap<String, Integer>();
+        final Map<String, Integer> builderKeysAndValuesLoadedSummary = new LinkedHashMap<>();
+        final Map<String, Integer> systemPropertyNameMappingLoadedSummary = new LinkedHashMap<>();
 
         loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary);
         loadBuilderKeyToSystemPropertyNameMapping(systemPropertyNameMappingLoadedSummary);
 
         LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  "
-                + "Builder to Coherence system property mapping values: %s ___",
+                        + "Builder to Coherence system property mapping values: %s ___",
                 Info.getName(), Info.getVersionNumber(), Info.getWebsiteAddress(),
                 builderKeysAndValuesLoadedSummary, systemPropertyNameMappingLoadedSummary));
 
@@ -474,7 +474,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         final String clusterMemberGroupInstanceClassName =
                 getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
 
-        DefaultClusterMemberGroup containerGroup = null;
+        DefaultClusterMemberGroup containerGroup;
 
         try {
             final URL[] classPathUrls = ClassPathUtils.getClassPathUrlsExcludingJavaHome(
@@ -1322,7 +1322,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
     @Override
     public String toString() {
         return format("Builder{builderKeysAndValues=%s, additionalSystemProperties=%s, "
-                + "builderKeyToSystemPropertyNameMapping=%s}",
+                        + "builderKeyToSystemPropertyNameMapping=%s}",
                 builderKeysAndValues, additionalSystemProperties, builderKeyToSystemPropertyNameMapping);
     }
 
@@ -1746,8 +1746,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
         /**
          * Default scope to facilitate testing.
          */
-        final Map<Object, ReusableClusterMemberGroup> reusableClusterMemberGroupMap =
-                new HashMap<Object, ReusableClusterMemberGroup>();
+        final Map<Object, ReusableClusterMemberGroup> reusableClusterMemberGroupMap = new HashMap<>();
 
         static Registry getInstance() {
             return INSTANCE;

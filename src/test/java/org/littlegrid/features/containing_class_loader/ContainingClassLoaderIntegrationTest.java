@@ -37,6 +37,7 @@ import com.tangosol.net.cache.AbstractCacheStore;
 import com.tangosol.util.ClassHelper;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMember;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.features.PretendServer;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
@@ -54,7 +55,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 import static org.littlegrid.ClusterMemberGroupTestSupport.KNOWN_TEST_CACHE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.MEDIUM_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
@@ -187,9 +187,10 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
         private static final AtomicInteger LOAD_COUNTER = new AtomicInteger();
         private static final AtomicInteger STORE_COUNTER = new AtomicInteger();
 
-        private List<String> loadKeysThatWillGenerateExceptions = new ArrayList<String>();
+        private final List<String> loadKeysThatWillGenerateExceptions = new ArrayList<>();
+        private final List<String> storeKeysThatWillGenerateExceptions = new ArrayList<>();
+
         private String loadExceptionClassName;
-        private List<String> storeKeysThatWillGenerateExceptions = new ArrayList<String>();
         private String storeExceptionClassName;
 
         public StubCacheStore() {

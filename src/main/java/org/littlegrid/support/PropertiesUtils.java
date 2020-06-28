@@ -29,9 +29,8 @@ public final class PropertiesUtils {
     /**
      * Loads properties using the specified (potentially comma delimited) filenames.
      *
-     * @param loadedPropertyFileLogLevel Log level at which properties files loaded should be output.
-     * @param commaDelimitedPropertiesFilenames
-     *         Comma delimited properties filenames.
+     * @param loadedPropertyFileLogLevel        Log level at which properties files loaded should be output.
+     * @param commaDelimitedPropertiesFilenames Comma delimited properties filenames.
      * @return properties.
      */
     public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
@@ -50,14 +49,14 @@ public final class PropertiesUtils {
     public static Properties loadProperties(final Level loadedPropertyFileLogLevel,
                                             final String... propertiesFilenames) {
 
-        final Map<String, String> loadedSummary = new LinkedHashMap<String, String>();
+        final Map<String, String> loadedSummary = new LinkedHashMap<>();
         final Properties properties = new Properties();
 
         for (String propertiesFilename : propertiesFilenames) {
             propertiesFilename = propertiesFilename.trim();
 
             final URL url = Resources.findFileOrResource(propertiesFilename,
-                    PropertiesUtils.class.getClass().getClassLoader());
+                    PropertiesUtils.class.getClassLoader());
 
             if (url == null) {
                 loadedSummary.put(propertiesFilename, "not found");

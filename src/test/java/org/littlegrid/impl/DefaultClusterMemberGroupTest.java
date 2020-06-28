@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import org.junit.Test;
+import org.littlegrid.ClusterMember;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -45,7 +46,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
 
 /**
@@ -108,9 +108,7 @@ public final class DefaultClusterMemberGroupTest {
     }
 
     @Test
-    public void shutdownAllRestoreOfSystemProperties()
-            throws MalformedURLException {
-
+    public void shutdownAllRestoreOfSystemProperties() {
         final String key = "this-is-a-key-of-a-new-property";
 
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.newBuilder()

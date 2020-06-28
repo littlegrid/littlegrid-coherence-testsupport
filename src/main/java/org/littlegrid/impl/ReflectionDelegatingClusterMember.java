@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import com.tangosol.util.ClassHelper;
+import org.littlegrid.ClusterMember;
 import org.littlegrid.support.PropertiesUtils;
 
 import java.lang.reflect.Constructor;
@@ -43,7 +44,7 @@ import static java.lang.String.format;
 /**
  * Reflection based cluster member, provides a declarative mechanism to delegate
  * to a class that acts as a cluster member - in the event of the delegate class not
- * implementing all the methods of {@link org.littlegrid.ClusterMemberGroup.ClusterMember}
+ * implementing all the methods of {@link ClusterMember}
  * then this class will simply handle them with default cluster member behaviour.
  * <p/>
  * The configuration of delegate class and the method mapping should be defined in
@@ -101,8 +102,7 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
         try {
             final Class clusterMemberClass = this.getClass().getClassLoader().loadClass(delegateInstanceClassName);
 
-            @SuppressWarnings("unchecked")
-            final Constructor constructor = clusterMemberClass.getConstructor();
+            @SuppressWarnings("unchecked") final Constructor constructor = clusterMemberClass.getConstructor();
 
             delegateInstance = constructor.newInstance();
         } catch (Exception e) {
@@ -228,8 +228,7 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     /**
      * Set method name of get actual containing class loader.
      *
-     * @param getActualContainingClassLoaderMethodName
-     *         Method name.
+     * @param getActualContainingClassLoaderMethodName Method name.
      * @return reflection delegating cluster member.
      */
     public ReflectionDelegatingClusterMember setGetActualContainingClassLoaderMethodName(

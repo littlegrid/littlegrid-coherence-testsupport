@@ -29,41 +29,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid.impl;
-
-import org.littlegrid.CallbackHandler;
+package org.littlegrid;
 
 /**
- * Default implementation of callback handler.
+ * Cluster member interface - implementations of this class need to provide basic functionality,
+ * so they may be controlled by the {@link ClusterMemberGroup}
+ * implementations - typically the default implementation of this class should suffice for most
+ * uses.
  *
- * @since 2.6.1
+ * @since 3.0.0 - top-level interface.
  */
-public class DefaultCallbackHandler implements CallbackHandler {
+public interface ClusterMember {
     /**
-     * {@inheritDoc}
+     * Shutdown the member, it leaves the cluster politely and notifies other members.
      */
-    @Override
-    public void doBeforeStart() {
-    }
+    void shutdown();
 
     /**
-     * {@inheritDoc}
+     * Stops the member immediately, it leaves the cluster without notifying other members.
      */
-    @Override
-    public void doAfterStart() {
-    }
+    void stop();
 
     /**
-     * {@inheritDoc}
+     * Gets this local member Id.
+     *
+     * @return member id.
      */
-    @Override
-    public void doBeforeShutdown() {
-    }
+    int getLocalMemberId();
 
     /**
-     * {@inheritDoc}
+     * Returns the class loader that the cluster member has been loaded into.
+     *
+     * @return class loader.
      */
-    @Override
-    public void doAfterShutdown() {
-    }
+    ClassLoader getActualContainingClassLoader();
 }

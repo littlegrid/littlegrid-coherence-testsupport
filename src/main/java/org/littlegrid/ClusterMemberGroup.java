@@ -31,7 +31,6 @@
 
 package org.littlegrid;
 
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -160,38 +159,6 @@ public interface ClusterMemberGroup {
      */
     interface ReusableClusterMemberGroup extends ClusterMemberGroup {
         int getCurrentUsageCount();
-    }
-
-    /**
-     * Cluster member interface - implementations of this class need to provide basic functionality,
-     * so they may be controlled by the {@link ClusterMemberGroup}
-     * implementations - typically the default implementation of this class should suffice for most
-     * uses.
-     */
-    public interface ClusterMember {
-        /**
-         * Shutdown the member, it leaves the cluster politely and notifies other members.
-         */
-        void shutdown();
-
-        /**
-         * Stops the member immediately, it leaves the cluster without notifying other members.
-         */
-        void stop();
-
-        /**
-         * Gets this local member Id.
-         *
-         * @return member id.
-         */
-        int getLocalMemberId();
-
-        /**
-         * Returns the class loader that the cluster member has been loaded into.
-         *
-         * @return class loader.
-         */
-        ClassLoader getActualContainingClassLoader();
     }
 
     /**
@@ -339,8 +306,7 @@ public interface ClusterMemberGroup {
         /**
          * Sets the exception report instance class name.
          *
-         * @param exceptionReportInstanceClassName
-         *         Exception report instance name.
+         * @param exceptionReportInstanceClassName Exception report instance name.
          * @return builder.
          */
         Builder setExceptionReporterInstanceClassName(String exceptionReportInstanceClassName);
@@ -417,9 +383,8 @@ public interface ClusterMemberGroup {
          * Used to set any remaining system properties that are required when starting the cluster
          * member group - multiple properties files are supported by passing as a comma separated string.
          *
-         * @param commaDelimitedPropertiesFilenames
-         *         String of properties filenames, multiple property
-         *         files are supported.
+         * @param commaDelimitedPropertiesFilenames String of properties filenames, multiple property
+         *                                          files are supported.
          * @return builder.
          */
         Builder setAdditionalSystemProperties(String commaDelimitedPropertiesFilenames);
@@ -790,11 +755,10 @@ public interface ClusterMemberGroup {
          * properties is useful if the configuration is required to be externalised, rather than
          * the builder being controlled through code.
          *
-         * @param commaDelimitedPropertiesFilenames
-         *         Filenames of properties containing overrides, the keys should match the methods
-         *         exposed on this cluster member group builder interface, minus the
-         *         'set' - so for example to set the WKA port, the entry in the properties
-         *         file would look like WkaPort=345612
+         * @param commaDelimitedPropertiesFilenames Filenames of properties containing overrides, the keys should match the methods
+         *                                          exposed on this cluster member group builder interface, minus the
+         *                                          'set' - so for example to set the WKA port, the entry in the properties
+         *                                          file would look like WkaPort=345612
          * @return builder.
          */
         Builder setBuilderProperties(String commaDelimitedPropertiesFilenames);
@@ -862,8 +826,7 @@ public interface ClusterMemberGroup {
          * Sets a callback handler instance, examples of use could be to add indexes after
          * the cluster member group is started.
          *
-         * @param callbackHandlerInstanceClassName
-         *         Callback handler instance class name.
+         * @param callbackHandlerInstanceClassName Callback handler instance class name.
          * @return builder.
          * @since 2.6
          */
@@ -916,75 +879,10 @@ public interface ClusterMemberGroup {
         /**
          * Sets the cluster member group instance, some types are able to pool member groups.
          *
-         * @param clusterMemberGroupInstanceClassName
-         *         Cluster member group instance class name.
+         * @param clusterMemberGroupInstanceClassName Cluster member group instance class name.
          * @return builder.
          * @since 2.15
          */
         Builder setClusterMemberGroupInstanceClassName(String clusterMemberGroupInstanceClassName);
-    }
-
-    /**
-     * Build exception reporter, reports useful exception information in a form to help with
-     * trouble-shooting.
-     */
-    interface BuildExceptionReporter {
-        /**
-         * Report on the exception.
-         *
-         * @param throwable            Throwable.
-         * @param builderKeysAndValues Builder keys and values.
-         * @param builderKeyToSystemPropertyNameMapping
-         *                             Builder key to system property name mapping.
-         */
-        void report(Throwable throwable,
-                    Map<String, String> builderKeysAndValues,
-                    Properties builderKeyToSystemPropertyNameMapping);
-
-        /**
-         * Report on the exception.
-         *
-         * @param throwable            Throwable.
-         * @param builderKeysAndValues Builder keys and values.
-         * @param builderKeyToSystemPropertyNameMapping
-         *                             Builder key to system property name mapping.
-         * @param clusterMemberGroupInstanceClassName
-         *                             Cluster member group instance class name.
-         * @param otherInformation     Other information that may be builder specific and useful
-         *                             to help identify the problem.
-         * @since 2.15
-         */
-        void report(Throwable throwable,
-                    Map<String, String> builderKeysAndValues,
-                    Properties builderKeyToSystemPropertyNameMapping,
-                    String clusterMemberGroupInstanceClassName,
-                    String otherInformation);
-    }
-
-    /**
-     * Callback handler interface, enabling callbacks to be registered for certain lifecycle events.
-     *
-     * @since 2.6
-     */
-    interface CallbackHandler {
-        /**
-         * Performs any necessary setup before cluster member is started.
-         */
-        void doBeforeStart();
-
-        /**
-         * Performs any necessary actions after the cluster member has been started.
-         */
-        void doAfterStart();
-
-        /**
-         * Performs any necessary actions before the cluster member is shutdown.
-         */
-        void doBeforeShutdown();
-
-        /**
-         * Performs any necessary actions after the cluster member has been shutdown.
-         */
-        void doAfterShutdown();
     }
 }

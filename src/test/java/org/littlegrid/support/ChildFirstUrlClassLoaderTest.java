@@ -38,9 +38,7 @@ import org.littlegrid.IdentifiableException;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -174,7 +172,7 @@ public final class ChildFirstUrlClassLoaderTest {
     private List<Callable<Void>> getTasks(final ClassLoader classLoader,
                                           int numberOfTasks) {
 
-        final List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(numberOfTasks);
+        final List<Callable<Void>> tasks = new ArrayList<>(numberOfTasks);
 
         for (int i = 0; i < numberOfTasks; i++) {
             tasks.add(new LoadClassCallable(classLoader));
@@ -223,7 +221,7 @@ public final class ChildFirstUrlClassLoaderTest {
          * @param name    Class name.
          * @param resolve Resolve the class.
          * @return class.
-         * @throws ClassNotFoundException
+         * @throws ClassNotFoundException exception.
          */
         @Override
         public synchronized Class<?> loadClass(final String name,

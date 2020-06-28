@@ -90,7 +90,7 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
     }
 
-    @Test (expected = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void launchAndStartConsoleBadConsole() {
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "AppConsoleClassName",
                 NoWaitConsole.class.getName() + "xyz");

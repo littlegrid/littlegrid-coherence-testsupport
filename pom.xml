@@ -200,7 +200,7 @@
                         <configuration>
                             <forkCount>${fork.count}</forkCount>
                             <reuseForks>false</reuseForks>
-                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=384m</argLine>
+                            <argLine>-Xmx768m -Xms768m</argLine>
                             <systemPropertyVariables>
                                 <littlegrid.builder.WkaPort>${starting.thousand.port.number}${surefire.forkNumber}00
                                 </littlegrid.builder.WkaPort>

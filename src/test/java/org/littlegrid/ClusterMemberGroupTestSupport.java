@@ -121,8 +121,8 @@ public final class ClusterMemberGroupTestSupport {
                 expectedSizeOrTimedOutWaiting = true;
             } else {
                 LOGGER.warning(format("Cluster size is presently %d, but was expected to be %d - will check again "
-                        + "after sleeping, the cluster could be stabilising after a failover.  Number of attempts "
-                        + "%d out of %d before giving up",
+                                + "after sleeping, the cluster could be stabilising after a failover.  Number of attempts "
+                                + "%d out of %d before giving up",
                         currentClusterSize, expectedClusterSize,
                         counter, NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP));
 

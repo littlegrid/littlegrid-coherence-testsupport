@@ -258,31 +258,29 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String appConsoleClassName = "com.a.b.c.Console";
         final String buildAndConfigureForEnumName = STORAGE_DISABLED_CLIENT.name();
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
-
-        builder.setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName);
-        builder.setCallbackHandlerInstanceClassName(expectedCallbackHandlerInstanceClassName);
-
-        builder.setCustomConfiguredCount(expectedCustomConfiguredMemberCount);
-        builder.setStorageEnabledCount(expectedStorageEnabledCount);
-        builder.setStorageEnabledExtendProxyCount(expectedStorageEnabledProxyCount);
-        builder.setExtendProxyCount(expectedExtendProxyCount);
-        builder.setJmxMonitorCount(expectedJmxMonitorCount);
-
-        builder.setNumberOfThreadsInStartUpPool(expectedNumberOfThreads);
-        builder.setClusterMemberInstanceClassName(expectedInstanceClassName);
-        builder.setClusterMemberGroupInstanceClassName(expectedGroupInstanceClassName);
-        builder.setCustomConfiguredClusterMemberInstanceClassName(expectedCustomConfiguredInstanceClassName);
-
-        builder.setSuggestedSleepAfterStopDuration35x(expectedSleepDuration35x);
-        builder.setSuggestedSleepAfterStopDuration36x(expectedSleepDuration36x);
-        builder.setSuggestedSleepAfterStopDurationDefault(expectedSleepDurationDefault);
-
-        builder.setJarsToExcludeFromClassPath(jarsToExcludeFromClassPath);
-        builder.setCoreJarsToExcludeFromClassPath(coreJarsToExcludeFromClassPath);
-
-        builder.setAppConsoleClassName(appConsoleClassName);
-        builder.setBuildAndConfigureForEnumName(buildAndConfigureForEnumName);
+        final Builder builder = ClusterMemberGroupUtils.newBuilder()
+                .setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName)
+                .setCallbackHandlerInstanceClassName(expectedCallbackHandlerInstanceClassName)
+                .setCustomConfiguredCount(expectedCustomConfiguredMemberCount)
+                .setStorageEnabledCount(expectedStorageEnabledCount)
+                .setStorageEnabledExtendProxyCount(expectedStorageEnabledProxyCount)
+                .setExtendProxyCount(expectedExtendProxyCount)
+                .setJmxMonitorCount(expectedJmxMonitorCount)
+                //
+                .setNumberOfThreadsInStartUpPool(expectedNumberOfThreads)
+                .setClusterMemberInstanceClassName(expectedInstanceClassName)
+                .setClusterMemberGroupInstanceClassName(expectedGroupInstanceClassName)
+                .setCustomConfiguredClusterMemberInstanceClassName(expectedCustomConfiguredInstanceClassName)
+                //
+                .setSuggestedSleepAfterStopDuration35x(expectedSleepDuration35x)
+                .setSuggestedSleepAfterStopDuration36x(expectedSleepDuration36x)
+                .setSuggestedSleepAfterStopDurationDefault(expectedSleepDurationDefault)
+                //
+                .setJarsToExcludeFromClassPath(jarsToExcludeFromClassPath)
+                .setCoreJarsToExcludeFromClassPath(coreJarsToExcludeFromClassPath)
+                //
+                .setAppConsoleClassName(appConsoleClassName)
+                .setBuildAndConfigureForEnumName(buildAndConfigureForEnumName);
 
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;

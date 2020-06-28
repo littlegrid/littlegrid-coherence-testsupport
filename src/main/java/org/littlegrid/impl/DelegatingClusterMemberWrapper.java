@@ -32,6 +32,7 @@
 package org.littlegrid.impl;
 
 import com.tangosol.util.ClassHelper;
+import org.littlegrid.ClusterMember;
 import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
 
@@ -39,7 +40,6 @@ import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
 import static java.lang.String.format;
-import static org.littlegrid.ClusterMemberGroup.ClusterMember;
 import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
@@ -72,8 +72,7 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
 
             final Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
 
-            @SuppressWarnings("unchecked")
-            final Constructor constructor = clusterMemberClass.getConstructor();
+            @SuppressWarnings("unchecked") final Constructor constructor = clusterMemberClass.getConstructor();
 
             clusterMemberInstance = constructor.newInstance();
         } catch (Exception e) {

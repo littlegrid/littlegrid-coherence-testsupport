@@ -31,6 +31,7 @@
 
 package org.littlegrid.impl;
 
+import org.littlegrid.CallbackHandler;
 import org.littlegrid.ClusterMemberGroup;
 
 import java.util.logging.Logger;
