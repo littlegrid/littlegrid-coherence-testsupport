@@ -183,7 +183,7 @@ public class DefaultClusterMemberGroupBuilder implements Builder {
 
         LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  "
                 + "Builder to Coherence system property mapping values: %s ___",
-                Info.getName(), Info.getVersionNumber(), "http://littlegrid.bitbucket.org",
+                Info.getName(), Info.getVersionNumber(), Info.getWebsiteAddress(),
                 builderKeysAndValuesLoadedSummary, systemPropertyNameMappingLoadedSummary));
 
     }

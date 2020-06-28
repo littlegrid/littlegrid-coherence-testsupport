@@ -15,6 +15,7 @@ final class $className {
     private static final String NAME = "$name";
     private static final String VERSION_NUMBER = "$versionNumber";
     private static final String BUILD_DATE = "$buildDate";
+    private static final String WEBSITE_ADDRESS = "http://www.littlegrid.org";
 
 
     $className() {
@@ -30,6 +31,10 @@ final class $className {
 
     public static String getBuildDate() {
         return BUILD_DATE;
+    }
+    
+    public static String getWebsiteAddress() {
+        return WEBSITE_ADDRESS;
     }
 }
 """
