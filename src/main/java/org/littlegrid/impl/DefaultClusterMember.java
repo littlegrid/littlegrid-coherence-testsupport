@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 Jonathan Hall.
+ * Copyright (c) 2010-2020 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,6 @@ package org.littlegrid.impl;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultCacheServer;
-
-import java.util.concurrent.Callable;
 
 import static org.littlegrid.ClusterMemberGroup.CallbackHandler;
 import static org.littlegrid.ClusterMemberGroup.ClusterMember;
@@ -83,13 +81,7 @@ public class DefaultClusterMember implements ClusterMember, CallbackHandler {
     @Override
     public void shutdown() {
         doBeforeShutdown();
-
-        if (CacheFactory.VERSION.startsWith("12.")) {
-            CacheFactory.shutdown();
-        } else {
-            DefaultCacheServer.shutdown();
-        }
-
+        DefaultCacheServer.shutdown();
         doAfterShutdown();
     }
 

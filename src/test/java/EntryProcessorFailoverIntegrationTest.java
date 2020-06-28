@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 Jonathan Hall.
+ * Copyright (c) 2010-2020 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ import com.tangosol.util.InvocableMap;
 import com.tangosol.util.processor.AbstractProcessor;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -52,6 +53,7 @@ import static org.junit.Assert.assertTrue;
  * an entry processor, the tests also demonstrate how to use the standard Java Executor
  * framework to essentially perform 'deferred' events.
  */
+@Ignore
 public class EntryProcessorFailoverIntegrationTest {
     private static final int SECONDS_DELAY_BEFORE_DEFERRED_ACTION = 2;
     private static final int SECONDS_TO_SLEEP_IN_ENTRY_PROCESSOR = SECONDS_DELAY_BEFORE_DEFERRED_ACTION + 3;

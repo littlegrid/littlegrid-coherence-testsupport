@@ -5,7 +5,7 @@
     <groupId>org.littlegrid</groupId>
     <artifactId>littlegrid</artifactId>
     <packaging>jar</packaging>
-    <version>2.15.2</version>
+    <version>3.0.0-SNAPSHOT</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -48,10 +48,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle.coherence</groupId>
+            <groupId>com.oracle.coherence.ce</groupId>
             <artifactId>coherence</artifactId>
-            <version>${coherence.version}</version>
-            <scope>provided</scope>
+            <version>${coherence.ce.version}</version>
         </dependency>
     </dependencies>
 
@@ -200,13 +199,18 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${maven-surefire-plugin.version}</version>
                         <configuration>
-                            <!--
-                                Due to the classes being loaded into different class loaders and coupled with
-                                the fact that these tests are all about testing that behaviour, the forking and
-                                below argLine settings are used to avoid the perm-space from becoming full.
-                            -->
-                            <forkMode>always</forkMode>
-                            <argLine>-Xmx1024m -Xms1024m -XX:MaxPermSize=512m</argLine>
+                            <forkCount>${fork.count}</forkCount>
+                            <reuseForks>false</reuseForks>
+                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=384m</argLine>
+                            <systemPropertyVariables>
+                                <littlegrid.builder.WkaPort>${starting.thousand.port.number}${surefire.forkNumber}00
+                                </littlegrid.builder.WkaPort>
+                                <littlegrid.builder.ExtendPort>
+                                    ${starting.thousand.port.number}${surefire.forkNumber}50
+                                </littlegrid.builder.ExtendPort>
+                                <littlegrid.builder.ClusterName>littlegridCluster-${surefire.forkNumber}
+                                </littlegrid.builder.ClusterName>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
 
@@ -236,7 +240,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <forkMode>always</forkMode>
-                            <argLine>-Xmx1024m -Xms1024m -XX:MaxPermSize=512m ${argLine}</argLine>
+                            <!--<argLine>-Xmx768m -Xms768m -XX:MaxPermSize=384m ${argLine}</argLine>-->
+                            <argLine>-Xmx768m -Xms768m -XX:MaxPermSize=384m ${argLine}</argLine>
                             <!--
                                 If using this custom argLine profile (typically to support command-line override),
                                 then in additional to your own user specified settings you should also include
@@ -250,18 +255,21 @@
     </profiles>
 
     <properties>
-        <java.target.version>1.6</java.target.version>
+        <java.target.version>1.8</java.target.version>
 
         <!-- JAR versions -->
-        <coherence.version>12.1.2.0.0</coherence.version>
+        <coherence.ce.version>20.06</coherence.ce.version>
         <junit.version>4.8.2</junit.version>
+
+        <starting.thousand.port.number>40</starting.thousand.port.number>
+        <fork.count>1</fork.count>
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
         <maven-install-plugin.version>2.3.1</maven-install-plugin.version>
         <maven-release-plugin.version>2.1</maven-release-plugin.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.10</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
         <maven-javadoc-plugin.version>2.7</maven-javadoc-plugin.version>
         <maven-checkstyle-plugin.version>2.7</maven-checkstyle-plugin.version>
         <maven-source-plugin.version>2.1.2</maven-source-plugin.version>

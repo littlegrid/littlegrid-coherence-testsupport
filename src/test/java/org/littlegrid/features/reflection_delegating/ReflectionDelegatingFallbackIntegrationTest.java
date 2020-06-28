@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 Jonathan Hall.
+ * Copyright (c) 2010-2020 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ package org.littlegrid.features.reflection_delegating;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -56,6 +57,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
  * Reflection delegating cluster memberWhoWillCauseFallbackToBeUsed fallback tests, to
  * ensure fallback functionality works as expected.
  */
+@Ignore
 public final class ReflectionDelegatingFallbackIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     private static final int NUMBER_OF_MEMBERS = SMALL_TEST_CLUSTER_SIZE;
     private static final int EXPECTED_CLUSTER_SIZE = NUMBER_OF_MEMBERS + CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;

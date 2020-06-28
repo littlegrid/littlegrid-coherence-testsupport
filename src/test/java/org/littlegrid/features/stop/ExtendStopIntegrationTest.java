@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 Jonathan Hall.
+ * Copyright (c) 2010-2020 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ package org.littlegrid.features.stop;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.InvocationService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -55,6 +56,7 @@ import static org.littlegrid.support.ExtendUtils.getExtendProxyMemberIdThatClien
  * Extend Cluster member group stop tests, demonstrating failover for Extend clients
  * when Extend proxy is stopped.
  */
+@Ignore
 public final class ExtendStopIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void startAndStopExtendProxy() {

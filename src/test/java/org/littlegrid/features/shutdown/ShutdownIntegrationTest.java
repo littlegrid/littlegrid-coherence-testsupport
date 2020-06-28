@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 Jonathan Hall.
+ * Copyright (c) 2010-2020 Jonathan Hall.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ package org.littlegrid.features.shutdown;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -51,6 +52,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
 /**
  * Cluster member group shutdown tests.
  */
+@Ignore
 public final class ShutdownIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void startAndShutdownSingleMemberGroup() {
