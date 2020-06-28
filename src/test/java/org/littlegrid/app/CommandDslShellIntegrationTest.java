@@ -49,8 +49,8 @@ import static java.util.Calendar.SECOND;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 import static org.littlegrid.app.CommandDslShell.Response;
 
 /**
@@ -64,7 +64,7 @@ public class CommandDslShellIntegrationTest {
         systemProperties = SystemUtils.snapshotSystemProperties();
 
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
-                STORAGE_DISABLED_CLIENT.name());
+                CONFIGURE_FOR_STORAGE_DISABLED_CLIENT.name());
     }
 
     @After

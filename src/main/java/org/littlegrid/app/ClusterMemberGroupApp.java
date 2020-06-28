@@ -29,43 +29,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.littlegrid;
+package org.littlegrid.app;
 
-import java.util.Map;
-import java.util.Properties;
+import org.littlegrid.ClusterMemberGroupUtils;
 
 /**
- * Build exception reporter, reports useful exception information in a form to help with
- * trouble-shooting.
+ * Cluster member group app.
  *
- * @since 3.0.0 - top-level interface.
+ * @since 2.14
+ * @since 3.0.0 moved to app package
  */
-public interface BuildExceptionReporter {
+public class ClusterMemberGroupApp {
     /**
-     * Report on the exception.
-     *
-     * @param throwable                              Throwable.
-     * @param builderKeysAndValues                   Builder keys and values.
-     * @param builderKeyToSystemPropertyNameMappings Builder key to system property name mapping.
+     * Default scope to enable test coverage.
      */
-    void report(Throwable throwable,
-                Map<String, String> builderKeysAndValues,
-                Properties builderKeyToSystemPropertyNameMappings);
+    ClusterMemberGroupApp() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
-     * Report on the exception.
+     * Launches a littlegrid cluster member group, this technique is useful when an external process
+     * is required - for instance, if launching littlegrid from .Net or perhaps if you want to run
+     * mini-clusters on your development machine and connect to then via an external process such as
+     * WebLogic or Tomcat etc.
      *
-     * @param throwable                              Throwable.
-     * @param builderKeysAndValues                   Builder keys and values.
-     * @param builderKeyToSystemPropertyNameMappings Builder key to system property name mapping.
-     * @param clusterMemberGroupInstanceClassName    Cluster member group instance class name.
-     * @param otherInformation                       Other information that may be builder specific and useful
-     *                                               to help identify the problem.
-     * @since 2.15
+     * @param args Arguments - either no arguments can be specified or optionally, a single properties
+     *             file can be specified from which the cluster member group configuration should be
+     *             specified.
      */
-    void report(Throwable throwable,
-                Map<String, String> builderKeysAndValues,
-                Properties builderKeyToSystemPropertyNameMappings,
-                String clusterMemberGroupInstanceClassName,
-                String otherInformation);
+    public static void main(final String[] args) {
+        ClusterMemberGroupUtils.main(args);
+    }
 }

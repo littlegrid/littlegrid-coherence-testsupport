@@ -31,41 +31,12 @@
 
 package org.littlegrid;
 
-import java.util.Map;
-import java.util.Properties;
-
 /**
- * Build exception reporter, reports useful exception information in a form to help with
- * trouble-shooting.
+ * Interface to denote that the cluster member group may be re-used.
  *
+ * @since 2.15.
  * @since 3.0.0 - top-level interface.
  */
-public interface BuildExceptionReporter {
-    /**
-     * Report on the exception.
-     *
-     * @param throwable                              Throwable.
-     * @param builderKeysAndValues                   Builder keys and values.
-     * @param builderKeyToSystemPropertyNameMappings Builder key to system property name mapping.
-     */
-    void report(Throwable throwable,
-                Map<String, String> builderKeysAndValues,
-                Properties builderKeyToSystemPropertyNameMappings);
-
-    /**
-     * Report on the exception.
-     *
-     * @param throwable                              Throwable.
-     * @param builderKeysAndValues                   Builder keys and values.
-     * @param builderKeyToSystemPropertyNameMappings Builder key to system property name mapping.
-     * @param clusterMemberGroupInstanceClassName    Cluster member group instance class name.
-     * @param otherInformation                       Other information that may be builder specific and useful
-     *                                               to help identify the problem.
-     * @since 2.15
-     */
-    void report(Throwable throwable,
-                Map<String, String> builderKeysAndValues,
-                Properties builderKeyToSystemPropertyNameMappings,
-                String clusterMemberGroupInstanceClassName,
-                String otherInformation);
+public interface ReusableClusterMemberGroup extends ClusterMemberGroup {
+    int getCurrentUsageCount();
 }

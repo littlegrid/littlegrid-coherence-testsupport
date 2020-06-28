@@ -40,12 +40,12 @@ import java.util.Properties;
  * @since 2.2.1
  */
 public class ClusterMemberGroupBuildException extends RuntimeException {
-    private Properties systemPropertiesBeforeStartInvoked;
-    private Properties systemPropertiesToBeApplied;
-    private int numberOfMembers;
-    private URL[] classPathUrls;
-    private String clusterMemberInstanceClassName;
-    private int numberOfThreadsInStartUpPool;
+    private final Properties systemPropertiesBeforeStartInvoked;
+    private final Properties systemPropertiesToBeApplied;
+    private final int numberOfMembers;
+    private final URL[] classPathUrls;
+    private final String clusterMemberInstanceClassName;
+    private final int numberOfThreadsInStartUpPool;
 
     /**
      * Constructor.

@@ -65,9 +65,9 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
     @Override
     public void report(final Throwable throwable,
                        final Map<String, String> builderKeysAndValues,
-                       final Properties builderKeyToSystemPropertyNameMapping) {
+                       final Properties builderKeyToSystemPropertyNameMappings) {
 
-        report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping, null, null);
+        report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMappings, null, null);
     }
 
     /**
@@ -76,7 +76,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
     @Override
     public void report(final Throwable throwable,
                        final Map<String, String> builderKeysAndValues,
-                       final Properties builderKeyToSystemPropertyNameMapping,
+                       final Properties builderKeyToSystemPropertyNameMappings,
                        final String clusterMemberGroupInstanceClassName,
                        final String otherInformation) {
 
@@ -105,7 +105,7 @@ public class DefaultBuildExceptionReporter implements BuildExceptionReporter {
             outputNetwork(out);
             outputSortedCurrentSystemProperties(out);
             outputBuilderKeysAndValues(out, builderKeysAndValues);
-            outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMapping);
+            outputBuilderKeyToSystemPropertyNameMapping(out, builderKeyToSystemPropertyNameMappings);
             outputException(out, throwable.getCause());
             outputOtherInformation(out, otherInformation);
             outputSuggestedExceptionReason(out, buildException);

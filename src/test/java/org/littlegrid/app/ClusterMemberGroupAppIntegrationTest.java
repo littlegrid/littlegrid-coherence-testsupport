@@ -31,52 +31,17 @@
 
 package org.littlegrid.app;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.littlegrid.support.SystemUtils;
+import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 
-import java.util.Properties;
-
-import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
-
-/**
- * Extend client REPL application tests.
- */
-public class ExtendClientReplAppTest {
-    private Properties systemProperties;
-
-    @Before
-    public void beforeTest() {
-        systemProperties = SystemUtils.snapshotSystemProperties();
-    }
-
-    @After
-    public void afterTest() {
-        System.setProperties(systemProperties);
-    }
-
+public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test(expected = UnsupportedOperationException.class)
     public void construct() {
-        new ExtendClientReplApp();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void startWithEmptyStringClientCacheConfiguration() {
-        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "ClientCacheConfiguration", " ");
-
-        ExtendClientReplApp.main(new String[]{});
+        new ClusterMemberGroupApp();
     }
 
     @Test
     public void runMain() {
-        System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "ClientCacheConfiguration", "some-file.xml");
-
-        ExtendClientReplApp.main(new String[]{"commands=# Extend client REPL test; bye"});
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void startWithNullArguments() {
-        ExtendClientReplApp.main(null);
+        ClusterMemberGroupApp.main(new String[]{"littlegrid/member-group-1-littlegrid-builder.properties"});
     }
 }

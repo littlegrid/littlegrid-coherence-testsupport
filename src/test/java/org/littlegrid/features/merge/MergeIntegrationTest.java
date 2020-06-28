@@ -36,11 +36,11 @@ import com.tangosol.net.Cluster;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
+import org.littlegrid.ClusterMemberGroupBuilder;
 import org.littlegrid.ClusterMemberGroupUtils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.Builder;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 import static org.littlegrid.ClusterMemberGroupTestSupport.doesMemberExist;
@@ -56,7 +56,7 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
         final int numberOfMembersToAddEachTime = 1;
         final int numberOfTimesToPerformMerge = 3;
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder()
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembersToStartWith);
 
         memberGroup = builder.buildAndConfigureForStorageDisabledClient();
@@ -85,7 +85,7 @@ public class MergeIntegrationTest extends AbstractAfterTestShutdownIntegrationTe
         final int numberOfMembersToAddEachTime = 1;
         final int numberOfTimesToPerformMerge = 4;
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder()
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder()
                 .setStorageEnabledCount(numberOfMembersToStartWith);
 
         memberGroup = builder.buildAndConfigureForStorageDisabledClient();

@@ -36,21 +36,21 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
+import org.littlegrid.ClusterMemberGroupBuilder;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.littlegrid.ReusableClusterMemberGroup;
 import org.littlegrid.support.SystemUtils;
 
 import java.util.Map;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.Builder;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
-import static org.littlegrid.ClusterMemberGroup.ReusableClusterMemberGroup;
+import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY;
 import static org.littlegrid.impl.DefaultClusterMemberGroupBuilder.Registry;
 
 /**
@@ -155,7 +155,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void equalsWhenOtherIsThis() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         assertThat(builder.equals(builder), is(true));
     }
@@ -172,8 +172,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void equalsWhenOtherHasDifferentAdditionalSystemProperties() {
-        final Builder thisBuilder = ClusterMemberGroupUtils.newBuilder();
-        final Builder otherBuilder = ClusterMemberGroupUtils.newBuilder()
+        final ClusterMemberGroupBuilder thisBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder otherBuilder = ClusterMemberGroupUtils.newBuilder()
                 .setAdditionalSystemProperty("hasAdditionalSystemPropertyToBeDifferent", true);
 
         assertThat(thisBuilder.equals(otherBuilder), is(false));
@@ -181,20 +181,20 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void equalsWhenOtherHasDifferentBuilderToSystemPropertyNameMappings() {
-        final Builder thisBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder thisBuilder = ClusterMemberGroupUtils.newBuilder();
 
         System.setProperty(BUILDER_SYSTEM_PROPERTY_MAPPING_OVERRIDE_KEY,
                 "directory-where-config-stored/example-littlegrid-builder-system-property-mapping-override.properties");
 
-        final Builder otherBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder otherBuilder = ClusterMemberGroupUtils.newBuilder();
 
         assertThat(thisBuilder.equals(otherBuilder), is(false));
     }
 
     @Test
     public void equalsWhenOtherHasDifferentBuilderKeyAndValues() {
-        final Builder thisBuilder = ClusterMemberGroupUtils.newBuilder();
-        final Builder otherBuilder = ClusterMemberGroupUtils.newBuilder()
+        final ClusterMemberGroupBuilder thisBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder otherBuilder = ClusterMemberGroupUtils.newBuilder()
                 .setWkaPort(1234);
 
         assertThat(thisBuilder.equals(otherBuilder), is(false));
@@ -202,16 +202,16 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void equalsWhenOtherIsSame() {
-        final Builder thisBuilder = ClusterMemberGroupUtils.newBuilder();
-        final Builder otherBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder thisBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder otherBuilder = ClusterMemberGroupUtils.newBuilder();
 
         assertThat(thisBuilder.equals(otherBuilder), is(true));
     }
 
     @Test
     public void hashCodeWhenOtherIsDifferent() {
-        final Builder thisBuilder = ClusterMemberGroupUtils.newBuilder();
-        final Builder otherBuilder = ClusterMemberGroupUtils.newBuilder()
+        final ClusterMemberGroupBuilder thisBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder otherBuilder = ClusterMemberGroupUtils.newBuilder()
                 .setWkaPort(1234);
 
         assertThat(otherBuilder.hashCode(), not(thisBuilder.hashCode()));
@@ -219,8 +219,8 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void hashCodeWhenOtherIsSame() {
-        final Builder thisBuilder = ClusterMemberGroupUtils.newBuilder();
-        final Builder otherBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder thisBuilder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder otherBuilder = ClusterMemberGroupUtils.newBuilder();
 
         assertThat(otherBuilder.hashCode(), is(thisBuilder.hashCode()));
     }
@@ -256,9 +256,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String coreJarsToExcludeFromClassPath = "rt.jar";
 
         final String appConsoleClassName = "com.a.b.c.Console";
-        final String buildAndConfigureForEnumName = STORAGE_DISABLED_CLIENT.name();
+        final String buildAndConfigureForEnumName = CONFIGURE_FOR_STORAGE_DISABLED_CLIENT.name();
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder()
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder()
                 .setExceptionReporterInstanceClassName(expectedExceptionReportInstanceClassName)
                 .setCallbackHandlerInstanceClassName(expectedCallbackHandlerInstanceClassName)
                 .setCustomConfiguredCount(expectedCustomConfiguredMemberCount)
@@ -371,7 +371,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
         final int expectedFastStartJoinTimeoutMilliseconds = 231;
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setCacheConfiguration(expectedCacheConfiguration);
         builder.setClientCacheConfiguration(expectedClientCacheConfiguration);
@@ -532,14 +532,14 @@ public final class DefaultClusterMemberGroupBuilderTest {
     }
 
     private DefaultClusterMemberGroupBuilder getDefaultClusterMemberGroupBuilder() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         return (DefaultClusterMemberGroupBuilder) builder;
     }
 
     @Test
     public void performToString() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         assertThat(builder.toString().length() > 0, is(true));
     }
@@ -580,7 +580,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void defaultMappingSystemPropertiesForStorageEnabledWhenNoSpecificSettings() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageEnabled();
@@ -593,7 +593,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedCacheConfiguration = "cache-config.xml";
         final String expectedLogLevel = "-1";
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setStorageEnabledCacheConfiguration(expectedCacheConfiguration);
         builder.setStorageEnabledLogLevel(Integer.parseInt(expectedLogLevel));
@@ -607,7 +607,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void defaultMappingSystemPropertiesForExtendProxyWhenNoSpecificSettings() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxy(123);
@@ -620,7 +620,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedCacheConfiguration = "cache-config.xml";
         final String expectedLogLevel = "-1";
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setExtendProxyCacheConfiguration(expectedCacheConfiguration);
         builder.setExtendProxyLogLevel(Integer.parseInt(expectedLogLevel));
@@ -640,7 +640,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void defaultMappingSystemPropertiesForStorageDisabledClientNoSpecificSettings() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForStorageDisabledClient();
@@ -654,7 +654,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedOverrideConfiguration = "override-config.xml";
         final String expectedLogLevel = "-1";
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setClientCacheConfiguration(expectedCacheConfiguration);
         builder.setClientOverrideConfiguration(expectedOverrideConfiguration);
@@ -670,7 +670,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void defaultMappingSystemPropertiesForJmxMonitorClientWhenNoSpecificSettings() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForJmxMonitor();
@@ -683,7 +683,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedCacheConfiguration = "cache-config.xml";
         final String expectedLogLevel = "-1";
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setJmxMonitorCacheConfiguration(expectedCacheConfiguration);
         builder.setJmxMonitorLogLevel(Integer.parseInt(expectedLogLevel));
@@ -697,7 +697,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
 
     @Test
     public void defaultMappingSystemPropertiesForExtendProxyClientWhenNoSpecificSettings() {
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         final DefaultClusterMemberGroupBuilder defaultBuilder = (DefaultClusterMemberGroupBuilder) builder;
         final Properties properties = defaultBuilder.getSystemPropertiesForExtendProxyClient();
@@ -711,7 +711,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final String expectedOverrideConfiguration = "override-config.xml";
         final String expectedLogLevel = "-1";
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         builder.setClientCacheConfiguration(expectedCacheConfiguration);
         builder.setClientOverrideConfiguration(expectedOverrideConfiguration);
@@ -739,7 +739,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void registryGetWhenEntryDoesNotExist() {
         final Registry registry = getRegistryAndClearContents();
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         assertThat(registry.reusableClusterMemberGroupMap.size(), is(0));
         assertThat(registry.getClusterMemberGroup(builder), nullValue());
@@ -757,7 +757,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void registryGetWhenEntryDoesExist() {
         final Registry registry = getRegistryAndClearContents();
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         registry.registerClusterMemberGroup(builder, getClusterMemberGroup());
 
@@ -769,7 +769,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
     public void registryRegisterWhenEntryDoesNotExist() {
         final Registry registry = getRegistryAndClearContents();
 
-        final Builder builder = ClusterMemberGroupUtils.newBuilder();
+        final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
         registry.registerClusterMemberGroup(builder, getClusterMemberGroup());
         assertThat(registry.reusableClusterMemberGroupMap.size(), is(1));
@@ -781,7 +781,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         final Registry registry = getRegistryAndClearContents();
 
         {
-            final Builder builder = ClusterMemberGroupUtils.newBuilder();
+            final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
             final ReusableClusterMemberGroup memberGroup = getClusterMemberGroup();
 
@@ -793,7 +793,7 @@ public final class DefaultClusterMemberGroupBuilderTest {
         }
 
         {
-            final Builder builder = ClusterMemberGroupUtils.newBuilder();
+            final ClusterMemberGroupBuilder builder = ClusterMemberGroupUtils.newBuilder();
 
             final ReusableClusterMemberGroup memberGroup = getClusterMemberGroup();
 

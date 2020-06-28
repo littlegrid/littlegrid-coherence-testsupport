@@ -39,15 +39,15 @@ import org.littlegrid.support.SystemUtils;
 
 import java.util.Properties;
 
-import static org.littlegrid.ClusterMemberGroup.BuildAndConfigureEnum.STORAGE_DISABLED_CLIENT;
-import static org.littlegrid.ClusterMemberGroup.Builder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
+import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_STORAGE_DISABLED_CLIENT;
+import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_SYSTEM_PROPERTY_PREFIX_KEY;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
 
 /**
  * Cluster member group launcher application integration tests.
  */
-public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
+public class ClusterMemberGroupUtilsIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     private Properties systemProperties;
 
     @Before
@@ -58,11 +58,6 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
     @After
     public void afterTest() {
         System.setProperties(systemProperties);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void construct() {
-        new ClusterMemberGroupApp();
     }
 
     @Test
@@ -81,7 +76,7 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
                 NoWaitConsole.class.getName());
 
         System.setProperty(BUILDER_SYSTEM_PROPERTY_PREFIX_KEY + "BuildAndConfigureForEnumName",
-                STORAGE_DISABLED_CLIENT.name());
+                CONFIGURE_FOR_STORAGE_DISABLED_CLIENT.name());
 
         final ClusterMemberGroup memberGroup = ClusterMemberGroupUtils.launchAndStartConsole(new String[]{});
 
@@ -100,11 +95,6 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
         assertThatClusterIsExpectedSize(CacheFactory.ensureCluster(), CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP);
 
         ClusterMemberGroupUtils.shutdownCacheFactoryThenClusterMemberGroups(memberGroup);
-    }
-
-    @Test
-    public void runMain() {
-        ClusterMemberGroupApp.main(new String[]{"littlegrid/member-group-1-littlegrid-builder.properties"});
     }
 
     public static class NoWaitConsole {

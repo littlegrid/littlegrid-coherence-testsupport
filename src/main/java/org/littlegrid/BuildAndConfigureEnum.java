@@ -32,29 +32,34 @@
 package org.littlegrid;
 
 /**
- * Cluster member group app.
+ * Build and configure enum, defining what type of 'client' or environment to configure
+ * after the cluster member group has been built.
  *
  * @since 2.14
+ * @since 3.0.0 - top-level enum with name changes.
  */
-public class ClusterMemberGroupApp {
+public enum BuildAndConfigureEnum {
     /**
-     * Default scope to enable test coverage.
+     * Denotes that after the cluster member group has been built that the environment
+     * should be configured for a storage-disabled client to interact with Coherence.
      */
-    ClusterMemberGroupApp() {
-        throw new UnsupportedOperationException();
-    }
+    CONFIGURE_FOR_STORAGE_DISABLED_CLIENT,
 
     /**
-     * Launches a littlegrid cluster member group, this technique is useful when an external process
-     * is required - for instance, if launching littlegrid from .Net or perhaps if you want to run
-     * mini-clusters on your development machine and connect to then via an external process such as
-     * WebLogic or Tomcat etc.
-     *
-     * @param args Arguments - either no arguments can be specified or optionally, a single properties
-     *             file can be specified from which the cluster member group configuration should be
-     *             specified.
+     * Denotes that after the cluster member group has been built that the environment
+     * should be configured for a Extend client to interact with Coherence.
      */
-    public static void main(final String[] args) {
-        ClusterMemberGroupUtils.main(args);
-    }
+    CONFIGURE_FOR_EXTEND_CLIENT,
+
+    /**
+     * Denotes that after the cluster member group has been built then no special
+     * configuration should be applied.
+     */
+    CONFIGURE_FOR_NO_CLIENT,
+
+    /**
+     * Denotes that after the cluster member group has been built that the environment
+     * should be configured for a storage enabled member to interact with Coherence.
+     */
+    CONFIGURE_FOR_STORAGE_ENABLED_MEMBER
 }
