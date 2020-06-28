@@ -44,4 +44,10 @@ public class ClusterMemberGroupAppIntegrationTest extends AbstractAfterTestShutd
     public void runMain() {
         ClusterMemberGroupApp.main(new String[]{"littlegrid/member-group-1-littlegrid-builder.properties"});
     }
+
+    public static class NoWaitConsole {
+        public static void main(String[] args) {
+            System.out.println("Console launched - and done");
+        }
+    }
 }
