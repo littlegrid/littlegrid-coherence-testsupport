@@ -34,6 +34,7 @@ package org.littlegrid.group.storage_enabled_proxy;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 import com.tangosol.net.NamedCache;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMemberGroupUtils;
@@ -50,6 +51,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.TCMP_CLUSTER_MEMBER_C
 /**
  * Cluster member group Extend tests.
  */
+@Ignore
 public final class StorageEnabledProxyGroupIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void singleStorageEnabledExtendProxy() {
