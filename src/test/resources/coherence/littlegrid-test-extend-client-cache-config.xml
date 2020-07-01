@@ -33,8 +33,8 @@
                 <tcp-initiator>
                     <remote-addresses>
                         <socket-address>
-                            <address system-property="tangosol.coherence.extend.address">129.1.2.3</address>
-                            <port system-property="tangosol.coherence.extend.port">32123</port>
+                            <address system-property="coherence.extend.address">129.1.2.3</address>
+                            <port system-property="coherence.extend.port">32123</port>
                         </socket-address>
                     </remote-addresses>
                 </tcp-initiator>
@@ -51,8 +51,8 @@
                 <tcp-initiator>
                     <remote-addresses>
                         <socket-address>
-                            <address system-property="tangosol.coherence.extend.address">129.1.2.3</address>
-                            <port system-property="tangosol.coherence.extend.port">32123</port>
+                            <address system-property="coherence.extend.address">129.1.2.3</address>
+                            <port system-property="coherence.extend.port">32123</port>
                         </socket-address>
                     </remote-addresses>
                 </tcp-initiator>

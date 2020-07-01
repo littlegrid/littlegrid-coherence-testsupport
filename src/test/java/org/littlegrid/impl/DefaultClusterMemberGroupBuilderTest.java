@@ -130,9 +130,9 @@ public final class DefaultClusterMemberGroupBuilderTest {
     private static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
 
-    private static final String COHERENCE_CACHE_CONFIG_KEY = "tangosol.coherence.cacheconfig";
-    private static final String COHERENCE_LOG_LEVEL_KEY = "tangosol.coherence.log.level";
-    private static final String COHERENCE_OVERRIDE_KEY = "tangosol.coherence.override";
+    private static final String COHERENCE_CACHE_CONFIG_KEY = "coherence.cacheconfig";
+    private static final String COHERENCE_LOG_LEVEL_KEY = "coherence.log.level";
+    private static final String COHERENCE_OVERRIDE_KEY = "coherence.override";
 
     private Properties systemPropertiesBeforeTest;
 
