@@ -38,6 +38,7 @@ import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.ClusterMemberGroupBuilder;
 import org.littlegrid.ReusableClusterMemberGroup;
+import org.littlegrid.ReusableClusterMemberGroupRegistry;
 import org.littlegrid.support.BeanUtils;
 import org.littlegrid.support.ClassPathUtils;
 import org.littlegrid.support.PropertiesUtils;
@@ -170,6 +171,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
     private final Map<String, String> builderKeysAndValues = new HashMap<>();
     private final Properties additionalSystemProperties = new Properties();
     private final Properties builderKeyToSystemPropertyNameMapping = new Properties();
+    private final ReusableClusterMemberGroupRegistry registry = DefaultReusableClusterMemberGroupRegistry.getInstance();
 
     /**
      * Default constructor.
@@ -400,14 +402,13 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
     private ClusterMemberGroup getClusterMemberGroupInstance(final ClusterMemberGroupBuilder builder) {
         final String className = getBuilderValueAsString(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME);
-        final Registry registry = Registry.getInstance();
 
         try {
             final Class clusterMemberGroupClass = this.getClass().getClassLoader().loadClass(className);
 
             if (ReusableClusterMemberGroup.class.isAssignableFrom(clusterMemberGroupClass)) {
                 // It is reusable
-                ReusableClusterMemberGroup reusableMemberGroup = registry.getClusterMemberGroup(builder);
+                ReusableClusterMemberGroup reusableMemberGroup = registry.getClusterMemberGroup(getIdentifier(builder));
 
                 if (reusableMemberGroup == null) {
                     // Whilst it is reusable no instance already exists - create one
@@ -415,7 +416,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
                     reusableMemberGroup = (ReusableClusterMemberGroup) buildClusterMembers(clusterMemberGroupClass);
 
-                    registry.registerClusterMemberGroup(builder, reusableMemberGroup);
+                    registry.registerClusterMemberGroup(getIdentifier(builder), reusableMemberGroup);
                 } else {
                     // An existing reusable instance has been found, check if it has been shutdown
 
@@ -426,7 +427,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
                         reusableMemberGroup = (ReusableClusterMemberGroup)
                                 buildClusterMembers(clusterMemberGroupClass);
 
-                        registry.registerClusterMemberGroup(builder, reusableMemberGroup);
+                        registry.registerClusterMemberGroup(getIdentifier(builder), reusableMemberGroup);
                     }
                 }
 
@@ -438,6 +439,10 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(format("Cannot load class '%s", className));
         }
+    }
+
+    private String getIdentifier(ClusterMemberGroupBuilder builder) {
+        return Integer.toString(builder.hashCode());
     }
 
     /**
@@ -506,12 +511,12 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
                     Arrays.toString(containerGroup.getStartedMemberIds())));
         } catch (ClusterMemberGroupBuildException e) {
             exceptionReporter.report(e, builderKeysAndValues, builderKeyToSystemPropertyNameMapping,
-                    clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
+                    clusterMemberGroupInstanceClassName, registry.toString());
 
             throw e;
         } catch (Throwable throwable) {
             exceptionReporter.report(throwable, builderKeysAndValues, builderKeyToSystemPropertyNameMapping,
-                    clusterMemberGroupInstanceClassName, Registry.getInstance().toString());
+                    clusterMemberGroupInstanceClassName, registry.toString());
 
             throw new IllegalStateException(throwable);
         }
@@ -1730,56 +1735,6 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
         if (value != null && value.trim().length() > 0) {
             properties.setProperty(key, value);
-        }
-    }
-
-    /**
-     * Registry containing registered cluster member groups that can be re-used.
-     *
-     * @since 2.15
-     */
-    static class Registry {
-        private static final Logger LOGGER = Logger.getLogger(Registry.class.getName());
-
-        private static final Registry INSTANCE = new Registry();
-
-        /**
-         * Default scope to facilitate testing.
-         */
-        final Map<Object, ReusableClusterMemberGroup> reusableClusterMemberGroupMap = new HashMap<>();
-
-        static Registry getInstance() {
-            return INSTANCE;
-        }
-
-        ReusableClusterMemberGroup getClusterMemberGroup(final ClusterMemberGroupBuilder builder) {
-            final Object key = getKey(builder);
-            final ReusableClusterMemberGroup memberGroup = reusableClusterMemberGroupMap.get(key);
-
-            LOGGER.info(format("Member group get using key: '%s' returned group: %s", key, memberGroup));
-
-            return memberGroup;
-        }
-
-        void registerClusterMemberGroup(final ClusterMemberGroupBuilder builder,
-                                        final ReusableClusterMemberGroup clusterMemberGroup) {
-
-            final Object key = getKey(builder);
-
-            LOGGER.info(format("Member group registered using key: '%s' with group of: %s", key, clusterMemberGroup));
-            reusableClusterMemberGroupMap.put(key, clusterMemberGroup);
-        }
-
-        private Object getKey(ClusterMemberGroupBuilder builder) {
-            return builder.hashCode();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return format("Registry: %s", reusableClusterMemberGroupMap);
         }
     }
 }
