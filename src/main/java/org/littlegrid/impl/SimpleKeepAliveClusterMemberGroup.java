@@ -40,7 +40,7 @@ import static java.lang.String.format;
 
 /**
  * Simple keep-alive local process cluster member group implementation that doesn't perform
- * its shutdown all when requested.
+ * its shutdown when requested.
  *
  * @since 2.15
  */
