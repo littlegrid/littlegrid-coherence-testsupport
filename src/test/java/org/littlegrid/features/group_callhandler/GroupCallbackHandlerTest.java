@@ -113,7 +113,7 @@ public class GroupCallbackHandlerTest extends AbstractAfterTestShutdownIntegrati
         public void doAfterStart() {
             // Ensure that this member is storage disabled and thus should be joining the cluster already
             // established with a storage-enabled member.
-            System.setProperty("tangosol.coherence.distributed.localstorage", "false");
+            System.setProperty("coherence.distributed.localstorage", "false");
 
             final NamedCache cache = CacheFactory.getCache(KNOWN_TEST_CACHE);
 

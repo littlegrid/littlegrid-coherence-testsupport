@@ -96,10 +96,10 @@ public final class ExtendStopIntegrationTest extends AbstractAfterTestShutdownIn
                 .setCacheConfiguration(TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE)
                 .setClientCacheConfiguration(
                         "coherence/littlegrid-test-extend-client-cache-config-with-multiple-remote-addresses.xml")
-                .setAdditionalSystemProperty("tangosol.coherence.extend.address.2", builder.getWkaAddress())
-                .setAdditionalSystemProperty("tangosol.coherence.extend.port.2", builder.getExtendPort() + 1)
-                .setAdditionalSystemProperty("tangosol.coherence.extend.address.3", builder.getWkaAddress())
-                .setAdditionalSystemProperty("tangosol.coherence.extend.port.3", builder.getExtendPort() + 2)
+                .setAdditionalSystemProperty("coherence.extend.address.2", builder.getWkaAddress())
+                .setAdditionalSystemProperty("coherence.extend.port.2", builder.getExtendPort() + 1)
+                .setAdditionalSystemProperty("coherence.extend.address.3", builder.getWkaAddress())
+                .setAdditionalSystemProperty("coherence.extend.port.3", builder.getExtendPort() + 2)
                 .setLogLevel(6)
                 .buildAndConfigureForExtendClient();
 
