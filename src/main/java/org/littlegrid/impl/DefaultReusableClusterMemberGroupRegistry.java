@@ -33,10 +33,11 @@ package org.littlegrid.impl;
 
 import org.littlegrid.ReusableClusterMemberGroup;
 import org.littlegrid.ReusableClusterMemberGroupRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -44,7 +45,7 @@ import static java.lang.String.format;
  * Default implementation of reusable cluster member registry.
  */
 public class DefaultReusableClusterMemberGroupRegistry implements ReusableClusterMemberGroupRegistry {
-    private static final Logger LOGGER = Logger.getLogger(DefaultReusableClusterMemberGroupRegistry.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultReusableClusterMemberGroupRegistry.class);
 
     private static final ReusableClusterMemberGroupRegistry INSTANCE = new DefaultReusableClusterMemberGroupRegistry();
 
@@ -61,7 +62,7 @@ public class DefaultReusableClusterMemberGroupRegistry implements ReusableCluste
     public ReusableClusterMemberGroup getClusterMemberGroup(final String identifier) {
         final ReusableClusterMemberGroup memberGroup = reusableClusterMemberGroupMap.get(identifier);
 
-        LOGGER.info(format("Member group get using key: '%s' returned group: %s", identifier, memberGroup));
+        LOGGER.info("Member group get using key: '{}' returned group: {}", identifier, memberGroup);
 
         return memberGroup;
     }
@@ -70,7 +71,7 @@ public class DefaultReusableClusterMemberGroupRegistry implements ReusableCluste
     public void registerClusterMemberGroup(final String identifier,
                                            final ReusableClusterMemberGroup clusterMemberGroup) {
 
-        LOGGER.info(format("Member group registered using key: '%s' with group of: %s", identifier, clusterMemberGroup));
+        LOGGER.info("Member group registered using key: '{}' with group of: {}", identifier, clusterMemberGroup);
         reusableClusterMemberGroupMap.put(identifier, clusterMemberGroup);
     }
 

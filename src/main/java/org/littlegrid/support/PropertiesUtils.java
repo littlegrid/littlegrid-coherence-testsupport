@@ -1,13 +1,14 @@
 package org.littlegrid.support;
 
 import com.tangosol.util.Resources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -15,7 +16,7 @@ import static java.lang.String.format;
  * Properties utilities class, containing useful convenience methods for working with properties.
  */
 public final class PropertiesUtils {
-    private static final Logger LOGGER = Logger.getLogger(PropertiesUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtils.class);
 
     private static final String DELIMITER = ",";
 
@@ -76,7 +77,11 @@ public final class PropertiesUtils {
             }
         }
 
-        LOGGER.log(loadedPropertyFileLogLevel, loadedSummary.toString());
+        if (loadedPropertyFileLogLevel == Level.DEBUG) {
+            LOGGER.debug(loadedSummary.toString());
+        } else {
+            LOGGER.info(loadedSummary.toString());
+        }
 
         return properties;
     }

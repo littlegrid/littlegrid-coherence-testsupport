@@ -35,11 +35,11 @@ import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMember;
 import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.logging.Logger;
 
-import static java.lang.String.format;
 import static org.littlegrid.IdentifiableException.ReasonEnum.JOIN_TIMEOUT_MILLISECONDS_TOO_SMALL;
 import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTART_EXCEPTION;
 
@@ -50,10 +50,10 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.SUSPECTED_AUTOSTAR
  * the instance of the wrapped class.
  */
 class DelegatingClusterMemberWrapper implements ClusterMember {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DelegatingClusterMemberWrapper.class);
+
     static final String ERROR_INSTANTIATING_FILTER_WITH_NAME_GZIP = "Error instantiating Filter with name: gzip";
     static final String VALUE_OUT_OF_RANGE_1000 = "Value out of range [1000,";
-
-    private static final Logger LOGGER = Logger.getLogger(DelegatingClusterMemberWrapper.class.getName());
 
     private final Object clusterMemberInstance;
     private boolean running = false;
@@ -68,7 +68,7 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
     public DelegatingClusterMemberWrapper(final String clusterMemberInstanceClassName,
                                           final ChildFirstUrlClassLoader childFirstUrlClassLoader) {
         try {
-            LOGGER.fine(format("Cluster member class to be instantiated: '%s'", clusterMemberInstanceClassName));
+            LOGGER.debug("Cluster member class to be instantiated: '{}'", clusterMemberInstanceClassName);
 
             final Class clusterMemberClass = childFirstUrlClassLoader.loadClass(clusterMemberInstanceClassName);
 
@@ -84,7 +84,7 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
      * Start the cluster member - this has reduced scope to prevent normal framework users from calling it.
      */
     void start() {
-        LOGGER.fine("About to start this cluster member");
+        LOGGER.debug("About to start this cluster member");
 
         invokeMethod(clusterMemberInstance, "start");
 
@@ -98,7 +98,7 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
     public void shutdown() {
         running = false;
 
-        LOGGER.fine("Shutting down this cluster member");
+        LOGGER.debug("Shutting down this cluster member");
 
         invokeMethod(clusterMemberInstance, "shutdown");
     }
@@ -110,7 +110,7 @@ class DelegatingClusterMemberWrapper implements ClusterMember {
     public void stop() {
         running = false;
 
-        LOGGER.fine("Stopping this cluster member");
+        LOGGER.debug("Stopping this cluster member");
 
         invokeMethod(clusterMemberInstance, "stop");
     }

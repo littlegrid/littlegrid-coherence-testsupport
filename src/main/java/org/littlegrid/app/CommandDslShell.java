@@ -36,6 +36,8 @@ import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuilder;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -46,7 +48,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -57,7 +58,7 @@ import static java.lang.String.format;
  * @since 2.15
  */
 class CommandDslShell {
-    private static final Logger LOGGER = Logger.getLogger(CommandDslShell.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandDslShell.class);
     private static final int WAIT_MILLISECONDS_AFTER_STOP_COMMAND = 750;
 
     private static final String COMMANDS_ARGUMENT = "commands=";

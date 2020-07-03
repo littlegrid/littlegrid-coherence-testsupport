@@ -34,8 +34,8 @@ package org.littlegrid;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.impl.DefaultClusterMemberGroupBuilder;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_OVERRIDE_KEY;
@@ -45,7 +45,7 @@ import static org.littlegrid.ClusterMemberGroupBuilder.BUILDER_OVERRIDE_KEY;
  * and for shutting down {@link ClusterMemberGroup}(s).
  */
 public final class ClusterMemberGroupUtils {
-    private static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterMemberGroupUtils.class);
 
     /**
      * Default scope to enable test coverage.
@@ -83,8 +83,7 @@ public final class ClusterMemberGroupUtils {
             } catch (Exception e) {
                 exceptionDuringShutdownCounter++;
 
-                LOGGER.warning(
-                        format("Exception shutting down member group - suppressing for now, exception was: %s", e));
+                LOGGER.warn("Exception shutting down member group - suppressing for now", e);
 
                 // Ignore for now and carry on looping to try and shutdown any other
                 // cluster member groups that may be running

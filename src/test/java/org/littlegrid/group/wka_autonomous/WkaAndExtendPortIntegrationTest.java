@@ -36,10 +36,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.logging.Logger;
-
-import static java.lang.String.format;
 import static org.littlegrid.ClusterMemberGroupTestSupport.CLUSTER_SIZE_WITHOUT_CLUSTER_MEMBER_GROUP;
 import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SIZE;
 import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsExpectedSize;
@@ -49,7 +48,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.assertThatClusterIsEx
  */
 @Ignore
 public final class WkaAndExtendPortIntegrationTest {
-    private static final Logger LOGGER = Logger.getLogger(WkaAndExtendPortIntegrationTest.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(WkaAndExtendPortIntegrationTest.class);
 
     @Test
     public void twoSmallMemberGroupsWithDifferentWkaAndExtendPorts() {
@@ -68,9 +67,8 @@ public final class WkaAndExtendPortIntegrationTest {
             final int memberGroup2WkaPort = memberGroup1.getWkaPort() + offset;
             final int memberGroup2ExtendPort = memberGroup1.getExtendPort() + offset;
 
-            LOGGER.warning(format(
-                    "A different WKA port of %s has been configured for a WKA test, along with Extend port %s",
-                    memberGroup2WkaPort, memberGroup2ExtendPort));
+            LOGGER.warn("A different WKA port of {} has been configured for a WKA test, along with Extend port {}",
+                    memberGroup2WkaPort, memberGroup2ExtendPort);
 
             memberGroup2 = ClusterMemberGroupUtils.newBuilder()
                     .setStorageEnabledExtendProxyCount(numberOfMembers)

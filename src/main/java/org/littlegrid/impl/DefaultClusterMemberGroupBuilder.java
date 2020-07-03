@@ -43,6 +43,9 @@ import org.littlegrid.support.BeanUtils;
 import org.littlegrid.support.ClassPathUtils;
 import org.littlegrid.support.PropertiesUtils;
 import org.littlegrid.support.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -54,8 +57,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_EXTEND_CLIENT;
@@ -67,6 +68,8 @@ import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_STORAGE_ENABLED
  * Default cluster member group builder implementation.
  */
 public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClusterMemberGroupBuilder.class);
+
     private static final String DEFAULT_PROPERTIES_FILENAME = "littlegrid/littlegrid-builder-default.properties";
     private static final String SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME = "littlegrid/littlegrid-builder-system-property-mapping-default.properties";
     private static final String OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
@@ -154,8 +157,6 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
     private static final String LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY = BUILDER_OVERRIDE_KEY + ".";
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroupBuilder.class.getName());
-
     private final Map<String, String> builderKeysAndValues = new HashMap<>();
     private final Properties additionalSystemProperties = new Properties();
     private final Properties builderKeyToSystemPropertyNameMapping = new Properties();
@@ -171,11 +172,10 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
         loadAndSetBuilderKeysAndValues(builderKeysAndValuesLoadedSummary);
         loadBuilderKeyToSystemPropertyNameMapping(systemPropertyNameMappingLoadedSummary);
 
-        LOGGER.info(format("___ %s %s (%s) - initialised.  Builder values: %s.  "
-                        + "Builder to Coherence system property mapping values: %s ___",
+        LOGGER.info("___ {} {} ({}) - initialised.  Builder values: {}.  "
+                        + "Builder to Coherence system property mapping values: {} ___",
                 Info.getName(), Info.getVersionNumber(), Info.getWebsiteAddress(),
-                builderKeysAndValuesLoadedSummary, systemPropertyNameMappingLoadedSummary));
-
+                builderKeysAndValuesLoadedSummary, systemPropertyNameMappingLoadedSummary);
     }
 
     /**
@@ -222,15 +222,14 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
             builderOverrides.remove("override");
             builderOverrides.remove("system.property.mapping.override");
         } else {
-            LOGGER.warning(format(
-                    "Please note: the preferred prefix for system properties is now '%s' instead of '%s'",
+            LOGGER.warn(
+                    "Please note: the preferred prefix for system properties is now '{}' instead of '{}'",
                     preferredPrefix,
-                    LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY));
+                    LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY);
         }
 
-        LOGGER.fine(format("Prefixed '%s' %s found: %d", prefixUsed, propertiesDescription, builderOverrides.size()));
-        builderKeysAndValuesLoadedSummary.put(format("'%s' %s", preferredPrefix, propertiesDescription),
-                builderOverrides.size());
+        LOGGER.debug("Prefixed '{}' {} found: {}", prefixUsed, propertiesDescription, builderOverrides.size());
+        builderKeysAndValuesLoadedSummary.put(format("'%s' %s", preferredPrefix, propertiesDescription), builderOverrides.size());
 
         BeanUtils.multiSetter(this, builderOverrides);
     }
@@ -238,7 +237,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
     private void loadAndSetBuilderKeysAndValuesUsingPropertiesFiles(
             final Map<String, Integer> builderKeysAndValuesLoadedSummary) {
 
-        final Properties defaultProperties = PropertiesUtils.loadProperties(Level.FINE, DEFAULT_PROPERTIES_FILENAME);
+        final Properties defaultProperties = PropertiesUtils.loadProperties(Level.DEBUG, DEFAULT_PROPERTIES_FILENAME);
 
         BeanUtils.multiSetter(this, defaultProperties);
         builderKeysAndValuesLoadedSummary.put("default file", defaultProperties.size());
@@ -248,9 +247,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
         // Check if an alternative properties file should be used, otherwise use standard named override file
         if (stringHasValue(alternativePropertiesFilename)) {
-            overrideProperties = PropertiesUtils.loadProperties(Level.FINE, alternativePropertiesFilename);
+            overrideProperties = PropertiesUtils.loadProperties(Level.DEBUG, alternativePropertiesFilename);
         } else {
-            overrideProperties = PropertiesUtils.loadProperties(Level.FINE,
+            overrideProperties = PropertiesUtils.loadProperties(Level.DEBUG,
                     OVERRIDE_PROPERTIES_FILENAME,
                     LITTLEGRID_DIRECTORY_SLASH + OVERRIDE_PROPERTIES_FILENAME);
         }
@@ -263,7 +262,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
             final Map<String, Integer> systemPropertyNameMappingLoadedSummary) {
 
         final Properties defaultMappingProperties =
-                PropertiesUtils.loadProperties(Level.FINE, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME);
+                PropertiesUtils.loadProperties(Level.DEBUG, SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME);
         systemPropertyNameMappingLoadedSummary.put("default file", defaultMappingProperties.size());
 
         builderKeyToSystemPropertyNameMapping.putAll(defaultMappingProperties);
@@ -273,9 +272,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
         // Check if an alternative property file should be used, otherwise use standard named override file
         if (stringHasValue(alternativePropertiesFile)) {
-            overrideMappingProperties = PropertiesUtils.loadProperties(Level.FINE, alternativePropertiesFile);
+            overrideMappingProperties = PropertiesUtils.loadProperties(Level.DEBUG, alternativePropertiesFile);
         } else {
-            overrideMappingProperties = PropertiesUtils.loadProperties(Level.FINE,
+            overrideMappingProperties = PropertiesUtils.loadProperties(Level.DEBUG,
                     SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME,
                     LITTLEGRID_DIRECTORY_SLASH + SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME);
         }
@@ -386,7 +385,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
         SystemUtils.applyToSystemProperties(systemProperties);
 
-        LOGGER.info(format("System properties set for client/member: %s", new TreeMap(systemProperties)));
+        LOGGER.info("System properties set for client/member: {}", new TreeMap(systemProperties));
 
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) memberGroup;
         defaultClusterMemberGroup.startAll();
@@ -458,12 +457,12 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
         final long startTime = System.currentTimeMillis();
         final BuildExceptionReporter exceptionReporter = createExceptionReporter();
 
-        LOGGER.info(format(
-                "___ %s %s starting - Storage-enabled: %d, Extend proxy: %d, Storage-enabled proxy: %d, "
-                        + "JMX: %d, Custom configured: %d ___",
+        LOGGER.info(
+                "___ {} {} starting - Storage-enabled: {}, Extend proxy: {}, Storage-enabled proxy: {}, "
+                        + "JMX: {}, Custom configured: {} ___",
                 Info.getName(), Info.getVersionNumber(),
                 storageEnabledCount, extendProxyCount, storageEnabledExtendProxyCount,
-                jmxMonitorCount, customConfiguredCount));
+                jmxMonitorCount, customConfiguredCount);
 
         final int numberOfThreadsInStartUpPool = getBuilderValueAsInt(NUMBER_OF_THREADS_IN_START_UP_POOL_KEY);
         final Properties systemProperties = System.getProperties();
@@ -500,9 +499,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
             final long startDuration = System.currentTimeMillis() - startTime;
 
-            LOGGER.info(format("___ Group of %d cluster member(s) started in %dms, member Ids are: %s ___",
+            LOGGER.info("___ Group of {} cluster member(s) started in {}ms, member Ids are: {} ___",
                     containerGroup.getStartedMemberIds().length, startDuration,
-                    Arrays.toString(containerGroup.getStartedMemberIds())));
+                    Arrays.toString(containerGroup.getStartedMemberIds()));
         } catch (ClusterMemberGroupBuildException e) {
             exceptionReporter.report(e, builderKeysAndValues, builderKeyToSystemPropertyNameMapping,
                     clusterMemberGroupInstanceClassName, registry.toString());
@@ -674,9 +673,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
     }
 
     @SuppressWarnings("unchecked")
-    private DefaultClusterMemberGroup createClusterMemberGroupWithCallbackAndSleepDurations(
-            final Class clusterMemberGroupClass) {
-
+    private DefaultClusterMemberGroup createClusterMemberGroupWithCallbackAndSleepDurations(final Class clusterMemberGroupClass) {
         final int duration35x = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_35X_KEY);
         final int duration36x = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_36X_KEY);
         final int durationDefault = getBuilderValueAsInt(SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY);
@@ -692,7 +689,6 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
                     duration35x, duration36x, durationDefault, wkaPort, extendPort);
         } catch (Exception e) {
             //TODO:
-
             throw new UnsupportedOperationException(e);
         }
     }
@@ -1479,8 +1475,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, DISTRIBUTED_LOCAL_STORAGE_KEY, false);
 
-        final String customConfiguredCacheConfiguration =
-                getBuilderValueAsString(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY);
+        final String customConfiguredCacheConfiguration = getBuilderValueAsString(CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY);
 
         if (customConfiguredCacheConfiguration.length() == 0) {
             setPropertyUsingNameMappingAndBuilderValue(properties, CACHE_CONFIGURATION_KEY);
@@ -1633,8 +1628,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
         if (fastStartJoinTimeout > 0 && (overrideConfiguration == null
                 || overrideConfiguration.trim().length() == 0)) {
 
-            LOGGER.warning("Fast-start join timeout specified.  Note: the fast-start Coherence override file will "
-                    + "now be configured to be used");
+            LOGGER.warn("Fast-start join timeout specified.  Note: the fast-start Coherence override file will now be configured to be used");
 
             setPropertyUsingNameMappingAndSuppliedValue(properties, OVERRIDE_CONFIGURATION_KEY,
                     FAST_START_OVERRIDE_CONFIGURATION_FILENAME);
@@ -1662,7 +1656,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
         if (stringHasValue(clientCacheConfiguration)) {
             setPropertyUsingNameMappingAndBuilderValue(properties, CLIENT_CACHE_CONFIGURATION_KEY);
         } else {
-            LOGGER.warning("No client cache configuration has been specified for Extend clients");
+            LOGGER.warn("No client cache configuration has been specified for Extend clients");
         }
 
         final String clientOverrideConfiguration = getBuilderValueAsString(CLIENT_OVERRIDE_CONFIGURATION_KEY);

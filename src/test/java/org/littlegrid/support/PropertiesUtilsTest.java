@@ -1,9 +1,9 @@
 package org.littlegrid.support;
 
 import org.junit.Test;
+import org.slf4j.event.Level;
 
 import java.util.Properties;
-import java.util.logging.Level;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

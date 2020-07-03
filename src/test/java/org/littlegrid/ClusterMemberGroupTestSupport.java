@@ -34,11 +34,11 @@ package org.littlegrid;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.Member;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
-import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -47,19 +47,12 @@ import static org.junit.Assert.assertThat;
  * Class containing constants and utility methods for cluster member group tests.
  */
 public final class ClusterMemberGroupTestSupport {
-    public static final Logger LOGGER = Logger.getLogger(ClusterMemberGroupTestSupport.class.getName());
+    public static final Logger LOGGER = LoggerFactory.getLogger(ClusterMemberGroupTestSupport.class);
 
-    public static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE =
-            "coherence/littlegrid-test-cache-config.xml";
-
-    public static final String TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE =
-            "coherence/littlegrid-test-custom-configured-cache-config.xml";
-
-    public static final String EXTEND_CLIENT_CACHE_CONFIGURATION_FILE =
-            "coherence/littlegrid-test-extend-client-cache-config.xml";
-
-    public static final String CLIENT_OVERRIDE_CONFIGURATION_FILE =
-            "coherence/littlegrid-test-client-override-config.xml";
+    public static final String TCMP_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE = "coherence/littlegrid-test-cache-config.xml";
+    public static final String TCMP_CUSTOM_CONFIGURED_CLUSTER_MEMBER_CACHE_CONFIGURATION_FILE = "coherence/littlegrid-test-custom-configured-cache-config.xml";
+    public static final String EXTEND_CLIENT_CACHE_CONFIGURATION_FILE = "coherence/littlegrid-test-extend-client-cache-config.xml";
+    public static final String CLIENT_OVERRIDE_CONFIGURATION_FILE = "coherence/littlegrid-test-client-override-config.xml";
 
     public static final String KNOWN_TEST_CACHE = "known-cache";
     public static final String KNOWN_EXTEND_TEST_CACHE = "known-extend-cache";
@@ -82,9 +75,7 @@ public final class ClusterMemberGroupTestSupport {
     }
 
     public static void sleepForSeconds(final int seconds) {
-        LOGGER.info(format(
-                "Coherence '%s' - so will now sleep for %s seconds to allow the member left to be acknowledged",
-                CacheFactory.VERSION, seconds));
+        LOGGER.info("Coherence '{}' - so will now sleep for {} seconds to allow the member left to be acknowledged", CacheFactory.VERSION, seconds);
 
         try {
             SECONDS.sleep(seconds);
@@ -120,11 +111,11 @@ public final class ClusterMemberGroupTestSupport {
             if (counter == (NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP + 1)) {
                 expectedSizeOrTimedOutWaiting = true;
             } else {
-                LOGGER.warning(format("Cluster size is presently %d, but was expected to be %d - will check again "
+                LOGGER.warn("Cluster size is presently {}, but was expected to be {} - will check again "
                                 + "after sleeping, the cluster could be stabilising after a failover.  Number of attempts "
-                                + "%d out of %d before giving up",
+                                + "{} out of {} before giving up",
                         currentClusterSize, expectedClusterSize,
-                        counter, NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP));
+                        counter, NUMBER_OF_TIMES_TO_ASSERT_SIZE_BEFORE_GIVING_UP);
 
                 try {
                     TimeUnit.SECONDS.sleep(1);
