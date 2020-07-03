@@ -33,8 +33,8 @@ package org.littlegrid.impl;
 
 import org.littlegrid.CallbackHandler;
 import org.littlegrid.ClusterMemberGroup;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 
@@ -45,7 +45,7 @@ import static java.lang.String.format;
  * @since 2.15
  */
 public class SimpleKeepAliveClusterMemberGroup extends UsageCountingClusterMemberGroup {
-    private static final Logger LOGGER = Logger.getLogger(SimpleKeepAliveClusterMemberGroup.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleKeepAliveClusterMemberGroup.class);
 
     /**
      * Constructor.

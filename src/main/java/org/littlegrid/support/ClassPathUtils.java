@@ -31,21 +31,21 @@
 
 package org.littlegrid.support;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
-
-import static java.lang.String.format;
 
 /**
  * Class path utilities class.
  */
 public final class ClassPathUtils {
-    private static final Logger LOGGER = Logger.getLogger(ClassPathUtils.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassPathUtils.class);
     private static final String PATH_SEPARATOR = "path.separator";
     private static final String JAVA_CLASS_PATH = "java.class.path";
     private static final String SUREFIRE_TEST_CLASS_PATH = "surefire.test.class.path";
@@ -77,7 +77,7 @@ public final class ClassPathUtils {
      */
     public static String getClassPath(final Properties systemProperties) {
         if (systemProperties.containsKey(SUREFIRE_TEST_CLASS_PATH)) {
-            LOGGER.fine("Note: class path is being controlled by Surefire");
+            LOGGER.debug("Note: class path is being controlled by Surefire");
 
             return systemProperties.getProperty(SUREFIRE_TEST_CLASS_PATH);
         } else {
@@ -124,8 +124,7 @@ public final class ClassPathUtils {
                         final String trimmedJarToExclude = jarToExclude.trim();
 
                         if (trimmedJarToExclude.length() != 0 && partOfClassPath.contains(trimmedJarToExclude)) {
-                            LOGGER.fine(format("JAR: '%s' specified for exclusion from class path",
-                                    trimmedJarToExclude));
+                            LOGGER.debug("JAR: '{}' specified for exclusion from class path", trimmedJarToExclude);
 
                             includeInClassPath = false;
                         }

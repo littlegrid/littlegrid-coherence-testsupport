@@ -38,6 +38,8 @@ import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ClusterMemberGroupBuildException;
 import org.littlegrid.IdentifiableException;
 import org.littlegrid.support.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,7 +54,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_CLASS_PATH_IN_USE;
@@ -62,20 +63,20 @@ import static org.littlegrid.IdentifiableException.ReasonEnum.CHECK_CHILD_FIRST_
  */
 public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     private static final int ONE_MB = 1024 * 1024;
-    private static final Logger LOGGER = Logger.getLogger(DefaultClusterMemberGroup.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClusterMemberGroup.class);
 
     private final List<Future<DelegatingClusterMemberWrapper>> memberFutures = new ArrayList<>();
 
-    private CallbackHandler callbackHandler;
-    private boolean startAllInvoked;
-    private Properties systemPropertiesBeforeStartAllInvoked;
-    private int sleepAfterStopDuration35x;
-    private int sleepAfterStopDuration36x;
-    private int sleepAfterStopDurationDefault;
+    private final CallbackHandler callbackHandler;
+    private final Properties systemPropertiesBeforeStartAllInvoked;
+    private final int sleepAfterStopDuration35x;
+    private final int sleepAfterStopDuration36x;
+    private final int sleepAfterStopDurationDefault;
     private final int wkaPort;
     private final int extendPort;
-    private boolean shutdownAllInvoked;
 
+    private boolean startAllInvoked;
+    private boolean shutdownAllInvoked;
 
     /**
      * Constructor.
@@ -122,8 +123,8 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
         final DefaultClusterMemberGroup defaultClusterMemberGroup = (DefaultClusterMemberGroup) otherMemberGroup;
 
-        LOGGER.info(format("About to merge - current members started: %s, members started to merge in: %s",
-                this.getStartedMemberIds().length, defaultClusterMemberGroup.getMemberFutures().size()));
+        LOGGER.info("About to merge - current members started: {}, members started to merge in: {}",
+                this.getStartedMemberIds().length, defaultClusterMemberGroup.getMemberFutures().size());
 
         merge(defaultClusterMemberGroup.getMemberFutures());
 
@@ -243,13 +244,13 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreadsInStartUpPool);
 
-            LOGGER.fine("About to establish a cluster using a single member initially");
+            LOGGER.debug("About to establish a cluster using a single member initially");
             final Future<DelegatingClusterMemberWrapper> futureForSeniorMember =
                     executorService.submit(taskForSeniorMember);
 
             futureForSeniorMember.get();
 
-            LOGGER.fine("First cluster member up, starting any remaining members to join established cluster");
+            LOGGER.debug("First cluster member up, starting any remaining members to join established cluster");
             final List<Future<DelegatingClusterMemberWrapper>> futuresForOtherMembers =
                     executorService.invokeAll(tasks);
 
@@ -260,10 +261,10 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
 
             ensureMemberIdsAreUnique(getStartedMemberIds(memberFutures));
 
-            LOGGER.fine(format("This group of cluster member(s) started, member Ids: %s",
+            LOGGER.debug(format("This group of cluster member(s) started, member Ids: %s",
                     Arrays.toString(getStartedMemberIds(memberFutures))));
         } catch (Exception e) {
-            LOGGER.severe("Failed to start cluster member group - please check the exception report to aid diagnosis");
+            LOGGER.error("Failed to start cluster member group - please check the exception report to aid diagnosis");
 
             throw new ClusterMemberGroupBuildException(e, systemPropertiesBeforeStartInvoked,
                     systemPropertiesToBeApplied, numberOfMembers, classPathUrls,
@@ -296,19 +297,19 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
                                                final Properties systemPropertiesToBeApplied,
                                                final URL[] classPathUrls,
                                                final int numberOfThreadsInStartUpPool) {
-        LOGGER.fine(format("About to start %d cluster member(s) in group, using %d threads in pool",
-                numberOfMembers, numberOfThreadsInStartUpPool));
+        LOGGER.debug("About to start {} cluster member(s) in group, using {} threads in pool",
+                numberOfMembers, numberOfThreadsInStartUpPool);
 
-        LOGGER.fine(format("Class path (after exclusions)..: %s", Arrays.deepToString(classPathUrls)));
-        LOGGER.info(format("System properties to be set.: %s", new TreeMap<>(systemPropertiesToBeApplied)));
+        LOGGER.debug("Class path (after exclusions)..: {}", Arrays.deepToString(classPathUrls));
+        LOGGER.info("System properties to be set.: {}", new TreeMap<>(systemPropertiesToBeApplied));
         outputMemoryMessage();
     }
 
     private static void outputMemoryMessage() {
-        LOGGER.info(format("Max memory: %sMB, current: %sMB, free memory: %sMB",
+        LOGGER.info("Max memory: {}MB, current: {}MB, free memory: {}MB",
                 Runtime.getRuntime().maxMemory() / ONE_MB,
                 Runtime.getRuntime().totalMemory() / ONE_MB,
-                Runtime.getRuntime().freeMemory() / ONE_MB));
+                Runtime.getRuntime().freeMemory() / ONE_MB);
     }
 
     DelegatingClusterMemberWrapper getClusterMemberWrapper(final int memberId) {
@@ -377,6 +378,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
      * @param majorMinorVersion Version of Coherence.
      * @return returns the suggested sleep duration.
      */
+    @Deprecated
     public int getSuggestedSleepDurationBasedUponVersion(final float majorMinorVersion) {
         final float coherenceVersionNumber36x = 3.6f;
         final float coherenceVersionNumber370 = 3.7f;
@@ -403,12 +405,12 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public ClusterMember getClusterMember(final int memberId) {
         if (!startAllInvoked) {
-            LOGGER.warning(format("Cluster member group never started - cannot get member %s", memberId));
+            LOGGER.warn("Cluster member group never started - cannot get member {}", memberId);
 
             return null;
         }
 
-        LOGGER.fine(format("About to get cluster member %d", memberId));
+        LOGGER.debug("About to get cluster member {}", memberId);
 
         return getClusterMemberWrapper(memberId);
     }
@@ -419,18 +421,18 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public ClusterMemberGroup shutdownMember(final int... memberIds) {
         if (!startAllInvoked) {
-            LOGGER.warning("Cluster member group never started - nothing to shutdown");
+            LOGGER.warn("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
 
         for (final int memberId : memberIds) {
-            LOGGER.info(format("About to shutdown cluster member %d", memberId));
+            LOGGER.info("About to shutdown cluster member {}", memberId);
 
             final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
             if (memberWrapper == null) {
-                LOGGER.warning(format("Member with id %d did not exist in group - so cannot shut it down", memberId));
+                LOGGER.warn("Member with id {} did not exist in group - so cannot shut it down", memberId);
             } else {
                 memberWrapper.shutdown();
             }
@@ -449,7 +451,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         System.setProperties(systemPropertiesBeforeStartAllInvoked);
 
         if (!startAllInvoked) {
-            LOGGER.warning("Cluster member group never started - nothing to shutdown");
+            LOGGER.warn("Cluster member group never started - nothing to shutdown");
 
             return this;
         }
@@ -457,7 +459,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
         callbackHandler.doBeforeShutdown();
         final int memberCount = memberFutures.size();
 
-        LOGGER.fine(format("Shutting down %d cluster member(s) in group", memberCount));
+        LOGGER.debug("Shutting down {} cluster member(s) in group", memberCount);
 
         try {
             final long startTime = System.currentTimeMillis();
@@ -471,8 +473,7 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
             memberFutures.clear();
             final long shutdownDuration = System.currentTimeMillis() - startTime;
 
-            LOGGER.info(format("___ Group of %d cluster member(s) shutdown in %dms ___",
-                    memberCount, shutdownDuration));
+            LOGGER.info("___ Group of {} cluster member(s) shutdown in {}ms ___", memberCount, shutdownDuration);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -498,18 +499,18 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public ClusterMemberGroup stopMember(final int... memberIds) {
         if (!startAllInvoked) {
-            LOGGER.warning("Cluster member group never started - nothing to do");
+            LOGGER.warn("Cluster member group never started - nothing to do");
 
             return this;
         }
 
         for (final int memberId : memberIds) {
-            LOGGER.info(format("About to stop cluster member with id %d", memberId));
+            LOGGER.info("About to stop cluster member with id {}", memberId);
 
             final DelegatingClusterMemberWrapper memberWrapper = getClusterMemberWrapper(memberId);
 
             if (memberWrapper == null) {
-                LOGGER.warning(format("Member with id %d did not exist in group - so cannot stop it", memberId));
+                LOGGER.warn("Member with id {} did not exist in group - so cannot stop it", memberId);
             } else {
                 memberWrapper.stop();
             }
@@ -524,12 +525,12 @@ public class DefaultClusterMemberGroup implements ClusterMemberGroup {
     @Override
     public ClusterMemberGroup stopAll() {
         if (!startAllInvoked) {
-            LOGGER.warning("Cluster member group never started - nothing to stop");
+            LOGGER.warn("Cluster member group never started - nothing to stop");
 
             return this;
         }
 
-        LOGGER.info(format("Stopping %d cluster member(s) in this group", memberFutures.size()));
+        LOGGER.info("Stopping {} cluster member(s) in this group", memberFutures.size());
 
         try {
             for (final Future<DelegatingClusterMemberWrapper> task : memberFutures) {

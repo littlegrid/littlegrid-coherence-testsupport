@@ -41,6 +41,8 @@ import org.littlegrid.ClusterMember;
 import org.littlegrid.ClusterMemberGroupUtils;
 import org.littlegrid.features.PretendServer;
 import org.littlegrid.support.ChildFirstUrlClassLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -48,7 +50,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -182,7 +183,7 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
     }
 
     public static class StubCacheStore extends AbstractCacheStore {
-        private static final Logger LOGGER = Logger.getLogger(StubCacheStore.class.getName());
+        private static final Logger LOGGER = LoggerFactory.getLogger(StubCacheStore.class);
 
         private static final AtomicInteger LOAD_COUNTER = new AtomicInteger();
         private static final AtomicInteger STORE_COUNTER = new AtomicInteger();
@@ -200,8 +201,8 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
             loadKeysThatWillGenerateExceptions.addAll(Arrays.asList(loadKeys.split(",")));
 
             if (loadKeysThatWillGenerateExceptions.size() > 0) {
-                LOGGER.info(format("Member: %d - the following keys will cause exceptions when load is invoked: %s",
-                        memberId, loadKeysThatWillGenerateExceptions));
+                LOGGER.info("Member: {} - the following keys will cause exceptions when load is invoked: {}",
+                        memberId, loadKeysThatWillGenerateExceptions);
 
                 loadExceptionClassName = System.getProperty("littlegrid.stub.cache.load.exception.class.name",
                         UnsupportedOperationException.class.getName());
@@ -211,8 +212,8 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
             storeKeysThatWillGenerateExceptions.addAll(Arrays.asList(storeKeys.split(",")));
 
             if (storeKeysThatWillGenerateExceptions.size() > 0) {
-                LOGGER.info(format("Member: %d - the following keys will cause exceptions when store is invoked: %s",
-                        memberId, storeKeysThatWillGenerateExceptions));
+                LOGGER.info("Member: {} - the following keys will cause exceptions when store is invoked: {}",
+                        memberId, storeKeysThatWillGenerateExceptions);
 
                 storeExceptionClassName = System.getProperty("littlegrid.stub.cache.store.exception.class.name",
                         UnsupportedOperationException.class.getName());

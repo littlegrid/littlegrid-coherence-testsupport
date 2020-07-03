@@ -34,10 +34,10 @@ package org.littlegrid.impl;
 import com.tangosol.util.ClassHelper;
 import org.littlegrid.ClusterMember;
 import org.littlegrid.support.PropertiesUtils;
+import org.slf4j.event.Level;
 
 import java.lang.reflect.Constructor;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import static java.lang.String.format;
 
@@ -71,7 +71,6 @@ public class ReflectionDelegatingClusterMember extends DefaultClusterMember {
     private String stopMethodName;
     private String getLocalMemberIdMethodName;
     private String getActualContainingClassLoaderMethodName;
-
 
     /**
      * Constructor.

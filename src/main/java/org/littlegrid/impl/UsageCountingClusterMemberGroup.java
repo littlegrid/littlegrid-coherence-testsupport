@@ -34,8 +34,8 @@ package org.littlegrid.impl;
 import org.littlegrid.CallbackHandler;
 import org.littlegrid.ClusterMemberGroup;
 import org.littlegrid.ReusableClusterMemberGroup;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 
@@ -48,7 +48,7 @@ import static java.lang.String.format;
 public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
         implements ReusableClusterMemberGroup {
 
-    private static final Logger LOGGER = Logger.getLogger(UsageCountingClusterMemberGroup.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(UsageCountingClusterMemberGroup.class);
 
     private int currentUsageCount = 0;
     private int peakUsageCount = 0;
@@ -91,7 +91,7 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
 
         super.startAll();
 
-        LOGGER.info(format("Start all invoked - current usage count is now: %d for '%s'", currentUsageCount, this));
+        LOGGER.info("Start all invoked - current usage count is now: {} for '{}'", currentUsageCount, this);
 
         return this;
     }
@@ -104,15 +104,15 @@ public class UsageCountingClusterMemberGroup extends DefaultClusterMemberGroup
         if (currentUsageCount > 0) {
             currentUsageCount--;
         } else {
-            LOGGER.warning("Shutdown all called more times than this group has been started - check your usage");
+            LOGGER.warn("Shutdown all called more times than this group has been started - check your usage");
         }
 
-        LOGGER.info(format("Shutdown all invoked - current usage count is now: %d for '%s'", currentUsageCount, this));
+        LOGGER.info("Shutdown all invoked - current usage count is now: {} for '{}'", currentUsageCount, this);
 
         if (currentUsageCount == 0) {
             super.shutdownAll();
         } else {
-            LOGGER.info(format("Deferring shutdown of this member group %s", this));
+            LOGGER.info("Deferring shutdown of this member group {}", this);
         }
 
         return this;

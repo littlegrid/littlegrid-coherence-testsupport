@@ -40,16 +40,29 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.oracle.coherence.ce</groupId>
+            <artifactId>coherence</artifactId>
+            <version>${coherence.ce.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.coherence.ce</groupId>
-            <artifactId>coherence</artifactId>
-            <version>${coherence.ce.version}</version>
         </dependency>
     </dependencies>
 
@@ -253,6 +266,7 @@
 
         <!-- JAR versions -->
         <coherence.ce.version>20.06</coherence.ce.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <junit.version>4.8.2</junit.version>
 
         <starting.thousand.port.number>40</starting.thousand.port.number>
