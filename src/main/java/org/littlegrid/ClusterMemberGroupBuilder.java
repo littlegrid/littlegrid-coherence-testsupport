@@ -713,7 +713,7 @@ public interface ClusterMemberGroupBuilder {
     /**
      * Returns application console class name.
      *
-     * @return class name..
+     * @return class name.
      * @since 2.14
      */
     String getAppConsoleClassName();
@@ -726,4 +726,22 @@ public interface ClusterMemberGroupBuilder {
      * @since 2.15
      */
     ClusterMemberGroupBuilder setClusterMemberGroupInstanceClassName(String clusterMemberGroupInstanceClassName);
+
+    /**
+     * Set the POF configuration filename.
+     *
+     * @param pofEnabled Denotes if POF should be enabled.
+     * @return builder.
+     * @since 3.0.0
+     */
+    ClusterMemberGroupBuilder setPofEnabled(boolean pofEnabled);
+
+    /**
+     * Set the POF configuration filename.
+     *
+     * @param pofConfiguration POF configuration filename.
+     * @return builder.
+     * @since 3.0.0
+     */
+    ClusterMemberGroupBuilder setPofConfiguration(String pofConfiguration);
 }

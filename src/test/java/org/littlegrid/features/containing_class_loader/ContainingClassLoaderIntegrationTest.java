@@ -257,62 +257,10 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
                             "Key '%s' was configured to throw exception - throwing requested exception", key);
 
                     throw (RuntimeException) ClassHelper.newInstance(exceptionClass, new Object[]{message});
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(unexpectedExceptionMessage, e);
-                } catch (InstantiationException e) {
-                    throw new IllegalStateException(unexpectedExceptionMessage, e);
-                } catch (InvocationTargetException e) {
+                } catch (ClassNotFoundException | InstantiationException | InvocationTargetException e) {
                     throw new IllegalStateException(unexpectedExceptionMessage, e);
                 }
             }
         }
     }
-
-/*
-    public static class BusinessDayProcessor extends AbstractProcessor implements PortableObject {
-        @Override
-        public Object process(final InvocableMap.Entry entry) {
-            return new Date();
-//            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void readExternal(final PofReader reader)
-                throws IOException {
-        }
-
-        @Override
-        public void writeExternal(final PofWriter writer)
-                throws IOException {
-        }
-    }
-
-    public static class BusinessDay {
-        private int day;
-        private int month;
-        private int year;
-
-        private static BusinessDay INSTANCE;
-
-        public static synchronized BusinessDay getInstance() {
-            if (INSTANCE == null) {
-                INSTANCE = new BusinessDay();
-            }
-
-            return INSTANCE;
-        }
-
-        public int getDay() {
-            return day;
-        }
-
-        public int getMonth() {
-            return month;
-        }
-
-        public int getYear() {
-            return year;
-        }
-    }
-*/
 }
