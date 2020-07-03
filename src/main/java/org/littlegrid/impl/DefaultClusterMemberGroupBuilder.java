@@ -67,27 +67,15 @@ import static org.littlegrid.BuildAndConfigureEnum.CONFIGURE_FOR_STORAGE_ENABLED
  * Default cluster member group builder implementation.
  */
 public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuilder {
-    private static final String DEFAULT_PROPERTIES_FILENAME =
-            "littlegrid/littlegrid-builder-default.properties";
-
-    private static final String SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME =
-            "littlegrid/littlegrid-builder-system-property-mapping-default.properties";
-
+    private static final String DEFAULT_PROPERTIES_FILENAME = "littlegrid/littlegrid-builder-default.properties";
+    private static final String SYSTEM_PROPERTY_MAPPING_DEFAULT_PROPERTIES_FILENAME = "littlegrid/littlegrid-builder-system-property-mapping-default.properties";
     private static final String OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-override.properties";
-
-    private static final String SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME =
-            "littlegrid-builder-system-property-mapping-override.properties";
-
-    private static final String FAST_START_OVERRIDE_CONFIGURATION_FILENAME =
-            "littlegrid/littlegrid-fast-start-coherence-override.xml";
-
+    private static final String SYSTEM_PROPERTY_MAPPING_OVERRIDE_PROPERTIES_FILENAME = "littlegrid-builder-system-property-mapping-override.properties";
+    private static final String FAST_START_OVERRIDE_CONFIGURATION_FILENAME = "littlegrid/littlegrid-fast-start-coherence-override.xml";
     private static final String LITTLEGRID_DIRECTORY_SLASH = "littlegrid/";
 
-    private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY =
-            "ExceptionReporterInstanceClassName";
-
-    private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY =
-            "CallbackHandlerInstanceClassName";
+    private static final String EXCEPTION_REPORTER_INSTANCE_CLASS_NAME_KEY = "ExceptionReporterInstanceClassName";
+    private static final String CALLBACK_HANDLER_INSTANCE_CLASS_NAME_KEY = "CallbackHandlerInstanceClassName";
 
     private static final String CUSTOM_CONFIGURED_COUNT_KEY = "CustomConfiguredCount";
     private static final String STORAGE_ENABLED_COUNT_KEY = "StorageEnabledCount";
@@ -97,14 +85,12 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
     private static final String NUMBER_OF_THREADS_IN_START_UP_POOL_KEY = "NumberOfThreadsInStartUpPool";
     private static final String CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "ClusterMemberInstanceClassName";
-    private static final String CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY =
-            "CustomConfiguredClusterMemberInstanceClassName";
+    private static final String CUSTOM_CONFIGURATION_CLUSTER_MEMBER_INSTANCE_CLASS_NAME_KEY = "CustomConfiguredClusterMemberInstanceClassName";
     private static final String CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME = "ClusterMemberGroupInstanceClassName";
 
     private static final String SLEEP_AFTER_STOP_DURATION_35X_KEY = "SuggestedSleepAfterStopDuration35x";
     private static final String SLEEP_AFTER_STOP_DURATION_36X_KEY = "SuggestedSleepAfterStopDuration36x";
-    private static final String SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY =
-            "SuggestedSleepAfterStopDurationDefault";
+    private static final String SLEEP_AFTER_STOP_DURATION_DEFAULT_KEY = "SuggestedSleepAfterStopDurationDefault";
 
     private static final String CACHE_CONFIGURATION_KEY = "CacheConfiguration";
     private static final String CLIENT_CACHE_CONFIGURATION_KEY = "ClientCacheConfiguration";
@@ -114,8 +100,7 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
     private static final String OVERRIDE_CONFIGURATION_KEY = "OverrideConfiguration";
     private static final String CLIENT_OVERRIDE_CONFIGURATION_KEY = "ClientOverrideConfiguration";
 
-    private static final String CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY =
-            "CustomConfiguredCacheConfiguration";
+    private static final String CUSTOM_CONFIGURED_CACHE_CONFIGURATION_KEY = "CustomConfiguredCacheConfiguration";
     private static final String DISTRIBUTED_LOCAL_STORAGE_KEY = "DistributedLocalStorage";
     private static final String TCMP_ENABLED_KEY = "TcmpEnabled";
 
@@ -163,6 +148,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
     private static final String BUILD_AND_CONFIG_FOR_ENUM_NAME_KEY = "BuildAndConfigureForEnumName";
     private static final String APP_CONSOLE_CLASS_NAME_KEY = "AppConsoleClassName";
+
+    private static final String POF_ENABLED = "PofEnabled";
+    private static final String POF_CONFIGURATION = "PofConfiguration";
 
     private static final String LEGACY_ENVIRONMENT_VARIABLE_OR_SYSTEM_PROPERTY_PREFIX_KEY = BUILDER_OVERRIDE_KEY + ".";
 
@@ -316,6 +304,12 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
                          final String value) {
 
         builderKeysAndValues.put(key, value);
+    }
+
+    void setBuilderValue(final String key,
+                         final boolean value) {
+
+        builderKeysAndValues.put(key, Boolean.toString(value));
     }
 
     int getBuilderValueAsInt(final String builderKey) {
@@ -1308,6 +1302,27 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
     @Override
     public ClusterMemberGroupBuilder setClusterMemberGroupInstanceClassName(final String clusterMemberGroupInstanceClassName) {
         setBuilderValue(CLUSTER_MEMBER_GROUP_INSTANCE_CLASS_NAME, clusterMemberGroupInstanceClassName);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroupBuilder setPofEnabled(boolean pofEnabled) {
+        setBuilderValue(POF_ENABLED, pofEnabled);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClusterMemberGroupBuilder setPofConfiguration(String pofConfiguration) {
+        setBuilderValue(POF_CONFIGURATION, pofConfiguration);
+
         return this;
     }
 
@@ -1591,17 +1606,10 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
 
         setPropertyUsingNameMappingAndSuppliedValue(properties, TCMP_ENABLED_KEY, true);
         setPropertyUsingNameMappingAndBuilderValue(properties, WKA_ADDRESS_KEY);
-
-        setPropertyUsingNameMappingAndSuppliedValue(properties, LOCAL_ADDRESS_KEY,
-                getBuilderValueAsString(WKA_ADDRESS_KEY));
-
-        setPropertyUsingNameMappingAndSuppliedValue(properties, EXTEND_ADDRESS_KEY,
-                getBuilderValueAsString(WKA_ADDRESS_KEY));
-
+        setPropertyUsingNameMappingAndSuppliedValue(properties, LOCAL_ADDRESS_KEY, getBuilderValueAsString(WKA_ADDRESS_KEY));
+        setPropertyUsingNameMappingAndSuppliedValue(properties, EXTEND_ADDRESS_KEY, getBuilderValueAsString(WKA_ADDRESS_KEY));
         setPropertyUsingNameMappingAndBuilderValue(properties, WKA_PORT_KEY);
-
-        setPropertyUsingNameMappingAndSuppliedValue(properties, LOCAL_PORT_KEY,
-                getBuilderValueAsString(WKA_PORT_KEY));
+        setPropertyUsingNameMappingAndSuppliedValue(properties, LOCAL_PORT_KEY, getBuilderValueAsString(WKA_PORT_KEY));
 
         setPropertyUsingNameMappingAndBuilderValue(properties, TTL_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, CLUSTER_NAME_KEY);
@@ -1612,11 +1620,12 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
         setPropertyUsingNameMappingAndBuilderValue(properties, LOG_DESTINATION_KEY);
         setPropertyUsingNameMappingAndBuilderValue(properties, LOG_LEVEL_KEY);
 
-        setPropertyUsingNameMappingAndSuppliedValue(properties, COHERENCE_MANAGEMENT,
-                COHERENCE_MANAGEMENT_NONE);
-
+        setPropertyUsingNameMappingAndSuppliedValue(properties, COHERENCE_MANAGEMENT, COHERENCE_MANAGEMENT_NONE);
         setPropertyUsingNameMappingAndSuppliedValue(properties, COHERENCE_MANAGEMENT_REMOTE, true);
         setPropertyUsingNameMappingAndSuppliedValue(properties, MANAGEMENT_JMX_REMOTE, false);
+
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_ENABLED);
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_CONFIGURATION);
 
         final long fastStartJoinTimeout = getBuilderValueAsLong(FAST_START_JOIN_TIMEOUT_MILLISECONDS);
         final String overrideConfiguration = getBuilderValueAsString(OVERRIDE_CONFIGURATION_KEY);
@@ -1646,6 +1655,9 @@ public class DefaultClusterMemberGroupBuilder implements ClusterMemberGroupBuild
         final Properties properties = new Properties();
 
         final String clientCacheConfiguration = getBuilderValueAsString(CLIENT_CACHE_CONFIGURATION_KEY);
+
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_ENABLED);
+        setPropertyUsingNameMappingAndBuilderValue(properties, POF_CONFIGURATION);
 
         if (stringHasValue(clientCacheConfiguration)) {
             setPropertyUsingNameMappingAndBuilderValue(properties, CLIENT_CACHE_CONFIGURATION_KEY);

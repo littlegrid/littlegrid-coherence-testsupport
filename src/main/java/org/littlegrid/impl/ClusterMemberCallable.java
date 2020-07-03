@@ -40,8 +40,8 @@ import java.util.concurrent.Callable;
  * Local process cluster member callable, a task that starts a cluster member wrapper.
  */
 class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> {
-    private URL[] classPathUrls;
-    private String clusterMemberInstanceClassName;
+    private final URL[] classPathUrls;
+    private final String clusterMemberInstanceClassName;
 
     /**
      * Constructor.
@@ -68,9 +68,7 @@ class ClusterMemberCallable implements Callable<DelegatingClusterMemberWrapper> 
      * {@inheritDoc}
      */
     @Override
-    public DelegatingClusterMemberWrapper call()
-            throws Exception {
-
+    public DelegatingClusterMemberWrapper call() {
         final ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 
         try {
