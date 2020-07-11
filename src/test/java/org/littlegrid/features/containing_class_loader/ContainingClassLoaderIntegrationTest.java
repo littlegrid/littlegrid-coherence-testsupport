@@ -48,10 +48,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -165,7 +165,7 @@ public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTes
             cache.put(i, i);
         }
 
-        TimeUnit.SECONDS.sleep(writeDelaySeconds + 3); // wait a few extra seconds
+        SECONDS.sleep(writeDelaySeconds + 10); // wait a few extra seconds
 
         int totalStoreCount = 0;
 
