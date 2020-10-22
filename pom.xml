@@ -295,7 +295,7 @@
         <!-- JAR versions -->
         <coherence.ce.version>20.06</coherence.ce.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <junit.version>4.8.2</junit.version>
+        <junit.version>4.13.1</junit.version>
 
         <starting.thousand.port.number>40</starting.thousand.port.number>
         <fork.count>1</fork.count>
