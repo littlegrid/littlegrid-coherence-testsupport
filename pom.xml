@@ -5,13 +5,7 @@
     <groupId>org.littlegrid</groupId>
     <artifactId>littlegrid</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.0-M5-SNAPSHOT</version>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+    <version>3.0.0-M5</version>
 
     <name>${project.artifactId}</name>
     <description>littlegrid Coherence test-support framework</description>
@@ -235,7 +229,7 @@
         </profile>
 
         <profile>
-            <id>release</id>
+            <id>ossrh</id>
             <build>
                 <plugins>
                     <plugin>
@@ -271,6 +265,16 @@
                     </plugin>
                 </plugins>
             </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
         </profile>
 
         <profile>
