@@ -32,13 +32,11 @@
 package org.littlegrid;
 
 import org.junit.After;
-import org.junit.Ignore;
 
 /**
  * Abstract base class which provides a cluster member group instance variable and
  * also performs a cluster member group support shutdown after *each* test.
  */
-@Ignore
 public class AbstractAfterTestShutdownIntegrationTest {
     protected ClusterMemberGroup memberGroup;
 
