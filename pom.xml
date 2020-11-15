@@ -341,17 +341,16 @@
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
-        <maven-install-plugin.version>2.3.1</maven-install-plugin.version>
-        <maven-release-plugin.version>2.1</maven-release-plugin.version>
-        <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
-        <maven-javadoc-plugin.version>2.7</maven-javadoc-plugin.version>
-        <maven-checkstyle-plugin.version>2.7</maven-checkstyle-plugin.version>
-        <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
-        <maven-deploy-plugin.version>2.5</maven-deploy-plugin.version>
+        <maven-install-plugin.version>3.0.0-M1</maven-install-plugin.version>
+        <maven-release-plugin.version>3.0.0-M1</maven-release-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M1</maven-surefire-plugin.version>
+        <maven-javadoc-plugin.version>3.0.0-M1</maven-javadoc-plugin.version>
+        <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
+        <maven-source-plugin.version>3.0.0-M1</maven-source-plugin.version>
+        <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
         <cobertura-maven-plugin.version>2.5.1</cobertura-maven-plugin.version>
-        <maven-gpg-plugin.version>1.1</maven-gpg-plugin.version>
-        <build-helper-plugin.version>1.7</build-helper-plugin.version>
+        <build-helper-plugin.version>3.2.0</build-helper-plugin.version>
         <gmaven-plugin.version>1.0</gmaven-plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.7</nexus.staging.maven.plugin.version>
