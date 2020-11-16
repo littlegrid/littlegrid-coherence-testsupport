@@ -35,6 +35,7 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.cache.AbstractCacheStore;
 import com.tangosol.util.ClassHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.littlegrid.AbstractAfterTestShutdownIntegrationTest;
 import org.littlegrid.ClusterMember;
@@ -63,6 +64,7 @@ import static org.littlegrid.ClusterMemberGroupTestSupport.SMALL_TEST_CLUSTER_SI
 /**
  * Cluster member actual containing class loader tests.
  */
+@Ignore
 public final class ContainingClassLoaderIntegrationTest extends AbstractAfterTestShutdownIntegrationTest {
     @Test
     public void getContainingClassLoader() {
